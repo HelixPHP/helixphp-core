@@ -59,7 +59,7 @@ class Response
   public function json($data)
   {
     $this->header('Content-Type', 'application/json; charset=utf-8');
-    $this->body = json_encode(\Encoding::iso2utf8($data));
+    $this->body = json_encode($data);
     echo $this->body;
     return $this;
   }
@@ -71,7 +71,7 @@ class Response
   public function text($text)
   {
     $this->header('Content-Type', 'text/plain; charset=utf-8');
-    $this->body = \Encoding::iso2utf8($text);
+    $this->body = $text;
     echo $this->body;
     return $this;
   }
@@ -83,7 +83,7 @@ class Response
   public function html($html)
   {
     $this->header('Content-Type', 'text/html; charset=utf-8');
-    $this->body = \Encoding::iso2utf8($html);
+    $this->body = $html;
     echo $this->body;
     return $this;
   }
