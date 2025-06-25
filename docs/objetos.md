@@ -8,6 +8,7 @@
 - [HeaderRequest](#headerrequest)
 - [ServerExpress](#serverexpress)
 - [Middlewares](#middlewares)
+- [Middlewares de Segurança](#middlewares-de-segurança)
 
 ---
 
@@ -87,6 +88,133 @@ Classe placeholder para futuras implementações de funcionalidades de servidor.
 ## Middlewares
 O Express PHP suporta middlewares globais e por rota, com assinatura compatível ao Express.js:
 
+- **Middleware global:**
+```php
+$app->use(function($req, $res, $next) {
+    // Executa para todas as rotas
+    $next();
+});
+```
+
+- **Middleware por rota:**
+```php
+$app->get('/rota',
+    function($req, $res, $next) {
+        // Middleware 1
+        $next();
+    },
+    function($req, $res, $next) {
+        // Middleware 2
+        $next();
+    },
+    function($req, $res) {
+        // Handler final
+        $res->json(['ok' => true]);
+    }
+);
+```
+
+- **Encadeamento:**
+  - Cada middleware deve chamar `$next()` para passar o controle adiante.
+  - É possível modificar o objeto `$request` entre middlewares.
+
+---
+
+## Middlewares de Segurança
+
+### SecurityMiddleware
+Middleware combinado que oferece proteção completa contra CSRF e XSS.
+- **Função:** Aplica múltiplas camadas de segurança em uma única configuração.
+- **Principais recursos:**
+  - Proteção CSRF automática
+  - Sanitização XSS de entrada
+  - Cabeçalhos de segurança
+  - Rate limiting opcional
+  - Configuração segura de sessão
+- **Exemplo:**
+```php
+// Configuração básica
+$app->use(SecurityMiddleware::create());
+
+// Configuração estrita
+$app->use(SecurityMiddleware::strict());
+
+// Configuração personalizada
+$app->use(new SecurityMiddleware([
+    'enableCsrf' => true,
+    'enableXss' => true,
+    'rateLimiting' => false,
+    'csrf' => ['excludePaths' => ['/api/public']],
+    'xss' => ['excludeFields' => ['content']]
+]));
+```
+
+### CsrfMiddleware
+Middleware específico para proteção contra ataques CSRF.
+- **Função:** Valida tokens CSRF em requisições POST, PUT, PATCH e DELETE.
+- **Principais recursos:**
+  - Geração automática de tokens
+  - Validação em headers ou body
+  - Exclusão de caminhos específicos
+  - Métodos utilitários para formulários
+- **Exemplo:**
+```php
+$app->use(new CsrfMiddleware([
+    'headerName' => 'X-CSRF-Token',
+    'fieldName' => 'csrf_token',
+    'excludePaths' => ['/webhook'],
+    'methods' => ['POST', 'PUT', 'DELETE']
+]));
+
+// Obter token para formulários
+$token = CsrfMiddleware::getToken();
+$hiddenField = CsrfMiddleware::hiddenField();
+$metaTag = CsrfMiddleware::metaTag();
+```
+
+### XssMiddleware
+Middleware específico para proteção contra ataques XSS.
+- **Função:** Sanitiza dados de entrada e adiciona cabeçalhos de segurança.
+- **Principais recursos:**
+  - Sanitização automática de input
+  - Cabeçalhos de segurança (X-XSS-Protection, CSP, etc.)
+  - Detecção de conteúdo malicioso
+  - Tags HTML permitidas configuráveis
+  - Limpeza de URLs
+- **Exemplo:**
+```php
+$app->use(new XssMiddleware([
+    'sanitizeInput' => true,
+    'securityHeaders' => true,
+    'excludeFields' => ['rich_content'],
+    'allowedTags' => '<p><strong><em>',
+    'contentSecurityPolicy' => "default-src 'self';"
+]));
+
+// Métodos utilitários
+$clean = XssMiddleware::sanitize($input);
+$hasXss = XssMiddleware::containsXss($input);
+$safeUrl = XssMiddleware::cleanUrl($url);
+```
+
+### Cabeçalhos de Segurança Aplicados
+Os middlewares de segurança automaticamente adicionam:
+- `X-XSS-Protection`: Proteção XSS do navegador
+- `X-Content-Type-Options`: Prevenção de MIME sniffing  
+- `X-Frame-Options`: Proteção contra clickjacking
+- `Referrer-Policy`: Controle de informações de referrer
+- `Content-Security-Policy`: Política de segurança de conteúdo
+
+### Configuração de Sessão Segura
+O SecurityMiddleware configura automaticamente:
+- Cookies HttpOnly (não acessíveis via JavaScript)
+- Regeneração periódica de ID da sessão
+- SameSite cookies para proteção CSRF
+- Parâmetros seguros de tempo de vida
+
+## Middlewares Existentes
+
+### Encadeamento de Middlewares
 - **Middleware global:**
 ```php
 $app->use(function($req, $res, $next) {

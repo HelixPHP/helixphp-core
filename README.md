@@ -184,6 +184,142 @@ Exemplo de resposta ao exceder o limite:
 }
 ```
 
+## Middlewares de Segurança
+
+O Express PHP inclui middlewares robustos de segurança para proteger sua aplicação contra ataques CSRF e XSS.
+
+### Middleware de Segurança Combinado (SecurityMiddleware)
+
+O SecurityMiddleware oferece proteção completa contra CSRF e XSS em um único middleware:
+
+```php
+use Express\SRC\Services\SecurityMiddleware;
+
+// Configuração básica (recomendada)
+$app->use(SecurityMiddleware::create());
+
+// Configuração estrita (máxima segurança)
+$app->use(SecurityMiddleware::strict());
+
+// Configuração personalizada
+$app->use(new SecurityMiddleware([
+    'enableCsrf' => true,
+    'enableXss' => true,
+    'rateLimiting' => false,
+    'csrf' => [
+        'excludePaths' => ['/api/webhook', '/api/public'],
+        'generateTokenResponse' => true
+    ],
+    'xss' => [
+        'excludeFields' => ['content', 'description'],
+        'allowedTags' => '<p><br><strong><em><ul><ol><li><a>'
+    ]
+]));
+```
+
+### Middleware de Proteção CSRF (CsrfMiddleware)
+
+Protege contra ataques Cross-Site Request Forgery:
+
+```php
+use Express\SRC\Services\CsrfMiddleware;
+
+// Aplicar globalmente
+$app->use(new CsrfMiddleware());
+
+// Com configurações personalizadas
+$app->use(new CsrfMiddleware([
+    'headerName' => 'X-CSRF-Token',
+    'fieldName' => 'csrf_token',
+    'excludePaths' => ['/api/public'],
+    'methods' => ['POST', 'PUT', 'PATCH', 'DELETE']
+]));
+
+// Obter token CSRF para formulários
+$app->get('/form', function($req, $res) {
+    $csrfField = CsrfMiddleware::hiddenField();
+    $csrfMeta = CsrfMiddleware::metaTag();
+    // Use $csrfField em formulários HTML
+    // Use $csrfMeta para requisições AJAX
+});
+```
+
+### Middleware de Proteção XSS (XssMiddleware)
+
+Protege contra ataques Cross-Site Scripting:
+
+```php
+use Express\SRC\Services\XssMiddleware;
+
+// Aplicar globalmente
+$app->use(new XssMiddleware());
+
+// Com configurações personalizadas
+$app->use(new XssMiddleware([
+    'sanitizeInput' => true,
+    'securityHeaders' => true,
+    'excludeFields' => ['rich_content'],
+    'allowedTags' => '<p><br><strong><em><ul><ol><li><a>',
+    'contentSecurityPolicy' => "default-src 'self'; script-src 'self';"
+]));
+
+// Sanitização manual
+$cleanData = XssMiddleware::sanitize($userInput);
+$safeUrl = XssMiddleware::cleanUrl($url);
+$hasXss = XssMiddleware::containsXss($input);
+```
+
+### Cabeçalhos de Segurança Incluídos
+
+Os middlewares de segurança automaticamente adicionam os seguintes cabeçalhos:
+
+- `X-XSS-Protection`: Ativa proteção XSS no navegador
+- `X-Content-Type-Options`: Previne MIME sniffing
+- `X-Frame-Options`: Protege contra clickjacking
+- `Referrer-Policy`: Controla informações de referrer
+- `Content-Security-Policy`: Define política de segurança de conteúdo
+
+### Configurações de Sessão Segura
+
+O SecurityMiddleware também configura parâmetros seguros de sessão:
+
+- Cookies HttpOnly (não acessíveis via JavaScript)
+- Regeneração periódica de ID da sessão
+- SameSite cookies para proteção CSRF
+- Configurações de tempo de vida da sessão
+
+### Exemplo Completo de Uso
+
+```php
+use Express\SRC\ApiExpress;
+use Express\SRC\Services\SecurityMiddleware;
+use Express\SRC\Services\CsrfMiddleware;
+
+$app = new ApiExpress();
+
+// Aplicar segurança globalmente
+$app->use(SecurityMiddleware::create());
+
+// Rota para obter token CSRF
+$app->get('/csrf-token', function($req, $res) {
+    $res->json([
+        'csrf_token' => CsrfMiddleware::getToken(),
+        'meta_tag' => CsrfMiddleware::metaTag()
+    ]);
+});
+
+// Rota protegida
+$app->post('/api/user', function($req, $res) {
+    // Dados já sanitizados automaticamente
+    $userData = $req->body;
+    $res->json(['message' => 'User created', 'data' => $userData]);
+});
+
+$app->run();
+```
+
+Para mais exemplos, consulte `examples/exemplo_seguranca.php` e os snippets em `examples/snippets/`.
+
 ## Tratamento de Erros
 
 O tratamento de erros pode ser feito através do middleware de erro ou utilizando blocos try/catch em suas rotas.
