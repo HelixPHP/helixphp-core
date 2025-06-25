@@ -1,0 +1,110 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
+    
+    name: PHP ${{ matrix.php-version }} Tests
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, json, session
+        coverage: xdebug
+    
+    - name: Validate composer.json and composer.lock
+      run: composer validate --strict
+    
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+    
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Check PHP syntax
+      run: find SRC -name "*.php" -exec php -l {} \;
+    
+    - name: Run PHPStan
+      run: |
+        if [ -f "vendor/bin/phpstan" ]; then
+          ./vendor/bin/phpstan analyse --no-progress
+        else
+          echo "PHPStan not installed, skipping static analysis"
+        fi
+    
+    - name: Run PHP CS
+      run: |
+        if [ -f "vendor/bin/phpcs" ]; then
+          ./vendor/bin/phpcs --standard=PSR12 SRC/
+        else
+          echo "PHPCS not installed, skipping code style check"
+        fi
+    
+    - name: Run PHPUnit tests
+      run: |
+        if [ -f "vendor/bin/phpunit" ]; then
+          ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml
+        else
+          echo "PHPUnit not installed, running basic tests"
+          php test/auth_test.php
+        fi
+    
+    - name: Run custom validation
+      run: php scripts/validate_project.php
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      if: matrix.php-version == '8.1'
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  quality:
+    runs-on: ubuntu-latest
+    name: Code Quality
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
+    
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+    
+    - name: Security Check
+      run: |
+        if [ -f "vendor/bin/security-checker" ]; then
+          ./vendor/bin/security-checker security:check composer.lock
+        else
+          echo "Security checker not installed"
+        fi
+    
+    - name: Dependency Check
+      run: composer outdated --direct

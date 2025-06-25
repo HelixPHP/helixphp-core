@@ -15,14 +15,21 @@
         "xss",
         "cors",
         "openapi",
-        "swagger"
+        "swagger",
+        "authentication",
+        "jwt",
+        "auth"
     ],
-    "homepage": "https://github.com/express-php/microframework",
+    "homepage": "https://github.com/CAFernandes/express-php",
     "license": "MIT",
     "authors": [
         {
+            "name": "Caio Alberto Fernandes",
+            "homepage": "https://github.com/CAFernandes"
+        },
+        {
             "name": "Express PHP Contributors",
-            "homepage": "https://github.com/express-php/microframework/contributors"
+            "homepage": "https://github.com/CAFernandes/express-php/contributors"
         }
     ],
     "require": {
@@ -76,23 +83,34 @@
         "exclude": [
             "/test",
             "/tests",
-            "/examples",
+            "/examples", 
+            "/scripts",
+            "/reports",
             "/.github",
             "/.gitignore",
+            "/.gitattributes",
             "/phpunit.xml",
             "/phpstan.neon",
-            "/.editorconfig"
+            "/.editorconfig",
+            "/.env.example",
+            "/docker-compose.yml",
+            "/Dockerfile",
+            "/TODO.md",
+            "/NOTES.md",
+            "/docs/implementation",
+            "/docs/development"
         ]
     },
     "support": {
-        "issues": "https://github.com/express-php/microframework/issues",
-        "source": "https://github.com/express-php/microframework",
-        "docs": "https://github.com/express-php/microframework/blob/main/README.md"
+        "issues": "https://github.com/CAFernandes/express-php/issues",
+        "source": "https://github.com/CAFernandes/express-php",
+        "docs": "https://github.com/CAFernandes/express-php/blob/main/README.md",
+        "wiki": "https://github.com/CAFernandes/express-php/wiki"
     },
     "funding": [
         {
             "type": "github",
-            "url": "https://github.com/sponsors/express-php"
+            "url": "https://github.com/sponsors/CAFernandes"
         }
     ]
 }

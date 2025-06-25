@@ -1,10 +1,16 @@
 # Express PHP Microframework
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
+[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
+[![Latest Release](https://img.shields.io/github/v/release/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/releases)
+
+**Express PHP** is a lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs with native multi-method authentication system.
+
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](docs/pt-br/README.md)
 
-**Express PHP** is a lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs.
-
-> 🌐 **Multilingual Support**: This project is now standardized in English for better community support. Portuguese documentation is available in `docs/pt-br/`.
+> 🔐 **New in v1.0**: Complete authentication system with JWT, Basic Auth, Bearer Token, API Key, and auto-detection!
 
 ## 🚀 New: Modular Examples and Guided Learning
 
@@ -146,6 +152,14 @@ $app->get('/profile', function($req, $res) {
 composer require express-php/microframework
 ```
 
+Or clone the repository:
+
+```bash
+git clone https://github.com/CAFernandes/express-php.git
+cd express-php
+composer install
+```
+
 2. Use PSR-4 autoload in your project:
 ```php
 <?php
@@ -214,11 +228,33 @@ composer run examples:complete
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
 
+1. Fork the repository: https://github.com/CAFernandes/express-php
+2. Create your feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add some amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## � Links
+
+- **Repository**: https://github.com/CAFernandes/express-php
+- **Issues**: https://github.com/CAFernandes/express-php/issues
+- **Documentation**: https://github.com/CAFernandes/express-php/wiki
+- **Releases**: https://github.com/CAFernandes/express-php/releases
+- **Packagist**: https://packagist.org/packages/express-php/microframework
+
+## �🙏 Acknowledgments
+
+- Inspired by [Express.js](https://expressjs.com/) framework
+- Built with ❤️ by [Caio Alberto Fernandes](https://github.com/CAFernandes)
+- Special thanks to all [contributors](https://github.com/CAFernandes/express-php/contributors)
+
+---
+
+**Made with ❤️ in Brazil 🇧🇷**
 
 - Inspired by Express.js
 - Built for the PHP community

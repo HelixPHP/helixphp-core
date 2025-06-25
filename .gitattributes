@@ -1,0 +1,94 @@
+# Git attributes for Express PHP
+
+# ==============================================
+# Auto-detect text files and perform LF normalization
+# ==============================================
+* text=auto
+
+# ==============================================
+# PHP files
+# ==============================================
+*.php text eol=lf
+*.inc text eol=lf
+
+# ==============================================
+# Configuration files
+# ==============================================
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.ini text eol=lf
+*.conf text eol=lf
+*.config text eol=lf
+
+# ==============================================
+# Documentation
+# ==============================================
+*.md text eol=lf
+*.txt text eol=lf
+*.rst text eol=lf
+
+# ==============================================
+# Web assets
+# ==============================================
+*.css text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.htm text eol=lf
+
+# ==============================================
+# Shell scripts
+# ==============================================
+*.sh text eol=lf
+*.bash text eol=lf
+
+# ==============================================
+# Binary files (explicitly marked)
+# ==============================================
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+
+# ==============================================
+# Exclude from exports (archive/zip downloads)
+# ==============================================
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/.github/ export-ignore
+/test/ export-ignore
+/tests/ export-ignore
+/examples/ export-ignore
+/scripts/ export-ignore
+/reports/ export-ignore
+/phpunit.xml export-ignore
+/phpstan.neon export-ignore
+/.editorconfig export-ignore
+/docker-compose.yml export-ignore
+/Dockerfile export-ignore
+/TODO.md export-ignore
+/NOTES.md export-ignore
+/docs/implementation/ export-ignore
+/docs/development/ export-ignore
+
+# ==============================================
+# Language detection
+# ==============================================
+*.php linguist-language=PHP
+*.js linguist-language=JavaScript
+*.md linguist-documentation=true
+/examples/ linguist-documentation=true
+/docs/ linguist-documentation=true
+
+# ==============================================
+# Diff settings
+# ==============================================
+*.php diff=php
+*.json diff=json

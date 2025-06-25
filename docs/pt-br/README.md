@@ -1,8 +1,16 @@
 # Express PHP Microframework
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
+[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
+[![Latest Release](https://img.shields.io/github/v/release/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/releases)
+
+**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web e APIs modernas em PHP com sistema nativo de autenticação multi-método.
+
 [![English](https://img.shields.io/badge/Language-English-blue)](../../README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](README.md)
 
-**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web e APIs modernas em PHP.
+> 🔐 **Novidade na v1.0**: Sistema completo de autenticação com JWT, Basic Auth, Bearer Token, API Key e auto-detecção!
 
 ## 🚀 Novidade: Exemplos Modulares e Aprendizagem Guiada
 
@@ -125,10 +133,29 @@ php examples/example_complete.php
 
 4. Abra seu navegador em `http://localhost:8000`
 
+## 📦 Instalação
+
+### Via Composer (Recomendado)
+
+```bash
+composer require express-php/microframework
+```
+
+### Ou clone o repositório
+
+```bash
+git clone https://github.com/CAFernandes/express-php.git
+cd express-php
+composer install
+```
+
 ## 🌟 Funcionalidades
 
 - ✅ **Sintaxe similar ao Express.js** para PHP
+- ✅ **PSR-4 Autoloading** com suporte ao Composer
+- ✅ **PHP Moderno** (7.4+ necessário)
 - ✅ **Roteamento automático** com suporte a parâmetros
+- ✅ **🆕 Autenticação Avançada** (JWT, Basic Auth, Bearer Token, API Key)
 - ✅ **Middlewares de segurança** (proteção CSRF, XSS)
 - ✅ **Geração de documentação** OpenAPI/Swagger
 - ✅ **Tratamento de upload** de arquivos
@@ -137,17 +164,39 @@ php examples/example_complete.php
 - ✅ **Validação de requisições**
 - ✅ **Tratamento de erros**
 - ✅ **Arquitetura modular**
-- ✅ **Zero dependências externas** (Composer opcional)
+- ✅ **Suporte a testes** PHPUnit
 
 ## 🤝 Contribuindo
 
 Contribuições são bem-vindas! Por favor, leia nosso [Guia de Contribuição](../../CONTRIBUTING.md) para detalhes.
 
+1. Faça um fork do repositório: https://github.com/CAFernandes/express-php
+2. Crie sua branch de feature: `git checkout -b feature/funcionalidade-incrivel`
+3. Commit suas mudanças: `git commit -m 'Adiciona funcionalidade incrível'`
+4. Push para a branch: `git push origin feature/funcionalidade-incrivel`
+5. Abra um Pull Request
+
 ## 📄 Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](../../LICENSE) para detalhes.
 
+## 🔗 Links
+
+- **Repositório**: https://github.com/CAFernandes/express-php
+- **Issues**: https://github.com/CAFernandes/express-php/issues
+- **Documentação**: https://github.com/CAFernandes/express-php/wiki
+- **Releases**: https://github.com/CAFernandes/express-php/releases
+- **Packagist**: https://packagist.org/packages/express-php/microframework
+
 ## 🙏 Agradecimentos
+
+- Inspirado no framework [Express.js](https://expressjs.com/)
+- Desenvolvido com ❤️ por [Caio Alberto Fernandes](https://github.com/CAFernandes)
+- Agradecimentos especiais a todos os [contribuidores](https://github.com/CAFernandes/express-php/contributors)
+
+---
+
+**Feito com ❤️ no Brasil 🇧🇷**
 
 - Inspirado no Express.js
 - Construído para a comunidade PHP

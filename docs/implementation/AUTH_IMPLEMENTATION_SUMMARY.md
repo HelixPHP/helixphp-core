@@ -1,5 +1,12 @@
 # 🎉 Implementação Concluída: Middleware de Autenticação Automática
 
+## 📋 Informações do Projeto
+
+- **Repositório**: https://github.com/CAFernandes/express-php
+- **Autor**: Caio Alberto Fernandes
+- **Versão**: 1.0.0
+- **Data**: Junho 2025
+
 ## ✅ Resumo das Melhorias
 
 Foi implementado com sucesso um **sistema completo de autenticação automática** para o Express PHP com suporte nativo para múltiplos métodos de autorização:
