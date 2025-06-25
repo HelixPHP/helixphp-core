@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\SRC\Services;
+namespace Express\Services;
 
 /**
  * HeaderRequest class manages and facilitates access to request headers.

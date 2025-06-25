@@ -1,0 +1,232 @@
+# Express PHP - .gitignore
+
+# ==============================================
+# Dependencies
+# ==============================================
+/vendor/
+composer.lock
+.composer/
+
+# ==============================================
+# IDE and Editor Files
+# ==============================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# PhpStorm
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# ==============================================
+# Operating System Files
+# ==============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ==============================================
+# PHP Specific
+# ==============================================
+# Temporary files
+*.tmp
+*.temp
+*.log
+
+# Error logs
+error_log
+error.log
+php_errors.log
+
+# Session files
+/tmp/
+/temp/
+sessions/
+
+# ==============================================
+# Testing and Coverage
+# ==============================================
+# PHPUnit
+.phpunit.cache/
+.phpunit.result.cache
+phpunit.xml.dist
+coverage.xml
+coverage/
+coverage-html/
+coverage.txt
+clover.xml
+
+# Codeception
+tests/_output/
+tests/_support/_generated
+
+# ==============================================
+# Static Analysis
+# ==============================================
+# PHPStan
+.phpstan.cache/
+phpstan.neon.dist
+
+# Psalm
+.psalm/
+psalm.xml.dist
+
+# ==============================================
+# Build and Distribution
+# ==============================================
+build/
+dist/
+/reports/
+
+# ==============================================
+# Development Tools
+# ==============================================
+# PHP CS Fixer
+.php_cs.cache
+.php-cs-fixer.cache
+
+# PHPCS
+.phpcs.cache
+
+# Deployer
+.dep/
+
+# ==============================================
+# Environment and Configuration
+# ==============================================
+.env
+.env.local
+.env.*.local
+config.local.php
+
+# ==============================================
+# Express PHP Specific
+# ==============================================
+# Upload directories
+uploads/
+files/
+storage/
+
+# Cache directories
+cache/
+/tmp/express_cache/
+
+# Logs
+logs/
+*.log
+
+# Runtime files
+*.pid
+*.sock
+
+# Documentation build
+docs/_build/
+docs/html/
+docs/latex/
+
+# ==============================================
+# Security
+# ==============================================
+# Private keys
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Secrets
+secrets.json
+.secrets
+
+# ==============================================
+# Database
+# ==============================================
+*.sqlite
+*.sqlite3
+*.db
+*.sql
+
+# ==============================================
+# Backup Files
+# ==============================================
+*.bak
+*.backup
+*.old
+*.orig
+
+# ==============================================
+# Package managers
+# ==============================================
+# Node.js (if used for frontend build tools)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ==============================================
+# Archives
+# ==============================================
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ==============================================
+# Express PHP Examples - Keep tracked but ignore user modifications
+# ==============================================
+# Uncomment the following if you want to ignore user modifications to examples
+# examples/user_*
+# examples/custom_*
+
+# ==============================================
+# Custom Project Files
+# ==============================================
+# Add your custom ignore patterns here
+TODO.md
+NOTES.md
+scratch/

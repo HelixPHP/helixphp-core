@@ -107,29 +107,69 @@ Express PHP includes robust security middlewares:
 - [Middleware Documentation](SRC/Middlewares/README.md)
 - [API Objects](docs/en/objects.md)
 
-## 🔧 Installation
+## 🔧 Installation & Requirements
+
+### System Requirements
+- **PHP**: 7.4.0 or higher
+- **Extensions**: json, session (required)
+- **Recommended**: openssl, mbstring, fileinfo, apcu
+
+### Installation via Composer (Recommended)
+
+1. Install via Composer:
+```bash
+composer require express-php/microframework
+```
+
+2. Use PSR-4 autoload in your project:
+```php
+<?php
+require_once 'vendor/autoload.php';
+
+use Express\ApiExpress;
+use Express\Middlewares\Security\SecurityMiddleware;
+
+$app = new ApiExpress();
+$app->use(SecurityMiddleware::create());
+$app->run();
+```
+
+### Manual Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/Express-PHP.git
-cd Express-PHP
+git clone https://github.com/express-php/microframework.git
+cd microframework
 ```
 
-2. Install dependencies (if using Composer):
+2. Install dependencies:
 ```bash
 composer install
 ```
 
 3. Run an example:
 ```bash
-php examples/example_complete.php
+php examples/example_autoload.php
 ```
 
-4. Open your browser at `http://localhost:8000`
+### Testing the Installation
+
+```bash
+# Run security tests
+composer run test:security
+
+# Run PHPUnit tests
+composer test
+
+# Run all examples
+composer run examples:complete
+```
 
 ## 🌟 Features
 
 - ✅ **Express.js-like syntax** for PHP
+- ✅ **PSR-4 Autoloading** with Composer support
+- ✅ **Modern PHP** (7.4+ required)
 - ✅ **Automatic routing** with parameter support
 - ✅ **Security middlewares** (CSRF, XSS protection)
 - ✅ **OpenAPI/Swagger documentation** generation
@@ -139,7 +179,7 @@ php examples/example_complete.php
 - ✅ **Request validation**
 - ✅ **Error handling**
 - ✅ **Modular architecture**
-- ✅ **Zero external dependencies** (optional Composer)
+- ✅ **PHPUnit testing** support
 
 ## 🤝 Contributing
 

@@ -3,10 +3,10 @@
 
 require_once '../vendor/autoload.php';
 
-use Express\SRC\ApiExpress;
-use Express\SRC\Middlewares\Security\CsrfMiddleware;
-use Express\SRC\Middlewares\Security\XssMiddleware;
-use Express\SRC\Middlewares\Security\SecurityMiddleware;
+use Express\ApiExpress;
+use Express\Middlewares\Security\CsrfMiddleware;
+use Express\Middlewares\Security\XssMiddleware;
+use Express\Middlewares\Security\SecurityMiddleware;
 
 // Create application
 $app = new ApiExpress();

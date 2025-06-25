@@ -1,7 +1,7 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\Services;
 
-use Express\SRC\Services\HeaderRequest;
+use Express\Services\HeaderRequest;
 use InvalidArgumentException;
 use stdClass;
 use RuntimeException;

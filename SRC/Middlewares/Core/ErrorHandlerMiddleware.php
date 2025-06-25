@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Middlewares\Core;
+namespace Express\Middlewares\Core;
 
 /**
  * Middleware padrão para tratamento centralizado de erros na API Express PHP.
@@ -11,7 +11,7 @@ namespace Express\SRC\Middlewares\Core;
  *
  * Exemplo de uso:
  *
- *   use Express\SRC\Services\ErrorHandlerMiddleware;
+ *   use Express\Middlewares\Core\ErrorHandlerMiddleware;
  *   $app->use(new ErrorHandlerMiddleware());
  *
  * Resposta de erro (produção):

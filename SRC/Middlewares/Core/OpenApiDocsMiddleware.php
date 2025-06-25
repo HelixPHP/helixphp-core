@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\SRC\Middlewares\Core;
+namespace Express\Middlewares\Core;
 
 class OpenApiDocsMiddleware
 {

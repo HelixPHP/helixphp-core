@@ -1,7 +1,7 @@
 <?php
-namespace Express\SRC\Middlewares\Security;
+namespace Express\Middlewares\Security;
 
-use Express\SRC\Helpers\Utils;
+use Express\Helpers\Utils;
 
 /**
  * Middleware de proteção CSRF (Cross-Site Request Forgery) para Express PHP.

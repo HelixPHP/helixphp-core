@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\SRC\Services;
+namespace Express\Services;
 
 /**
  * Classe Response constrói e envia a resposta HTTP.

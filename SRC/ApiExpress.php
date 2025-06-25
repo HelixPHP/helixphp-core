@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\SRC;
+namespace Express;
 
-use Express\SRC\Controller\Router;
-use Express\SRC\Services\Request;
-use Express\SRC\Services\Response;
+use Express\Controller\Router;
+use Express\Services\Request;
+use Express\Services\Response;
 
 /**
  * Classe principal do framework Express PHP.

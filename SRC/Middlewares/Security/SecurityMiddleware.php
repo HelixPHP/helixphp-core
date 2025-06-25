@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Middlewares\Security;
+namespace Express\Middlewares\Security;
 
 /**
  * Middleware de segurança combinado para Express PHP.

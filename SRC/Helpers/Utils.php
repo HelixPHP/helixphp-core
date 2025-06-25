@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Helpers;
+namespace Express\Helpers;
 
 class Utils
 {

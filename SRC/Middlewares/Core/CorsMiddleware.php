@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Middlewares\Core;
+namespace Express\Middlewares\Core;
 
 /**
  * Default middleware for CORS configuration in Express PHP.

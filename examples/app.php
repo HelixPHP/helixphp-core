@@ -12,13 +12,13 @@ $path = implode(DIRECTORY_SEPARATOR, $path);
 require_once $path . '/vendor/autoload.php';
 // require_once 'layout.php';
 
-// use Express\SRC\Controller\App;
-use Express\SRC\ApiExpress;
-use Express\SRC\Controller\Router;
-use Express\SRC\Controller\RouterInstance;
-use Express\SRC\Services\CorsMiddleware;
-use Express\SRC\Services\OpenApiDocsMiddleware;
-use Express\SRC\Services\ErrorHandlerMiddleware;
+// use Express\Controller\App;
+use Express\ApiExpress;
+use Express\Controller\Router;
+use Express\Controller\RouterInstance;
+use Express\Middlewares\Core\CorsMiddleware;
+use Express\Middlewares\Core\OpenApiDocsMiddleware;
+use Express\Middlewares\Core\ErrorHandlerMiddleware;
 
 $baseUrl = "https://{$_SERVER['SSL_TLS_SNI']}{$_SERVER['SCRIPT_NAME']}";
 substr($baseUrl, -1) === '/' && $baseUrl = substr($baseUrl, 0, -1);

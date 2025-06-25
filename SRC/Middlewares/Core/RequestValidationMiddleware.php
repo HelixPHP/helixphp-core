@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Middlewares\Core;
+namespace Express\Middlewares\Core;
 
 /**
  * Middleware para validação automática de parâmetros e corpo da requisição com base nos metadados da rota.

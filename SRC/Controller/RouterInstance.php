@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Controller;
+namespace Express\Controller;
 
 use InvalidArgumentException;
 

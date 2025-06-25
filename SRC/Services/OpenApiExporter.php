@@ -1,8 +1,8 @@
 <?php
 
-namespace Express\SRC\Services;
+namespace Express\Services;
 
-use Express\SRC\Controller\Router;
+use Express\Controller\Router;
 
 /**
  * Service responsible for exporting OpenAPI documentation from Router routes.
