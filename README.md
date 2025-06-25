@@ -94,11 +94,36 @@ $app->run();
 
 Express PHP includes robust security middlewares:
 
+- **🔐 Authentication**: Automatic authentication with JWT, Basic Auth, Bearer Token, API Key support
 - **CSRF Protection**: Cross-Site Request Forgery protection
 - **XSS Protection**: Cross-Site Scripting sanitization
 - **Security Headers**: Automatic security headers
 - **Rate Limiting**: Request rate limiting
 - **Session Security**: Secure session configuration
+
+### 🆕 New: Advanced Authentication Middleware
+
+```php
+// JWT Authentication
+$app->use(AuthMiddleware::jwt('your_secret_key'));
+
+// Multiple authentication methods
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt', 'basic', 'apikey'],
+    'jwtSecret' => 'your_jwt_secret',
+    'basicAuthCallback' => 'validateUser',
+    'apiKeyCallback' => 'validateApiKey'
+]));
+
+// Access authenticated user data
+$app->get('/profile', function($req, $res) {
+    $user = $req->user; // authenticated user data
+    $method = $req->auth['method']; // auth method used
+    $res->json(['user' => $user, 'auth_method' => $method]);
+});
+```
+
+📖 **Full Documentation**: [Authentication Middleware Guide](docs/pt-br/AUTH_MIDDLEWARE.md)
 
 ## 📖 Documentation
 
@@ -158,6 +183,9 @@ php examples/example_autoload.php
 # Run security tests
 composer run test:security
 
+# Run authentication tests  
+composer run test:auth
+
 # Run PHPUnit tests
 composer test
 
@@ -171,6 +199,7 @@ composer run examples:complete
 - ✅ **PSR-4 Autoloading** with Composer support
 - ✅ **Modern PHP** (7.4+ required)
 - ✅ **Automatic routing** with parameter support
+- ✅ **🆕 Advanced Authentication** (JWT, Basic Auth, Bearer Token, API Key)
 - ✅ **Security middlewares** (CSRF, XSS protection)
 - ✅ **OpenAPI/Swagger documentation** generation
 - ✅ **File upload handling**

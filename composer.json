@@ -36,6 +36,7 @@
         "squizlabs/php_codesniffer": "^3.0"
     },
     "suggest": {
+        "firebase/php-jwt": "Required for JWT authentication middleware",
         "ext-openssl": "Required for secure token generation",
         "ext-mbstring": "Required for proper string handling",
         "ext-fileinfo": "Required for file upload validation",
@@ -54,10 +55,12 @@
     "scripts": {
         "test": "phpunit",
         "test:security": "php test/security_test.php",
+        "test:auth": "php test/auth_test.php",
         "phpstan": "phpstan analyse",
         "cs:check": "phpcs --standard=PSR12 SRC/",
         "cs:fix": "phpcbf --standard=PSR12 SRC/",
         "examples:security": "php examples/example_security.php",
+        "examples:auth": "php examples/example_auth.php",
         "examples:complete": "php examples/example_complete.php"
     },
     "config": {

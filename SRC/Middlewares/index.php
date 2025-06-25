@@ -8,6 +8,7 @@
 require_once __DIR__ . '/Security/CsrfMiddleware.php';
 require_once __DIR__ . '/Security/XssMiddleware.php';
 require_once __DIR__ . '/Security/SecurityMiddleware.php';
+require_once __DIR__ . '/Security/AuthMiddleware.php';
 
 // Middlewares Core
 require_once __DIR__ . '/Core/AttachmentMiddleware.php';
@@ -21,6 +22,7 @@ require_once __DIR__ . '/Core/RequestValidationMiddleware.php';
 use Express\Middlewares\Security\CsrfMiddleware;
 use Express\Middlewares\Security\XssMiddleware;
 use Express\Middlewares\Security\SecurityMiddleware;
+use Express\Middlewares\Security\AuthMiddleware;
 use Express\Middlewares\Core\AttachmentMiddleware;
 use Express\Middlewares\Core\CorsMiddleware;
 use Express\Middlewares\Core\ErrorHandlerMiddleware;
@@ -59,6 +61,10 @@ if (!class_exists('Express\SRC\Services\OpenApiDocsMiddleware')) {
 
 if (!class_exists('Express\SRC\Services\RateLimitMiddleware')) {
     class_alias('Express\Middlewares\Core\RateLimitMiddleware', 'Express\SRC\Services\RateLimitMiddleware');
+}
+
+if (!class_exists('Express\SRC\Services\AuthMiddleware')) {
+    class_alias('Express\Middlewares\Security\AuthMiddleware', 'Express\SRC\Services\AuthMiddleware');
 }
 
 if (!class_exists('Express\SRC\Services\RequestValidationMiddleware')) {

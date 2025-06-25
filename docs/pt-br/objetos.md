@@ -212,39 +212,104 @@ O SecurityMiddleware configura automaticamente:
 - SameSite cookies para proteção CSRF
 - Parâmetros seguros de tempo de vida
 
-## Middlewares Existentes
-
-### Encadeamento de Middlewares
-- **Middleware global:**
+### AuthMiddleware
+Middleware automático de autenticação com suporte nativo para múltiplos métodos.
+- **Função:** Autentica requisições usando JWT, Basic Auth, Bearer Token, API Key ou métodos customizados.
+- **Principais recursos:**
+  - Suporte a JWT com biblioteca Firebase ou implementação nativa
+  - Basic Authentication com callback customizado
+  - Bearer Token authentication
+  - API Key via header ou query parameter
+  - Autenticação customizada via callback
+  - Múltiplos métodos em uma única configuração
+  - Caminhos excluídos da autenticação
+  - Modo flexível (opcional)
+- **Exemplo JWT:**
 ```php
-$app->use(function($req, $res, $next) {
-    // Executa para todas as rotas
-    $next();
+// JWT apenas
+$app->use(AuthMiddleware::jwt('sua_chave_secreta'));
+
+// JWT com configurações
+$app->use(AuthMiddleware::jwt('chave_secreta', [
+    'excludePaths' => ['/public', '/login']
+]));
+```
+
+- **Exemplo Basic Auth:**
+```php
+function validateUser($username, $password) {
+    // Validar no banco de dados
+    return $username === 'admin' && $password === 'senha123'
+        ? ['id' => 1, 'username' => 'admin'] : false;
+}
+
+$app->use(AuthMiddleware::basic('validateUser'));
+```
+
+- **Exemplo API Key:**
+```php
+function validateApiKey($key) {
+    $validKeys = ['key123' => ['name' => 'App Mobile']];
+    return $validKeys[$key] ?? false;
+}
+
+$app->use(AuthMiddleware::apiKey('validateApiKey'));
+// Usar: Header X-API-Key: key123 OU ?api_key=key123
+```
+
+- **Exemplo Múltiplos Métodos:**
+```php
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt', 'basic', 'apikey'],
+    'jwtSecret' => 'chave_jwt',
+    'basicAuthCallback' => 'validateUser',
+    'apiKeyCallback' => 'validateApiKey',
+    'allowMultiple' => true,
+    'excludePaths' => ['/public']
+]));
+```
+
+- **Acessar dados do usuário:**
+```php
+$app->get('/profile', function($req, $res) {
+    $user = $req->user; // dados do usuário autenticado
+    $method = $req->auth['method']; // método usado (jwt, basic, etc)
+    $res->json(['user' => $user, 'auth_method' => $method]);
 });
 ```
 
-- **Middleware por rota:**
+### JWTHelper
+Helper para trabalhar com JSON Web Tokens de forma simples.
+- **Função:** Facilita criação, validação e decodificação de tokens JWT.
+- **Principais métodos:**
+  - `encode($payload, $secret, $options)`: Gera um token JWT
+  - `decode($token, $secret, $options)`: Decodifica e valida token
+  - `isValid($token, $secret)`: Verifica se token é válido
+  - `isExpired($token, $leeway)`: Verifica se token expirou
+  - `getPayload($token)`: Extrai payload sem validar assinatura
+  - `generateSecret($length)`: Gera chave secreta aleatória
+  - `createRefreshToken($userId, $secret)`: Cria refresh token
+  - `validateRefreshToken($token, $secret)`: Valida refresh token
+- **Exemplo:**
 ```php
-$app->get('/rota',
-    function($req, $res, $next) {
-        // Middleware 1
-        $next();
-    },
-    function($req, $res, $next) {
-        // Middleware 2
-        $next();
-    },
-    function($req, $res) {
-        // Handler final
-        $res->json(['ok' => true]);
-    }
-);
+use Express\Helpers\JWTHelper;
+
+// Gerar token
+$token = JWTHelper::encode([
+    'user_id' => 123,
+    'username' => 'usuario',
+    'role' => 'admin'
+], 'chave_secreta', [
+    'expiresIn' => 3600 // 1 hora
+]);
+
+// Validar token
+if (JWTHelper::isValid($token, 'chave_secreta')) {
+    $payload = JWTHelper::decode($token, 'chave_secreta');
+    echo "Usuário: " . $payload['username'];
+}
+
+// Refresh token
+$refreshToken = JWTHelper::createRefreshToken(123, 'chave_secreta');
+$refreshData = JWTHelper::validateRefreshToken($refreshToken, 'chave_secreta');
 ```
-
-- **Encadeamento:**
-  - Cada middleware deve chamar `$next()` para passar o controle adiante.
-  - É possível modificar o objeto `$request` entre middlewares.
-
----
-
-Consulte o README principal para visão geral e exemplos de uso.
