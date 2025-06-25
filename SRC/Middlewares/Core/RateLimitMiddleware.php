@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\SRC\Middlewares\Core;
 
 /**
  * Middleware simples de rate limiting para Express PHP.

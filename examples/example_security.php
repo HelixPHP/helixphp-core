@@ -1,5 +1,5 @@
 <?php
-// Exemplo de uso dos middlewares de segurança no Express PHP
+// Security middlewares usage example in Express PHP
 
 require_once '../vendor/autoload.php';
 
@@ -8,41 +8,41 @@ use Express\SRC\Middlewares\Security\CsrfMiddleware;
 use Express\SRC\Middlewares\Security\XssMiddleware;
 use Express\SRC\Middlewares\Security\SecurityMiddleware;
 
-// Cria a aplicação
+// Create application
 $app = new ApiExpress();
 
 // ========================================
-// OPÇÃO 1: Usar middleware de segurança combinado
+// OPTION 1: Use combined security middleware
 // ========================================
 
-// Segurança básica (CSRF + XSS)
+// Basic security (CSRF + XSS)
 $app->use(SecurityMiddleware::create());
 
-// Ou segurança estrita (com rate limiting)
+// Or strict security (with rate limiting)
 // $app->use(SecurityMiddleware::strict());
 
 // ========================================
-// OPÇÃO 2: Usar middlewares individuais
+// OPTION 2: Use individual middlewares
 // ========================================
 
-// Middleware XSS (aplica primeiro)
+// XSS Middleware (apply first)
 // $app->use(new XssMiddleware([
 //     'sanitizeInput' => true,
 //     'securityHeaders' => true,
-//     'excludeFields' => ['content', 'description'] // campos que permitem HTML
+//     'excludeFields' => ['content', 'description'] // fields that allow HTML
 // ]));
 
-// Middleware CSRF
+// CSRF Middleware
 // $app->use(new CsrfMiddleware([
-//     'excludePaths' => ['/api/public'], // endpoints públicos
-//     'generateTokenResponse' => true // incluir token na resposta
+//     'excludePaths' => ['/api/public'], // public endpoints
+//     'generateTokenResponse' => true // include token in response
 // ]));
 
 // ========================================
-// ROTAS DE EXEMPLO
+// EXAMPLE ROUTES
 // ========================================
 
-// Rota para obter token CSRF
+// Route to get CSRF token
 $app->get('/csrf-token', function($req, $res) {
     $token = CsrfMiddleware::getToken();
     $res->json([
@@ -52,17 +52,17 @@ $app->get('/csrf-token', function($req, $res) {
     ]);
 });
 
-// Rota pública (sem proteção CSRF)
+// Public route (no CSRF protection)
 $app->get('/api/public/status', function($req, $res) {
     $res->json(['status' => 'ok', 'timestamp' => time()]);
 });
 
-// Rota protegida que requer CSRF
+// Protected route that requires CSRF
 $app->post('/api/user/create', function($req, $res) {
-    // Dados já foram sanitizados pelo XssMiddleware
+    // Data has been sanitized by XssMiddleware
     $userData = $req->body;
     
-    // Exemplo de validação adicional
+    // Example of additional validation
     if (XssMiddleware::containsXss($userData['name'] ?? '')) {
         $res->status(400)->json(['error' => 'Invalid input detected']);
         return;
@@ -74,11 +74,11 @@ $app->post('/api/user/create', function($req, $res) {
     ]);
 });
 
-// Rota para upload (sanitiza URL)
+// Upload route (sanitize URL)
 $app->post('/api/upload', function($req, $res) {
     $file = $req->body;
     
-    // Sanitiza URL se fornecida
+    // Sanitize URL if provided
     if (isset($file['callback_url'])) {
         $file['callback_url'] = XssMiddleware::cleanUrl($file['callback_url']);
     }
@@ -89,7 +89,7 @@ $app->post('/api/upload', function($req, $res) {
     ]);
 });
 
-// Rota que retorna formulário HTML com proteção CSRF
+// Route that returns HTML form with CSRF protection
 $app->get('/form', function($req, $res) {
     $csrfField = CsrfMiddleware::hiddenField();
     $csrfMeta = CsrfMiddleware::metaTag();
@@ -98,16 +98,16 @@ $app->get('/form', function($req, $res) {
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Formulário Seguro</title>
+        <title>Secure Form</title>
         {$csrfMeta}
         <meta charset='UTF-8'>
     </head>
     <body>
-        <h1>Formulário com Proteção CSRF</h1>
+        <h1>Form with CSRF Protection</h1>
         <form action='/api/user/create' method='POST'>
             {$csrfField}
             <div>
-                <label>Nome:</label>
+                <label>Name:</label>
                 <input type='text' name='name' required>
             </div>
             <div>
@@ -115,14 +115,14 @@ $app->get('/form', function($req, $res) {
                 <input type='email' name='email' required>
             </div>
             <div>
-                <label>Comentário:</label>
+                <label>Comment:</label>
                 <textarea name='comment'></textarea>
             </div>
-            <button type='submit'>Enviar</button>
+            <button type='submit'>Submit</button>
         </form>
         
         <script>
-        // Exemplo de como usar o token CSRF em requisições AJAX
+        // Example of how to use CSRF token in AJAX requests
         const csrfToken = document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content');
         
         function makeSecureRequest(url, data) {
@@ -143,10 +143,10 @@ $app->get('/form', function($req, $res) {
     $res->send($html);
 });
 
-// Middleware de tratamento de erros
+// Error handling middleware
 $app->use(function($req, $res, $next) {
     $res->status(404)->json(['error' => 'Route not found']);
 });
 
-// Inicia a aplicação
+// Start application
 $app->run();

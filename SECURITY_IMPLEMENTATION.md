@@ -59,13 +59,13 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - ✅ `docs/objetos.md` - Documentação de objetos atualizada
 
 ### Exemplos Práticos:
-- ✅ `examples/exemplo_seguranca.php` - Exemplo completo de uso
+- ✅ `examples/example_security.php` - Complete usage example
 - ✅ `examples/snippets/utils_csrf.php` - Snippets CSRF
 - ✅ `examples/snippets/utils_xss.php` - Snippets XSS  
 - ✅ `examples/snippets/utils_seguranca.php` - Configurações
 
 ### Testes:
-- ✅ `test/teste_seguranca.php` - Teste completo dos middlewares
+- ✅ `test/security_test.php` - Complete middleware testing
 
 ## 🔧 Cabeçalhos de Segurança Implementados
 

@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\SRC\Middlewares\Core;
 
 /**
  * Middleware padrão para tratamento centralizado de erros na API Express PHP.

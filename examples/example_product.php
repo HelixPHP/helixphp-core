@@ -1,5 +1,5 @@
 <?php
-// Exemplo de uso isolado das rotas de produto
+// Example of isolated product routes usage
 $app = require __DIR__ . '/snippets/app_base.php';
 $produtoRouter = require __DIR__ . '/snippets/produto_routes.php';
 $app->use($produtoRouter);

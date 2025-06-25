@@ -1,5 +1,5 @@
 <?php
-// Exemplo completo integrando todos os sub-routers
+// Complete example integrating all sub-routers
 $app = require __DIR__ . '/snippets/app_base.php';
 $userRouter = require __DIR__ . '/snippets/user_routes.php';
 $produtoRouter = require __DIR__ . '/snippets/produto_routes.php';

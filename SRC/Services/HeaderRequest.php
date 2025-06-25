@@ -3,21 +3,21 @@
 namespace Express\SRC\Services;
 
 /**
- * Classe HeaderRequest gerencia e facilita o acesso aos cabeçalhos da requisição.
- * Converte os cabeçalhos para camelCase e permite acesso via propriedades ou métodos.
+ * HeaderRequest class manages and facilitates access to request headers.
+ * Converts headers to camelCase and allows access via properties or methods.
  *
- * @property array $headers Array de cabeçalhos convertidos.
+ * @property array $headers Array of converted headers.
  */
 class HeaderRequest
 {
   /**
-   * Array de cabeçalhos convertidos.
+   * Array of converted headers.
    * @var array
    */
   private $headers;
 
   /**
-   * Construtor. Inicializa e converte os cabeçalhos da requisição.
+   * Constructor. Initializes and converts request headers.
    */
   public function __construct()
   {
@@ -33,9 +33,9 @@ class HeaderRequest
   }
 
   /**
-   * Permite acesso aos cabeçalhos via propriedade.
-   * @param string $name Nome do cabeçalho.
-   * @return string|null Valor do cabeçalho ou null se não existir.
+   * Allows access to headers via property.
+   * @param string $name Header name.
+   * @return string|null Header value or null if not exists.
    */
   public function __get($name)
   {
@@ -46,8 +46,8 @@ class HeaderRequest
   }
 
   /**
-   * Retorna o valor de um cabeçalho.
-   * @param string $name Nome do cabeçalho.
+   * Returns the value of a header.
+   * @param string $name Header name.
    * @return string|null Valor do cabeçalho ou null se não existir.
    */
   public function getHeader($name)

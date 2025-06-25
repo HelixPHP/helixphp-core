@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\SRC\Middlewares\Security;
 
 use Express\SRC\Helpers\Utils;
 

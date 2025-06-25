@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\SRC\Middlewares\Core;
 
 /**
  * Middleware padrão para tratar anexos (uploads de arquivos).

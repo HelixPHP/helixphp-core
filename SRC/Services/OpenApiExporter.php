@@ -5,13 +5,13 @@ namespace Express\SRC\Services;
 use Express\SRC\Controller\Router;
 
 /**
- * Serviço responsável por exportar a documentação OpenAPI a partir das rotas do Router.
+ * Service responsible for exporting OpenAPI documentation from Router routes.
  */
 class OpenApiExporter
 {
     /**
-     * Gera a documentação OpenAPI a partir das rotas de múltiplos routers.
-     * @param array|string $routers Array de instâncias Router/RouterInstance ou nome da classe Router
+     * Generates OpenAPI documentation from multiple router routes.
+     * @param array|string $routers Array of Router/RouterInstance instances or Router class name
      * @return array
      */
     public static function export($routers, $baseUrl = null)
@@ -33,20 +33,20 @@ class OpenApiExporter
         $paths = [];
         $allTags = [];
         $tagDescriptions = [];
-        // Servers padrão
+        // Default servers
         $servers = [];
         if ($baseUrl) {
-            $servers[] = [ 'url' => $baseUrl, 'description' => 'Ambiente atual' ];
+            $servers[] = [ 'url' => $baseUrl, 'description' => 'Current environment' ];
         }
-        $servers[] = [ 'url' => 'http://localhost:8080', 'description' => 'Desenvolvimento local' ];
-        $servers[] = [ 'url' => 'https://api.exemplo.com', 'description' => 'Produção' ];
-        $servers[] = [ 'url' => 'https://homolog.api.exemplo.com', 'description' => 'Homologação' ];
-        // Respostas globais de erro
+        $servers[] = [ 'url' => 'http://localhost:8080', 'description' => 'Local development' ];
+        $servers[] = [ 'url' => 'https://api.example.com', 'description' => 'Production' ];
+        $servers[] = [ 'url' => 'https://staging.api.example.com', 'description' => 'Staging' ];
+        // Global error responses
         $globalErrors = [
-            '400' => ['description' => 'Requisição inválida'],
-            '401' => ['description' => 'Não autorizado'],
-            '404' => ['description' => 'Não encontrado'],
-            '500' => ['description' => 'Erro interno do servidor']
+            '400' => ['description' => 'Invalid request'],
+            '401' => ['description' => 'Unauthorized'],
+            '404' => ['description' => 'Not found'],
+            '500' => ['description' => 'Internal server error']
         ];
         foreach ($allRoutes as $route) {
             $method = strtolower($route['method']);
@@ -91,13 +91,13 @@ class OpenApiExporter
                     $responses[$code] = is_array($resp) ? $resp : ['description' => $resp];
                 }
             }
-            // Adiciona respostas globais de erro se não existirem
+            // Add global error responses if they don't exist
             foreach ($globalErrors as $code => $err) {
                 if (!isset($responses[$code])) {
                     $responses[$code] = $err;
                 }
             }
-            // Suporte a tags e descrições
+            // Support for tags and descriptions
             $tags = [];
             if (isset($meta['tags'])) {
                 if (is_array($meta['tags'])) {
@@ -109,7 +109,7 @@ class OpenApiExporter
                     $allTags[$tag] = true;
                 }
             }
-            // Descrição de tags (se fornecida)
+            // Tag descriptions (if provided)
             if (isset($meta['tagDescriptions']) && is_array($meta['tagDescriptions'])) {
                 foreach ($meta['tagDescriptions'] as $tag => $desc) {
                     $tagDescriptions[$tag] = $desc;

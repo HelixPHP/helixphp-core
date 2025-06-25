@@ -1,5 +1,5 @@
 <?php
-namespace Express\SRC\Services;
+namespace Express\SRC\Middlewares\Security;
 
 /**
  * Middleware de proteção XSS (Cross-Site Scripting) para Express PHP.

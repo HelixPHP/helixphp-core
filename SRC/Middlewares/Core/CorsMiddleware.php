@@ -1,9 +1,9 @@
-﻿<?php
-namespace Express\SRC\Services;
+<?php
+namespace Express\SRC\Middlewares\Core;
 
 /**
- * Middleware padrão para configuração de CORS no Express PHP.
- * Permite customizar origens, métodos e headers permitidos.
+ * Default middleware for CORS configuration in Express PHP.
+ * Allows customizing allowed origins, methods and headers.
  */
 class CorsMiddleware
 {

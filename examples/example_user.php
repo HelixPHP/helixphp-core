@@ -1,5 +1,5 @@
 <?php
-// Exemplo de uso isolado das rotas de usuário
+// Example of isolated user routes usage
 $app = require __DIR__ . '/snippets/app_base.php';
 $userRouter = require __DIR__ . '/snippets/user_routes.php';
 $app->use($userRouter);
