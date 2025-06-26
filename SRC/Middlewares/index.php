@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Arquivo de conveniência para importação fácil dos middlewares de segurança
  * Express PHP Framework

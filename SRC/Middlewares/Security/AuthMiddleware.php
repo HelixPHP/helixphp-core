@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 /**
@@ -7,10 +8,11 @@ namespace Express\Middlewares\Security;
  */
 class AuthMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - jwtSecret: string (chave secreta para JWT)
      *   - jwtAlgorithm: string (algoritmo JWT, default: 'HS256')
      *   - basicAuthCallback: callable (callback para validar Basic Auth)
@@ -87,8 +89,9 @@ class AuthMiddleware
 
     /**
      * Autentica a requisição usando todos os métodos configurados
+     * @return array<string, mixed>
      */
-    private function authenticateRequest(mixed $request): array
+    private function authenticateRequest(mixed $request): array /** @return array<string, mixed> */
     {
         $errors = [];
         $methods = $this->options['authMethods'];
@@ -121,7 +124,7 @@ class AuthMiddleware
     /**
      * Tenta um método específico de autenticação
      */
-    private function tryAuthMethod(string $method, mixed $request): array
+    private function tryAuthMethod(string $method, mixed $request): array /** @return array<string, mixed> */
     {
         switch ($method) {
             case 'jwt':
@@ -147,7 +150,7 @@ class AuthMiddleware
     /**
      * Autenticação JWT
      */
-    private function authenticateJWT(mixed $request): array
+    private function authenticateJWT(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
 
@@ -198,7 +201,7 @@ class AuthMiddleware
     /**
      * Autenticação Basic Auth
      */
-    private function authenticateBasic(mixed $request): array
+    private function authenticateBasic(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
 
@@ -251,7 +254,7 @@ class AuthMiddleware
     /**
      * Autenticação Bearer Token
      */
-    private function authenticateBearer(mixed $request): array
+    private function authenticateBearer(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
 
@@ -292,7 +295,7 @@ class AuthMiddleware
     /**
      * Autenticação API Key
      */
-    private function authenticateAPIKey(mixed $request): array
+    private function authenticateAPIKey(mixed $request): array /** @return array<string, mixed> */
     {
         // Procura a API Key no header
         $apiKey = $this->getHeader($request, $this->options['headerName']);
@@ -337,7 +340,7 @@ class AuthMiddleware
     /**
      * Autenticação customizada
      */
-    private function authenticateCustom(mixed $request): array
+    private function authenticateCustom(mixed $request): array /** @return array<string, mixed> */
     {
         if (!$this->options['customAuthCallback']) {
             return [

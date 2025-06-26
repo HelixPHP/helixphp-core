@@ -12,7 +12,7 @@ class OpenApiExporter
     /**
      * Generates OpenAPI documentation from multiple router routes.
      * @param array|string $routers Array of Router/RouterInstance instances or Router class name
-     * @return array
+     * @return array<string, mixed>
      */
     public static function export(mixed $routers, ?string $baseUrl = null): array
     {

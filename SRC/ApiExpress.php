@@ -35,7 +35,7 @@ class ApiExpress
 
   /**
    * Lista de sub-routers registrados via use.
-   * @var array<object>
+   * @var \Express\Controller\RouterInstance[]
    */
     private array $subRouters = [];
 
@@ -56,14 +56,14 @@ class ApiExpress
     }
 
   /**
-   * Registra um middleware global.
-   * @param callable $middleware Middleware com assinatura function($request, $response, $next)
+   * Registra um middleware global ou sub-router.
+   * @param callable|\Express\Controller\RouterInstance $middleware Middleware com assinatura function($request, $response, $next)
    * @return void
    */
     public function use($middleware)
     {
       // Suporte a sub-routers
-        if (is_object($middleware) && method_exists($middleware, 'getRoutes')) {
+        if ($middleware instanceof \Express\Controller\RouterInstance) {
             $this->subRouters[] = $middleware;
             $routes = $middleware->getRoutes();
             foreach ($routes as $route) {
@@ -176,12 +176,12 @@ class ApiExpress
 
   /**
    * Executa middlewares em cadeia, chamando next() para o próximo.
-   * @param array $middlewares Lista de middlewares + handler final
+   * @param callable[] $middlewares Lista de middlewares + handler final
    * @param Request $request
    * @param Response $response
    * @return void
    */
-    private function executeMiddlewares($middlewares, $request, $response)
+    private function executeMiddlewares(array $middlewares, $request, $response): void
     {
         $runner = function ($index) use (&$middlewares, &$request, &$response, &$runner) {
             if ($index < count($middlewares)) {
@@ -197,11 +197,11 @@ class ApiExpress
   /**
    * Permite chamar métodos do Router dinamicamente (get, post, etc).
    * @param string $method Nome do método chamado.
-   * @param array $args Argumentos do método.
+   * @param mixed[] $args Argumentos do método.
    * @return mixed
    * @throws \BadMethodCallException Se o método não existir no Router.
    */
-    public function __call($method, $args)
+    public function __call(string $method, array $args)
     {
       // Corrigido: usar método público para obter métodos aceitos
         if (method_exists(Router::class, $method) || in_array(strtoupper($method), Router::getHttpMethodsAccepted())) {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -12,7 +13,7 @@ class AttachmentMiddleware
      * Exemplo de uso:
      * $app->use(AttachmentMiddleware::handle());
      *
-     * @param array $options Opções de validação (tipos, tamanho, etc)
+     * @param array<string, mixed> $options Opções de validação (tipos, tamanho, etc)
      * @return callable
      */
     public static function handle($options = [])

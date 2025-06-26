@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Services;
 
 use Express\Services\HeaderRequest;
@@ -57,7 +58,7 @@ class Request
     private $headers = null;
   /**
    * Arquivos enviados via upload (anexos).
-   * @var array
+   * @var array<string, mixed>
    */
     private $files = [];
 

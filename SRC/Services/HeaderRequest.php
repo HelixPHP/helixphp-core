@@ -12,7 +12,7 @@ class HeaderRequest
 {
   /**
    * Array of converted headers.
-   * @var array
+   * @var array<string, mixed>
    */
     private $headers;
 
@@ -73,7 +73,7 @@ class HeaderRequest
 
   /**
    * Retorna todos os cabeçalhos convertidos.
-   * @return array
+   * @return array<string, mixed>
    */
     public function getAllHeaders()
     {

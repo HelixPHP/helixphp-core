@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 /**
@@ -9,10 +10,11 @@ class SecurityMiddleware
 {
     private ?CsrfMiddleware $csrfMiddleware;
     private ?XssMiddleware $xssMiddleware;
+    /** @var array<string, mixed> */
     private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - csrf: array (opções para CSRF middleware)
      *   - xss: array (opções para XSS middleware)
      *   - enableCsrf: bool (habilitar proteção CSRF, default: true)

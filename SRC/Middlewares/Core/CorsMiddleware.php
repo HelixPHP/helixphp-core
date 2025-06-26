@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -7,10 +8,11 @@ namespace Express\Middlewares\Core;
  */
 class CorsMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - origin: string|array|null (origem permitida, '*' para todas)
      *   - methods: string (métodos permitidos, ex: 'GET,POST,PUT,DELETE')
      *   - headers: string (headers permitidos)

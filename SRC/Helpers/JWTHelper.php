@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Helpers;
 
 /**
@@ -9,9 +10,9 @@ class JWTHelper
     /**
      * Gera um token JWT
      *
-     * @param array $payload Dados do payload
+     * @param array<string, mixed> $payload Dados do payload
      * @param string $secret Chave secreta
-     * @param array $options Opções:
+     * @param array<string, mixed> $options Opções:
      *   - algorithm: string (algoritmo, default: 'HS256')
      *   - expiresIn: int (segundos para expiração, default: 3600)
      *   - issuer: string (emissor do token)
@@ -58,10 +59,10 @@ class JWTHelper
      *
      * @param string $token Token JWT
      * @param string $secret Chave secreta
-     * @param array $options Opções:
+     * @param array<string, mixed> $options Opções:
      *   - algorithm: string (algoritmo esperado, default: 'HS256')
      *   - leeway: int (margem de tempo em segundos, default: 0)
-     * @return array Payload decodificado
+     * @return array<string, mixed> Payload decodificado
      * @throws \Exception Se o token for inválido
      */
     public static function decode(string $token, string $secret, array $options = []): array
@@ -94,7 +95,7 @@ class JWTHelper
      *
      * @param string $token Token JWT
      * @param string $secret Chave secreta
-     * @param array $options Opções de decodificação
+     * @param array<string, mixed> $options Opções de decodificação
      * @return bool True se válido
      */
     public static function isValid(string $token, string $secret, array $options = []): bool
@@ -111,7 +112,7 @@ class JWTHelper
      * Obtém o payload sem validar a assinatura (útil para debug)
      *
      * @param string $token Token JWT
-     * @return array Payload
+     * @return array<string, mixed> Payload
      */
     public static function getPayload(string $token): array
     {
@@ -147,6 +148,7 @@ class JWTHelper
 
     /**
      * Implementação simples do HS256 para casos sem biblioteca
+     * @param array<string, mixed> $payload
      */
     private static function encodeHS256(array $payload, string $secret): string
     {
@@ -173,6 +175,7 @@ class JWTHelper
 
     /**
      * Implementação simples de decodificação HS256
+     * @return array<string, mixed>
      */
     private static function decodeHS256(string $token, string $secret, int $leeway = 0): array
     {
@@ -263,7 +266,7 @@ class JWTHelper
      *
      * @param string $token Token de refresh
      * @param string $secret Chave secreta
-     * @return array|false Dados do usuário ou false se inválido
+     * @return array<string, mixed>|false Dados do usuário ou false se inválido
      */
     public static function validateRefreshToken(string $token, string $secret)
     {

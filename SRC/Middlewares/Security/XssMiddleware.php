@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 /**
@@ -7,10 +8,11 @@ namespace Express\Middlewares\Security;
  */
 class XssMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - sanitizeInput: bool (sanitizar dados de entrada automaticamente)
      *   - securityHeaders: bool (adicionar cabeçalhos de segurança)
      *   - contentSecurityPolicy: string|null (política CSP personalizada)

@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Helpers;
 
 class Utils

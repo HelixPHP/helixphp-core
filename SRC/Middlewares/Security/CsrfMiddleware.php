@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 use Express\Helpers\Utils;
@@ -9,10 +10,11 @@ use Express\Helpers\Utils;
  */
 class CsrfMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - headerName: string (nome do header para o token, default: 'X-CSRF-Token')
      *   - fieldName: string (nome do campo no body para o token, default: 'csrf_token')
      *   - excludePaths: array (caminhos que devem ser excluídos da verificação)

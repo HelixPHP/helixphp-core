@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Controller;
 
 use InvalidArgumentException;
@@ -9,7 +10,9 @@ use InvalidArgumentException;
 class RouterInstance
 {
     private string $prefix;
+    /** @var array<int, array<string, mixed>> */
     private array $routes = [];
+    /** @var callable[] */
     private array $middlewares = [];
 
     public function __construct(string $prefix = '/')
@@ -24,7 +27,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function get(string $path, ...$handlers): void
     {
@@ -32,7 +35,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function post(string $path, ...$handlers): void
     {
@@ -40,7 +43,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function put(string $path, ...$handlers): void
     {
@@ -48,7 +51,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function delete(string $path, ...$handlers): void
     {
@@ -56,7 +59,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function patch(string $path, ...$handlers): void
     {
@@ -64,7 +67,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function options(string $path, ...$handlers): void
     {
@@ -72,7 +75,7 @@ class RouterInstance
     }
     /**
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     public function head(string $path, ...$handlers): void
     {
@@ -80,6 +83,9 @@ class RouterInstance
     }
 
     // Suporte a métodos HTTP customizados (ex: custom, trace, etc)
+    /**
+     * @param mixed[] $args
+     */
     public function __call(string $method, array $args): void
     {
         $httpMethod = strtoupper($method);
@@ -91,7 +97,7 @@ class RouterInstance
     /**
      * @param string $method
      * @param string $path
-     * @param callable|array ...$handlers
+     * @param mixed ...$handlers
      */
     private function add(string $method, string $path, ...$handlers): void
     {
@@ -122,6 +128,9 @@ class RouterInstance
         ];
     }
 
+    /**
+     * @param mixed[] $arr
+     */
     private function isAssoc(array $arr): bool
     {
         if ([] === $arr) {
@@ -132,6 +141,7 @@ class RouterInstance
 
     /**
      * Retorna as rotas deste sub-router.
+     * @return array<int, array<string, mixed>>
      */
     public function getRoutes(): array
     {

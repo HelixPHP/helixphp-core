@@ -19,7 +19,7 @@ class Response
     private $statusCode = 200;
   /**
    * Cabeçalhos da resposta.
-   * @var array
+   * @var array<string, mixed>
    */
     private $headers = [];
   /**
@@ -54,7 +54,7 @@ class Response
 
   /**
    * Obtém os cabeçalhos da resposta.
-   * @return array
+   * @return array<string, mixed>
    */
     public function getHeaders(): array
     {

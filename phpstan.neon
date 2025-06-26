@@ -6,10 +6,11 @@ parameters:
         - vendor
         - test
         - examples
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     reportUnmatchedIgnoredErrors: false
     ignoreErrors:
         - '#Call to an undefined method [a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\)#'
         - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+#'
         - '#Parameter \#[0-9]+ \$[a-zA-Z0-9_]+ of method [a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\) expects [^,]+, [^,]+ given#'
+        - '#Method [a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\) has parameter \$[a-zA-Z0-9_]+ with no value type specified in iterable type array#'
+        - '#Method [a-zA-Z0-9\\_]+::[a-zA-Z0-9_]+\(\) return type has no value type specified in iterable type array#'
+        - '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+ type has no value type specified in iterable type array#'

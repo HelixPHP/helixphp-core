@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -15,10 +16,11 @@ class RateLimitMiddleware
 {
     private int $max;
     private int $window;
+    /** @var array<string, int[]> */
     private static array $requests = [];
 
     /**
-     * @param array $options ['max' => int, 'window' => int]
+     * @param array<string, mixed> $options ['max' => int, 'window' => int]
      */
     public function __construct(array $options = [])
     {

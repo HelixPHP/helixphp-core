@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Controller;
 
 use InvalidArgumentException;
@@ -16,7 +17,7 @@ class Router
     private static string $current_group_prefix = '';
   /**
    * Lista de rotas registradas.
-   * @var array<int, array>
+   * @var array<int, array<string, mixed>>
    */
     private static array $routes = [];
   /**
@@ -45,7 +46,7 @@ class Router
 
   /**
    * Middlewares de grupo por prefixo de rota.
-   * @var array<string, array>
+   * @var array<string, callable[]>
    */
     private static array $groupMiddlewares = [];
 
@@ -129,6 +130,9 @@ class Router
     }
 
   // Verifica se array é associativo
+    /**
+     * @param mixed[] $arr
+     */
     private static function isAssoc(array $arr): bool
     {
         if ([] === $arr) {
@@ -142,7 +146,7 @@ class Router
    * @param string $method The HTTP method (GET, POST, etc.).
    * @param string|null $path The path to match (optional).
    * @throws InvalidArgumentException if the method is not supported.
-   * @return array|null The matching routes or null if not found.
+   * @return array<string, mixed>|null The matching routes or null if not found.
    */
     public static function identify(string $method, ?string $path = null): ?array
     {
@@ -184,6 +188,9 @@ class Router
         return null; // Nenhuma rota encontrada
     }
 
+    /**
+     * @param mixed[] $args
+     */
     public static function __callStatic(string $method, array $args): mixed
     {
         if (in_array(strtoupper($method), self::$httpMethodsAccepted)) {
@@ -214,7 +221,7 @@ class Router
 
   /**
    * Retorna todas as rotas registradas (para exportação/documentação).
-   * @return array<int, array>
+   * @return array<int, array<string, mixed>>
    */
     public static function getRoutes(): array
     {
