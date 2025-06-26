@@ -176,6 +176,7 @@ class Response
     {
         $json = json_encode($data);
         if ($json === false) {
+            error_log('JSON encoding failed: ' . json_last_error_msg() . '. Input data: ' . var_export($data, true));
             $json = '{}';
         }
 
