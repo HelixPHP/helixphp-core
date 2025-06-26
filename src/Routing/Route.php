@@ -85,7 +85,11 @@ class Route
             return [];
         }
 
-        preg_match($this->pattern, $path, $matches);
+        $matchResult = preg_match($this->pattern, $path, $matches);
+        if (!$matchResult || empty($matches)) {
+            return [];
+        }
+
         array_shift($matches); // Remove o match completo
 
         $parameters = [];

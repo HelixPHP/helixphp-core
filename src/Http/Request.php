@@ -129,8 +129,12 @@ class Request
         $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $this->path);
         $pattern = rtrim($pattern ?: '', '/');
         $pattern = '#^' . $pattern . '/?$#';
-        preg_match($pattern, rtrim($this->pathCallable ?: '', '/'), $values);
-        array_shift($values); // Remove the full match
+        $matchResult = preg_match($pattern, rtrim($this->pathCallable ?: '', '/'), $values);
+        if ($matchResult && !empty($values)) {
+            array_shift($values); // Remove the full match
+        } else {
+            $values = [];
+        }
         preg_match_all('/\/:([^\/]+)/', $this->path, $params);
         $params = $params[1];
         // Permitir que valores extras sejam ignorados se a rota for mais curta
