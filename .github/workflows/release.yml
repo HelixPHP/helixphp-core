@@ -1,0 +1,137 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    name: Validate Release
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
+
+    - name: Cache Composer packages
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+    - name: Check PHP syntax
+      run: find SRC -name "*.php" -exec php -l {} \;
+
+    - name: Run PHPStan
+      run: |
+        composer install --dev --no-progress
+        ./vendor/bin/phpstan analyse --no-progress
+
+    - name: Run tests
+      run: ./vendor/bin/phpunit --no-coverage
+
+    - name: Run code style check
+      run: ./vendor/bin/phpcs --standard=PSR12 SRC/ --report=summary
+
+    - name: Prepare release script
+      run: |
+        chmod +x scripts/prepare_release.sh
+        ./scripts/prepare_release.sh
+
+  release:
+    needs: validate
+    runs-on: ubuntu-latest
+    name: Create Release
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
+
+    - name: Install dependencies (production only)
+      run: composer install --prefer-dist --no-progress --no-dev --optimize-autoloader
+
+    - name: Get tag version
+      id: tag_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+    - name: Create archive
+      run: |
+        # Create clean directory for packaging
+        mkdir -p build/express-php
+
+        # Copy source files
+        cp -r SRC build/express-php/
+        cp composer.json build/express-php/
+        cp README.md build/express-php/
+        cp LICENSE build/express-php/
+        cp -r docs/en build/express-php/docs
+
+        # Create tarball
+        cd build
+        tar -czf express-php-${{ steps.tag_version.outputs.VERSION }}.tar.gz express-php/
+        zip -r express-php-${{ steps.tag_version.outputs.VERSION }}.zip express-php/
+
+    - name: Generate changelog
+      id: changelog
+      run: |
+        # Extract changelog for this version from git commits
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -n "$PREVIOUS_TAG" ]; then
+          CHANGELOG=$(git log $PREVIOUS_TAG..HEAD --pretty=format:"- %s" --reverse)
+        else
+          CHANGELOG=$(git log --pretty=format:"- %s" --reverse)
+        fi
+
+        # Save changelog to file for GitHub release
+        echo "## What's Changed" > changelog.md
+        echo "" >> changelog.md
+        echo "$CHANGELOG" >> changelog.md
+        echo "" >> changelog.md
+        echo "**Full Changelog**: https://github.com/CAFernandes/express-php/compare/$PREVIOUS_TAG...${{ steps.tag_version.outputs.VERSION }}" >> changelog.md
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.tag_version.outputs.VERSION }}
+        name: Release ${{ steps.tag_version.outputs.VERSION }}
+        body_path: changelog.md
+        files: |
+          build/express-php-${{ steps.tag_version.outputs.VERSION }}.tar.gz
+          build/express-php-${{ steps.tag_version.outputs.VERSION }}.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  packagist:
+    needs: [validate, release]
+    runs-on: ubuntu-latest
+    name: Update Packagist
+
+    steps:
+    - name: Update Packagist
+      run: |
+        curl -XPOST -H'content-type:application/json' 'https://packagist.org/api/update-package?username=CAFernandes&apiToken=${{ secrets.PACKAGIST_TOKEN }}' \
+        -d'{"repository":{"url":"https://github.com/CAFernandes/express-php"}}'
+      continue-on-error: true

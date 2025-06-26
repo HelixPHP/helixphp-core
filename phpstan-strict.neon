@@ -1,0 +1,10 @@
+parameters:
+    level: 8
+    paths:
+        - SRC
+    excludePaths:
+        - vendor
+        - test
+        - examples
+    reportUnmatchedIgnoredErrors: true
+    # Removemos os ignores para ver todos os erros

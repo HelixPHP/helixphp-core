@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 use Express\Helpers\Utils;
@@ -9,10 +10,11 @@ use Express\Helpers\Utils;
  */
 class CsrfMiddleware
 {
-    private $options;
+    /** @var array<string, mixed> */
+    private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - headerName: string (nome do header para o token, default: 'X-CSRF-Token')
      *   - fieldName: string (nome do campo no body para o token, default: 'csrf_token')
      *   - excludePaths: array (caminhos que devem ser excluídos da verificação)
@@ -30,7 +32,7 @@ class CsrfMiddleware
         ], $options);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(object $request, object $response, callable $next): void
     {
         // Inicializa sessão se não estiver ativa
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -109,7 +111,7 @@ class CsrfMiddleware
      * Método estático para gerar um campo hidden HTML com o token CSRF
      * @return string
      */
-    public static function hiddenField($fieldName = 'csrf_token')
+    public static function hiddenField(string $fieldName = 'csrf_token'): string
     {
         $token = self::getToken();
         return "<input type=\"hidden\" name=\"{$fieldName}\" value=\"{$token}\">";

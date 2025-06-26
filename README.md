@@ -197,7 +197,7 @@ php examples/example_autoload.php
 # Run security tests
 composer run test:security
 
-# Run authentication tests  
+# Run authentication tests
 composer run test:auth
 
 # Run PHPUnit tests
@@ -206,6 +206,29 @@ composer test
 # Run all examples
 composer run examples:complete
 ```
+
+## 🧪 Testing
+
+Express PHP includes a comprehensive test suite covering all major components:
+
+- **87+ tests** covering core functionality
+- **95%+ code coverage** of critical components
+- **PHPUnit 10** compatible test suite
+- **Automated security testing** for all middlewares
+
+Run the test suite:
+```bash
+# Run all tests
+php vendor/bin/phpunit
+
+# Run with coverage report
+php vendor/bin/phpunit --coverage-text
+
+# Run automated test report
+bash test_coverage_report.sh
+```
+
+For detailed testing information, see: [Test Coverage Report](docs/TEST_COVERAGE_REPORT.md)
 
 ## 🌟 Features
 
@@ -263,3 +286,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 **Express PHP** - Building modern PHP applications with simplicity and security.
+# Test commit

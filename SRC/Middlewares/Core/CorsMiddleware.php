@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -7,10 +8,11 @@ namespace Express\Middlewares\Core;
  */
 class CorsMiddleware
 {
-    private $options;
+    /** @var array<string, mixed> */
+    private array $options;
 
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - origin: string|array|null (origem permitida, '*' para todas)
      *   - methods: string (métodos permitidos, ex: 'GET,POST,PUT,DELETE')
      *   - headers: string (headers permitidos)
@@ -26,7 +28,7 @@ class CorsMiddleware
         ], $options);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         $origin = $this->options['origin'];
         if (is_array($origin)) {
@@ -44,6 +46,6 @@ class CorsMiddleware
             $response->status(204)->end();
             exit;
         }
-        $next();
+        return $next();
     }
 }

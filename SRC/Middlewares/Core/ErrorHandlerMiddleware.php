@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -46,10 +47,10 @@ class ErrorHandlerMiddleware
         $this->customHandler = $customHandler;
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         try {
-            $next();
+            return $next();
         } catch (\Throwable $e) {
             if ($this->customHandler) {
                 // Permite resposta customizada
@@ -57,7 +58,9 @@ class ErrorHandlerMiddleware
                 exit;
             }
             $status = method_exists($e, 'getCode') && $e->getCode() ? $e->getCode() : 500;
-            if ($status < 400 || $status > 599) $status = 500;
+            if ($status < 400 || $status > 599) {
+                $status = 500;
+            }
             $body = [
                 'error' => true,
                 'message' => $e->getMessage(),

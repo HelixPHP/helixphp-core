@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -6,21 +7,40 @@ namespace Express\Middlewares\Core;
  */
 class RequestValidationMiddleware
 {
-    private static function validateType($value, $type) {
-        if ($type === 'integer') return is_numeric($value);
-        if ($type === 'boolean') return is_bool($value) || $value === '0' || $value === '1' || $value === 0 || $value === 1 || $value === true || $value === false;
-        if ($type === 'email') return is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
-        if ($type === 'array') return is_array($value);
-        if ($type === 'string') return is_string($value) || is_numeric($value);
+    private static function validateType(mixed $value, string $type): bool
+    {
+        if ($type === 'integer') {
+            return is_numeric($value);
+        }
+        if ($type === 'boolean') {
+            return is_bool($value) || $value === '0' || $value === '1' || $value === 0 || $value === 1;
+        }
+        if ($type === 'email') {
+            return is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
+        }
+        if ($type === 'array') {
+            return is_array($value);
+        }
+        if ($type === 'string') {
+            return is_string($value) || is_numeric($value);
+        }
         return true;
     }
-    private static function sanitize($value, $type) {
-        if ($type === 'string' && is_string($value)) return trim(strip_tags($value));
-        if ($type === 'email' && is_string($value)) return trim($value);
-        if ($type === 'array' && is_array($value)) return array_map('trim', $value);
+    private static function sanitize(mixed $value, string $type): mixed
+    {
+        if ($type === 'string' && is_string($value)) {
+            return trim(strip_tags($value));
+        }
+        if ($type === 'email' && is_string($value)) {
+            return trim($value);
+        }
+        if ($type === 'array' && is_array($value)) {
+            return array_map('trim', $value);
+        }
         return $value;
     }
-    private function validateField($name, $value, $type, $required, &$errors) {
+    private function validateField(string $name, mixed $value, string $type, bool $required, array &$errors): void
+    {
         if ($required && ($value === null || $value === '')) {
             $errors[] = "Campo obrigatório: $name";
             return;
@@ -29,7 +49,7 @@ class RequestValidationMiddleware
             $errors[] = "Campo $name deve ser do tipo $type";
         }
     }
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         $route = $request->matchedRoute ?? null;
         $errors = [];
@@ -68,7 +88,13 @@ class RequestValidationMiddleware
                         $type = $prop['type'] ?? 'string';
                         $value = $request->body[$field] ?? null;
                         $value = self::sanitize($value, $type);
-                        $this->validateField($field, $value, $type, in_array($field, $schema['required'] ?? []), $errors);
+                        $this->validateField(
+                            $field,
+                            $value,
+                            $type,
+                            in_array($field, $schema['required'] ?? []),
+                            $errors
+                        );
                     }
                     // Rejeita campos extras
                     foreach ($request->body as $field => $v) {
@@ -86,6 +112,6 @@ class RequestValidationMiddleware
                 'fields' => $errors
             ]);
         }
-        $next();
+        return $next();
     }
 }

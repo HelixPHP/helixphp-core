@@ -11,8 +11,9 @@ Para toda a documentação organizada do projeto, acesse:
 ## 🚀 Links Essenciais Rápidos
 
 - **[README](README.md)** - Introdução e instalação
-- **[CONTRIBUTING](CONTRIBUTING.md)** - Como contribuir  
+- **[CONTRIBUTING](CONTRIBUTING.md)** - Como contribuir
 - **[LICENSE](LICENSE)** - Licença MIT
+- **[Cobertura de Testes](docs/TEST_COVERAGE_REPORT.md)** - Relatório completo de testes
 
 ---
 

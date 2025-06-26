@@ -62,12 +62,24 @@ class AuthMiddlewareTest extends TestCase
 
     public function testJWTAuthenticationSuccess(): void
     {
-        // Test básico - apenas verificar se o middleware pode ser criado
-        $middleware = AuthMiddleware::jwt($this->jwtSecret);
-        $this->assertInstanceOf(AuthMiddleware::class, $middleware);
+        // Arrange
+        $payload = ['user_id' => 1, 'username' => 'testuser'];
+        $token = JWTHelper::encode($payload, $this->jwtSecret);
 
-        // Se chegou até aqui, consideramos sucesso básico
-        $this->assertTrue(true);
+        $request = $this->createMockRequest(['authorization' => "Bearer $token"]);
+        $response = $this->createMockResponse();
+        $nextCalled = false;
+
+        $middleware = AuthMiddleware::jwt($this->jwtSecret);
+
+        // Act
+        $middleware($request, $response, function() use (&$nextCalled) {
+            $nextCalled = true;
+        });
+
+        // Assert
+        $this->assertTrue($nextCalled);
+        $this->assertTrue(property_exists($request, 'user'));
     }
 
     public function testJWTAuthenticationFailure(): void
@@ -89,15 +101,13 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationSuccess(): void
     {
-        $basicCallback = function($username, $password) {
-            return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
-        };
+        $validCredentials = ['testuser' => 'testpass'];
 
         $request = $this->createMockRequest(['authorization' => 'Basic ' . base64_encode('testuser:testpass')]);
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware = AuthMiddleware::basic($basicCallback);
+        $middleware = AuthMiddleware::basic($validCredentials);
 
         $middleware($request, $response, function() use (&$nextCalled) {
             $nextCalled = true;
@@ -109,15 +119,13 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationFailure(): void
     {
-        $basicCallback = function($username, $password) {
-            return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
-        };
+        $validCredentials = ['testuser' => 'testpass'];
 
         $request = $this->createMockRequest(['authorization' => 'Basic ' . base64_encode('testuser:wrongpass')]);
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware = AuthMiddleware::basic($basicCallback);
+        $middleware = AuthMiddleware::basic($validCredentials);
 
         $middleware($request, $response, function() use (&$nextCalled) {
             $nextCalled = true;
@@ -129,15 +137,13 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBearerTokenAuthentication(): void
     {
-        $bearerCallback = function($token) {
-            return $token === 'valid_token_123' ? ['token' => $token] : false;
-        };
+        $validTokens = ['valid_token_123'];
 
         $request = $this->createMockRequest(['authorization' => 'Bearer valid_token_123']);
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware = AuthMiddleware::bearer($bearerCallback);
+        $middleware = AuthMiddleware::bearer($validTokens);
 
         $middleware($request, $response, function() use (&$nextCalled) {
             $nextCalled = true;

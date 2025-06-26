@@ -5,6 +5,24 @@
 
 namespace Express\Test;
 
+// Configuração para URLs amigáveis sem .php
+// Garante que PATH_INFO seja definido corretamente
+if (!isset($_SERVER['PATH_INFO']) && isset($_SERVER['REQUEST_URI'])) {
+    $requestUri = $_SERVER['REQUEST_URI'];
+    $scriptName = $_SERVER['SCRIPT_NAME'];
+
+    // Remove a extensão .php do SCRIPT_NAME se presente
+    $scriptNameClean = preg_replace('/\.php$/', '', $scriptName);
+
+    // Extrai o PATH_INFO da REQUEST_URI
+    if (strpos($requestUri, $scriptNameClean) === 0) {
+        $pathInfo = substr($requestUri, strlen($scriptNameClean));
+        // Remove query string se presente
+        $pathInfo = strtok($pathInfo, '?');
+        $_SERVER['PATH_INFO'] = $pathInfo ?: '/';
+    }
+}
+
 $path = __DIR__;
 $path = explode(DIRECTORY_SEPARATOR, $path);
 $path = array_slice($path, 0, count($path) - 1);

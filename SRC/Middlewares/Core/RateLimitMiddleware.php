@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Core;
 
 /**
@@ -13,12 +14,13 @@ namespace Express\Middlewares\Core;
  */
 class RateLimitMiddleware
 {
-    private $max;
-    private $window;
-    private static $requests = [];
+    private int $max;
+    private int $window;
+    /** @var array<string, int[]> */
+    private static array $requests = [];
 
     /**
-     * @param array $options ['max' => int, 'window' => int]
+     * @param array<string, mixed> $options ['max' => int, 'window' => int]
      */
     public function __construct(array $options = [])
     {
@@ -26,7 +28,7 @@ class RateLimitMiddleware
         $this->window = $options['window'] ?? 60;
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         $ip = $_SERVER['REMOTE_ADDR'] ?? 'anon';
         $now = time();
@@ -45,6 +47,6 @@ class RateLimitMiddleware
             ]);
             exit;
         }
-        $next();
+        return $next();
     }
 }

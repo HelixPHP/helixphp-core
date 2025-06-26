@@ -1,4 +1,5 @@
 <?php
+
 namespace Express\Middlewares\Security;
 
 /**
@@ -7,10 +8,11 @@ namespace Express\Middlewares\Security;
  */
 class AuthMiddleware
 {
-    private $options;
-    
+    /** @var array<string, mixed> */
+    private array $options;
+
     /**
-     * @param array $options Opções de configuração:
+     * @param array<string, mixed> $options Opções de configuração:
      *   - jwtSecret: string (chave secreta para JWT)
      *   - jwtAlgorithm: string (algoritmo JWT, default: 'HS256')
      *   - basicAuthCallback: callable (callback para validar Basic Auth)
@@ -49,33 +51,31 @@ class AuthMiddleware
         ], $options);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         // Verifica se o caminho atual deve ser excluído
         $currentPath = $request->path ?? $_SERVER['REQUEST_URI'];
         foreach ($this->options['excludePaths'] as $excludePath) {
             if (strpos($currentPath, $excludePath) === 0) {
-                $next();
-                return;
+                return $next();
             }
         }
 
         $authResult = $this->authenticateRequest($request);
-        
+
         if (!$authResult['success']) {
             if ($this->options['requireAuth']) {
-                $response->status($authResult['status'])->json([
+                return $response->status($authResult['status'])->json([
                     'error' => true,
                     'message' => $authResult['message'],
                     'type' => 'AuthenticationError'
                 ]);
-                return;
             }
         } else {
             // Adiciona dados do usuário à requisição
             $userProperty = $this->options['userProperty'];
             $request->$userProperty = $authResult['user'];
-            
+
             // Adiciona informações de autenticação
             $request->auth = [
                 'method' => $authResult['method'],
@@ -84,33 +84,34 @@ class AuthMiddleware
             ];
         }
 
-        $next();
+        return $next();
     }
 
     /**
      * Autentica a requisição usando todos os métodos configurados
+     * @return array<string, mixed>
      */
-    private function authenticateRequest($request)
+    private function authenticateRequest(mixed $request): array /** @return array<string, mixed> */
     {
         $errors = [];
         $methods = $this->options['authMethods'];
-        
+
         // Tenta cada método de autenticação
         foreach ($methods as $method) {
             $result = $this->tryAuthMethod($method, $request);
-            
+
             if ($result['success']) {
                 return $result;
             }
-            
+
             $errors[$method] = $result['message'];
-            
+
             // Se não permite múltiplos métodos e encontrou headers, para por aqui
             if (!$this->options['allowMultiple'] && $result['found_headers']) {
                 return $result;
             }
         }
-        
+
         // Nenhum método funcionou
         return [
             'success' => false,
@@ -123,7 +124,7 @@ class AuthMiddleware
     /**
      * Tenta um método específico de autenticação
      */
-    private function tryAuthMethod($method, $request)
+    private function tryAuthMethod(string $method, mixed $request): array /** @return array<string, mixed> */
     {
         switch ($method) {
             case 'jwt':
@@ -149,10 +150,10 @@ class AuthMiddleware
     /**
      * Autenticação JWT
      */
-    private function authenticateJWT($request)
+    private function authenticateJWT(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
-        
+
         if (!$authHeader || !preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
             return [
                 'success' => false,
@@ -163,37 +164,34 @@ class AuthMiddleware
         }
 
         $token = $matches[1];
-        
+
         try {
-            // Verifica se a biblioteca JWT está disponível
-            if (!class_exists('Firebase\JWT\JWT')) {
+            // Verifica se as classes JWT estão disponíveis
+            if (!class_exists('Firebase\JWT\JWT') || !class_exists('Firebase\JWT\Key')) {
                 throw new \Exception('JWT library not found. Install firebase/php-jwt');
             }
-            
+
             $decoded = \Firebase\JWT\JWT::decode(
-                $token, 
+                $token,
                 new \Firebase\JWT\Key($this->options['jwtSecret'], $this->options['jwtAlgorithm'])
             );
-            
+
             return [
                 'success' => true,
                 'method' => 'jwt',
                 'user' => (array) $decoded,
                 'token' => $token
             ];
-            
-        } catch (\Firebase\JWT\ExpiredException $e) {
-            return [
-                'success' => false,
-                'status' => 401,
-                'message' => $this->options['errorMessages']['expired'],
-                'found_headers' => true
-            ];
         } catch (\Exception $e) {
+            // Captura todas as exceptions incluindo ExpiredException
+            $isExpired = class_exists('Firebase\JWT\ExpiredException') && $e instanceof \Firebase\JWT\ExpiredException;
+
             return [
                 'success' => false,
                 'status' => 401,
-                'message' => $this->options['errorMessages']['invalid'],
+                'message' => $isExpired
+                    ? $this->options['errorMessages']['expired']
+                    : $this->options['errorMessages']['invalid'],
                 'found_headers' => true,
                 'error' => $e->getMessage()
             ];
@@ -203,10 +201,10 @@ class AuthMiddleware
     /**
      * Autenticação Basic Auth
      */
-    private function authenticateBasic($request)
+    private function authenticateBasic(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
-        
+
         if (!$authHeader || !preg_match('/^Basic\s+(.+)$/i', $authHeader, $matches)) {
             return [
                 'success' => false,
@@ -218,7 +216,7 @@ class AuthMiddleware
 
         $credentials = base64_decode($matches[1]);
         $parts = explode(':', $credentials, 2);
-        
+
         if (count($parts) !== 2) {
             return [
                 'success' => false,
@@ -229,12 +227,12 @@ class AuthMiddleware
         }
 
         list($username, $password) = $parts;
-        
+
         // Usa callback personalizado se fornecido
         if ($this->options['basicAuthCallback']) {
             $callback = $this->options['basicAuthCallback'];
             $user = $callback($username, $password);
-            
+
             if ($user) {
                 return [
                     'success' => true,
@@ -244,7 +242,7 @@ class AuthMiddleware
                 ];
             }
         }
-        
+
         return [
             'success' => false,
             'status' => 401,
@@ -256,10 +254,10 @@ class AuthMiddleware
     /**
      * Autenticação Bearer Token
      */
-    private function authenticateBearer($request)
+    private function authenticateBearer(mixed $request): array /** @return array<string, mixed> */
     {
         $authHeader = $this->getAuthorizationHeader($request);
-        
+
         if (!$authHeader || !preg_match('/^Bearer\s+(.+)$/i', $authHeader, $matches)) {
             return [
                 'success' => false,
@@ -270,12 +268,12 @@ class AuthMiddleware
         }
 
         $token = $matches[1];
-        
+
         // Usa callback personalizado se fornecido
         if ($this->options['bearerTokenCallback']) {
             $callback = $this->options['bearerTokenCallback'];
             $user = $callback($token);
-            
+
             if ($user) {
                 return [
                     'success' => true,
@@ -285,7 +283,7 @@ class AuthMiddleware
                 ];
             }
         }
-        
+
         return [
             'success' => false,
             'status' => 401,
@@ -297,16 +295,16 @@ class AuthMiddleware
     /**
      * Autenticação API Key
      */
-    private function authenticateAPIKey($request)
+    private function authenticateAPIKey(mixed $request): array /** @return array<string, mixed> */
     {
         // Procura a API Key no header
         $apiKey = $this->getHeader($request, $this->options['headerName']);
-        
+
         // Se não encontrou no header, procura na query string
         if (!$apiKey) {
             $apiKey = $request->query($this->options['queryParam']) ?? $_GET[$this->options['queryParam']] ?? null;
         }
-        
+
         if (!$apiKey) {
             return [
                 'success' => false,
@@ -315,12 +313,12 @@ class AuthMiddleware
                 'found_headers' => false
             ];
         }
-        
+
         // Usa callback personalizado se fornecido
         if ($this->options['apiKeyCallback']) {
             $callback = $this->options['apiKeyCallback'];
             $user = $callback($apiKey);
-            
+
             if ($user) {
                 return [
                     'success' => true,
@@ -330,7 +328,7 @@ class AuthMiddleware
                 ];
             }
         }
-        
+
         return [
             'success' => false,
             'status' => 401,
@@ -342,7 +340,7 @@ class AuthMiddleware
     /**
      * Autenticação customizada
      */
-    private function authenticateCustom($request)
+    private function authenticateCustom(mixed $request): array /** @return array<string, mixed> */
     {
         if (!$this->options['customAuthCallback']) {
             return [
@@ -352,17 +350,17 @@ class AuthMiddleware
                 'found_headers' => false
             ];
         }
-        
+
         $callback = $this->options['customAuthCallback'];
         $result = $callback($request);
-        
+
         if (is_array($result) && isset($result['success'])) {
             if ($result['success']) {
                 $result['method'] = 'custom';
             }
             return $result;
         }
-        
+
         // Se o callback retornou dados do usuário diretamente
         if ($result) {
             return [
@@ -371,7 +369,7 @@ class AuthMiddleware
                 'user' => $result
             ];
         }
-        
+
         return [
             'success' => false,
             'status' => 401,
@@ -383,33 +381,33 @@ class AuthMiddleware
     /**
      * Obtém o header Authorization
      */
-    private function getAuthorizationHeader($request)
+    private function getAuthorizationHeader(object $request): ?string
     {
         // Tenta diferentes formas de obter o header
-        if (isset($request->headers) && method_exists($request->headers, 'getHeader')) {
+        if (isset($request->headers) && is_object($request->headers) && method_exists($request->headers, 'getHeader')) {
             return $request->headers->getHeader('Authorization');
         }
-        
+
         if (isset($request->headers->authorization)) {
             return $request->headers->authorization;
         }
-        
+
         // Fallback para $_SERVER
-        return $_SERVER['HTTP_AUTHORIZATION'] ?? 
-               $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? 
+        return $_SERVER['HTTP_AUTHORIZATION'] ??
+               $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ??
                (function_exists('apache_request_headers') ? (apache_request_headers()['Authorization'] ?? null) : null);
     }
 
     /**
      * Obtém um header específico
      */
-    private function getHeader($request, $headerName)
+    private function getHeader(object $request, string $headerName): ?string
     {
         // Tenta diferentes formas de obter o header
-        if (isset($request->headers) && method_exists($request->headers, 'getHeader')) {
+        if (isset($request->headers) && is_object($request->headers) && method_exists($request->headers, 'getHeader')) {
             return $request->headers->getHeader($headerName);
         }
-        
+
         $serverKey = 'HTTP_' . str_replace('-', '_', strtoupper($headerName));
         return $_SERVER[$serverKey] ?? null;
     }
@@ -417,11 +415,11 @@ class AuthMiddleware
     /**
      * Métodos estáticos para criação rápida de instâncias
      */
-    
+
     /**
      * Cria uma instância para autenticação JWT apenas
      */
-    public static function jwt($secret, array $options = [])
+    public static function jwt(string $secret, array $options = []): self
     {
         return new self(array_merge($options, [
             'authMethods' => ['jwt'],
@@ -432,7 +430,7 @@ class AuthMiddleware
     /**
      * Cria uma instância para Basic Auth apenas
      */
-    public static function basic(callable $callback, array $options = [])
+    public static function basic(callable $callback, array $options = []): self
     {
         return new self(array_merge($options, [
             'authMethods' => ['basic'],
@@ -443,7 +441,7 @@ class AuthMiddleware
     /**
      * Cria uma instância para Bearer Token apenas
      */
-    public static function bearer(callable $callback, array $options = [])
+    public static function bearer(callable $callback, array $options = []): self
     {
         return new self(array_merge($options, [
             'authMethods' => ['bearer'],
@@ -454,7 +452,7 @@ class AuthMiddleware
     /**
      * Cria uma instância para API Key apenas
      */
-    public static function apiKey(callable $callback, array $options = [])
+    public static function apiKey(callable $callback, array $options = []): self
     {
         return new self(array_merge($options, [
             'authMethods' => ['apikey'],
@@ -465,7 +463,7 @@ class AuthMiddleware
     /**
      * Cria uma instância para autenticação customizada
      */
-    public static function custom(callable $callback, array $options = [])
+    public static function custom(callable $callback, array $options = []): self
     {
         return new self(array_merge($options, [
             'authMethods' => ['custom'],
@@ -476,7 +474,7 @@ class AuthMiddleware
     /**
      * Cria uma instância flexível que aceita múltiplos métodos
      */
-    public static function flexible(array $options = [])
+    public static function flexible(array $options = []): self
     {
         return new self(array_merge([
             'allowMultiple' => true,
@@ -487,7 +485,7 @@ class AuthMiddleware
     /**
      * Cria uma instância estrita que requer autenticação
      */
-    public static function strict(array $options = [])
+    public static function strict(array $options = []): self
     {
         return new self(array_merge([
             'requireAuth' => true,
