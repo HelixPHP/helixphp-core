@@ -77,11 +77,13 @@ class Router
      * Adiciona uma nova rota com método, caminho, middlewares e handler.
      * @param string $method Método HTTP.
      * @param string $path Caminho da rota.
-     * @param mixed ...$handlers Middlewares e handler final (callable|array).
+     * @param callable $handler Handler da rota.
+     * @param array $metadata Metadados da rota.
+     * @param mixed ...$middlewares Middlewares opcionais.
      * @throws InvalidArgumentException Se o método não for suportado.
      * @return void
      */
-    public static function add(string $method, string $path, ...$handlers): void
+    public static function add(string $method, string $path, callable $handler, array $metadata = [], ...$middlewares): void
     {
         if (empty($path)) {
             $path = self::DEFAULT_PATH;
@@ -90,22 +92,12 @@ class Router
             throw new InvalidArgumentException("Method {$method} is not supported");
         }
         $method = strtoupper($method);
-        if (empty($handlers)) {
-            throw new InvalidArgumentException('Handler must be provided');
-        }
 
-        // Suporte a metadados: se o último argumento for array associativo, é metadado
-        $metadata = [];
-        if (is_array(end($handlers)) && self::isAssoc(end($handlers))) {
-            $metadata = self::sanitizeForJson(array_pop($handlers));
-        }
-
-        $handler = array_pop($handlers); // último argumento é o handler final
         if (!is_callable($handler)) {
             throw new InvalidArgumentException('Handler must be a callable function');
         }
 
-        foreach ($handlers as $mw) {
+        foreach ($middlewares as $mw) {
             if (!is_callable($mw)) {
                 throw new InvalidArgumentException('Middleware must be callable');
             }
@@ -134,9 +126,9 @@ class Router
         self::$routes[] = [
             'method' => $method,
             'path' => $path,
-            'middlewares' => array_merge($groupMiddlewares, $handlers),
+            'middlewares' => array_merge($groupMiddlewares, $middlewares),
             'handler' => $handler,
-            'metadata' => $metadata
+            'metadata' => self::sanitizeForJson($metadata)
         ];
     }
 
@@ -354,5 +346,53 @@ class Router
 
         // Restaurar prefixo anterior
         self::$current_group_prefix = $previousPrefix;
+    }
+
+    /**
+     * Registra uma rota GET
+     */
+    public static function get(string $path, $handler, array $metadata = []): void
+    {
+        self::add('GET', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota POST
+     */
+    public static function post(string $path, $handler, array $metadata = []): void
+    {
+        self::add('POST', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota PUT
+     */
+    public static function put(string $path, $handler, array $metadata = []): void
+    {
+        self::add('PUT', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota DELETE
+     */
+    public static function delete(string $path, $handler, array $metadata = []): void
+    {
+        self::add('DELETE', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota PATCH
+     */
+    public static function patch(string $path, $handler, array $metadata = []): void
+    {
+        self::add('PATCH', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota OPTIONS
+     */
+    public static function options(string $path, $handler, array $metadata = []): void
+    {
+        self::add('OPTIONS', $path, $handler, $metadata);
     }
 }

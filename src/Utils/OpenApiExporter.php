@@ -54,7 +54,8 @@ class OpenApiExporter
 
         // Process routes
         foreach ($allRoutes as $route) {
-            $path = self::convertPathParameters($route['url']);
+            // O Router usa 'path', mas podemos aceitar tanto 'path' quanto 'url' para compatibilidade
+            $path = self::convertPathParameters($route['path'] ?? $route['url'] ?? '');
             $method = strtolower($route['method']);
 
             if (!isset($paths[$path])) {
@@ -64,13 +65,18 @@ class OpenApiExporter
             // Extract documentation from comments
             $docInfo = self::parseDocumentation($route);
             $tags = $docInfo['tags'] ?? ['default'];
-            $summary = $docInfo['summary'] ?? ucfirst($method) . ' ' . $path;
+            $summary = $docInfo['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path;
             $description = $docInfo['description'] ?? '';
             $parameters = $docInfo['parameters'] ?? [];
+
+            // Determine if we should add global errors
+            $hasCustomResponses = !empty($docInfo['responses']);
             $responses = $docInfo['responses'] ?? ['200' => ['description' => 'Successful response']];
 
-            // Merge global errors
-            $responses = array_merge($responses, $globalErrors);
+            // Merge global errors only if no custom responses are provided
+            if (!$hasCustomResponses) {
+                $responses = $responses + $globalErrors;
+            }
 
             // Add tags to collection
             $allTags = array_merge($allTags, $tags);
@@ -121,8 +127,11 @@ class OpenApiExporter
     /**
      * Convert Express route parameters to OpenAPI format
      */
-    private static function convertPathParameters(string $path): string
+    private static function convertPathParameters(?string $path): string
     {
+        if (empty($path)) {
+            return '/';
+        }
         return preg_replace('/:(\w+)/', '{$1}', $path);
     }
 
@@ -139,17 +148,118 @@ class OpenApiExporter
             'responses' => []
         ];
 
-        // Try to extract documentation from callback if it's a closure
-        if (isset($route['callback']) && is_callable($route['callback'])) {
-            $reflection = new \ReflectionFunction($route['callback']);
-            $docComment = $reflection->getDocComment();
+        // Primeiro, vamos verificar se temos metadados explícitos na rota
+        if (isset($route['metadata']) && is_array($route['metadata'])) {
+            $metadata = $route['metadata'];
 
-            if ($docComment) {
-                $docInfo = self::parseDocComment($docComment);
+            if (isset($metadata['summary'])) {
+                $docInfo['summary'] = $metadata['summary'];
+            }
+
+            if (isset($metadata['description'])) {
+                $docInfo['description'] = $metadata['description'];
+            }
+
+            if (isset($metadata['tags'])) {
+                $docInfo['tags'] = is_array($metadata['tags']) ? $metadata['tags'] : [$metadata['tags']];
+            }
+
+            if (isset($metadata['parameters'])) {
+                $docInfo['parameters'] = self::convertParameters($metadata['parameters']);
+            }
+
+            if (isset($metadata['responses'])) {
+                $docInfo['responses'] = self::normalizeResponses($metadata['responses']);
             }
         }
 
+        // Se não temos summary e temos um handler, tentamos extrair da reflection
+        if (empty($docInfo['summary'])) {
+            $handler = $route['handler'] ?? $route['callback'] ?? null;
+            if ($handler && is_callable($handler)) {
+                try {
+                    $reflection = new \ReflectionFunction($handler);
+                    $docComment = $reflection->getDocComment();
+
+                    if ($docComment) {
+                        $parsedDoc = self::parseDocComment($docComment);
+                        $docInfo = array_merge($docInfo, array_filter($parsedDoc));
+                    }
+                } catch (\Exception $e) {
+                    // Ignore reflection errors
+                }
+            }
+        }
+
+        // Se ainda não temos summary, gerar um padrão
+        if (empty($docInfo['summary'])) {
+            $method = strtoupper($route['method'] ?? 'GET');
+            $path = $route['path'] ?? '/';
+            $docInfo['summary'] = "Endpoint {$method} {$path}";
+        }
+
         return $docInfo;
+    }
+
+    /**
+     * Convert parameter definitions to OpenAPI format
+     */
+    private static function convertParameters(array $parameters): array
+    {
+        $converted = [];
+
+        foreach ($parameters as $name => $config) {
+            if (is_string($config)) {
+                // Simple string definition
+                $converted[] = [
+                    'name' => $name,
+                    'in' => 'path',
+                    'required' => true,
+                    'schema' => ['type' => self::phpTypeToOpenApi($config)]
+                ];
+            } elseif (is_array($config)) {
+                // Full parameter definition
+                $param = [
+                    'name' => $name,
+                    'in' => $config['in'] ?? 'path',
+                    'required' => $config['required'] ?? true,
+                    'schema' => [
+                        'type' => self::phpTypeToOpenApi($config['type'] ?? 'string')
+                    ]
+                ];
+
+                if (isset($config['description'])) {
+                    $param['description'] = $config['description'];
+                }
+
+                $converted[] = $param;
+            }
+        }
+
+        return $converted;
+    }
+
+    /**
+     * Normalize response definitions to OpenAPI format
+     */
+    private static function normalizeResponses(array $responses): array
+    {
+        $normalized = [];
+
+        foreach ($responses as $code => $response) {
+            if (is_string($response)) {
+                // Simple string description
+                $normalized[$code] = ['description' => $response];
+            } elseif (is_array($response) && isset($response['description'])) {
+                // Already in proper format
+                $normalized[$code] = $response;
+            } else {
+                // Fallback
+                $normalized[$code] = ['description' => 'Response'];
+            }
+        }
+
+        return $normalized;
     }
 
     /**
@@ -220,7 +330,7 @@ class OpenApiExporter
     }
 
     /**
-     * Convert PHP types to OpenAPI types
+     * Convert PHP type to OpenAPI type
      */
     private static function phpTypeToOpenApi(string $phpType): string
     {

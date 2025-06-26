@@ -7,6 +7,7 @@ use Express\Http\Response;
 
 /**
  * Testes para funcionalidades de streaming da classe Response.
+ * @group streaming
  */
 class ResponseStreamingTest extends TestCase
 {

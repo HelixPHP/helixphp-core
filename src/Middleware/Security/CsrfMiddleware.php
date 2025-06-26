@@ -54,7 +54,7 @@ class CsrfMiddleware extends BaseMiddleware
 
     private function generateToken(): string
     {
-        return bin2hex(random_bytes($this->options['tokenLength']));
+        return bin2hex(random_bytes($this->options['tokenLength'] / 2));
     }
 
     private function getTokenFromRequest($request): ?string
@@ -82,16 +82,43 @@ class CsrfMiddleware extends BaseMiddleware
         return hash_equals($_SESSION[$this->options['sessionKey']], $token);
     }
 
-    public function getToken(): string
+    /**
+     * Obtém o token CSRF atual da sessão (método estático)
+     */
+    public static function getToken(string $sessionKey = '_csrf_token', int $tokenLength = 32): string
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
-        if (!isset($_SESSION[$this->options['sessionKey']])) {
-            $_SESSION[$this->options['sessionKey']] = $this->generateToken();
+        if (!isset($_SESSION[$sessionKey])) {
+            $_SESSION[$sessionKey] = bin2hex(random_bytes($tokenLength / 2));
         }
 
-        return $_SESSION[$this->options['sessionKey']];
+        return $_SESSION[$sessionKey];
+    }
+
+    /**
+     * Gera um campo hidden HTML com o token CSRF
+     */
+    public static function hiddenField(string $fieldName = 'csrf_token', string $sessionKey = '_csrf_token'): string
+    {
+        $token = self::getToken($sessionKey);
+        return sprintf('<input type="hidden" name="%s" value="%s">',
+            htmlspecialchars($fieldName, ENT_QUOTES),
+            htmlspecialchars($token, ENT_QUOTES)
+        );
+    }
+
+    /**
+     * Gera uma meta tag HTML com o token CSRF
+     */
+    public static function metaTag(string $name = 'csrf-token', string $sessionKey = '_csrf_token'): string
+    {
+        $token = self::getToken($sessionKey);
+        return sprintf('<meta name="%s" content="%s">',
+            htmlspecialchars($name, ENT_QUOTES),
+            htmlspecialchars($token, ENT_QUOTES)
+        );
     }
 }

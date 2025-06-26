@@ -42,9 +42,13 @@ abstract class BaseMiddleware implements MiddlewareInterface
             return $request->headers->getHeader($header) ?? $default;
         }
 
-        // Handle generic objects for testing
-        if (is_object($request) && isset($request->headers) && is_array($request->headers)) {
-            return $request->headers[$header] ?? $default;
+        // Handle generic objects for testing - check if headers is an object
+        if (is_object($request) && isset($request->headers)) {
+            if (is_object($request->headers) && property_exists($request->headers, $header)) {
+                return $request->headers->$header;
+            } elseif (is_array($request->headers) && isset($request->headers[$header])) {
+                return $request->headers[$header];
+            }
         }
 
         // Fallback to $_SERVER for testing

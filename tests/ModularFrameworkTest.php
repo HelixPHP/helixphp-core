@@ -40,6 +40,9 @@ class ModularFrameworkTest extends TestCase
         $this->assertEquals('{"test":"data"}', $output);
     }
 
+    /**
+     * @group streaming
+     */
     public function testStreamingResponse()
     {
         $response = new Response();

@@ -136,7 +136,9 @@ class AuthMiddleware extends BaseMiddleware
         }
 
         try {
-            $payload = JWTHelper::decode($token, $this->options['jwtSecret'], $this->options['jwtAlgorithm']);
+            $payload = JWTHelper::decode($token, $this->options['jwtSecret'], [
+                'algorithm' => $this->options['jwtAlgorithm']
+            ]);
             return ['success' => true, 'user' => $payload];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Invalid JWT token: ' . $e->getMessage()];
@@ -238,7 +240,12 @@ class AuthMiddleware extends BaseMiddleware
             $callback = $this->options['customAuthCallback'];
             $result = $callback($request);
             if (is_array($result)) {
-                return $result;
+                // Se já tem a estrutura esperada, retorna como está
+                if (isset($result['success'])) {
+                    return $result;
+                }
+                // Senão, trata como dados do usuário
+                return ['success' => true, 'user' => $result];
             } elseif ($result) {
                 return ['success' => true, 'user' => $result];
             }
@@ -252,21 +259,64 @@ class AuthMiddleware extends BaseMiddleware
      */
     private function getAuthorizationHeader($request): ?string
     {
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            return $_SERVER['HTTP_AUTHORIZATION'];
-        }
+        return $this->getHeader($request, 'authorization') ?? $this->getHeader($request, 'Authorization');
+    }
 
-        if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            return $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
-        }
+    /**
+     * Factory method para JWT authentication
+     */
+    public static function jwt(string $secret, string $algorithm = 'HS256'): self
+    {
+        return new self([
+            'authMethods' => ['jwt'],
+            'jwtSecret' => $secret,
+            'jwtAlgorithm' => $algorithm
+        ]);
+    }
 
-        if (function_exists('apache_request_headers')) {
-            $headers = apache_request_headers();
-            if (isset($headers['Authorization'])) {
-                return $headers['Authorization'];
-            }
-        }
+    /**
+     * Factory method para Basic authentication
+     */
+    public static function basic(callable $callback): self
+    {
+        return new self([
+            'authMethods' => ['basic'],
+            'basicAuthCallback' => $callback
+        ]);
+    }
 
-        return null;
+    /**
+     * Factory method para Bearer token authentication
+     */
+    public static function bearer(callable $callback): self
+    {
+        return new self([
+            'authMethods' => ['bearer'],
+            'bearerTokenCallback' => $callback
+        ]);
+    }
+
+    /**
+     * Factory method para custom authentication
+     */
+    public static function custom(callable $callback): self
+    {
+        return new self([
+            'authMethods' => ['custom'],
+            'customAuthCallback' => $callback
+        ]);
+    }
+
+    /**
+     * Factory method para API Key authentication
+     */
+    public static function apiKey(callable $callback, string $headerName = 'X-API-Key', string $queryParam = 'api_key'): self
+    {
+        return new self([
+            'authMethods' => ['apikey'],
+            'apiKeyCallback' => $callback,
+            'headerName' => $headerName,
+            'queryParam' => $queryParam
+        ]);
     }
 }

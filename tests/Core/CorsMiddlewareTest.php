@@ -107,47 +107,13 @@ class CorsMiddlewareTest extends TestCase
         $this->assertContains('Access-Control-Allow-Origin: null', $response->headers);
     }    public function testOptionsPreflightRequest(): void
     {
-        // Criar um middleware modificado que não usa exit() para testes
-        $testMiddleware = new class extends CorsMiddleware {
-            public function __construct(array $options = [])
-            {
-                parent::__construct($options);
-            }
-
-            public function __invoke(mixed $request, mixed $response, callable $next): mixed
-            {
-                // Acessar as opções através de reflexão já que $options é private na classe pai
-                $reflection = new \ReflectionClass(get_parent_class($this));
-                $optionsProperty = $reflection->getProperty('options');
-                $optionsProperty->setAccessible(true);
-                $options = $optionsProperty->getValue($this);
-
-                $origin = $options['origin'];
-                if (is_array($origin)) {
-                    $origin = isset($_SERVER['HTTP_ORIGIN']) && in_array($_SERVER['HTTP_ORIGIN'], $origin)
-                        ? $_SERVER['HTTP_ORIGIN'] : 'null';
-                }
-                $response->header('Access-Control-Allow-Origin', $origin);
-                $response->header('Access-Control-Allow-Methods', $options['methods']);
-                $response->header('Access-Control-Allow-Headers', $options['headers']);
-                if ($options['credentials']) {
-                    $response->header('Access-Control-Allow-Credentials', 'true');
-                }
-                // Para testes, simular o comportamento do OPTIONS sem exit
-                if ($request->method === 'OPTIONS') {
-                    $response->status(204)->end();
-                    // Ao invés de exit, apenas retornar sem chamar next()
-                    return null;
-                }
-                return $next();
-            }
-        };
+        $middleware = new CorsMiddleware();
 
         $request = (object) ['method' => 'OPTIONS'];
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $testMiddleware($request, $response, function() use (&$nextCalled) {
+        $result = $middleware($request, $response, function() use (&$nextCalled) {
             $nextCalled = true;
         });
 
