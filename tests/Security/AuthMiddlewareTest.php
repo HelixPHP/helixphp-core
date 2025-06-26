@@ -145,7 +145,9 @@ class AuthMiddlewareTest extends TestCase
 
         $this->assertTrue($nextCalled);
         $this->assertTrue(property_exists($request, 'user'));
-    }    public function testCustomAuthentication(): void
+    }
+
+    public function testCustomAuthentication(): void
     {
         $customAuth = function($request) {
             if (($request->headers->customAuth ?? '') === 'valid') {
