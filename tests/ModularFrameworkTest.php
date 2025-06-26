@@ -6,6 +6,19 @@ use Express\Http\Response;
 
 class ModularFrameworkTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        // Clean any output buffers that might have been opened, but keep PHPUnit's own buffer
+        while (ob_get_level() > 1) {
+            ob_end_clean();
+        }
+
+        // Clear current buffer content if any
+        if (ob_get_level() && ob_get_length()) {
+            ob_clean();
+        }
+    }
+
     public function testHttpRequestBasic()
     {
         $request = new Request('GET', '/', '/');
