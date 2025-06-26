@@ -53,8 +53,8 @@ $app->run();
 
 - 🔐 **Autenticação Multi-método**: JWT, Basic Auth, Bearer Token, API Key
 - 🛡️ **Segurança Avançada**: CSRF, XSS, Rate Limiting, Headers de Segurança
-- � **Streaming**: Suporte completo para streaming de dados, SSE e arquivos grandes
-- �📚 **Documentação OpenAPI/Swagger**: Geração automática de documentação
+- 📡 **Streaming**: Suporte completo para streaming de dados, SSE e arquivos grandes
+- 📚 **Documentação OpenAPI/Swagger**: Geração automática de documentação
 - 🎯 **Middlewares Modulares**: Sistema flexível de middlewares
 - ⚡ **Performance**: Otimizado para alta performance
 - 🧪 **Testado**: 186+ testes unitários e 100% de cobertura de código
