@@ -22,31 +22,59 @@ class RouterInstance
         $this->middlewares[] = $middleware;
     }
 
-    public function get(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function get(string $path, ...$handlers): void
     {
         $this->add('GET', $path, ...$handlers);
     }
-    public function post(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function post(string $path, ...$handlers): void
     {
         $this->add('POST', $path, ...$handlers);
     }
-    public function put(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function put(string $path, ...$handlers): void
     {
         $this->add('PUT', $path, ...$handlers);
     }
-    public function delete(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function delete(string $path, ...$handlers): void
     {
         $this->add('DELETE', $path, ...$handlers);
     }
-    public function patch(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function patch(string $path, ...$handlers): void
     {
         $this->add('PATCH', $path, ...$handlers);
     }
-    public function options(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function options(string $path, ...$handlers): void
     {
         $this->add('OPTIONS', $path, ...$handlers);
     }
-    public function head(string $path, callable|array ...$handlers): void
+    /**
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    public function head(string $path, ...$handlers): void
     {
         $this->add('HEAD', $path, ...$handlers);
     }
@@ -60,7 +88,12 @@ class RouterInstance
         $this->add($httpMethod, $path, ...$handlers);
     }
 
-    private function add(string $method, string $path, callable|array ...$handlers): void
+    /**
+     * @param string $method
+     * @param string $path
+     * @param callable|array ...$handlers
+     */
+    private function add(string $method, string $path, ...$handlers): void
     {
         if (empty($path)) {
             $path = '/';

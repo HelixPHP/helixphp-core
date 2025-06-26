@@ -130,11 +130,13 @@ class Request
       // Combine parameters with values
         if (!empty($params)) {
             $paramsArray = array_combine($params, array_slice($values, 0, count($params)));
-            foreach ($paramsArray as $key => $value) {
-                if (is_numeric($value)) {
-                    $value = (int)$value; // Convert numeric values to integers
+            if ($paramsArray !== false) {
+                foreach ($paramsArray as $key => $value) {
+                    if (is_numeric($value)) {
+                        $value = (int)$value; // Convert numeric values to integers
+                    }
+                    $this->params->{$key} = $value;
                 }
-                $this->params->{$key} = $value;
             }
         }
     }
