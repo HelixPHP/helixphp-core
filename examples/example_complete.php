@@ -7,7 +7,7 @@ $uploadRouter = require __DIR__ . '/snippets/upload_routes.php';
 $adminRouter = require __DIR__ . '/snippets/admin_routes.php';
 $blogRouter = require __DIR__ . '/snippets/blog_routes.php';
 
-use Express\SRC\Services\RequestValidationMiddleware;
+use Express\Validation\RequestValidationMiddleware;
 $app->use(new RequestValidationMiddleware());
 
 $app->use($userRouter);
@@ -17,8 +17,8 @@ $app->use($adminRouter);
 $app->use($blogRouter);
 
 // Ativa documentação automática
-use Express\SRC\Controller\Router;
-use Express\SRC\Services\OpenApiDocsMiddleware;
+use Express\Routing\Router;
+use Express\Validation\OpenApiDocsMiddleware;
 new OpenApiDocsMiddleware($app, [
     Router::class,
     $userRouter,

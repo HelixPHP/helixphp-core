@@ -1,6 +1,6 @@
 <?php
 // Exemplo de uso do helper de sanitização em middleware e rota
-use Express\SRC\Helpers\Utils;
+use Express\Helpers\Utils;
 
 $router->use(function($req, $res, $next) {
     // Sanitiza todos os parâmetros de query

@@ -43,7 +43,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
     
     - name: Check PHP syntax
-      run: find SRC -name "*.php" -exec php -l {} \;
+      run: find src -name "*.php" -exec php -l {} \;
     
     - name: Run PHPStan
       run: |
@@ -56,7 +56,7 @@ jobs:
     - name: Run PHP CS
       run: |
         if [ -f "vendor/bin/phpcs" ]; then
-          ./vendor/bin/phpcs --standard=PSR12 SRC/
+          ./vendor/bin/phpcs --standard=PSR12 src/
         else
           echo "PHPCS not installed, skipping code style check"
         fi

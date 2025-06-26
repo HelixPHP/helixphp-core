@@ -8,10 +8,10 @@ $path = array_slice($path, 0, count($path) - 2); // volta duas pastas
 $path = implode(DIRECTORY_SEPARATOR, $path);
 require_once $path . '/vendor/autoload.php';
 
-use Express\SRC\ApiExpress;
-use Express\SRC\Services\CorsMiddleware;
-use Express\SRC\Services\OpenApiDocsMiddleware;
-use Express\SRC\Services\ErrorHandlerMiddleware;
+use Express\ApiExpress;
+use Express\Services\CorsMiddleware;
+use Express\Services\OpenApiDocsMiddleware;
+use Express\Services\ErrorHandlerMiddleware;
 
 $baseUrl = "https://{$_SERVER['SSL_TLS_SNI']}{$_SERVER['SCRIPT_NAME']}";
 substr($baseUrl, -1) === '/' && $baseUrl = substr($baseUrl, 0, -1);

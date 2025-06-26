@@ -11,7 +11,7 @@ Express-PHP/
 ├── composer.json       # Package configuration
 ├── phpunit.xml         # PHPUnit configuration
 ├── phpstan.neon        # PHPStan configuration
-├── SRC/                # Source code (PSR-4: Express\)
+├── src/                # Source code (PSR-4: Express\)
 ├── tests/              # PHPUnit tests
 ├── examples/           # Usage examples
 ├── docs/               # Documentation
@@ -69,7 +69,7 @@ composer test
 git status
 
 # Stage specific files
-git add SRC/ tests/ docs/
+git add src/ tests/ docs/
 
 # Commit changes
 git commit -m "feat: add new feature"
@@ -81,7 +81,7 @@ git push origin main
 ### Files to Track vs Ignore
 
 #### ✅ Track These:
-- Source code (`SRC/`)
+- Source code (`src/`)
 - Tests (`tests/`)
 - Documentation (`docs/`)
 - Configuration files (`composer.json`, `phpunit.xml`)

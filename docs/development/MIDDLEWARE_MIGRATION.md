@@ -7,7 +7,7 @@ Os middlewares do Express PHP foram reorganizados em uma estrutura mais profissi
 ## 📁 Nova Estrutura
 
 ```
-SRC/Middlewares/
+src/Middlewares/
 ├── README.md                 # Documentação dos middlewares
 ├── index.php                 # Importação automática + aliases
 ├── Security/                 # 🔒 Middlewares de Segurança
@@ -27,23 +27,23 @@ SRC/Middlewares/
 
 ### Antes (Antigo)
 ```php
-use Express\SRC\Services\CsrfMiddleware;
-use Express\SRC\Services\XssMiddleware;
-use Express\SRC\Services\SecurityMiddleware;
-use Express\SRC\Services\CorsMiddleware;
-use Express\SRC\Services\RateLimitMiddleware;
+use Express\src\Services\CsrfMiddleware;
+use Express\src\Services\XssMiddleware;
+use Express\src\Services\SecurityMiddleware;
+use Express\src\Services\CorsMiddleware;
+use Express\src\Services\RateLimitMiddleware;
 ```
 
 ### Depois (Novo)
 ```php
 // Middlewares de Segurança
-use Express\SRC\Middlewares\Security\CsrfMiddleware;
-use Express\SRC\Middlewares\Security\XssMiddleware;
-use Express\SRC\Middlewares\Security\SecurityMiddleware;
+use Express\src\Middlewares\Security\CsrfMiddleware;
+use Express\src\Middlewares\Security\XssMiddleware;
+use Express\src\Middlewares\Security\SecurityMiddleware;
 
 // Middlewares Core
-use Express\SRC\Middlewares\Core\CorsMiddleware;
-use Express\SRC\Middlewares\Core\RateLimitMiddleware;
+use Express\src\Middlewares\Core\CorsMiddleware;
+use Express\src\Middlewares\Core\RateLimitMiddleware;
 ```
 
 ## ✅ Compatibilidade Mantida
@@ -52,9 +52,9 @@ use Express\SRC\Middlewares\Core\RateLimitMiddleware;
 
 ```php
 // Estes imports antigos ainda funcionam:
-use Express\SRC\Services\SecurityMiddleware;  // ✅ Funciona
-use Express\SRC\Services\CsrfMiddleware;      // ✅ Funciona
-use Express\SRC\Services\XssMiddleware;       // ✅ Funciona
+use Express\src\Services\SecurityMiddleware;  // ✅ Funciona
+use Express\src\Services\CsrfMiddleware;      // ✅ Funciona
+use Express\src\Services\XssMiddleware;       // ✅ Funciona
 ```
 
 ## 🚀 Como Migrar (Recomendado)
@@ -62,16 +62,16 @@ use Express\SRC\Services\XssMiddleware;       // ✅ Funciona
 ### 1. Importação Automática
 ```php
 // Importa todos os middlewares + cria aliases
-require_once 'SRC/Middlewares/index.php';
+require_once 'src/Middlewares/index.php';
 ```
 
 ### 2. Importação Específica
 ```php
 // Apenas middlewares de segurança
-use Express\SRC\Middlewares\Security\SecurityMiddleware;
+use Express\src\Middlewares\Security\SecurityMiddleware;
 
 // Apenas middlewares core
-use Express\SRC\Middlewares\Core\CorsMiddleware;
+use Express\src\Middlewares\Core\CorsMiddleware;
 ```
 
 ### 3. Atualização Gradual
@@ -94,7 +94,7 @@ use Express\SRC\Middlewares\Core\CorsMiddleware;
 ### ✅ Documentação Atualizada
 - [x] `README.md` - Namespaces atualizados
 - [x] `docs/objetos.md` - Documentação de middlewares
-- [x] `SRC/Middlewares/README.md` - Nova documentação
+- [x] `src/Middlewares/README.md` - Nova documentação
 
 ## 🧪 Testes de Migração
 

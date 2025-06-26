@@ -62,7 +62,7 @@ for file in "${required_files[@]}"; do
     fi
 done
 
-required_dirs=("SRC" "docs")
+required_dirs=("src" "docs")
 for dir in "${required_dirs[@]}"; do
     if [ -d "$dir" ]; then
         status "Diretório $dir presente"
@@ -74,7 +74,7 @@ done
 # 3. Verificar sintaxe PHP
 echo "🔧 Verificando sintaxe PHP..."
 
-find SRC -name "*.php" -exec php -l {} \; > /dev/null
+find src -name "*.php" -exec php -l {} \; > /dev/null
 if [ $? -eq 0 ]; then
     status "Sintaxe PHP válida em todos os arquivos"
 else

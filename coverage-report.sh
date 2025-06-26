@@ -72,7 +72,7 @@ echo "🔍 ANÁLISE DE QUALIDADE:"
 echo "=========================================="
 
 # Contar linhas de código
-src_lines=$(find SRC -name "*.php" -exec wc -l {} + | tail -1 | awk '{print $1}')
+src_lines=$(find src -name "*.php" -exec wc -l {} + | tail -1 | awk '{print $1}')
 test_lines=$(find tests -name "*.php" -exec wc -l {} + | tail -1 | awk '{print $1}')
 
 echo "  📊 Linhas de código fonte: $src_lines"

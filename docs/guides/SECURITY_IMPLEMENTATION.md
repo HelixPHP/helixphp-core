@@ -5,7 +5,7 @@
 Foram implementados com sucesso os seguintes middlewares de segurança para o framework Express PHP:
 
 ### 🛡️ 1. CsrfMiddleware
-**Arquivo:** `SRC/Services/CsrfMiddleware.php`
+**Arquivo:** `src/Services/CsrfMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Proteção contra ataques CSRF (Cross-Site Request Forgery)
@@ -21,7 +21,7 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - `metaTag()` - Gera meta tag HTML para AJAX
 
 ### 🔒 2. XssMiddleware  
-**Arquivo:** `SRC/Services/XssMiddleware.php`
+**Arquivo:** `src/Services/XssMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Proteção contra ataques XSS (Cross-Site Scripting)
@@ -37,7 +37,7 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - `cleanUrl()` - Limpa URLs maliciosas
 
 ### 🛡️🔒 3. SecurityMiddleware
-**Arquivo:** `SRC/Services/SecurityMiddleware.php`
+**Arquivo:** `src/Services/SecurityMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Middleware combinado (CSRF + XSS)
@@ -83,7 +83,7 @@ Content-Security-Policy: [configurável]
 
 ### Uso Básico (Recomendado):
 ```php
-use Express\SRC\Services\SecurityMiddleware;
+use Express\Services\SecurityMiddleware;
 
 $app = new ApiExpress();
 $app->use(SecurityMiddleware::create());
@@ -96,8 +96,8 @@ $app->use(SecurityMiddleware::strict());
 
 ### Uso Individual:
 ```php
-use Express\SRC\Services\CsrfMiddleware;
-use Express\SRC\Services\XssMiddleware;
+use Express\Services\CsrfMiddleware;
+use Express\Services\XssMiddleware;
 
 $app->use(new XssMiddleware());
 $app->use(new CsrfMiddleware());

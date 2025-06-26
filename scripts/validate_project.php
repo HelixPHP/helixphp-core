@@ -39,10 +39,10 @@ class ProjectValidator
         echo "📁 Validando estrutura do projeto...\n";
 
         $requiredDirs = [
-            'SRC/',
-            'SRC/Middlewares/',
-            'SRC/Middlewares/Security/',
-            'SRC/Helpers/',
+            'src/',
+            'src/Middlewares/',
+            'src/Middlewares/Security/',
+            'src/Helpers/',
             'examples/',
             'tests/',
             'docs/'
@@ -57,9 +57,9 @@ class ProjectValidator
         }
 
         $requiredFiles = [
-            'SRC/ApiExpress.php',
-            'SRC/Middlewares/Security/AuthMiddleware.php',
-            'SRC/Helpers/JWTHelper.php',
+            'src/ApiExpress.php',
+            'src/Middlewares/Security/AuthMiddleware.php',
+            'src/Helpers/JWTHelper.php',
             'composer.json',
             'README.md',
             'docs/guides/PUBLISHING_GUIDE.md'
@@ -338,7 +338,7 @@ class ProjectValidator
         }
 
         // Verificar configurações de segurança no código
-        $securityFiles = glob('SRC/Middlewares/Security/*.php');
+        $securityFiles = glob('src/Middlewares/Security/*.php');
         if (count($securityFiles) >= 2) {
             $this->passed[] = "Múltiplos middlewares de segurança implementados";
         } else {

@@ -1,6 +1,6 @@
 <?php
 
-use Express\SRC\Controller\RouterInstance;
+use Express\Controller\RouterInstance;
 
 // Sub-router especializado para rotas de blog
 $blogRouter = new RouterInstance('/blog');

@@ -35,7 +35,7 @@ jobs:
       run: composer validate --strict
 
     - name: Check PHP syntax
-      run: find SRC -name "*.php" -exec php -l {} \;
+      run: find src -name "*.php" -exec php -l {} \;
 
     - name: Run PHPStan
       run: |
@@ -46,7 +46,7 @@ jobs:
       run: ./vendor/bin/phpunit --no-coverage
 
     - name: Run code style check
-      run: ./vendor/bin/phpcs --standard=PSR12 SRC/ --report=summary
+      run: ./vendor/bin/phpcs --standard=PSR12 src/ --report=summary
 
     - name: Prepare release script
       run: |
@@ -81,7 +81,7 @@ jobs:
         mkdir -p build/express-php
 
         # Copy source files
-        cp -r SRC build/express-php/
+        cp -r src build/express-php/
         cp composer.json build/express-php/
         cp README.md build/express-php/
         cp LICENSE build/express-php/

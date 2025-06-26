@@ -1,6 +1,6 @@
 <?php
 
-use Express\SRC\Controller\RouterInstance;
+use Express\Controller\RouterInstance;
 
 // Sub-router especializado para rotas de usuário
 $userRouter = new RouterInstance('/user');
@@ -43,7 +43,7 @@ $userRouter->post('/:id/:rotina', function ($request, $response) {
     $response->status(200)->json(['message' => "{$request->method}: User-Agent: {$request->headers->userAgent}, User ID: {$request->params->id}, Rotina: {$request->params->rotina}"]);
 }, ['tags' => ['User']]);
 // Exemplo de método HTTP customizado
-Express\SRC\Controller\Router::addHttpMethod('CUSTOM');
+Express\Controller\Router::addHttpMethod('CUSTOM');
 $userRouter->custom('/custom/:id', function ($request, $response) {
     $response->status(200)->json([
         'message' => 'Método CUSTOM executado',
