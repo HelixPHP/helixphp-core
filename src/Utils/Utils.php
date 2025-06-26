@@ -68,11 +68,42 @@ class Utils
     }
 
     /**
-     * Validação de string.
-     * @param mixed $value
-     * @return bool
+     * Verificar se um valor é estritamente uma string.
+     *
+     * Este método retorna true apenas para valores que são do tipo string.
+     * Valores numéricos (int, float) retornam false.
+     *
+     * @param mixed $value O valor a ser verificado
+     * @return bool True se for string, false caso contrário
+     *
+     * @example
+     * Utils::isString('hello');  // true
+     * Utils::isString('123');    // true
+     * Utils::isString(123);      // false
+     * Utils::isString(12.34);    // false
      */
     public static function isString(mixed $value): bool
+    {
+        return is_string($value);
+    }
+
+    /**
+     * Verificar se um valor é uma string ou numérico (conversível para string).
+     *
+     * Este método retorna true para strings e valores numéricos que podem
+     * ser convertidos para string de forma segura.
+     *
+     * @param mixed $value O valor a ser verificado
+     * @return bool True se for string ou numérico, false caso contrário
+     *
+     * @example
+     * Utils::isStringOrNumeric('hello');  // true
+     * Utils::isStringOrNumeric('123');    // true
+     * Utils::isStringOrNumeric(123);      // true
+     * Utils::isStringOrNumeric(12.34);    // true
+     * Utils::isStringOrNumeric([]);       // false
+     */
+    public static function isStringOrNumeric(mixed $value): bool
     {
         return is_string($value) || is_numeric($value);
     }

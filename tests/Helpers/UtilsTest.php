@@ -118,13 +118,29 @@ class UtilsTest extends TestCase
         // Valid strings
         $this->assertTrue(Utils::isString('hello'));
         $this->assertTrue(Utils::isString(''));
-        $this->assertTrue(Utils::isString(123));
-        $this->assertTrue(Utils::isString(12.34));
+        $this->assertTrue(Utils::isString('123'));
 
-        // Invalid strings
+        // Invalid strings (numeric values should not be considered strings)
+        $this->assertFalse(Utils::isString(123));
+        $this->assertFalse(Utils::isString(12.34));
         $this->assertFalse(Utils::isString([]));
         $this->assertFalse(Utils::isString(null));
         $this->assertFalse(Utils::isString(true));
+    }
+
+    public function testIsStringOrNumeric(): void
+    {
+        // Valid string or numeric values
+        $this->assertTrue(Utils::isStringOrNumeric('hello'));
+        $this->assertTrue(Utils::isStringOrNumeric(''));
+        $this->assertTrue(Utils::isStringOrNumeric('123'));
+        $this->assertTrue(Utils::isStringOrNumeric(123));
+        $this->assertTrue(Utils::isStringOrNumeric(12.34));
+
+        // Invalid values
+        $this->assertFalse(Utils::isStringOrNumeric([]));
+        $this->assertFalse(Utils::isStringOrNumeric(null));
+        $this->assertFalse(Utils::isStringOrNumeric(true));
     }
 
     public function testIsArray(): void
