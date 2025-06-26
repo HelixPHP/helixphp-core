@@ -16,7 +16,7 @@ A documentação do Express PHP foi revisada e consolidada para máxima clareza 
     ├── 📄 README.md                # 📋 Índice principal da documentação
     │
     ├── 📁 pt-br/                   # 🇧🇷 Documentação em português
-    │   ├── README.md               # README principal PT-BR  
+    │   ├── README.md               # README principal PT-BR
     │   ├── AUTH_MIDDLEWARE.md      # Guia completo de autenticação
     │   └── objetos.md              # Referência de objetos e API
     │
@@ -35,10 +35,12 @@ A documentação do Express PHP foi revisada e consolidada para máxima clareza 
     │   ├── INTERNATIONALIZATION.md # Suporte multilíngue
     │   └── COMPOSER_PSR4.md        # Configuração PSR-4
     │
-    └── 📁 implementation/          # 📋 Status de implementação
+    ├── 📁 implementation/          # 📋 Status de implementação
         ├── AUTH_IMPLEMENTATION_SUMMARY.md # Resumo da implementação
         ├── PROJECT_COMPLETION.md   # Status final do projeto
         └── PROJECT_ORGANIZATION.md # Estrutura organizacional
+    │
+    └── 📄 TEST_COVERAGE_REPORT.md  # 🧪 Relatório unificado de testes e cobertura
 ```
 
 ## 🎯 Pontos de Entrada
@@ -47,7 +49,7 @@ A documentação do Express PHP foi revisada e consolidada para máxima clareza 
 1. **[README.md](README.md)** - Documentação principal do projeto
 2. **[docs/pt-br/README.md](docs/pt-br/README.md)** - Para usuários brasileiros
 
-### 🛠️ Para Desenvolvedores  
+### 🛠️ Para Desenvolvedores
 1. **[CONTRIBUTING.md](CONTRIBUTING.md)** - Como contribuir
 2. **[docs/development/](docs/development/)** - Guias de desenvolvimento
 
@@ -59,7 +61,7 @@ A documentação do Express PHP foi revisada e consolidada para máxima clareza 
 
 ### 🔄 Remoção de Duplicações
 - ✅ **DOCUMENTATION_INDEX.md** simplificado (era redundante com docs/README.md)
-- ✅ **PROJECT_ORGANIZATION.md** focado apenas na estrutura  
+- ✅ **PROJECT_ORGANIZATION.md** focado apenas na estrutura
 - ✅ **PROJECT_COMPLETION.md** conciso e direto
 - ✅ Removed duplicated content between files
 

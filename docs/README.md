@@ -31,6 +31,7 @@ Bem-vindo à documentação completa do Express PHP Microframework!
 ## 📋 Status de Implementação
 
 ### 🎯 Documentos Técnicos
+- **[Cobertura de Testes](TEST_COVERAGE_REPORT.md)** - Relatório completo de testes e cobertura
 - **[Sumário de Auth](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Implementação de autenticação
 - **[Conclusão do Projeto](implementation/PROJECT_COMPLETION.md)** - Status final e validações
 - **[Organização do Projeto](implementation/PROJECT_ORGANIZATION.md)** - Estrutura e organização
@@ -72,5 +73,5 @@ Bem-vindo à documentação completa do Express PHP Microframework!
 
 ---
 
-**Express PHP** - Microframework inspirado no Express.js  
+**Express PHP** - Microframework inspirado no Express.js
 Desenvolvido com ❤️ por [Caio Alberto Fernandes](https://github.com/CAFernandes)
