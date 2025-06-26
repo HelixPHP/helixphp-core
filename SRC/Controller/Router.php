@@ -72,7 +72,7 @@ class Router
    * Adiciona uma nova rota com método, caminho, middlewares e handler.
    * @param string $method Método HTTP.
    * @param string $path Caminho da rota.
-   * @param callable|array ...$handlers Middlewares e handler final.
+   * @param mixed ...$handlers Middlewares e handler final (callable|array).
    * @throws InvalidArgumentException Se o método não for suportado.
    * @return void
    */
