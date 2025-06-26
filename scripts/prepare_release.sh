@@ -1,23 +1,31 @@
 #!/bin/bash
 
-# Script de preparação para publicação do Express PHP
-# Este script limpa e valida o projeto antes da publicação
+# Script de preparação para publicação do Express PHP v2.0.0
+# Este script limpa, valida e prepara o projeto para release
 
 set -e
 
-echo "🧹 Preparando Express PHP para publicação..."
-echo "=============================================="
+# Cores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
 
-# Função para exibir status
-status() {
-    echo "✅ $1"
-}
+title() { echo -e "${PURPLE}🚀 $1${NC}"; }
+info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+success() { echo -e "${GREEN}✅ $1${NC}"; }
+warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-warning() {
-    echo "⚠️  $1"
-}
+title "Express PHP v2.0.0 - Release Preparation"
+echo ""
 
-error() {
+# Verificar se estamos na raiz do projeto
+if [ ! -f "composer.json" ]; then
+    error "Execute este script na raiz do projeto Express-PHP"
+fi
     echo "❌ $1"
     exit 1
 }
@@ -110,7 +118,7 @@ fi
 # 7. Verificar se há mudanças não commitadas (se for um repositório Git)
 if [ -d ".git" ]; then
     echo "📝 Verificando status do Git..."
-    
+
     if [ -n "$(git status --porcelain)" ]; then
         warning "Há mudanças não commitadas:"
         git status --porcelain

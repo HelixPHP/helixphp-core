@@ -1,13 +1,82 @@
 # Changelog
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-06-26
+## [Unreleased]
+
+### Planejado
+- Sistema de plugins
+- CLI commands avançados
+- ORM básico integrado
+- Cache Redis driver
+
+## [2.0.0] - 2025-06-26
+
+### 🎉 MAJOR RELEASE - Modularização Completa
+
+Esta é uma **release principal** que introduz uma arquitetura completamente nova e modular para o Express-PHP Framework.
 
 ### ✨ Adicionado
+
+#### 🏗️ Arquitetura Modular
+- **PSR-4 Compliant**: Estrutura de namespaces moderna e organizada
+- **8 Módulos Core**: Core, Http, Routing, Middleware, Authentication, Utils, Exceptions
+- **6 Módulos Avançados**: Validation, Cache, Events, Logging, Support, Database
+- **Container DI**: Sistema básico de injeção de dependência
+- **Sistema de Configuração**: Gerenciamento centralizado de configurações
+
+#### 🛡️ Sistema de Middleware Completo
+- **CorsMiddleware**: Suporte completo a CORS com configuração flexível
+- **AuthMiddleware**: JWT, Basic Auth, Bearer Token e autenticação customizada
+- **SecurityMiddleware**: Headers de segurança (HSTS, CSP, X-Frame-Options)
+- **XssMiddleware**: Detecção e sanitização automática de XSS
+- **CsrfMiddleware**: Proteção CSRF com tokens
+- **RateLimitMiddleware**: Controle de taxa de requisições
+
+#### 🔧 Módulos Avançados
+- **Validation**: Sistema robusto de validação de dados
+- **Cache**: Cache em arquivo e memória com TTL
+- **Events**: Sistema de eventos com prioridades e listeners
+- **Logging**: Logger estruturado com diferentes handlers
+- **Support**: Helpers utilitários (Str, Arr) inspirados no Laravel
+- **Database**: Conexão PDO simplificada com query builder básico
+
+#### 📊 OpenAPI & Documentação
+- **OpenAPI Export**: Geração automática de documentação da API
+- **Metadata Support**: Anotações nas rotas para documentação
+- **Swagger UI**: Interface web para documentação da API
+
+#### 🧪 Testing & Quality
+- **219 Testes**: Cobertura abrangente de todos os módulos
+- **PHPUnit Integration**: Testes automatizados
+- **PHPStan**: Análise estática de código
+- **Git Hooks**: Pre-commit e pre-push validation
+
+### 🔄 Modificado
+- **Router**: Sistema de roteamento reescrito com suporte a metadados
+- **Request/Response**: Classes HTTP modernizadas
+- **Error Handling**: Sistema de exceções estruturado
+- **Examples**: Todos os exemplos atualizados para nova arquitetura
+
+### 🏠 Compatibilidade
+- **ApiExpress Facade**: Mantém compatibilidade com versões anteriores
+- **Smooth Migration**: Guias de migração para facilitar upgrade
+- **Legacy Support**: Suporte a código existente através de facades
+
+### 📚 Documentação
+- **README_v2.md**: Documentação completa em português
+- **COMO_USAR.md**: Guia prático de uso
+- **Migration Guides**: Instruções de migração detalhadas
+- **Advanced Examples**: Exemplos demonstrando novos recursos
+
+### 🚀 Performance
+- **Autoloading**: PSR-4 autoloading otimizado
+- **Middleware Stack**: Sistema de middleware eficiente
+- **Caching**: Sistema de cache integrado
+- **Lazy Loading**: Carregamento sob demanda de módulos
 
 #### 🔐 Sistema de Autenticação Multi-método
 - **JWT Authentication**: Suporte completo a JSON Web Tokens

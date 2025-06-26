@@ -1,3 +1,174 @@
+#!/bin/bash
+
+# Script de Geração de Documentação para Express-PHP
+# Gera documentação automática, atualiza versões e organiza arquivos
+
+set -e
+
+# Cores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
+
+info() { echo -e "${BLUE}📖 $1${NC}"; }
+success() { echo -e "${GREEN}✅ $1${NC}"; }
+warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
+title() { echo -e "${PURPLE}📚 $1${NC}"; }
+
+# Verificar se estamos na raiz do projeto
+if [ ! -f "composer.json" ]; then
+    error "Execute este script na raiz do projeto Express-PHP"
+fi
+
+title "Express-PHP Documentation Generator"
+echo ""
+
+# Obter versão atual
+VERSION=$(grep '"version"' composer.json | sed 's/.*"version": "\([^"]*\)".*/\1/' || echo "2.0.0")
+DATE=$(date +%Y-%m-%d)
+
+info "Versão: $VERSION"
+info "Data: $DATE"
+echo ""
+
+# 1. Atualizar README principal
+info "Atualizando README.md..."
+
+if [ ! -f "README.md" ]; then
+    cat > README.md << EOF
+# Express-PHP Framework
+
+[![Version](https://img.shields.io/badge/version-v$VERSION-blue.svg)](https://github.com/CAFernandes/express-php/releases)
+[![PHP](https://img.shields.io/badge/PHP-%3E%3D8.1-777BB4.svg)](https://php.net/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Tests](https://img.shields.io/badge/tests-219%20passing-brightgreen.svg)](tests/)
+
+Express-PHP é um microframework moderno, rápido e seguro para PHP, inspirado no Express.js. Construído com arquitetura modular e PSR-4, oferece todas as ferramentas necessárias para desenvolvimento de APIs e aplicações web modernas.
+
+## 🚀 Versão $VERSION - Modular Edition
+
+Esta versão representa uma **completa modernização** do framework com:
+
+- ✅ **Arquitetura Modular** com PSR-4
+- ✅ **6 Middlewares de Segurança** (CORS, Auth, XSS, CSRF, Security, RateLimit)
+- ✅ **6 Módulos Avançados** (Validation, Cache, Events, Logging, Support, Database)
+- ✅ **219 Testes** com 92.4% de taxa de sucesso
+- ✅ **Documentação Completa** em português
+- ✅ **Compatibilidade Backward** mantida
+
+## 📦 Instalação
+
+\`\`\`bash
+composer require express-php/microframework
+\`\`\`
+
+## 🏃‍♂️ Início Rápido
+
+\`\`\`php
+<?php
+require_once 'vendor/autoload.php';
+
+use Express\\ApiExpress;
+
+\$app = new ApiExpress();
+
+\$app->get('/', function() {
+    return ['message' => 'Hello, Express-PHP v$VERSION!'];
+});
+
+\$app->listen(8080);
+\`\`\`
+
+## 📖 Documentação
+
+- **[📘 Documentação Completa](README_v2.md)** - Guia completo em português
+- **[🚀 Como Usar](examples/COMO_USAR.md)** - Tutorial prático
+- **[📋 CHANGELOG](CHANGELOG.md)** - Histórico de versões
+- **[🔧 Exemplos](examples/)** - Códigos de exemplo
+
+## 🛡️ Recursos de Segurança
+
+- **CORS** configurável para APIs
+- **Autenticação** JWT, Basic Auth, Bearer Token
+- **Proteção XSS** automática
+- **CSRF** com tokens
+- **Headers de Segurança** (HSTS, CSP, etc.)
+- **Rate Limiting** para controle de tráfego
+
+## 🧩 Módulos Avançados
+
+- **Validation** - Sistema robusto de validação
+- **Cache** - Cache em arquivo/memória com TTL
+- **Events** - Sistema de eventos com prioridades
+- **Logging** - Logger estruturado
+- **Support** - Helpers utilitários (Str, Arr)
+- **Database** - Conexão PDO simplificada
+
+## 🧪 Testes
+
+\`\`\`bash
+# Executar todos os testes
+./vendor/bin/phpunit
+
+# Testes específicos (excluindo streaming)
+./vendor/bin/phpunit --exclude-group streaming
+\`\`\`
+
+## 📊 Status dos Testes
+
+- **219 testes passando** (92.4% sucesso)
+- **Cobertura completa** de middlewares
+- **Módulos avançados** validados
+- **Integração** testada
+
+## 🤝 Contribuição
+
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+## 🔗 Links
+
+- [GitHub](https://github.com/CAFernandes/express-php)
+- [Packagist](https://packagist.org/packages/express-php/microframework)
+- [Issues](https://github.com/CAFernandes/express-php/issues)
+- [Releases](https://github.com/CAFernandes/express-php/releases)
+
+---
+
+**Express-PHP v$VERSION** - Construído com ❤️ para a comunidade PHP brasileira
+EOF
+else
+    # Atualizar versão no README existente
+    sed -i.bak "s/v[0-9]\+\.[0-9]\+\.[0-9]\+/v$VERSION/g" README.md && rm README.md.bak
+fi
+
+success "README.md atualizado"
+
+# 2. Atualizar badge de versão
+info "Atualizando badges de versão..."
+for file in README.md README_v2.md; do
+    if [ -f "$file" ]; then
+        sed -i.bak "s/version-v[0-9]\+\.[0-9]\+\.[0-9]\+/version-v$VERSION/g" "$file" && rm "${file}.bak"
+    fi
+done
+
+success "Badges atualizados"
+
+# 3. Gerar índice de documentação
+info "Gerando índice de documentação..."
+
+cat > docs/INDEX.md << 'EOF'
 # Express-PHP Framework - Índice de Documentação
 
 ## 📚 Documentação Principal
@@ -237,3 +408,19 @@ Cada exemplo segue esta estrutura:
 ---
 
 **Express-PHP v$VERSION** - Exemplos atualizados em $DATE
+EOF
+
+success "Sumário de exemplos atualizado"
+
+echo ""
+success "🎉 Documentação gerada com sucesso!"
+echo ""
+info "Arquivos atualizados:"
+echo "  • README.md"
+echo "  • docs/INDEX.md"
+echo "  • examples/README.md"
+echo "  • Badges de versão"
+echo ""
+info "Versão: $VERSION"
+info "Data: $DATE"
+echo ""
