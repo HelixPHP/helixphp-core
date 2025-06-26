@@ -1,5 +1,6 @@
 <?php
 namespace Express\Controller;
+
 use InvalidArgumentException;
 
 /**
@@ -12,41 +13,41 @@ class Router
    * Prefixo/base para rotas agrupadas.
    * @var string
    */
-  private static string $current_group_prefix = '';
+    private static string $current_group_prefix = '';
   /**
    * Lista de rotas registradas.
    * @var array<int, array>
    */
-  private static array $routes = [];
+    private static array $routes = [];
   /**
    * Caminho padrão.
    * @var string
    */
-  const DEFAULT_PATH = '/';
+    const DEFAULT_PATH = '/';
   /**
    * Métodos HTTP aceitos.
    * @var array<string>
    */
-  private static array $httpMethodsAccepted = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+    private static array $httpMethodsAccepted = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
 
   /**
    * Permite adicionar métodos HTTP customizados.
    * @param string $method Método HTTP customizado.
    * @return void
    */
-  public static function addHttpMethod(string $method): void
-  {
-    $method = strtoupper($method);
-    if (!in_array($method, self::$httpMethodsAccepted)) {
-      self::$httpMethodsAccepted[] = $method;
+    public static function addHttpMethod(string $method): void
+    {
+        $method = strtoupper($method);
+        if (!in_array($method, self::$httpMethodsAccepted)) {
+            self::$httpMethodsAccepted[] = $method;
+        }
     }
-  }
 
   /**
    * Middlewares de grupo por prefixo de rota.
    * @var array<string, array>
    */
-  private static array $groupMiddlewares = [];
+    private static array $groupMiddlewares = [];
 
   /**
    * Define um prefixo/base para rotas agrupadas OU registra middlewares para um grupo de rotas.
@@ -55,17 +56,17 @@ class Router
    * @throws InvalidArgumentException Se $prev_path não for string.
    * @return void
    */
-  public static function use(string $prev_path, callable ...$middlewares): void
-  {
-    if (empty($prev_path)) {
-      $prev_path = '/';
+    public static function use(string $prev_path, callable ...$middlewares): void
+    {
+        if (empty($prev_path)) {
+            $prev_path = '/';
+        }
+        self::$current_group_prefix = $prev_path;
+      // Se middlewares foram passados, registra para o grupo
+        if (!empty($middlewares)) {
+            self::$groupMiddlewares[$prev_path] = $middlewares;
+        }
     }
-    self::$current_group_prefix = $prev_path;
-    // Se middlewares foram passados, registra para o grupo
-    if (!empty($middlewares)) {
-      self::$groupMiddlewares[$prev_path] = $middlewares;
-    }
-  }
 
   /**
    * Adiciona uma nova rota com método, caminho, middlewares e handler.
@@ -75,64 +76,66 @@ class Router
    * @throws InvalidArgumentException Se o método não for suportado.
    * @return void
    */
-  private static function add(string $method, string $path, callable|array ...$handlers): void
-  {
-    if (empty($path)) {
-      $path = self::DEFAULT_PATH;
+    private static function add(string $method, string $path, callable|array ...$handlers): void
+    {
+        if (empty($path)) {
+            $path = self::DEFAULT_PATH;
+        }
+        if (!in_array(strtoupper($method), self::$httpMethodsAccepted)) {
+            throw new InvalidArgumentException("Method {$method} is not supported");
+        }
+        $method = strtoupper($method);
+        if (empty($handlers)) {
+            throw new InvalidArgumentException('Handler must be provided');
+        }
+      // Suporte a metadados: se o último argumento for array associativo, é metadado
+        $metadata = [];
+        if (is_array(end($handlers)) && self::isAssoc(end($handlers))) {
+            $metadata = self::sanitizeForJson(array_pop($handlers));
+        }
+        $handler = array_pop($handlers); // último argumento é o handler final
+        if (!is_callable($handler)) {
+            throw new InvalidArgumentException('Handler must be a callable function');
+        }
+        foreach ($handlers as $mw) {
+            if (!is_callable($mw)) {
+                throw new InvalidArgumentException('Middleware must be callable');
+            }
+        }
+      // Corrigir: só aplica o prefixo do grupo atual, não acumula
+        $prefix = self::$current_group_prefix;
+        if (!empty($prefix) && $prefix !== '/' && strpos($path, $prefix) !== 0) {
+            $path = $prefix . $path;
+            $path = preg_replace('/\/+/', '/', $path); // Remove duplicate slashes
+        }
+      // Ensure the path starts with a slash
+        if (!empty($path) && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+      // Adiciona middlewares de grupo se houver para o prefixo
+        $groupMiddlewares = [];
+        foreach (self::$groupMiddlewares as $prefix => $middlewares) {
+            if (!empty($path) && strpos($path, $prefix) === 0) {
+                $groupMiddlewares = array_merge($groupMiddlewares, $middlewares);
+            }
+        }
+        self::$routes[] = [
+        'method'      => $method,
+        'path'        => $path,
+        'middlewares' => array_merge($groupMiddlewares, $handlers),
+        'handler'     => $handler,
+        'metadata'    => $metadata
+        ];
     }
-    if (!in_array(strtoupper($method), self::$httpMethodsAccepted)) {
-      throw new InvalidArgumentException("Method {$method} is not supported");
-    }
-    $method = strtoupper($method);
-    if (empty($handlers)) {
-      throw new InvalidArgumentException('Handler must be provided');
-    }
-    // Suporte a metadados: se o último argumento for array associativo, é metadado
-    $metadata = [];
-    if (is_array(end($handlers)) && self::isAssoc(end($handlers))) {
-      $metadata = self::sanitizeForJson(array_pop($handlers));
-    }
-    $handler = array_pop($handlers); // último argumento é o handler final
-    if (!is_callable($handler)) {
-      throw new InvalidArgumentException('Handler must be a callable function');
-    }
-    foreach ($handlers as $mw) {
-      if (!is_callable($mw)) {
-        throw new InvalidArgumentException('Middleware must be callable');
-      }
-    }
-    // Corrigir: só aplica o prefixo do grupo atual, não acumula
-    $prefix = self::$current_group_prefix;
-    if (!empty($prefix) && $prefix !== '/' && strpos($path, $prefix) !== 0) {
-      $path = $prefix . $path;
-      $path = preg_replace('/\/+/', '/', $path); // Remove duplicate slashes
-    }
-    // Ensure the path starts with a slash
-    if (!empty($path) && $path[0] !== '/') {
-      $path = '/' . $path;
-    }
-    // Adiciona middlewares de grupo se houver para o prefixo
-    $groupMiddlewares = [];
-    foreach (self::$groupMiddlewares as $prefix => $middlewares) {
-      if (!empty($path) && strpos($path, $prefix) === 0) {
-        $groupMiddlewares = array_merge($groupMiddlewares, $middlewares);
-      }
-    }
-    self::$routes[] = [
-      'method'      => $method,
-      'path'        => $path,
-      'middlewares' => array_merge($groupMiddlewares, $handlers),
-      'handler'     => $handler,
-      'metadata'    => $metadata
-    ];
-  }
 
   // Verifica se array é associativo
-  private static function isAssoc(array $arr): bool
-  {
-    if ([] === $arr) return false;
-    return array_keys($arr) !== range(0, count($arr) - 1);
-  }
+    private static function isAssoc(array $arr): bool
+    {
+        if ([] === $arr) {
+            return false;
+        }
+        return array_keys($arr) !== range(0, count($arr) - 1);
+    }
 
   /**
    * Get routes based on method and path.
@@ -141,123 +144,130 @@ class Router
    * @throws InvalidArgumentException if the method is not supported.
    * @return array|null The matching routes or null if not found.
    */
-  public static function identify(string $method, ?string $path = null): ?array
-  {
-    if (!in_array(strtoupper($method), self::$httpMethodsAccepted)) {
-      throw new InvalidArgumentException("Method {$method} is not supported");
-    }
-    $method = strtoupper($method);
-    if (is_null($path)) {
-      $path = self::DEFAULT_PATH;
-    }
-    //> Filter routes based on method
-    $routes = array_filter(self::$routes, function ($route) use ($method) {
-      return $route['method'] === $method;
-    });
-    if (empty($routes)) {
-      return null; // No routes found for the specified method
-    }
-
-    // 1. Tenta encontrar rota estática (exata)
-    foreach ($routes as $route) {
-      if ($route['path'] === $path) {
-        return $route;
-      }
-    }
-    // 2. Tenta encontrar rota dinâmica (com parâmetros)
-    foreach ($routes as $route) {
-      $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $route['path']);
-      // Permitir barra final opcional
-      $pattern = rtrim($pattern, '/');
-      $pattern = '#^' . $pattern . '/?$#';
-      if ($route['path'] === self::DEFAULT_PATH) {
-        if ($path === self::DEFAULT_PATH) {
-          return $route;
+    public static function identify(string $method, ?string $path = null): ?array
+    {
+        if (!in_array(strtoupper($method), self::$httpMethodsAccepted)) {
+            throw new InvalidArgumentException("Method {$method} is not supported");
         }
-      } elseif (preg_match($pattern, $path)) {
-        return $route;
-      }
-    }
-    return null; // Nenhuma rota encontrada
-  }
+        $method = strtoupper($method);
+        if (is_null($path)) {
+            $path = self::DEFAULT_PATH;
+        }
+      //> Filter routes based on method
+        $routes = array_filter(self::$routes, function ($route) use ($method) {
+            return $route['method'] === $method;
+        });
+        if (empty($routes)) {
+            return null; // No routes found for the specified method
+        }
 
-  public static function __callStatic(string $method, array $args): mixed
-  {
-    if (in_array(strtoupper($method), self::$httpMethodsAccepted)) {
-      $path = array_shift($args);
-      self::add(strtoupper($method), $path, ...$args);
-      return null;
+      // 1. Tenta encontrar rota estática (exata)
+        foreach ($routes as $route) {
+            if ($route['path'] === $path) {
+                return $route;
+            }
+        }
+      // 2. Tenta encontrar rota dinâmica (com parâmetros)
+        foreach ($routes as $route) {
+            $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $route['path']);
+          // Permitir barra final opcional
+            $pattern = rtrim($pattern, '/');
+            $pattern = '#^' . $pattern . '/?$#';
+            if ($route['path'] === self::DEFAULT_PATH) {
+                if ($path === self::DEFAULT_PATH) {
+                    return $route;
+                }
+            } elseif (preg_match($pattern, $path)) {
+                return $route;
+            }
+        }
+        return null; // Nenhuma rota encontrada
     }
 
-    if (method_exists(self::class, $method)) {
-      return self::{$method}(...$args);
-    }
-    throw new \BadMethodCallException("Method {$method} does not exist in " . self::class);
-  }
+    public static function __callStatic(string $method, array $args): mixed
+    {
+        if (in_array(strtoupper($method), self::$httpMethodsAccepted)) {
+            $path = array_shift($args);
+            self::add(strtoupper($method), $path, ...$args);
+            return null;
+        }
 
-  public static function toString(): string
-  {
-    $output = '';
-    foreach (self::$routes as $route) {
-      $output .= sprintf(
-        "%s %s => %s\n",
-        $route['method'],
-        $route['path'],
-        is_callable($route['handler']) ? 'Callable' : 'Not Callable'
-      );
+        if (method_exists(self::class, $method)) {
+            return self::{$method}(...$args);
+        }
+        throw new \BadMethodCallException("Method {$method} does not exist in " . self::class);
     }
-    return $output;
-  }
+
+    public static function toString(): string
+    {
+        $output = '';
+        foreach (self::$routes as $route) {
+            $output .= sprintf(
+                "%s %s => %s\n",
+                $route['method'],
+                $route['path'],
+                is_callable($route['handler']) ? 'Callable' : 'Not Callable'
+            );
+        }
+        return $output;
+    }
 
   /**
    * Retorna todas as rotas registradas (para exportação/documentação).
    * @return array<int, array>
    */
-  public static function getRoutes(): array
-  {
-    return self::$routes;
-  }
+    public static function getRoutes(): array
+    {
+        return self::$routes;
+    }
 
   /**
    * Retorna os métodos HTTP aceitos.
    * @return array<string>
    */
-  public static function getHttpMethodsAccepted(): array
-  {
-    return self::$httpMethodsAccepted;
-  }
+    public static function getHttpMethodsAccepted(): array
+    {
+        return self::$httpMethodsAccepted;
+    }
 
   // Remove closures, objetos e recursos de arrays recursivamente
-  private static function sanitizeForJson(mixed $value): mixed {
-    if (is_array($value)) {
-      $out = [];
-      foreach ($value as $k => $v) {
-        if (is_array($v)) {
-          $out[$k] = self::sanitizeForJson($v);
-        } elseif (is_scalar($v) || is_null($v)) {
-          $out[$k] = $v;
-        } elseif (is_object($v)) {
-          // Permite stdClass convertendo para array
-          if ($v instanceof \stdClass) {
-            $out[$k] = self::sanitizeForJson((array)$v);
-          } else {
-            // Ignora closures e outros objetos
-            $out[$k] = '[object]';
-          }
-        } elseif (is_resource($v)) {
-          $out[$k] = '[resource]';
-        } else {
-          $out[$k] = '[unserializable]';
+    private static function sanitizeForJson(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            $out = [];
+            foreach ($value as $k => $v) {
+                if (is_array($v)) {
+                    $out[$k] = self::sanitizeForJson($v);
+                } elseif (is_scalar($v) || is_null($v)) {
+                    $out[$k] = $v;
+                } elseif (is_object($v)) {
+                  // Permite stdClass convertendo para array
+                    if ($v instanceof \stdClass) {
+                        $out[$k] = self::sanitizeForJson((array)$v);
+                    } else {
+                  // Ignora closures e outros objetos
+                        $out[$k] = '[object]';
+                    }
+                } elseif (is_resource($v)) {
+                    $out[$k] = '[resource]';
+                } else {
+                    $out[$k] = '[unserializable]';
+                }
+            }
+            return $out;
         }
-      }
-      return $out;
+        if (is_scalar($value) || is_null($value)) {
+            return $value;
+        }
+        if (is_object($value)) {
+            if ($value instanceof \stdClass) {
+                return self::sanitizeForJson((array)$value);
+            }
+            return '[object]';
+        }
+        if (is_resource($value)) {
+            return '[resource]';
+        }
+        return '[unserializable]';
     }
-    if (is_scalar($value) || is_null($value)) return $value;
-    if (is_object($value)) {
-      if ($value instanceof \stdClass) return self::sanitizeForJson((array)$value);
-      return '[object]';
-    }
-    if (is_resource($value)) return '[resource]';
-    return '[unserializable]';
-  }
 }

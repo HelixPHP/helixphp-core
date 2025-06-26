@@ -57,7 +57,9 @@ class ErrorHandlerMiddleware
                 exit;
             }
             $status = method_exists($e, 'getCode') && $e->getCode() ? $e->getCode() : 500;
-            if ($status < 400 || $status > 599) $status = 500;
+            if ($status < 400 || $status > 599) {
+                $status = 500;
+            }
             $body = [
                 'error' => true,
                 'message' => $e->getMessage(),

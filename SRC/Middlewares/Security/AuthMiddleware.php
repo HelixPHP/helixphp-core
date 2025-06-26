@@ -179,7 +179,6 @@ class AuthMiddleware
                 'user' => (array) $decoded,
                 'token' => $token
             ];
-
         } catch (\Exception $e) {
             // Captura todas as exceptions incluindo ExpiredException
             $isExpired = class_exists('Firebase\JWT\ExpiredException') && $e instanceof \Firebase\JWT\ExpiredException;
@@ -187,7 +186,9 @@ class AuthMiddleware
             return [
                 'success' => false,
                 'status' => 401,
-                'message' => $isExpired ? $this->options['errorMessages']['expired'] : $this->options['errorMessages']['invalid'],
+                'message' => $isExpired
+                    ? $this->options['errorMessages']['expired']
+                    : $this->options['errorMessages']['invalid'],
                 'found_headers' => true,
                 'error' => $e->getMessage()
             ];

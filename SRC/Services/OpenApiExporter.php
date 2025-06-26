@@ -56,7 +56,9 @@ class OpenApiExporter
             if (!isset($paths[$pathKey])) {
                 $paths[$pathKey] = [];
             }
-            $summary = $meta['summary'] ?? ($meta['description'] ?? ('Endpoint ' . $route['method'] . ' ' . $route['path']));
+            $summary = $meta['summary'] ?? (
+                $meta['description'] ?? ('Endpoint ' . $route['method'] . ' ' . $route['path'])
+            );
             $parameters = [];
             if (preg_match_all('/:([a-zA-Z0-9_]+)/', $route['path'], $matches)) {
                 foreach ($matches[1] as $param) {
@@ -141,8 +143,10 @@ class OpenApiExporter
                 'version' => '1.0.0',
             ],
             'servers' => $servers,
-            'tags' => array_map(function($tag) use ($tagDescriptions) {
-                return isset($tagDescriptions[$tag]) ? ['name' => $tag, 'description' => $tagDescriptions[$tag]] : ['name' => $tag];
+            'tags' => array_map(function ($tag) use ($tagDescriptions) {
+                return isset($tagDescriptions[$tag])
+                    ? ['name' => $tag, 'description' => $tagDescriptions[$tag]]
+                    : ['name' => $tag];
             }, array_keys($allTags)),
             'paths' => $paths,
         ];

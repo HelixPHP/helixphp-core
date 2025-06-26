@@ -22,13 +22,34 @@ class RouterInstance
         $this->middlewares[] = $middleware;
     }
 
-    public function get(string $path, callable|array ...$handlers): void { $this->add('GET', $path, ...$handlers); }
-    public function post(string $path, callable|array ...$handlers): void { $this->add('POST', $path, ...$handlers); }
-    public function put(string $path, callable|array ...$handlers): void { $this->add('PUT', $path, ...$handlers); }
-    public function delete(string $path, callable|array ...$handlers): void { $this->add('DELETE', $path, ...$handlers); }
-    public function patch(string $path, callable|array ...$handlers): void { $this->add('PATCH', $path, ...$handlers); }
-    public function options(string $path, callable|array ...$handlers): void { $this->add('OPTIONS', $path, ...$handlers); }
-    public function head(string $path, callable|array ...$handlers): void { $this->add('HEAD', $path, ...$handlers); }
+    public function get(string $path, callable|array ...$handlers): void
+    {
+        $this->add('GET', $path, ...$handlers);
+    }
+    public function post(string $path, callable|array ...$handlers): void
+    {
+        $this->add('POST', $path, ...$handlers);
+    }
+    public function put(string $path, callable|array ...$handlers): void
+    {
+        $this->add('PUT', $path, ...$handlers);
+    }
+    public function delete(string $path, callable|array ...$handlers): void
+    {
+        $this->add('DELETE', $path, ...$handlers);
+    }
+    public function patch(string $path, callable|array ...$handlers): void
+    {
+        $this->add('PATCH', $path, ...$handlers);
+    }
+    public function options(string $path, callable|array ...$handlers): void
+    {
+        $this->add('OPTIONS', $path, ...$handlers);
+    }
+    public function head(string $path, callable|array ...$handlers): void
+    {
+        $this->add('HEAD', $path, ...$handlers);
+    }
 
     // Suporte a métodos HTTP customizados (ex: custom, trace, etc)
     public function __call(string $method, array $args): void
@@ -41,7 +62,9 @@ class RouterInstance
 
     private function add(string $method, string $path, callable|array ...$handlers): void
     {
-        if (empty($path)) $path = '/';
+        if (empty($path)) {
+            $path = '/';
+        }
         $fullPath = rtrim($this->prefix, '/') . '/' . ltrim($path, '/');
         $fullPath = preg_replace('/\/+/', '/', $fullPath);
         $metadata = [];
@@ -53,7 +76,9 @@ class RouterInstance
             throw new InvalidArgumentException('Handler must be a callable function');
         }
         foreach ($handlers as $mw) {
-            if (!is_callable($mw)) throw new InvalidArgumentException('Middleware must be callable');
+            if (!is_callable($mw)) {
+                throw new InvalidArgumentException('Middleware must be callable');
+            }
         }
         $this->routes[] = [
             'method' => strtoupper($method),
@@ -64,13 +89,19 @@ class RouterInstance
         ];
     }
 
-    private function isAssoc(array $arr): bool {
-        if ([] === $arr) return false;
+    private function isAssoc(array $arr): bool
+    {
+        if ([] === $arr) {
+            return false;
+        }
         return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     /**
      * Retorna as rotas deste sub-router.
      */
-    public function getRoutes(): array { return $this->routes; }
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
 }

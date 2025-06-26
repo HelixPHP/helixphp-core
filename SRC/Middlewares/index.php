@@ -68,5 +68,8 @@ if (!class_exists('Express\SRC\Services\AuthMiddleware')) {
 }
 
 if (!class_exists('Express\SRC\Services\RequestValidationMiddleware')) {
-    class_alias('Express\Middlewares\Core\RequestValidationMiddleware', 'Express\SRC\Services\RequestValidationMiddleware');
+    class_alias(
+        'Express\Middlewares\Core\RequestValidationMiddleware',
+        'Express\SRC\Services\RequestValidationMiddleware'
+    );
 }

@@ -22,7 +22,9 @@ class XssMiddleware
         $this->options = array_merge([
             'sanitizeInput' => true,
             'securityHeaders' => true,
-            'contentSecurityPolicy' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self'; frame-ancestors 'none';",
+            'contentSecurityPolicy' => "default-src 'self'; script-src 'self' 'unsafe-inline' " .
+                "'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; " .
+                "font-src 'self' https:; connect-src 'self'; frame-ancestors 'none';",
             'excludeFields' => [],
             'allowedTags' => '<p><br><strong><em><ul><ol><li><a><h1><h2><h3><h4><h5><h6>',
         ], $options);

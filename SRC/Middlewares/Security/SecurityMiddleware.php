@@ -61,10 +61,10 @@ class SecurityMiddleware
 
         // Aplica proteção XSS primeiro
         if ($this->xssMiddleware) {
-            $xssNext = function() use ($request, $response, $next) {
+            $xssNext = function () use ($request, $response, $next) {
                 // Aplica proteção CSRF depois
                 if ($this->csrfMiddleware) {
-                    $csrfNext = function() use ($next) {
+                    $csrfNext = function () use ($next) {
                         $next();
                     };
                     call_user_func($this->csrfMiddleware, $request, $response, $csrfNext);
@@ -73,7 +73,7 @@ class SecurityMiddleware
                 }
             };
             call_user_func($this->xssMiddleware, $request, $response, $xssNext);
-        } else if ($this->csrfMiddleware) {
+        } elseif ($this->csrfMiddleware) {
             call_user_func($this->csrfMiddleware, $request, $response, $next);
         } else {
             $next();
@@ -110,7 +110,7 @@ class SecurityMiddleware
             // Regenera ID da sessão periodicamente
             if (!isset($_SESSION['last_regeneration'])) {
                 $_SESSION['last_regeneration'] = time();
-            } else if (time() - $_SESSION['last_regeneration'] > 300) { // 5 minutos
+            } elseif (time() - $_SESSION['last_regeneration'] > 300) { // 5 minutos
                 session_regenerate_id(true);
                 $_SESSION['last_regeneration'] = time();
             }
@@ -208,7 +208,9 @@ class SecurityMiddleware
             'xss' => [
                 'sanitizeInput' => true,
                 'securityHeaders' => true,
-                'contentSecurityPolicy' => "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';"
+                'contentSecurityPolicy' => "default-src 'self'; script-src 'self'; " .
+                    "style-src 'self'; img-src 'self' data:; font-src 'self'; " .
+                    "connect-src 'self'; frame-ancestors 'none';"
             ]
         ], $options));
     }
