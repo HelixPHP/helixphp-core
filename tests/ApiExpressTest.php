@@ -9,23 +9,28 @@ use Express\Controller\Router;
 class ApiExpressTest extends TestCase
 {
     private $app;
-    
+
     protected function setUp(): void
     {
         $this->app = new ApiExpress();
-        
+
         // Reset global state
         $_SERVER = [];
         $_GET = [];
         $_POST = [];
         $_COOKIE = [];
     }
-    
+
     protected function tearDown(): void
     {
         // Clean any output buffers that might have been opened
-        while (ob_get_level() > 0) {
+        while (ob_get_level() > 1) { // Manter pelo menos 1 nível para PHPUnit
             ob_end_clean();
+        }
+
+        // Limpar output buffer se tiver conteúdo
+        if (ob_get_length()) {
+            ob_clean();
         }
     }
 
@@ -48,7 +53,7 @@ class ApiExpressTest extends TestCase
         $middleware = function($req, $res, $next) {
             $next();
         };
-        
+
         // use() method returns void, not the app instance
         $this->app->use($middleware);
         $this->assertInstanceOf(ApiExpress::class, $this->app);
@@ -66,13 +71,13 @@ class ApiExpressTest extends TestCase
         $handler = function($req, $res) {
             $res->json(['message' => 'Hello World']);
         };
-        
+
         // These methods are handled by __call and return values from Router
         $this->app->get('/test', $handler);
         $this->app->post('/users', $handler);
         $this->app->put('/users/:id', $handler);
         $this->app->delete('/users/:id', $handler);
-        
+
         // If no exception is thrown, the methods work correctly
         $this->assertTrue(true);
     }
@@ -82,7 +87,7 @@ class ApiExpressTest extends TestCase
         $handler = function($req, $res) {
             $res->json(['message' => 'Test']);
         };
-        
+
         // Test that HTTP methods can be called via __call
         try {
             $this->app->get('/test', $handler);
@@ -100,11 +105,11 @@ class ApiExpressTest extends TestCase
         // Test with trailing slash
         $this->app->setBaseUrl('https://api.example.com/');
         $this->assertEquals('https://api.example.com', $this->app->getBaseUrl());
-        
+
         // Test without trailing slash
         $this->app->setBaseUrl('https://api.example.com');
         $this->assertEquals('https://api.example.com', $this->app->getBaseUrl());
-        
+
         // Test with null
         $app2 = new ApiExpress();
         $this->assertNull($app2->getBaseUrl());

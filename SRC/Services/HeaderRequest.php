@@ -21,7 +21,18 @@ class HeaderRequest
    */
   public function __construct()
   {
-    $headers = getallheaders();
+    // Fallback para getallheaders() se não estiver disponível (como em testes CLI)
+    if (function_exists('getallheaders')) {
+      $headers = getallheaders();
+    } else {
+      $headers = [];
+      foreach ($_SERVER as $name => $value) {
+        if (substr($name, 0, 5) == 'HTTP_') {
+          $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
+        }
+      }
+    }
+
     foreach ($headers as $key => $value) {
       $key = trim($key, ':'); // Remove leading colon
       $camelCaseKey = explode('-', $key); // Remove any suffix after a hyphen
