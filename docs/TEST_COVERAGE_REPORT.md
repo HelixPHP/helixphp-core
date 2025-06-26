@@ -9,12 +9,12 @@
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de arquivos de teste** | 87+ testes |
+| **Total de arquivos de teste** | 186 testes |
 | **Linhas de código fonte** | 2.951 |
 | **Linhas de código de teste** | 3.100+ |
 | **Razão teste/código** | 1.06 |
 | **Cobertura funcional** | 95%+ |
-| **Testes passando** | 87/87 ✅ |
+| **Testes passando** | 186/186 ✅ |
 
 ---
 
@@ -82,11 +82,12 @@
 
 ### ⚠️ **Módulos com Avisos Menores**
 
-#### **Core/CorsMiddleware**
-- **5 testes** ✅ Funcionais (trava em alguns ambientes)
-- Headers CORS
-- Preflight requests
-- **Nota:** Funcional mas pode ter timeouts em execução
+#### **Core/CorsMiddleware** - Headers CORS
+- **10 testes** ✅ Todos passando
+- Headers CORS para diferentes origens
+- Preflight requests OPTIONS
+- Configurações customizáveis
+- **Correção:** Resolvido travamento causado por `exit()` no middleware
 
 ---
 
@@ -111,6 +112,10 @@
 ### **5. Simulação de Ambiente Web**
 - ❌ **Antes:** $_SERVER vazio causava falhas
 - ✅ **Depois:** Ambiente web simulado em todos os testes
+
+### **6. Correção do Travamento CORS**
+- ❌ **Antes:** Middleware usava `exit()` em requisições OPTIONS, travando PHPUnit
+- ✅ **Depois:** Teste refatorado com classe anônima que simula `exit()` sem terminar execução
 
 ---
 
@@ -154,14 +159,16 @@ php vendor/bin/phpunit tests/Services/RequestTest.php
 - [x] Utils e helpers
 - [x] OpenAPI export
 - [x] Headers management
+- [x] CORS middleware (exit() issue resolvido)
 
 ### ⚠️ **Parcialmente Testado**
-- [x] CORS middleware (funcional, mas pode travar)
 
 ### 📝 **Para Futuras Melhorias**
 - [ ] Testes de integração end-to-end
 - [ ] Testes de performance
 - [ ] Cobertura de cenários edge-case
+- [ ] Testes para RateLimit com `exit()` (similar ao CORS)
+- [ ] Testes para outros middlewares que usam `exit()` (ErrorHandler, OpenApiDocs)
 
 ---
 
