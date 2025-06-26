@@ -65,8 +65,8 @@
         "test:security": "php test/security_test.php",
         "test:auth": "php test/auth_test.php",
         "phpstan": "phpstan analyse",
-        "cs:check": "phpcs --standard=PSR12 SRC/",
-        "cs:fix": "phpcbf --standard=PSR12 SRC/",
+        "cs:check": "phpcs --standard=PSR12 src/",
+        "cs:fix": "phpcbf --standard=PSR12 src/",
         "examples:security": "php examples/example_security.php",
         "examples:auth": "php examples/example_auth.php",
         "examples:complete": "php examples/example_complete.php"
