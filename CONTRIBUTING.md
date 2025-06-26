@@ -1,53 +1,166 @@
-# Contributing to Express PHP
+# 🤝 Contribuindo para o Express PHP
 
-Thank you for your interest in contributing to Express PHP! We welcome contributions from the community.
+Obrigado pelo seu interesse em contribuir para o Express PHP! Valorizamos contribuições da comunidade.
 
-## 🤝 How to Contribute
+## 🚀 Como Contribuir
 
-### 1. Fork the Repository
-- Fork the project on GitHub
-- Clone your fork locally
-- Create a new branch for your feature
+### 1. Configurar Ambiente de Desenvolvimento
 
-### 2. Set Up Development Environment
 ```bash
-git clone https://github.com/your-username/Express-PHP.git
-cd Express-PHP
+# Fork o projeto no GitHub
+git clone https://github.com/seu-usuario/express-php.git
+cd express-php
+
+# Instalar dependências
+composer install
+
+# Executar testes para verificar se tudo está funcionando
+composer test
+./vendor/bin/phpunit
+./vendor/bin/phpstan analyse
 ```
 
-### 3. Make Your Changes
-- Follow the existing code style
-- Add tests for new features
-- Update documentation as needed
+### 2. Diretrizes de Código
 
-### 4. Test Your Changes
-```bash
-# Run security tests
-php test/security_test.php
+#### 📋 Padrões de Qualidade
+- **PHPStan Level 8**: Máxima análise estática
+- **PSR-12**: Padrão de code style
+- **PHP 7.4+**: Compatibilidade mínima
+- **100% Test Coverage**: Todos os recursos devem ter testes
 
-# Run examples to ensure they work
-php examples/example_complete.php
-php examples/example_security.php
+#### 🎯 Estrutura do Código
+```
+SRC/
+├── ApiExpress.php           # Classe principal
+├── Controller/              # Roteamento
+├── Services/               # Serviços (Request, Response)
+├── Helpers/               # Utilitários (JWT, Utils)
+└── Middlewares/           # Sistema de middlewares
+    ├── Core/              # Middlewares principais
+    └── Security/          # Middlewares de segurança
 ```
 
-### 5. Submit a Pull Request
-- Push your changes to your fork
-- Create a pull request with a clear description
-- Link any related issues
+### 3. Desenvolvendo Middlewares
 
-## 📝 Code Style Guidelines
+#### Template de Middleware
+```php
+<?php
+namespace Express\Middlewares\Core;
 
-### PHP Code Style
-- Use PSR-4 autoloading
-- Follow PSR-12 coding standard
-- Use meaningful variable and function names
-- Add docblocks for classes and methods
+class MeuMiddleware
+{
+    private array $options;
 
-### Middleware Development
-- Place security middlewares in `SRC/Middlewares/Security/`
-- Place core middlewares in `SRC/Middlewares/Core/`
-- Follow the middleware template pattern
-- Include comprehensive tests
+    public function __construct(array $options = [])
+    {
+        $this->options = array_merge([
+            'enabled' => true,
+            'option1' => 'default'
+        ], $options);
+    }
+
+    public function __invoke($req, $res, $next): void
+    {
+        if (!$this->options['enabled']) {
+            $next();
+            return;
+        }
+
+        // Lógica do middleware aqui
+
+        $next();
+    }
+}
+```
+
+#### Localização dos Middlewares
+- **Core**: `SRC/Middlewares/Core/` - Funcionalidades principais
+- **Security**: `SRC/Middlewares/Security/` - Segurança e autenticação
+
+### 4. Testes
+
+#### Executar Todos os Testes
+```bash
+# Testes unitários
+composer test
+./vendor/bin/phpunit
+
+# Análise estática
+./vendor/bin/phpstan analyse
+
+# Verificação de code style
+./vendor/bin/phpcs --standard=PSR12 SRC/
+
+# Correção automática de style
+./vendor/bin/phpcbf --standard=PSR12 SRC/
+```
+
+#### Criar Novos Testes
+```php
+<?php
+namespace Express\Tests\Middlewares\Core;
+
+use PHPUnit\Framework\TestCase;
+use Express\Middlewares\Core\MeuMiddleware;
+
+class MeuMiddlewareTest extends TestCase
+{
+    public function testMiddlewareBasicFunctionality(): void
+    {
+        $middleware = new MeuMiddleware();
+
+        // Implementar testes
+        $this->assertInstanceOf(MeuMiddleware::class, $middleware);
+    }
+}
+```
+
+## 📝 Tipos de Contribuição
+
+### 🐛 Reportar Bugs
+- Use o template de issue no GitHub
+- Inclua exemplos de código para reproduzir
+- Especifique versões (PHP, Express PHP)
+
+### ✨ Propor Novos Recursos
+- Abra uma issue para discussão
+- Inclua casos de uso
+- Considere impacto na performance e compatibilidade
+
+### 📚 Melhorar Documentação
+- Atualize README e guias
+- Adicione exemplos práticos
+- Traduza para outros idiomas
+
+### 🔧 Corrigir Código
+- Mantenha compatibilidade com PHP 7.4+
+- Siga os padrões de qualidade
+- Adicione testes para mudanças
+
+## 🎯 Processo de Review
+
+### Pull Request Checklist
+- [ ] Código segue PSR-12
+- [ ] PHPStan Level 8 sem erros
+- [ ] Todos os testes passam
+- [ ] Documentação atualizada
+- [ ] Exemplos funcionando
+- [ ] Compatibilidade PHP 7.4+
+
+### Hooks de Git
+O projeto inclui hooks automáticos que verificam:
+- Sintaxe PHP
+- PHPStan Level 8
+- Testes unitários
+- Code style PSR-12
+- Validação do composer.json
+
+## 🏆 Reconhecimento
+
+Contribuidores são listados em:
+- README.md
+- CONTRIBUTORS.md (se criado)
+- Releases do GitHub
 
 ### Documentation
 - Update both English and Portuguese documentation

@@ -1,207 +1,365 @@
-# Express PHP Microframework
+# Express PHP Microframework - Documentação Completa
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
-[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
-[![Latest Release](https://img.shields.io/github/v/release/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/releases)
+[![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 
 **Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web e APIs modernas em PHP com sistema nativo de autenticação multi-método.
 
-[![English](https://img.shields.io/badge/Language-English-blue)](../../README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](README.md)
+> 🔐 **Novo na v1.0**: Sistema completo de autenticação com JWT, Basic Auth, Bearer Token, API Key e auto-detecção!
 
-> 🔐 **Novidade na v1.0**: Sistema completo de autenticação com JWT, Basic Auth, Bearer Token, API Key e auto-detecção!
+## 🚀 Início Rápido
 
-## 🚀 Novidade: Exemplos Modulares e Aprendizagem Guiada
-
-A partir da versão 2025, o Express PHP traz uma coleção de exemplos modulares para facilitar o aprendizado e a especialização em cada recurso do framework. Veja a pasta `examples/`:
-
-- `example_user.php`: Rotas de usuário e autenticação
-- `example_product.php`: Rotas de produto, parâmetros e exemplos OpenAPI
-- `example_upload.php`: Upload de arquivos com exemplos práticos
-- `example_admin.php`: Rotas administrativas e autenticação
-- `example_blog.php`: Rotas de blog
-- `example_complete.php`: Integração de todos os recursos e documentação automática
-- `example_security.php`: Demonstração dos middlewares de segurança
-
-Cada exemplo utiliza sub-routers especializados, facilitando o estudo isolado de cada contexto. Os arquivos em `examples/snippets/` podem ser reutilizados em qualquer app Express PHP.
-
-## 📚 Documentação Automática OpenAPI/Swagger
-
-- **Agrupamento por tags**: Endpoints organizados por contexto (User, Produto, Upload, Admin, Blog) na interface Swagger
-- **Múltiplos servers**: Documentação já inclui ambientes local, produção e homologação
-- **Exemplos práticos**: Requests e responses de exemplo para facilitar testes e integração
-- **Respostas globais**: Todos os endpoints já documentam respostas 400, 401, 404 e 500
-- **BaseUrl dinâmica**: O campo `servers` é ajustado automaticamente conforme o ambiente
-
-Acesse `/docs/index` para a interface interativa.
-
-## 🎯 Como Estudar Cada Recurso
-
-- Para aprender sobre rotas de usuário: rode `php examples/example_user.php`
-- Para upload: `php examples/example_upload.php`
-- Para produto: `php examples/example_product.php`
-- Para admin: `php examples/example_admin.php`
-- Para blog: `php examples/example_blog.php`
-- Para segurança: `php examples/example_security.php`
-- Para ver tudo integrado: `php examples/example_complete.php`
-
-## 📁 Estrutura Recomendada para Projetos
-
-```
-examples/           # Exemplos práticos e didáticos
-├── snippets/       # Sub-routers prontos para reuso
-SRC/               # Framework e middlewares
-├── Middlewares/   # Sistema de middlewares organizado
-│   ├── Security/  # Middlewares de segurança (CSRF, XSS)
-│   └── Core/      # Middlewares principais (CORS, Rate Limiting)
-test/              # Testes e experimentos
-docs/              # Documentação
-├── en/            # Documentação em inglês
-└── pt-br/         # Documentação em português
+### Instalação
+```bash
+composer require cafernandes/express-php
 ```
 
-## 💡 Início Rápido
-
-Você pode criar seu próprio app Express PHP copiando e adaptando qualquer exemplo da pasta `examples/`.
-
+### Hello World
 ```php
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\SRC\ApiExpress;
-use Express\SRC\Middlewares\Security\SecurityMiddleware;
-use Express\SRC\Middlewares\Core\CorsMiddleware;
+use Express\ApiExpress;
 
 $app = new ApiExpress();
 
-// Aplicar middleware de segurança
-$app->use(SecurityMiddleware::create());
-
-// Aplicar CORS
-$app->use(new CorsMiddleware());
-
-// Rota básica
 $app->get('/', function($req, $res) {
     $res->json(['message' => 'Olá Express PHP!']);
-});
-
-// Rota protegida
-$app->post('/api/users', function($req, $res) {
-    $userData = $req->body;
-    // Dados do usuário são automaticamente sanitizados pelo middleware de segurança
-    $res->json(['message' => 'Usuário criado', 'data' => $userData]);
 });
 
 $app->run();
 ```
 
-## 🛡️ Recursos de Segurança
+**💡 Primeiro projeto?** Siga nosso **[Guia de Início](../guides/starter/README.md)** completo!
 
-O Express PHP inclui middlewares robustos de segurança:
+## ✨ Principais Recursos
 
-- **Proteção CSRF**: Proteção contra Cross-Site Request Forgery
-- **Proteção XSS**: Sanitização contra Cross-Site Scripting
-- **Cabeçalhos de Segurança**: Cabeçalhos de segurança automáticos
-- **Rate Limiting**: Limitação de taxa de requisições
-- **Segurança de Sessão**: Configuração segura de sessão
+### 🔐 Sistema de Autenticação Multi-método
+```php
+// JWT simples
+$app->use(AuthMiddleware::jwt('sua_chave_secreta'));
 
-## 📖 Documentação
+// Múltiplos métodos
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt', 'basic', 'apikey', 'bearer'],
+    'jwtSecret' => 'sua_chave_jwt',
+    'basicAuthCallback' => 'validarUsuario',
+    'apiKeyCallback' => 'validarApiKey'
+]));
 
-- [🇺🇸 Documentação em Inglês](../en/README.md)
-- [🇧🇷 Documentação em Português](README.md)
-- [Documentação de Middlewares](../../SRC/Middlewares/README.md)
-- [Objetos da API](objetos.md)
-
-## 🔧 Instalação
-
-1. Clone o repositório:
-```bash
-git clone https://github.com/your-username/Express-PHP.git
-cd Express-PHP
+// Acessar dados do usuário
+$app->get('/profile', function($req, $res) {
+    $user = $req->user; // Dados do usuário autenticado
+    $method = $req->auth['method']; // Método usado
+    $res->json(['user' => $user, 'auth_method' => $method]);
+});
 ```
 
-2. Instale as dependências (se usando Composer):
-```bash
-composer install
+### 🛡️ Middlewares de Segurança
+```php
+use Express\Middlewares\Security\SecurityMiddleware;
+use Express\Middlewares\Security\CsrfMiddleware;
+use Express\Middlewares\Security\XssMiddleware;
+use Express\Middlewares\Core\CorsMiddleware;
+use Express\Middlewares\Core\RateLimitMiddleware;
+
+// Segurança completa em uma linha
+$app->use(SecurityMiddleware::create());
+
+// Ou configure individualmente
+$app->use(new CsrfMiddleware());
+$app->use(new XssMiddleware());
+$app->use(new CorsMiddleware());
+$app->use(new RateLimitMiddleware());
 ```
 
-3. Execute um exemplo:
+### 📚 Documentação OpenAPI/Swagger Automática
+```php
+use Express\Middlewares\Core\OpenApiDocsMiddleware;
+
+$app->use('/docs', new OpenApiDocsMiddleware([
+    'title' => 'Minha API',
+    'version' => '1.0.0'
+]));
+
+// Rotas com metadados para documentação
+$app->get('/api/users', function($req, $res) {
+    $res->json(['users' => []]);
+}, [
+    'tags' => ['Users'],
+    'summary' => 'Listar usuários',
+    'responses' => [
+        '200' => ['description' => 'Lista de usuários']
+    ]
+]);
+
+// Acesse /docs para ver a documentação interativa
+```
+
+## 🎯 Exemplos de Aprendizado
+
+Explore os exemplos na pasta `examples/` para aprender diferentes aspectos:
+
+| Exemplo | Arquivo | O que ensina |
+|---------|---------|--------------|
+| 👥 **Usuários** | `example_user.php` | Sistema de usuários, autenticação, perfis |
+| 📦 **Produtos** | `example_product.php` | CRUD completo, parâmetros de rota, validação |
+| 📤 **Upload** | `example_upload.php` | Upload de arquivos, validação, storage |
+| 🔐 **Admin** | `example_admin.php` | Área administrativa, permissões, dashboards |
+| 📝 **Blog** | `example_blog.php` | Sistema de blog, categorias, comentários |
+| 🛡️ **Segurança** | `example_security.php` | Todos os middlewares de segurança |
+| 🏗️ **Completo** | `example_complete.php` | Integração de todos os recursos |
+
+### Como usar os exemplos
 ```bash
+# Testar exemplo específico
+php examples/example_user.php
+# Acessar: http://localhost:8000
+
+# Ver documentação do exemplo
 php examples/example_complete.php
+# Acessar: http://localhost:8000/docs
 ```
 
-4. Abra seu navegador em `http://localhost:8000`
+## 📖 CRUD Completo - Exemplo Prático
 
-## 📦 Instalação
+```php
+<?php
+require_once 'vendor/autoload.php';
 
-### Via Composer (Recomendado)
+use Express\ApiExpress;
+use Express\Middlewares\Security\SecurityMiddleware;
+use Express\Middlewares\Security\AuthMiddleware;
 
+$app = new ApiExpress();
+
+// Middlewares globais
+$app->use(SecurityMiddleware::create());
+
+// Autenticação para rotas /api/*
+$app->use('/api', AuthMiddleware::jwt('chave_secreta'));
+
+// Simulação de dados
+$users = [
+    ['id' => 1, 'name' => 'João', 'email' => 'joao@email.com'],
+    ['id' => 2, 'name' => 'Maria', 'email' => 'maria@email.com']
+];
+
+// LOGIN (rota pública)
+$app->post('/login', function($req, $res) {
+    $username = $req->body['username'] ?? '';
+    $password = $req->body['password'] ?? '';
+
+    if ($username === 'admin' && $password === 'senha123') {
+        $token = AuthMiddleware::generateJWT([
+            'user_id' => 1,
+            'username' => $username
+        ], 'chave_secreta');
+
+        $res->json(['token' => $token]);
+    } else {
+        $res->status(401)->json(['error' => 'Credenciais inválidas']);
+    }
+});
+
+// CRUD ENDPOINTS (protegidos)
+$app->get('/api/users', function($req, $res) use ($users) {
+    $res->json($users);
+});
+
+$app->get('/api/users/:id', function($req, $res) use ($users) {
+    $id = (int)$req->params['id'];
+    $user = array_filter($users, fn($u) => $u['id'] === $id);
+
+    if (empty($user)) {
+        return $res->status(404)->json(['error' => 'Usuário não encontrado']);
+    }
+
+    $res->json(array_values($user)[0]);
+});
+
+$app->post('/api/users', function($req, $res) use (&$users) {
+    $data = $req->body;
+    $newUser = [
+        'id' => count($users) + 1,
+        'name' => $data['name'],
+        'email' => $data['email']
+    ];
+    $users[] = $newUser;
+
+    $res->status(201)->json($newUser);
+});
+
+$app->put('/api/users/:id', function($req, $res) use (&$users) {
+    $id = (int)$req->params['id'];
+    $data = $req->body;
+
+    foreach ($users as &$user) {
+        if ($user['id'] === $id) {
+            $user = array_merge($user, $data);
+            return $res->json($user);
+        }
+    }
+
+    $res->status(404)->json(['error' => 'Usuário não encontrado']);
+});
+
+$app->delete('/api/users/:id', function($req, $res) use (&$users) {
+    $id = (int)$req->params['id'];
+    $users = array_filter($users, fn($u) => $u['id'] !== $id);
+
+    $res->status(204)->send();
+});
+
+$app->run();
+```
+
+### Testando a API
 ```bash
-composer require express-php/microframework
+# 1. Login
+curl -X POST http://localhost:8000/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"senha123"}'
+
+# 2. Listar usuários (com token)
+curl -X GET http://localhost:8000/api/users \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+
+# 3. Criar usuário
+curl -X POST http://localhost:8000/api/users \
+  -H "Authorization: Bearer SEU_TOKEN_AQUI" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Pedro","email":"pedro@email.com"}'
 ```
 
-### Ou clone o repositório
+## 🛠️ Recursos Avançados
 
-```bash
-git clone https://github.com/CAFernandes/express-php.git
-cd express-php
-composer install
+### 📊 Agrupamento de Rotas
+```php
+// Agrupar rotas com prefixo e middlewares
+$app->use('/api/v1', AuthMiddleware::jwt('chave'));
+
+$app->get('/api/v1/users', function($req, $res) {
+    // Rota protegida automaticamente
+});
+
+$app->get('/api/v1/products', function($req, $res) {
+    // Rota protegida automaticamente
+});
 ```
 
-## 🌟 Funcionalidades
+### 🔄 Middleware Customizado
+```php
+// Middleware de log
+$logMiddleware = function($req, $res, $next) {
+    error_log("Request: {$req->method} {$req->path}");
+    $next();
+    error_log("Response: {$res->getStatusCode()}");
+};
 
-- ✅ **Sintaxe similar ao Express.js** para PHP
-- ✅ **PSR-4 Autoloading** com suporte ao Composer
-- ✅ **PHP Moderno** (7.4+ necessário)
-- ✅ **Roteamento automático** com suporte a parâmetros
-- ✅ **🆕 Autenticação Avançada** (JWT, Basic Auth, Bearer Token, API Key)
-- ✅ **Middlewares de segurança** (proteção CSRF, XSS)
-- ✅ **Geração de documentação** OpenAPI/Swagger
-- ✅ **Tratamento de upload** de arquivos
-- ✅ **Suporte a CORS**
-- ✅ **Rate limiting**
-- ✅ **Validação de requisições**
-- ✅ **Tratamento de erros**
-- ✅ **Arquitetura modular**
-- ✅ **Suporte a testes** PHPUnit
+$app->use($logMiddleware);
+```
 
-## 🤝 Contribuindo
+### 📤 Upload de Arquivos
+```php
+$app->post('/upload', function($req, $res) {
+    if (!isset($_FILES['arquivo'])) {
+        return $res->status(400)->json(['error' => 'Nenhum arquivo enviado']);
+    }
 
-Contribuições são bem-vindas! Por favor, leia nosso [Guia de Contribuição](../../CONTRIBUTING.md) para detalhes.
+    $arquivo = $_FILES['arquivo'];
+    $destino = 'uploads/' . basename($arquivo['name']);
 
-1. Faça um fork do repositório: https://github.com/CAFernandes/express-php
-2. Crie sua branch de feature: `git checkout -b feature/funcionalidade-incrivel`
-3. Commit suas mudanças: `git commit -m 'Adiciona funcionalidade incrível'`
-4. Push para a branch: `git push origin feature/funcionalidade-incrivel`
-5. Abra um Pull Request
+    if (move_uploaded_file($arquivo['tmp_name'], $destino)) {
+        $res->json(['message' => 'Upload realizado', 'file' => $destino]);
+    } else {
+        $res->status(500)->json(['error' => 'Erro no upload']);
+    }
+});
+```
 
-## 📄 Licença
+## 🔧 Configuração e Deploy
 
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](../../LICENSE) para detalhes.
+### Estrutura de Projeto Recomendada
+```
+meu-projeto/
+├── public/
+│   ├── index.php          # Ponto de entrada
+│   └── .htaccess         # Configuração Apache
+├── app/
+│   ├── Controllers/      # Controladores
+│   ├── Middlewares/      # Middlewares customizados
+│   └── Models/          # Modelos
+├── config/
+│   └── app.php          # Configurações
+├── storage/
+│   ├── logs/            # Logs
+│   └── uploads/         # Arquivos
+├── .env                 # Variáveis de ambiente
+└── composer.json        # Dependências
+```
 
-## 🔗 Links
+### Apache (.htaccess)
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+```
 
-- **Repositório**: https://github.com/CAFernandes/express-php
-- **Issues**: https://github.com/CAFernandes/express-php/issues
-- **Documentação**: https://github.com/CAFernandes/express-php/wiki
-- **Releases**: https://github.com/CAFernandes/express-php/releases
-- **Packagist**: https://packagist.org/packages/express-php/microframework
+### Nginx
+```nginx
+location / {
+    try_files $uri $uri/ /index.php?$query_string;
+}
+```
 
-## 🙏 Agradecimentos
+## 📋 Referência Rápida da API
 
-- Inspirado no framework [Express.js](https://expressjs.com/)
-- Desenvolvido com ❤️ por [Caio Alberto Fernandes](https://github.com/CAFernandes)
-- Agradecimentos especiais a todos os [contribuidores](https://github.com/CAFernandes/express-php/contributors)
+### Objetos Principais
+
+| Objeto | Descrição | Principais Métodos |
+|--------|-----------|-------------------|
+| `$req` | Request | `body`, `params`, `query`, `headers`, `user` |
+| `$res` | Response | `json()`, `send()`, `status()`, `header()` |
+| `$app` | Application | `get()`, `post()`, `put()`, `delete()`, `use()` |
+
+### Middlewares Disponíveis
+
+| Middleware | Função | Uso |
+|------------|--------|-----|
+| `SecurityMiddleware` | Segurança completa | `SecurityMiddleware::create()` |
+| `AuthMiddleware` | Autenticação | `AuthMiddleware::jwt('secret')` |
+| `CorsMiddleware` | CORS | `new CorsMiddleware()` |
+| `CsrfMiddleware` | CSRF Protection | `new CsrfMiddleware()` |
+| `XssMiddleware` | XSS Protection | `new XssMiddleware()` |
+| `RateLimitMiddleware` | Rate Limiting | `new RateLimitMiddleware()` |
+
+## 🏆 Qualidade e Testes
+
+- ✅ **186 testes unitários** - 100% de cobertura
+- ✅ **PHPStan Level 8** - Máxima análise estática
+- ✅ **PSR-12** - Code style padronizado
+- ✅ **PHP 7.4+** - Compatibilidade ampla
+- ✅ **Zero dependências** obrigatórias
+- ✅ **CI/CD completo** - GitHub Actions
+
+## 🆘 Suporte e Comunidade
+
+- **[Issues](https://github.com/CAFernandes/express-php/issues)** - Reportar bugs
+- **[Discussions](https://github.com/CAFernandes/express-php/discussions)** - Perguntas e ideias
+- **[Wiki](https://github.com/CAFernandes/express-php/wiki)** - Documentação adicional
+- **[Contributing](../../CONTRIBUTING.md)** - Como contribuir
+
+## 📚 Documentação Adicional
+
+- **[🚀 Guia de Início](../guides/starter/README.md)** - Tutorial completo para iniciantes
+- **[🔐 Sistema de Autenticação](AUTH_MIDDLEWARE.md)** - Guia detalhado de autenticação
+- **[🛡️ Middlewares de Segurança](../guides/SECURITY_IMPLEMENTATION.md)** - Segurança avançada
+- **[📊 Referência de Objetos](objetos.md)** - API completa do framework
+- **[🌍 English Documentation](../en/README.md)** - English version
 
 ---
 
-**Feito com ❤️ no Brasil 🇧🇷**
-
-- Inspirado no Express.js
-- Construído para a comunidade PHP
-- Projetado para desenvolvimento web moderno
-
----
-
-**Express PHP** - Construindo aplicações PHP modernas com simplicidade e segurança.
+**🎉 Pronto para começar?** [Siga nosso guia de início](../guides/starter/README.md) ou explore os [exemplos práticos](../../examples/)!
