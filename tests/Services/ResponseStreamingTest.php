@@ -15,10 +15,16 @@ class ResponseStreamingTest extends TestCase
 
     /**
      * Helper method to check streaming output, with fallback for test environment
+     *
+     * This method reads the current output buffer, checks for expected content,
+     * and then clears the buffer to prevent content accumulation between calls.
      */
     private function assertStreamOutput(string $expected, string $message = ''): void
     {
         $output = ob_get_contents();
+
+        // Clear the buffer after reading to prevent accumulation
+        ob_clean();
 
         if (empty($output)) {
             // Em ambiente de teste, o output pode estar vazio devido ao controle de buffer
