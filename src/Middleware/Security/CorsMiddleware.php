@@ -175,7 +175,7 @@ class CorsMiddleware extends BaseMiddleware
     private function setHeader($response, string $name, string $value): void
     {
         if ($response instanceof \Express\Http\Response) {
-            $this->setHeader($response, $name, $value);
+            $response->header($name, $value);
         } elseif (is_object($response)) {
             // Handle test objects
             if (!isset($response->headers)) {
