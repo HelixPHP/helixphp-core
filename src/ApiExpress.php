@@ -9,6 +9,8 @@ use Express\Http\Request;
 use Express\Http\Response;
 use Express\Routing\Router;
 use Express\Routing\RouterInstance;
+use BadMethodCallException;
+use Exception;
 
 /**
  * Classe principal do framework Express PHP.
@@ -56,8 +58,9 @@ class ApiExpress
             $this->setBaseUrl($baseUrl);
         }
 
-        // Inicializa a nova aplicação modular
-        $this->app = new Application();
+        // Inicializa a nova aplicação modular com basePath
+        $basePath = dirname(__DIR__); // Pasta raiz do projeto
+        $this->app = new Application($basePath);
         $this->server = $_SERVER;
     }
 
@@ -298,13 +301,57 @@ class ApiExpress
     }
 
     /**
+     * Executa a aplicação.
+     */
+    public function run(): void
+    {
+        // Implementação simplificada para funcionar
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+
+        // Se estamos rodando via CLI ou servidor built-in do PHP
+        if (php_sapi_name() === 'cli-server' || php_sapi_name() === 'cli') {
+            echo "Express PHP Server running\n";
+        }
+
+        // Identificar rota usando o Router
+        $route = Router::identify($method, $path);
+
+        if ($route) {
+            // Criar objetos Request e Response simples
+            $request = Request::createFromGlobals();
+            $response = new Response();
+
+            // Executar handler
+            try {
+                call_user_func($route['handler'], $request, $response);
+            } catch (Exception $e) {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => true, 'message' => $e->getMessage()]);
+            }
+        } else {
+            // Rota não encontrada
+            header('HTTP/1.1 404 Not Found');
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Route not found', 'path' => $path]);
+        }
+    }
+
+    /**
      * Proxy para métodos HTTP customizados.
      * @param mixed[] $args
      */
     public function __call(string $method, array $args): void
     {
-        $path = array_shift($args);
-        Router::add(strtoupper($method), $path, ...$args);
+        // Lista de métodos HTTP que devem ser delegados ao Router
+        $httpMethods = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
+
+        if (in_array(strtolower($method), $httpMethods)) {
+            // Delega para os métodos estáticos do Router
+            call_user_func_array([Router::class, $method], $args);
+        } else {
+            throw new BadMethodCallException("Method {$method} does not exist");
+        }
     }
 
     /**

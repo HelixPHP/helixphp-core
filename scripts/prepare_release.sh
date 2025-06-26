@@ -26,14 +26,6 @@ echo ""
 if [ ! -f "composer.json" ]; then
     error "Execute este script na raiz do projeto Express-PHP"
 fi
-    echo "❌ $1"
-    exit 1
-}
-
-# Verificar se estamos na raiz do projeto
-if [ ! -f "composer.json" ]; then
-    error "Este script deve ser executado na raiz do projeto"
-fi
 
 # 1. Verificar se há arquivos sensíveis
 echo "🔍 Verificando arquivos sensíveis..."
@@ -47,7 +39,7 @@ if [ -d "vendor" ]; then
 fi
 
 if [ -f "composer.lock" ]; then
-    status "composer.lock encontrado - normal para aplicações, opcional para bibliotecas"
+    info "composer.lock encontrado - normal para aplicações, opcional para bibliotecas"
 fi
 
 # 2. Validar estrutura básica
@@ -56,7 +48,7 @@ echo "📁 Validando estrutura do projeto..."
 required_files=("composer.json" "README.md" "LICENSE")
 for file in "${required_files[@]}"; do
     if [ -f "$file" ]; then
-        status "Arquivo $file presente"
+        info "Arquivo $file presente"
     else
         error "Arquivo obrigatório $file não encontrado"
     fi
@@ -65,7 +57,7 @@ done
 required_dirs=("src" "docs")
 for dir in "${required_dirs[@]}"; do
     if [ -d "$dir" ]; then
-        status "Diretório $dir presente"
+        info "Diretório $dir presente"
     else
         error "Diretório obrigatório $dir não encontrado"
     fi
@@ -76,7 +68,7 @@ echo "🔧 Verificando sintaxe PHP..."
 
 find src -name "*.php" -exec php -l {} \; > /dev/null
 if [ $? -eq 0 ]; then
-    status "Sintaxe PHP válida em todos os arquivos"
+    info "Sintaxe PHP válida em todos os arquivos"
 else
     error "Erros de sintaxe encontrados"
 fi
@@ -86,10 +78,10 @@ echo "🧪 Executando testes..."
 
 if [ -f "vendor/bin/phpunit" ]; then
     ./vendor/bin/phpunit --no-coverage --stop-on-failure
-    status "Testes passaram"
+    info "Testes passaram"
 elif [ -f "phpunit.phar" ]; then
     php phpunit.phar --no-coverage --stop-on-failure
-    status "Testes passaram"
+    info "Testes passaram"
 else
     warning "PHPUnit não encontrado - testes não executados"
 fi
@@ -99,7 +91,7 @@ echo "🔍 Análise estática..."
 
 if [ -f "vendor/bin/phpstan" ]; then
     ./vendor/bin/phpstan analyse --no-progress
-    status "Análise estática passou"
+    info "Análise estática passou"
 else
     warning "PHPStan não encontrado - análise estática não executada"
 fi
@@ -110,7 +102,7 @@ echo "📦 Validando composer.json..."
 # Verificar se composer.json é válido
 composer validate --no-check-all --no-check-lock
 if [ $? -eq 0 ]; then
-    status "composer.json válido"
+    info "composer.json válido"
 else
     error "composer.json inválido"
 fi
@@ -129,7 +121,7 @@ if [ -d ".git" ]; then
             error "Cancelado pelo usuário"
         fi
     else
-        status "Todos os arquivos estão commitados"
+        info "Todos os arquivos estão commitados"
     fi
 fi
 
@@ -139,7 +131,7 @@ echo "🎯 Executando validação personalizada..."
 if [ -f "scripts/validate_project.php" ]; then
     php scripts/validate_project.php
     if [ $? -eq 0 ]; then
-        status "Validação personalizada passou"
+        info "Validação personalizada passou"
     else
         error "Validação personalizada falhou"
     fi
@@ -153,30 +145,30 @@ echo "🧹 Limpando arquivos temporários..."
 # Remover cache de desenvolvimento
 if [ -d ".phpunit.cache" ]; then
     rm -rf .phpunit.cache
-    status "Cache do PHPUnit removido"
+    info "Cache do PHPUnit removido"
 fi
 
 if [ -f ".phpunit.result.cache" ]; then
     rm -f .phpunit.result.cache
-    status "Cache de resultados do PHPUnit removido"
+    info "Cache de resultados do PHPUnit removido"
 fi
 
 if [ -d ".phpstan.cache" ]; then
     rm -rf .phpstan.cache
-    status "Cache do PHPStan removido"
+    info "Cache do PHPStan removido"
 fi
 
 # Limpar logs de desenvolvimento
 if [ -d "logs" ]; then
     find logs -name "*.log" -type f -delete 2>/dev/null || true
-    status "Logs de desenvolvimento limpos"
+    info "Logs de desenvolvimento limpos"
 fi
 
 # 10. Verificar tamanho do projeto
 echo "📊 Análise do tamanho do projeto..."
 
 project_size=$(du -sh . 2>/dev/null | cut -f1)
-status "Tamanho total do projeto: $project_size"
+info "Tamanho total do projeto: $project_size"
 
 # Verificar arquivos grandes
 echo "Arquivos maiores que 1MB:"

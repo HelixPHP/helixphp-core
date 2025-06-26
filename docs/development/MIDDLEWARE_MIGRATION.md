@@ -7,7 +7,7 @@ Os middlewares do Express PHP foram reorganizados em uma estrutura mais profissi
 ## 📁 Nova Estrutura
 
 ```
-src/Middlewares/
+src/Middleware/
 ├── README.md                 # Documentação dos middlewares
 ├── index.php                 # Importação automática + aliases
 ├── Security/                 # 🔒 Middlewares de Segurança
@@ -62,7 +62,7 @@ use Express\src\Services\XssMiddleware;       // ✅ Funciona
 ### 1. Importação Automática
 ```php
 // Importa todos os middlewares + cria aliases
-require_once 'src/Middlewares/index.php';
+require_once 'src/Middleware/index.php';
 ```
 
 ### 2. Importação Específica
@@ -89,22 +89,22 @@ use Express\src\Middlewares\Core\CorsMiddleware;
 - [x] `examples/snippets/utils_seguranca.php`
 
 ### ✅ Testes Atualizados
-- [x] `test/security_test.php`
+- [x] **[`tests/Security/`](../../tests/Security/)** - Complete security middleware tests
 
 ### ✅ Documentação Atualizada
 - [x] `README.md` - Namespaces atualizados
-- [x] `docs/objetos.md` - Documentação de middlewares
-- [x] `src/Middlewares/README.md` - Nova documentação
+- [x] **[`docs/pt-br/objetos.md`](../pt-br/objetos.md)** - Documentação de middlewares
+- [x] **[`src/Middleware/README.md`](../../src/Middleware/README.md)** - Nova documentação
 
 ## 🧪 Testes de Migração
 
 Todos os testes passaram com sucesso:
 
 ```bash
-$ php test/security_test.php
+$ php vendor/bin/phpunit tests/Security/
 === TESTE DOS MIDDLEWARES DE SEGURANÇA ===
 ✅ CSRF: Tokens funcionando
-✅ XSS: Sanitização funcionando  
+✅ XSS: Sanitização funcionando
 ✅ Configuração: Middlewares instanciados
 ✅ Simulação: Requisições processadas
 === TESTE CONCLUÍDO ===

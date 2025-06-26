@@ -129,7 +129,7 @@ class ProjectValidator
 
             // Testar instanciação
             try {
-                $auth = new Express\Middlewares\Security\AuthMiddleware();
+                $auth = new Express\Middleware\Security\AuthMiddleware();
                 $this->passed[] = "AuthMiddleware pode ser instanciado";
             } catch (Exception $e) {
                 $this->errors[] = "Erro ao instanciar AuthMiddleware: " . $e->getMessage();
@@ -287,7 +287,7 @@ class ProjectValidator
             $res = new stdClass();
             $res->status_code = 200;
 
-            $auth = new Express\Middlewares\Security\AuthMiddleware();
+            $auth = new Express\Middleware\Security\AuthMiddleware();
 
             $this->passed[] = "Sistema de autenticação funcional";
         } catch (Exception $e) {

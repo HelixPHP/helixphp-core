@@ -321,4 +321,18 @@ class Request
         $uri = $_SERVER['REQUEST_URI'] ?? '/';
         return "{$protocol}://{$host}{$uri}";
     }
+
+    /**
+     * Cria uma instância Request a partir das variáveis globais PHP.
+     *
+     * @return Request Nova instância de Request
+     */
+    public static function createFromGlobals(): Request
+    {
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+        $pathCallable = $path;
+
+        return new static($method, $path, $pathCallable);
+    }
 }

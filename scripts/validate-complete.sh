@@ -64,7 +64,6 @@ check_start "Verificando arquivos essenciais"
 required_files=(
     "composer.json"
     "README.md"
-    "README_v2.md"
     "CHANGELOG.md"
     "src/ApiExpress.php"
     "examples/COMO_USAR.md"
@@ -204,10 +203,9 @@ title "5. Documentação"
 check_start "Verificando completude da documentação"
 doc_files=(
     "README.md"
-    "README_v2.md"
     "CHANGELOG.md"
     "examples/COMO_USAR.md"
-    "docs/INDEX.md"
+    "docs/README.md"
 )
 
 incomplete_docs=()

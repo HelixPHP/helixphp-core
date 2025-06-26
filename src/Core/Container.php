@@ -108,10 +108,10 @@ class Container
      * Registra uma instância existente como singleton.
      *
      * @param string $abstract Nome abstrato
-     * @param object $instance Instância do objeto
+     * @param mixed $instance Instância do objeto ou valor
      * @return $this
      */
-    public function instance(string $abstract, object $instance): self
+    public function instance(string $abstract, $instance): self
     {
         $this->instances[$abstract] = $instance;
         return $this;

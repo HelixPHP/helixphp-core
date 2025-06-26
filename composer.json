@@ -61,7 +61,7 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test:security": "php test/security_test.php",
+        "test:security": "vendor/bin/phpunit tests/Security/",
         "test:auth": "php test/auth_test.php",
         "phpstan": "phpstan analyse",
         "cs:check": "phpcs --standard=PSR12 src/",

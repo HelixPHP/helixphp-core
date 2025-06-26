@@ -74,8 +74,8 @@ class MeuMiddleware
 ```
 
 #### Localização dos Middlewares
-- **Core**: `src/Middlewares/Core/` - Funcionalidades principais
-- **Security**: `src/Middlewares/Security/` - Segurança e autenticação
+- **Core**: `src/Middleware/Core/` - Funcionalidades principais
+- **Security**: `src/Middleware/Security/` - Segurança e autenticação
 
 ### 4. Testes
 
@@ -232,9 +232,8 @@ test: add middleware integration tests
 ## 📖 Development Resources
 
 - [Express PHP Documentation](docs/en/README.md)
-- [Middleware Documentation](src/Middlewares/README.md)
-- [Security Implementation Guide](SECURITY_IMPLEMENTATION.md)
-- [Migration Guide](MIDDLEWARE_MIGRATION.md)
+- [Security Implementation Guide](docs/guides/SECURITY_IMPLEMENTATION.md)
+- [Migration Guide](docs/development/MIDDLEWARE_MIGRATION.md)
 
 ## 🎯 Contribution Areas
 

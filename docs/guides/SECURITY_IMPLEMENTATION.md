@@ -20,7 +20,7 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - `hiddenField()` - Gera campo hidden HTML
 - `metaTag()` - Gera meta tag HTML para AJAX
 
-### 🔒 2. XssMiddleware  
+### 🔒 2. XssMiddleware
 **Arquivo:** `src/Services/XssMiddleware.php`
 
 **Funcionalidades:**
@@ -56,16 +56,16 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 
 ### Arquivos de Documentação:
 - ✅ `README.md` - Documentação principal atualizada
-- ✅ `docs/objetos.md` - Documentação de objetos atualizada
+- ✅ **[`docs/pt-br/objetos.md`](../pt-br/objetos.md)** - Documentação de objetos atualizada
 
 ### Exemplos Práticos:
-- ✅ `examples/example_security.php` - Complete usage example
-- ✅ `examples/snippets/utils_csrf.php` - Snippets CSRF
-- ✅ `examples/snippets/utils_xss.php` - Snippets XSS  
-- ✅ `examples/snippets/utils_seguranca.php` - Configurações
+- ✅ **[`examples/example_security.php`](../../examples/example_security.php)** - Complete usage example
+- ✅ **[`examples/snippets/utils_csrf.php`](../../examples/snippets/utils_csrf.php)** - Snippets CSRF
+- ✅ **[`examples/snippets/utils_xss.php`](../../examples/snippets/utils_xss.php)** - Snippets XSS
+- ✅ **[`examples/snippets/utils_seguranca.php`](../../examples/snippets/utils_seguranca.php)** - Configurações
 
 ### Testes:
-- ✅ `test/security_test.php` - Complete middleware testing
+- ✅ **[`tests/Security/`](../../tests/Security/)** - Complete middleware testing
 
 ## 🔧 Cabeçalhos de Segurança Implementados
 
@@ -137,18 +137,18 @@ fetch('/api/endpoint', {
 
 ## 🧪 Testes Realizados
 
-✅ Geração e validação de tokens CSRF  
-✅ Sanitização de dados XSS  
-✅ Detecção de conteúdo malicioso  
-✅ Configuração de middlewares  
-✅ Simulação de requisições  
-✅ Cabeçalhos de segurança  
-✅ Configuração de sessão segura  
+✅ Geração e validação de tokens CSRF
+✅ Sanitização de dados XSS
+✅ Detecção de conteúdo malicioso
+✅ Configuração de middlewares
+✅ Simulação de requisições
+✅ Cabeçalhos de segurança
+✅ Configuração de sessão segura
 
 ## 📋 Checklist de Segurança
 
 - [x] Proteção CSRF implementada
-- [x] Proteção XSS implementada  
+- [x] Proteção XSS implementada
 - [x] Cabeçalhos de segurança configurados
 - [x] Sanitização de entrada automática
 - [x] Configuração de sessão segura
