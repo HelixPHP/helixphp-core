@@ -14,7 +14,7 @@ class OpenApiExporter
      * @param array|string $routers Array of Router/RouterInstance instances or Router class name
      * @return array
      */
-    public static function export($routers, $baseUrl = null)
+    public static function export(mixed $routers, ?string $baseUrl = null): array
     {
         $allRoutes = [];
         if (is_string($routers)) {
@@ -52,8 +52,9 @@ class OpenApiExporter
             $method = strtolower($route['method']);
             $meta = $route['metadata'] ?? [];
             $path = preg_replace('/:(\w+)/', '{$1}', $route['path']);
-            if (!isset($paths[$path])) {
-                $paths[$path] = [];
+            $pathKey = is_string($path) ? $path : $route['path'];
+            if (!isset($paths[$pathKey])) {
+                $paths[$pathKey] = [];
             }
             $summary = $meta['summary'] ?? ($meta['description'] ?? ('Endpoint ' . $route['method'] . ' ' . $route['path']));
             $parameters = [];
@@ -130,7 +131,7 @@ class OpenApiExporter
             if (isset($meta['examples'])) {
                 $routeDef['examples'] = $meta['examples'];
             }
-            $paths[$path][$method] = $routeDef;
+            $paths[$pathKey][$method] = $routeDef;
         }
         // Monta o objeto OpenAPI
         $openapi = [

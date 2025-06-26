@@ -7,7 +7,7 @@ namespace Express\Middlewares\Security;
  */
 class XssMiddleware
 {
-    private $options;
+    private array $options;
 
     /**
      * @param array $options Opções de configuração:
@@ -28,7 +28,7 @@ class XssMiddleware
         ], $options);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(object $request, object $response, callable $next): void
     {
         // Adiciona cabeçalhos de segurança
         if ($this->options['securityHeaders']) {
@@ -46,25 +46,25 @@ class XssMiddleware
     /**
      * Adiciona cabeçalhos de segurança à resposta
      */
-    private function addSecurityHeaders($response)
+    private function addSecurityHeaders(object $response): void
     {
         // Proteção XSS
         $response->header('X-XSS-Protection', '1; mode=block');
-        
+
         // Impede que o browser "adivinhe" o tipo de conteúdo
         $response->header('X-Content-Type-Options', 'nosniff');
-        
+
         // Impede que a página seja carregada em frame/iframe (proteção contra clickjacking)
         $response->header('X-Frame-Options', 'DENY');
-        
+
         // Política de referrer
         $response->header('Referrer-Policy', 'strict-origin-when-cross-origin');
-        
+
         // Content Security Policy
         if ($this->options['contentSecurityPolicy']) {
             $response->header('Content-Security-Policy', $this->options['contentSecurityPolicy']);
         }
-        
+
         // Força HTTPS (uncommente se usando HTTPS)
         // $response->header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
     }
@@ -72,20 +72,20 @@ class XssMiddleware
     /**
      * Sanitiza dados da requisição
      */
-    private function sanitizeRequest($request)
+    private function sanitizeRequest(object $request): void
     {
         // Sanitiza parâmetros GET
-        if (isset($_GET) && !empty($_GET)) {
+        if (!empty($_GET)) {
             $_GET = $this->sanitizeArray($_GET);
         }
 
         // Sanitiza dados POST
-        if (isset($_POST) && !empty($_POST)) {
+        if (!empty($_POST)) {
             $_POST = $this->sanitizeArray($_POST);
         }
 
         // Sanitiza cookies
-        if (isset($_COOKIE) && !empty($_COOKIE)) {
+        if (!empty($_COOKIE)) {
             $_COOKIE = $this->sanitizeArray($_COOKIE);
         }
 
@@ -103,7 +103,7 @@ class XssMiddleware
     /**
      * Sanitiza um array recursivamente
      */
-    private function sanitizeArray($data)
+    private function sanitizeArray(mixed $data): mixed
     {
         if (!is_array($data)) {
             return $this->sanitizeValue($data);
@@ -112,7 +112,7 @@ class XssMiddleware
         $sanitized = [];
         foreach ($data as $key => $value) {
             $sanitizedKey = $this->sanitizeValue($key);
-            
+
             if (is_array($value)) {
                 $sanitized[$sanitizedKey] = $this->sanitizeArray($value);
             } else {
@@ -131,67 +131,67 @@ class XssMiddleware
     /**
      * Sanitiza um valor individual
      */
-    private function sanitizeValue($value)
+    private function sanitizeValue(mixed $value): mixed
     {
         if (!is_string($value)) {
             return $value;
         }
 
         // Remove caracteres de controle
-        $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
-        
+        $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value) ?? '';
+
         // Converte caracteres especiais para entidades HTML
         $value = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        
+
         // Remove tags HTML perigosas (mantém apenas as permitidas)
         $value = strip_tags($value, $this->options['allowedTags']);
-        
+
         // Remove scripts inline
-        $value = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $value);
-        
+        $value = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $value) ?? '';
+
         // Remove event handlers JavaScript
-        $value = preg_replace('/\s*on\w+\s*=\s*["\'][^"\']*["\']/i', '', $value);
-        
+        $value = preg_replace('/\s*on\w+\s*=\s*["\'][^"\']*["\']/i', '', $value) ?? '';
+
         // Remove javascript: URLs
-        $value = preg_replace('/javascript\s*:/i', '', $value);
-        
+        $value = preg_replace('/javascript\s*:/i', '', $value) ?? '';
+
         return trim($value);
     }
 
     /**
      * Método estático para sanitizar uma string
      */
-    public static function sanitize($value, $allowedTags = '')
+    public static function sanitize(mixed $value, string $allowedTags = ''): mixed
     {
         if (!is_string($value)) {
             return $value;
         }
 
         // Remove caracteres de controle
-        $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
-        
+        $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value) ?? '';
+
         // Converte caracteres especiais para entidades HTML
         $value = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-        
+
         // Remove tags HTML perigosas
         $value = strip_tags($value, $allowedTags);
-        
+
         // Remove scripts inline
-        $value = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $value);
-        
+        $value = preg_replace('/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/mi', '', $value) ?? '';
+
         // Remove event handlers JavaScript
-        $value = preg_replace('/\s*on\w+\s*=\s*["\'][^"\']*["\']/i', '', $value);
-        
+        $value = preg_replace('/\s*on\w+\s*=\s*["\'][^"\']*["\']/i', '', $value) ?? '';
+
         // Remove javascript: URLs
-        $value = preg_replace('/javascript\s*:/i', '', $value);
-        
+        $value = preg_replace('/javascript\s*:/i', '', $value) ?? '';
+
         return trim($value);
     }
 
     /**
      * Método estático para validar se uma string contém XSS
      */
-    public static function containsXss($value)
+    public static function containsXss(mixed $value): bool
     {
         if (!is_string($value)) {
             return false;
@@ -219,7 +219,7 @@ class XssMiddleware
     /**
      * Método estático para limpar URLs de JavaScript
      */
-    public static function cleanUrl($url)
+    public static function cleanUrl(mixed $url): mixed
     {
         if (!is_string($url)) {
             return $url;
@@ -227,10 +227,10 @@ class XssMiddleware
 
         // Remove javascript: e data: URLs maliciosos
         $url = preg_replace('/^(javascript|data|vbscript):/i', '', $url);
-        
+
         // Sanitiza a URL
         $url = filter_var($url, FILTER_SANITIZE_URL);
-        
+
         return $url;
     }
 }

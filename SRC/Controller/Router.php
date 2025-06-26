@@ -5,9 +5,6 @@ use InvalidArgumentException;
 /**
  * Classe Router responsável pelo registro e identificação de rotas HTTP.
  * Permite agrupar rotas, registrar handlers e identificar rotas para requisições.
- *
- * @property string $prev_path Prefixo/base para rotas agrupadas.
- * @property array $routes Lista de rotas registradas.
  */
 class Router
 {
@@ -15,13 +12,12 @@ class Router
    * Prefixo/base para rotas agrupadas.
    * @var string
    */
-  private static $prev_path = '';
-  private static $current_group_prefix = '';
+  private static string $current_group_prefix = '';
   /**
    * Lista de rotas registradas.
-   * @var array
+   * @var array<int, array>
    */
-  private static $routes = [];
+  private static array $routes = [];
   /**
    * Caminho padrão.
    * @var string
@@ -29,16 +25,16 @@ class Router
   const DEFAULT_PATH = '/';
   /**
    * Métodos HTTP aceitos.
-   * @var string[]
+   * @var array<string>
    */
-  private static $httpMethodsAccepted = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
+  private static array $httpMethodsAccepted = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
 
   /**
    * Permite adicionar métodos HTTP customizados.
    * @param string $method Método HTTP customizado.
    * @return void
    */
-  public static function addHttpMethod($method)
+  public static function addHttpMethod(string $method): void
   {
     $method = strtoupper($method);
     if (!in_array($method, self::$httpMethodsAccepted)) {
@@ -48,9 +44,9 @@ class Router
 
   /**
    * Middlewares de grupo por prefixo de rota.
-   * @var array
+   * @var array<string, array>
    */
-  private static $groupMiddlewares = [];
+  private static array $groupMiddlewares = [];
 
   /**
    * Define um prefixo/base para rotas agrupadas OU registra middlewares para um grupo de rotas.
@@ -59,23 +55,14 @@ class Router
    * @throws InvalidArgumentException Se $prev_path não for string.
    * @return void
    */
-  public static function use($prev_path, ...$middlewares)
+  public static function use(string $prev_path, callable ...$middlewares): void
   {
-    if (!is_string($prev_path)) {
-      throw new InvalidArgumentException('Previous path must be a string');
-    }
     if (empty($prev_path)) {
       $prev_path = '/';
     }
-    self::$prev_path = $prev_path;
     self::$current_group_prefix = $prev_path;
     // Se middlewares foram passados, registra para o grupo
     if (!empty($middlewares)) {
-      foreach ($middlewares as $mw) {
-        if (!is_callable($mw)) {
-          throw new InvalidArgumentException('Group middleware must be callable');
-        }
-      }
       self::$groupMiddlewares[$prev_path] = $middlewares;
     }
   }
@@ -84,12 +71,11 @@ class Router
    * Adiciona uma nova rota com método, caminho, middlewares e handler.
    * @param string $method Método HTTP.
    * @param string $path Caminho da rota.
-   * @param callable[] ...$middlewares Middlewares opcionais.
-   * @param callable $handler Função handler da rota.
+   * @param callable|array ...$handlers Middlewares e handler final.
    * @throws InvalidArgumentException Se o método não for suportado.
    * @return void
    */
-  private static function add($method, $path, ...$handlers)
+  private static function add(string $method, string $path, callable|array ...$handlers): void
   {
     if (empty($path)) {
       $path = self::DEFAULT_PATH;
@@ -122,13 +108,13 @@ class Router
       $path = preg_replace('/\/+/', '/', $path); // Remove duplicate slashes
     }
     // Ensure the path starts with a slash
-    if ($path[0] !== '/') {
+    if (!empty($path) && $path[0] !== '/') {
       $path = '/' . $path;
     }
     // Adiciona middlewares de grupo se houver para o prefixo
     $groupMiddlewares = [];
     foreach (self::$groupMiddlewares as $prefix => $middlewares) {
-      if (strpos($path, $prefix) === 0) {
+      if (!empty($path) && strpos($path, $prefix) === 0) {
         $groupMiddlewares = array_merge($groupMiddlewares, $middlewares);
       }
     }
@@ -142,7 +128,7 @@ class Router
   }
 
   // Verifica se array é associativo
-  private static function isAssoc(array $arr)
+  private static function isAssoc(array $arr): bool
   {
     if ([] === $arr) return false;
     return array_keys($arr) !== range(0, count($arr) - 1);
@@ -153,9 +139,9 @@ class Router
    * @param string $method The HTTP method (GET, POST, etc.).
    * @param string|null $path The path to match (optional).
    * @throws InvalidArgumentException if the method is not supported.
-   * @return array The matching routes.
+   * @return array|null The matching routes or null if not found.
    */
-  public static function identify($method, $path = null)
+  public static function identify(string $method, ?string $path = null): ?array
   {
     if (!in_array(strtoupper($method), self::$httpMethodsAccepted)) {
       throw new InvalidArgumentException("Method {$method} is not supported");
@@ -195,21 +181,21 @@ class Router
     return null; // Nenhuma rota encontrada
   }
 
-  public static function __callStatic($method, $args)
+  public static function __callStatic(string $method, array $args): mixed
   {
     if (in_array(strtoupper($method), self::$httpMethodsAccepted)) {
       $path = array_shift($args);
       self::add(strtoupper($method), $path, ...$args);
-      return;
+      return null;
     }
 
     if (method_exists(self::class, $method)) {
-      return call_user_func_array([self::class, $method], $args);
+      return self::{$method}(...$args);
     }
     throw new \BadMethodCallException("Method {$method} does not exist in " . self::class);
   }
 
-  public static function toString()
+  public static function toString(): string
   {
     $output = '';
     foreach (self::$routes as $route) {
@@ -225,24 +211,24 @@ class Router
 
   /**
    * Retorna todas as rotas registradas (para exportação/documentação).
-   * @return array
+   * @return array<int, array>
    */
-  public static function getRoutes()
+  public static function getRoutes(): array
   {
     return self::$routes;
   }
 
   /**
    * Retorna os métodos HTTP aceitos.
-   * @return array
+   * @return array<string>
    */
-  public static function getHttpMethodsAccepted()
+  public static function getHttpMethodsAccepted(): array
   {
     return self::$httpMethodsAccepted;
   }
 
   // Remove closures, objetos e recursos de arrays recursivamente
-  private static function sanitizeForJson($value) {
+  private static function sanitizeForJson(mixed $value): mixed {
     if (is_array($value)) {
       $out = [];
       foreach ($value as $k => $v) {

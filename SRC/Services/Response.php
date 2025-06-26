@@ -51,6 +51,15 @@ class Response
     header("{$name}: {$value}");
     return $this;
   }
+
+  /**
+   * Obtém os cabeçalhos da resposta.
+   * @return array
+   */
+  public function getHeaders(): array
+  {
+    return $this->headers;
+  }
   /**
    * Envia resposta em formato JSON.
    * @param mixed $data Dados a serem enviados.
@@ -59,7 +68,8 @@ class Response
   public function json($data)
   {
     $this->header('Content-Type', 'application/json; charset=utf-8');
-    $this->body = json_encode($data);
+    $encoded = json_encode($data);
+    $this->body = $encoded !== false ? $encoded : '{}';
     echo $this->body;
     return $this;
   }

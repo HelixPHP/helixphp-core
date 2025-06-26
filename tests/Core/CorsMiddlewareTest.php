@@ -114,7 +114,7 @@ class CorsMiddlewareTest extends TestCase
                 parent::__construct($options);
             }
 
-            public function __invoke($request, $response, $next)
+            public function __invoke(mixed $request, mixed $response, callable $next): mixed
             {
                 // Acessar as opções através de reflexão já que $options é private na classe pai
                 $reflection = new \ReflectionClass(get_parent_class($this));
@@ -137,9 +137,9 @@ class CorsMiddlewareTest extends TestCase
                 if ($request->method === 'OPTIONS') {
                     $response->status(204)->end();
                     // Ao invés de exit, apenas retornar sem chamar next()
-                    return;
+                    return null;
                 }
-                $next();
+                return $next();
             }
         };
 

@@ -16,39 +16,34 @@ use Express\Services\Response;
 class ApiExpress
 {
   /**
-   * Instância do roteador.
-   * @var string
-   */
-  private $router;
-  /**
    * Referência para o array $_SERVER.
-   * @var array
+   * @var array<string, mixed>
    */
-  private $server;
+  private array $server;
 
   /**
    * Lista de middlewares globais.
-   * @var array
+   * @var array<callable>
    */
-  private $middlewares = [];
+  private array $middlewares = [];
 
   /**
    * URL base do app para uso em geração de links/documentação.
    * @var string|null
    */
-  private $baseUrl = null;
+  private ?string $baseUrl = null;
 
   /**
    * Lista de sub-routers registrados via use.
-   * @var array
+   * @var array<object>
    */
-  private $subRouters = [];
+  private array $subRouters = [];
 
   /**
    * Construtor da aplicação Express PHP.
    * Inicializa o roteador e referencia o array $_SERVER.
    */
-  public function __construct($baseUrl = null)
+  public function __construct(?string $baseUrl = null)
   {
     if ($baseUrl) {
       $this->setBaseUrl($baseUrl);
@@ -57,7 +52,6 @@ class ApiExpress
     // Isso é necessário para evitar problemas com headers já enviados
     // e permitir que o erro seja tratado corretamente
     ob_start();
-    $this->router = Router::class;
     $this->server =& $_SERVER;
   }
 
@@ -74,24 +68,31 @@ class ApiExpress
       $routes = $middleware->getRoutes();
       foreach ($routes as $route) {
         $method = strtolower($route['method']);
-        if (method_exists($this->router, $method)) {
+        if (method_exists(Router::class, $method)) {
           $handlers = array_merge($route['middlewares'], [$route['handler']]);
           if (!empty($route['metadata'])) {
             $handlers[] = $route['metadata'];
           }
-          call_user_func_array([$this->router, $method], array_merge([$route['path']], $handlers));
+          Router::{$method}($route['path'], ...$handlers);
         }
       }
       return;
     }
+
     if (is_callable($middleware)) {
       $this->middlewares[] = $middleware;
-    } else {
-      // Permite manter compatibilidade com agrupamento de rotas (ex: $app->use('/user'))
-      if (is_string($middleware)) {
-        $this->router::use($middleware);
-      }
+      return;
     }
+
+    // Permite manter compatibilidade com agrupamento de rotas (ex: $app->use('/user'))
+    // @phpstan-ignore-next-line
+    if (is_string($middleware)) {
+      Router::use($middleware);
+      return;
+    }
+
+    // Se chegou até aqui, middleware tem tipo inválido
+    throw new \InvalidArgumentException('Middleware deve ser callable, string ou array de rotas');
   }
 
   /**
@@ -120,7 +121,7 @@ class ApiExpress
       }
       // Log temporário para depuração
       error_log('[ExpressPHP] PATH_INFO: ' . $pathInfo);
-      $config = $this->router::identify($this->server['REQUEST_METHOD'], $pathInfo);
+      $config = Router::identify($this->server['REQUEST_METHOD'], $pathInfo);
       // Se não encontrou no router principal, tenta nos sub-routers
       if (!$config && !empty($this->subRouters)) {
         foreach ($this->subRouters as $subRouter) {
@@ -203,9 +204,9 @@ class ApiExpress
   public function __call($method, $args)
   {
     // Corrigido: usar método público para obter métodos aceitos
-    if (method_exists($this->router, $method) || in_array(strtoupper($method), $this->router::getHttpMethodsAccepted())) {
+    if (method_exists(Router::class, $method) || in_array(strtoupper($method), Router::getHttpMethodsAccepted())) {
       // Call the Router method with the provided arguments
-      return call_user_func_array([$this->router, $method], $args);
+      return Router::{$method}(...$args);
     } else {
       throw new \BadMethodCallException("Method {$method} does not exist in Router class");
     }
@@ -215,14 +216,14 @@ class ApiExpress
    * Define a URL base do app.
    * @param string $url
    */
-  public function setBaseUrl($url) {
+  public function setBaseUrl(string $url): void {
     $this->baseUrl = rtrim($url, '/');
   }
   /**
    * Obtém a URL base do app.
    * @return string|null
    */
-  public function getBaseUrl() {
+  public function getBaseUrl(): ?string {
     return $this->baseUrl;
   }
 }

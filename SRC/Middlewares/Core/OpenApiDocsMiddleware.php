@@ -4,15 +4,15 @@ namespace Express\Middlewares\Core;
 
 class OpenApiDocsMiddleware
 {
-  public function __construct($app, $routers)
+  public function __construct(mixed $app, mixed $routers)
   {
     // Descobre a baseUrl do app
-    $baseUrl = method_exists($app, 'getBaseUrl') && $app->getBaseUrl() ? $app->getBaseUrl() : '';
+    $baseUrl = (is_object($app) && method_exists($app, 'getBaseUrl') && $app->getBaseUrl()) ? $app->getBaseUrl() : '';
     $jsonUrl = $baseUrl . '/docs/openapi.json';
     // Rota JSON OpenAPI
     $app->get('/docs/openapi.json', function ($request, $response) use ($routers, $baseUrl) {
       try {
-        $openapi = OpenApiExporter::export($routers, $baseUrl);
+        $openapi = \Express\Services\OpenApiExporter::export($routers, $baseUrl);
         header('Content-Type: application/json; charset=utf-8');
         $response->json($openapi);
         exit;

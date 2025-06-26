@@ -8,7 +8,7 @@ class JWTHelper
 {
     /**
      * Gera um token JWT
-     * 
+     *
      * @param array $payload Dados do payload
      * @param string $secret Chave secreta
      * @param array $options Opções:
@@ -31,11 +31,11 @@ class JWTHelper
         $now = time();
         $payload['iat'] = $now; // issued at
         $payload['exp'] = $now + $options['expiresIn']; // expiration time
-        
+
         if ($options['issuer']) {
             $payload['iss'] = $options['issuer'];
         }
-        
+
         if ($options['audience']) {
             $payload['aud'] = $options['audience'];
         }
@@ -55,7 +55,7 @@ class JWTHelper
 
     /**
      * Decodifica um token JWT
-     * 
+     *
      * @param string $token Token JWT
      * @param string $secret Chave secreta
      * @param array $options Opções:
@@ -72,10 +72,10 @@ class JWTHelper
         ], $options);
 
         // Verifica se a biblioteca JWT está disponível
-        if (class_exists('Firebase\JWT\JWT')) {
+        if (class_exists('Firebase\JWT\JWT') && class_exists('Firebase\JWT\Key')) {
             \Firebase\JWT\JWT::$leeway = $options['leeway'];
             $decoded = \Firebase\JWT\JWT::decode(
-                $token, 
+                $token,
                 new \Firebase\JWT\Key($secret, $options['algorithm'])
             );
             return (array) $decoded;
@@ -91,7 +91,7 @@ class JWTHelper
 
     /**
      * Verifica se um token está válido (não expirado)
-     * 
+     *
      * @param string $token Token JWT
      * @param string $secret Chave secreta
      * @param array $options Opções de decodificação
@@ -109,7 +109,7 @@ class JWTHelper
 
     /**
      * Obtém o payload sem validar a assinatura (útil para debug)
-     * 
+     *
      * @param string $token Token JWT
      * @return array Payload
      */
@@ -126,7 +126,7 @@ class JWTHelper
 
     /**
      * Verifica se um token está expirado
-     * 
+     *
      * @param string $token Token JWT
      * @param int $leeway Margem de tempo em segundos
      * @return bool True se expirado
@@ -138,7 +138,7 @@ class JWTHelper
             if (!isset($payload['exp'])) {
                 return false; // Token sem expiração
             }
-            
+
             return time() > ($payload['exp'] + $leeway);
         } catch (\Exception $e) {
             return true; // Se não conseguiu decodificar, considera expirado
@@ -155,9 +155,16 @@ class JWTHelper
             'alg' => 'HS256'
         ];
 
-        $headerEncoded = self::base64UrlEncode(json_encode($header));
-        $payloadEncoded = self::base64UrlEncode(json_encode($payload));
-        
+        $headerJson = json_encode($header);
+        $payloadJson = json_encode($payload);
+
+        if ($headerJson === false || $payloadJson === false) {
+            throw new \InvalidArgumentException('Failed to encode JWT header or payload');
+        }
+
+        $headerEncoded = self::base64UrlEncode($headerJson);
+        $payloadEncoded = self::base64UrlEncode($payloadJson);
+
         $signature = hash_hmac('sha256', $headerEncoded . '.' . $payloadEncoded, $secret, true);
         $signatureEncoded = self::base64UrlEncode($signature);
 
@@ -221,18 +228,21 @@ class JWTHelper
 
     /**
      * Gera uma chave secreta aleatória para JWT
-     * 
+     *
      * @param int $length Tamanho da chave em bytes (default: 32)
      * @return string Chave secreta
      */
     public static function generateSecret(int $length = 32): string
     {
+        if ($length < 1) {
+            throw new \InvalidArgumentException('Length must be at least 1');
+        }
         return bin2hex(random_bytes($length));
     }
 
     /**
      * Cria um token de refresh
-     * 
+     *
      * @param mixed $userId ID do usuário
      * @param string $secret Chave secreta
      * @param int $expiresIn Tempo de expiração em segundos (default: 30 dias)
@@ -250,7 +260,7 @@ class JWTHelper
 
     /**
      * Valida um token de refresh
-     * 
+     *
      * @param string $token Token de refresh
      * @param string $secret Chave secreta
      * @return array|false Dados do usuário ou false se inválido
@@ -259,11 +269,11 @@ class JWTHelper
     {
         try {
             $payload = self::decode($token, $secret);
-            
+
             if (isset($payload['type']) && $payload['type'] === 'refresh') {
                 return $payload;
             }
-            
+
             return false;
         } catch (\Exception $e) {
             return false;

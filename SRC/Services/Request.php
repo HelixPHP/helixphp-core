@@ -79,7 +79,7 @@ class Request
     $this->query   = new stdClass();
     $this->body    = new stdClass();
     $this->headers = new HeaderRequest();
-    $this->files   = $_FILES ?? [];
+    $this->files   = $_FILES;
     $this->parseRoute();
   }
   /**
@@ -117,9 +117,9 @@ class Request
   {
     // Permitir barra final opcional
     $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $this->path);
-    $pattern = rtrim($pattern, '/');
+    $pattern = rtrim($pattern ?: '', '/');
     $pattern = '#^' . $pattern . '/?$#';
-    preg_match($pattern, rtrim($this->pathCallable, '/'), $values);
+    preg_match($pattern, rtrim($this->pathCallable ?: '', '/'), $values);
     array_shift($values); // Remove the full match
     preg_match_all('/\/:([^\/]+)/', $this->path, $params);
     $params = $params[1];
@@ -162,15 +162,21 @@ class Request
   private function parseBody()
   {
     if ($this->method === 'GET') {
-      $this->body = [];
+      $this->body = new \stdClass();
       return;
     }
-    $this->body = json_decode(file_get_contents('php://input'));
+    $input = file_get_contents('php://input');
+    if ($input !== false) {
+      $decoded = json_decode($input);
+      $this->body = $decoded !== null ? $decoded : new \stdClass();
+    } else {
+      $this->body = new \stdClass();
+    }
     if (json_last_error() == JSON_ERROR_NONE) {
       return;
     }
     // If JSON parsing fails, try to parse as form data
-    if (isset($_POST) && !empty($_POST)) {
+    if (!empty($_POST)) {
       $this->body = new stdClass();
       foreach ($_POST as $key => $value) {
         $this->body->{$key} = $value;

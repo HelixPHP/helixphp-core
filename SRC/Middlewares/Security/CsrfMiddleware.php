@@ -9,7 +9,7 @@ use Express\Helpers\Utils;
  */
 class CsrfMiddleware
 {
-    private $options;
+    private array $options;
 
     /**
      * @param array $options Opções de configuração:
@@ -30,7 +30,7 @@ class CsrfMiddleware
         ], $options);
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(object $request, object $response, callable $next): void
     {
         // Inicializa sessão se não estiver ativa
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -109,7 +109,7 @@ class CsrfMiddleware
      * Método estático para gerar um campo hidden HTML com o token CSRF
      * @return string
      */
-    public static function hiddenField($fieldName = 'csrf_token')
+    public static function hiddenField(string $fieldName = 'csrf_token'): string
     {
         $token = self::getToken();
         return "<input type=\"hidden\" name=\"{$fieldName}\" value=\"{$token}\">";

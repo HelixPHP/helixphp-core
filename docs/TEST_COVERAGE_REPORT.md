@@ -117,6 +117,10 @@
 - ❌ **Antes:** Middleware usava `exit()` em requisições OPTIONS, travando PHPUnit
 - ✅ **Depois:** Teste refatorado com classe anônima que simula `exit()` sem terminar execução
 
+### **7. Correções de Tipos PHPStan**
+- ❌ **Antes:** 70+ erros de tipos, parâmetros sem tipagem, warnings PHPStan
+- ✅ **Depois:** Tipagem completa em middlewares, classes de serviço, e correções de compatibilidade
+
 ---
 
 ## 🚀 Como Executar os Testes

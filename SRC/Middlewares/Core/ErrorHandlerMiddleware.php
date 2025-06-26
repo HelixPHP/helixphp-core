@@ -46,10 +46,10 @@ class ErrorHandlerMiddleware
         $this->customHandler = $customHandler;
     }
 
-    public function __invoke($request, $response, $next)
+    public function __invoke(mixed $request, mixed $response, callable $next): mixed
     {
         try {
-            $next();
+            return $next();
         } catch (\Throwable $e) {
             if ($this->customHandler) {
                 // Permite resposta customizada
