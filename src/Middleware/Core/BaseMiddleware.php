@@ -21,27 +21,50 @@ abstract class BaseMiddleware implements MiddlewareInterface
     abstract public function handle($request, $response, callable $next);
 
     /**
+     * Make the middleware callable for backward compatibility
+     */
+    public function __invoke($request, $response, callable $next)
+    {
+        return $this->handle($request, $response, $next);
+    }
+
+    /**
      * Obtém um valor do cabeçalho da requisição.
      *
-     * @param Request $request
+     * @param mixed $request
      * @param string $header
      * @param mixed $default
      * @return mixed
      */
-    protected function getHeader(Request $request, string $header, $default = null)
+    protected function getHeader($request, string $header, $default = null)
     {
-        return $request->headers->getHeader($header) ?? $default;
+        if ($request instanceof Request) {
+            return $request->headers->getHeader($header) ?? $default;
+        }
+
+        // Handle generic objects for testing
+        if (is_object($request) && isset($request->headers) && is_array($request->headers)) {
+            return $request->headers[$header] ?? $default;
+        }
+
+        // Fallback to $_SERVER for testing
+        $serverKey = 'HTTP_' . str_replace('-', '_', strtoupper($header));
+        return $_SERVER[$serverKey] ?? $default;
     }
 
     /**
      * Verifica se a requisição é AJAX.
      *
-     * @param Request $request
+     * @param mixed $request
      * @return bool
      */
-    protected function isAjaxRequest(Request $request): bool
+    protected function isAjaxRequest($request): bool
     {
-        return $request->isAjax();
+        if ($request instanceof Request) {
+            return $request->isAjax();
+        }
+
+        return $this->getHeader($request, 'X-Requested-With') === 'XMLHttpRequest';
     }
 
     /**

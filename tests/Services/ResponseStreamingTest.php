@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\Services;
+namespace Express\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Services\Response;
+use Express\Http\Response;
 
 /**
  * Testes para funcionalidades de streaming da classe Response.

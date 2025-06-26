@@ -3,7 +3,7 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Security\XssMiddleware;
+use Express\Middleware\Security\XssMiddleware;
 
 class XssMiddlewareTest extends TestCase
 {

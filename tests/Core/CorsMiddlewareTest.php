@@ -3,7 +3,7 @@
 namespace Express\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Core\CorsMiddleware;
+use Express\Middleware\Security\CorsMiddleware;
 
 class CorsMiddlewareTest extends TestCase
 {

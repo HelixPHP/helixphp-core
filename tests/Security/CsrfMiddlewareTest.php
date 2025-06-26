@@ -3,7 +3,7 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Security\CsrfMiddleware;
+use Express\Middleware\Security\CsrfMiddleware;
 
 class CsrfMiddlewareTest extends TestCase
 {
@@ -18,7 +18,7 @@ class CsrfMiddlewareTest extends TestCase
     {
         $token1 = CsrfMiddleware::getToken();
         $token2 = CsrfMiddleware::getToken();
-        
+
         $this->assertNotEmpty($token1);
         $this->assertNotEmpty($token2);
         $this->assertEquals($token1, $token2, 'Tokens should be the same within session');
@@ -28,7 +28,7 @@ class CsrfMiddlewareTest extends TestCase
     public function testHiddenField(): void
     {
         $hiddenField = CsrfMiddleware::hiddenField();
-        
+
         $this->assertStringContainsString('<input', $hiddenField);
         $this->assertStringContainsString('type="hidden"', $hiddenField);
         $this->assertStringContainsString('name="csrf_token"', $hiddenField);
@@ -38,7 +38,7 @@ class CsrfMiddlewareTest extends TestCase
     public function testMetaTag(): void
     {
         $metaTag = CsrfMiddleware::metaTag();
-        
+
         $this->assertStringContainsString('<meta', $metaTag);
         $this->assertStringContainsString('name="csrf-token"', $metaTag);
         $this->assertStringContainsString('content="', $metaTag);
@@ -47,11 +47,11 @@ class CsrfMiddlewareTest extends TestCase
     public function testTokenValidation(): void
     {
         $token = CsrfMiddleware::getToken();
-        
+
         // Simulate valid token
         $_SESSION['csrf_token'] = $token;
         $this->assertTrue(hash_equals($_SESSION['csrf_token'], $token));
-        
+
         // Simulate invalid token
         $invalidToken = 'invalid_token_12345';
         $this->assertFalse(hash_equals($_SESSION['csrf_token'], $invalidToken));

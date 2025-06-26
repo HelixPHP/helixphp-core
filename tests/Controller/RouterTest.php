@@ -3,7 +3,7 @@
 namespace Express\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Express\Controller\Router;
+use Express\Routing\Router;
 
 class RouterTest extends TestCase
 {

@@ -3,7 +3,7 @@
 namespace Express\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Services\HeaderRequest;
+use Express\Http\HeaderRequest;
 
 class HeaderRequestTest extends TestCase
 {

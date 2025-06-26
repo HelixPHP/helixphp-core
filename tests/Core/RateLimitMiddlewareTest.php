@@ -3,7 +3,7 @@
 namespace Express\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Core\RateLimitMiddleware;
+use Express\Middleware\Core\RateLimitMiddleware;
 
 class RateLimitMiddlewareTest extends TestCase
 {
@@ -13,14 +13,14 @@ class RateLimitMiddlewareTest extends TestCase
             'max' => 100,
             'window' => 60
         ]);
-        
+
         $this->assertInstanceOf(RateLimitMiddleware::class, $middleware);
     }
 
     public function testDefaultOptions(): void
     {
         $middleware = new RateLimitMiddleware();
-        
+
         $this->assertInstanceOf(RateLimitMiddleware::class, $middleware);
     }
 
@@ -30,7 +30,7 @@ class RateLimitMiddlewareTest extends TestCase
             'max' => 5,
             'window' => 60
         ]);
-        
+
         $this->assertTrue(method_exists($middleware, '__invoke'));
     }
 }

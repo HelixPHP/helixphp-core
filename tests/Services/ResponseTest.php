@@ -3,23 +3,23 @@
 namespace Express\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Services\Response;
+use Express\Http\Response;
 
 class ResponseTest extends TestCase
 {
     private $response;
-    
+
     protected function setUp(): void
     {
         $this->response = new Response();
-        
+
         // Reset output buffer
         if (ob_get_level()) {
             ob_end_clean();
         }
         ob_start();
     }
-    
+
     protected function tearDown(): void
     {
         if (ob_get_level()) {
@@ -49,10 +49,10 @@ class ResponseTest extends TestCase
     public function testJsonResponse(): void
     {
         $data = ['message' => 'Hello World', 'status' => 'success'];
-        
+
         $result = $this->response->json($data);
         $output = ob_get_contents();
-        
+
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(json_encode($data), $output);
     }
@@ -60,10 +60,10 @@ class ResponseTest extends TestCase
     public function testTextResponse(): void
     {
         $text = 'Hello World';
-        
+
         $result = $this->response->text($text);
         $output = ob_get_contents();
-        
+
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals($text, $output);
     }
@@ -71,10 +71,10 @@ class ResponseTest extends TestCase
     public function testHtmlResponse(): void
     {
         $html = '<h1>Hello World</h1><p>This is HTML content</p>';
-        
+
         $result = $this->response->html($html);
         $output = ob_get_contents();
-        
+
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals($html, $output);
     }
@@ -82,14 +82,14 @@ class ResponseTest extends TestCase
     public function testMethodChaining(): void
     {
         $data = ['message' => 'Created successfully'];
-        
+
         $result = $this->response
             ->status(201)
             ->header('X-Custom-Header', 'custom-value')
             ->json($data);
-            
+
         $output = ob_get_contents();
-        
+
         $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(json_encode($data), $output);
     }
@@ -111,10 +111,10 @@ class ResponseTest extends TestCase
                 'version' => '1.0.0'
             ]
         ];
-        
+
         $this->response->json($complexData);
         $output = ob_get_contents();
-        
+
         $this->assertEquals(json_encode($complexData), $output);
     }
 
@@ -122,7 +122,7 @@ class ResponseTest extends TestCase
     {
         $this->response->json([]);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('[]', $output);
     }
 
@@ -130,7 +130,7 @@ class ResponseTest extends TestCase
     {
         $this->response->json(null);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('null', $output);
     }
 
@@ -138,14 +138,14 @@ class ResponseTest extends TestCase
     {
         $this->response->json(true);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('true', $output);
-        
+
         ob_clean();
-        
+
         $this->response->json(false);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('false', $output);
     }
 
@@ -153,14 +153,14 @@ class ResponseTest extends TestCase
     {
         $this->response->json(42);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('42', $output);
-        
+
         ob_clean();
-        
+
         $this->response->json(3.14);
         $output = ob_get_contents();
-        
+
         $this->assertEquals('3.14', $output);
     }
 
@@ -168,7 +168,7 @@ class ResponseTest extends TestCase
     {
         $this->response->json('Hello World');
         $output = ob_get_contents();
-        
+
         $this->assertEquals('"Hello World"', $output);
     }
 
@@ -176,27 +176,27 @@ class ResponseTest extends TestCase
     {
         $this->response->text('');
         $output = ob_get_contents();
-        
+
         $this->assertEquals('', $output);
     }
 
     public function testMultilineTextResponse(): void
     {
         $text = "Line 1\nLine 2\nLine 3";
-        
+
         $this->response->text($text);
         $output = ob_get_contents();
-        
+
         $this->assertEquals($text, $output);
     }
 
     public function testHtmlWithSpecialCharacters(): void
     {
         $html = '<div>Content with &amp; special chars &lt;script&gt;</div>';
-        
+
         $this->response->html($html);
         $output = ob_get_contents();
-        
+
         $this->assertEquals($html, $output);
     }
 
@@ -206,7 +206,7 @@ class ResponseTest extends TestCase
             ->header('Content-Type', 'application/json')
             ->header('X-API-Version', '1.0')
             ->header('X-Rate-Limit', '1000');
-            
+
         $this->assertInstanceOf(Response::class, $result);
     }
 
@@ -214,7 +214,7 @@ class ResponseTest extends TestCase
     {
         // Test various HTTP status codes
         $statusCodes = [200, 201, 400, 401, 403, 404, 500];
-        
+
         foreach ($statusCodes as $code) {
             $result = $this->response->status($code);
             $this->assertInstanceOf(Response::class, $result);

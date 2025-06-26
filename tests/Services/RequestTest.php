@@ -3,8 +3,8 @@
 namespace Express\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Services\Request;
-use Express\Services\HeaderRequest;
+use Express\Http\Request;
+use Express\Http\HeaderRequest;
 use InvalidArgumentException;
 
 class RequestTest extends TestCase
@@ -93,7 +93,7 @@ class RequestTest extends TestCase
         $request = new Request('GET', '/test', '/test');
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Property invalid does not exist in Route class');
+        $this->expectExceptionMessage('Property invalid does not exist in Request class');
 
         $request->invalid;
     }

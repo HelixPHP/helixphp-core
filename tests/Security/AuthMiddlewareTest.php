@@ -3,8 +3,8 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Security\AuthMiddleware;
-use Express\Helpers\JWTHelper;
+use Express\Middleware\Security\AuthMiddleware;
+use Express\Authentication\JWTHelper;
 
 class AuthMiddlewareTest extends TestCase
 {

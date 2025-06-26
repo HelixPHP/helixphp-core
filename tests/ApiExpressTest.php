@@ -4,7 +4,7 @@ namespace Express\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Express\ApiExpress;
-use Express\Controller\Router;
+use Express\Routing\Router;
 
 class ApiExpressTest extends TestCase
 {
