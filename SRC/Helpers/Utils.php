@@ -59,7 +59,7 @@ class Utils
     // Geração de token seguro
     public static function randomToken(int $length = 32): string
     {
-        $bytesLength = max(1, (int)($length/2));
+        $bytesLength = max(1, (int)($length / 2));
         return bin2hex(random_bytes($bytesLength));
     }
     // CSRF token

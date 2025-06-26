@@ -23,7 +23,7 @@ class Router
    * Caminho padrão.
    * @var string
    */
-    const DEFAULT_PATH = '/';
+    public const DEFAULT_PATH = '/';
   /**
    * Métodos HTTP aceitos.
    * @var array<string>
