@@ -53,10 +53,11 @@ $app->run();
 
 - 🔐 **Autenticação Multi-método**: JWT, Basic Auth, Bearer Token, API Key
 - 🛡️ **Segurança Avançada**: CSRF, XSS, Rate Limiting, Headers de Segurança
+- 📡 **Streaming**: Suporte completo para streaming de dados, SSE e arquivos grandes
 - 📚 **Documentação OpenAPI/Swagger**: Geração automática de documentação
 - 🎯 **Middlewares Modulares**: Sistema flexível de middlewares
 - ⚡ **Performance**: Otimizado para alta performance
-- 🧪 **Testado**: 186 testes unitários e 100% de cobertura de código
+- 🧪 **Testado**: 186+ testes unitários e 100% de cobertura de código
 - 📊 **Análise Estática**: PHPStan Level 8 compliance
 
 ## 📖 Documentação
@@ -64,7 +65,8 @@ $app->run();
 - **[🚀 Guia de Início](docs/guides/starter/README.md)** - Comece aqui!
 - **[📚 Documentação Completa](docs/README.md)** - Documentação detalhada
 - **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia de autenticação
-- **[🛡️ Middlewares de Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Segurança
+- **[� Streaming de Dados](docs/pt-br/STREAMING.md)** - Streaming e Server-Sent Events
+- **[�🛡️ Middlewares de Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Segurança
 - **[📝 Exemplos Práticos](examples/)** - Exemplos prontos para usar
 
 ## 🎯 Exemplos de Aprendizado
@@ -76,6 +78,7 @@ O framework inclui exemplos modulares para facilitar o aprendizado:
 - **[Upload](examples/example_upload.php)** - Upload de arquivos
 - **[Admin](examples/example_admin.php)** - Rotas administrativas
 - **[Blog](examples/example_blog.php)** - Sistema de blog
+- **[Streaming](examples/example_streaming.php)** - Streaming de dados e SSE
 - **[Segurança](examples/example_security.php)** - Demonstração de middlewares
 - **[Completo](examples/example_complete.php)** - Integração de todos os recursos
 
@@ -100,6 +103,69 @@ $app->get('/profile', function($req, $res) {
     $res->json(['user' => $user, 'auth_method' => $method]);
 });
 ```
+
+## 📡 Streaming de Dados
+
+O Express-PHP oferece suporte completo para streaming de dados em tempo real:
+
+```php
+// Streaming de texto simples
+$app->get('/stream/text', function($req, $res) {
+    $res->startStream('text/plain; charset=utf-8');
+
+    for ($i = 1; $i <= 10; $i++) {
+        $res->write("Chunk {$i}\n");
+        sleep(1); // Simula processamento
+    }
+
+    $res->endStream();
+});
+
+// Server-Sent Events (SSE)
+$app->get('/events', function($req, $res) {
+    $res->sendEvent('Conexão estabelecida', 'connect');
+
+    for ($i = 1; $i <= 10; $i++) {
+        $data = ['counter' => $i, 'timestamp' => time()];
+        $res->sendEvent($data, 'update', (string)$i);
+        sleep(1);
+    }
+});
+
+// Streaming de arquivos grandes
+$app->get('/download/:file', function($req, $res) {
+    $filePath = "/path/to/{$req->params['file']}";
+
+    $headers = [
+        'Content-Disposition' => 'attachment; filename="' . basename($filePath) . '"'
+    ];
+
+    $res->streamFile($filePath, $headers);
+});
+
+// Streaming de dados JSON
+$app->get('/data/export', function($req, $res) {
+    $res->startStream('application/json');
+    $res->write('[');
+
+    for ($i = 1; $i <= 1000; $i++) {
+        if ($i > 1) $res->write(',');
+        $res->writeJson(['id' => $i, 'data' => "Item {$i}"]);
+    }
+
+    $res->write(']');
+    $res->endStream();
+});
+```
+
+### Recursos de Streaming
+
+- **Streaming de Texto**: Para logs e dados em tempo real
+- **Server-Sent Events**: Para dashboards e notificações
+- **Streaming de Arquivos**: Para downloads de arquivos grandes
+- **Streaming de JSON**: Para exports e APIs de dados
+- **Buffer Customizável**: Controle fino sobre performance
+- **Heartbeat**: Manutenção de conexões SSE ativas
 
 ## ⚙️ Requisitos
 
