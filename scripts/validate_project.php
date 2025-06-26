@@ -237,7 +237,7 @@ class ProjectValidator
 
         $docs = [
             'README.md',
-            'DOCUMENTATION_INDEX.md',
+            'docs/INDEX.md',
             'docs/README.md',
             'docs/pt-br/README.md',
             'docs/pt-br/AUTH_MIDDLEWARE.md',
