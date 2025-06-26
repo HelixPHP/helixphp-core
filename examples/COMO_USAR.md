@@ -1,146 +1,124 @@
-# Como usar os exemplos do Express-PHP 2.0
+# 🚀 Como Usar os Exemplos do Express PHP
 
-## 🚀 Exemplos Disponíveis
+Este guia mostra como executar e testar os exemplos práticos do Express PHP.
 
-### 1. **app.php** - Aplicação Completa
-Demonstra todas as funcionalidades do framework com sub-routers e middlewares.
+## 📋 Pré-requisitos
 
-```bash
-# Iniciar servidor
-cd examples
-php -S localhost:8000 app.php
-
-# Acessar no browser:
-# http://localhost:8000/          # Página inicial
-# http://localhost:8000/docs      # Documentação
-# http://localhost:8000/user/123  # Usuário específico
-# http://localhost:8000/admin/logs # Logs administrativos
-# http://localhost:8000/blog/posts # Posts do blog
-```
-
-### 2. **example_modular.php** - Aplicação Básica Modular
-Exemplo simples mostrando a estrutura modular básica.
-
-```bash
-php -S localhost:8001 example_modular.php
-
-# Endpoints disponíveis:
-# GET /                   # Informações básicas
-# GET /users/:id         # Usuário por ID
-# POST /users            # Criar usuário
-# GET /api/status        # Status da API
-# GET /api/info          # Informações do framework
-```
-
-### 3. **example_security_new.php** - Demonstração de Segurança
-Mostra todos os middlewares de segurança em ação.
-
-```bash
-php -S localhost:8002 example_security_new.php
-
-# Funcionalidades:
-# - CORS configurado
-# - Headers de segurança
-# - Rate limiting
-# - Proteção XSS
-# - Proteção CSRF
-# - Autenticação JWT
-```
-
-### 4. **example_streaming_new.php** - Streaming HTTP
-Demonstra streaming, Server-Sent Events e downloads.
-
-```bash
-php -S localhost:8003 example_streaming_new.php
-
-# Recursos:
-# GET /events            # Server-Sent Events
-# GET /stream/data       # JSON streaming
-# GET /live/feed         # Feed de dados ao vivo
-# GET /chat/stream       # Simulação de chat
-# GET /test              # Página de teste HTML
-```
-
-## 🔧 Configuração do Ambiente
-
-### Pré-requisitos
 - PHP 8.1 ou superior
-- Composer
-- Extensões: json, mbstring
+- Composer instalado
+- Dependências instaladas: `composer install`
 
-### Instalação
-```bash
-# Instalar dependências
-composer install
+## 🎯 Exemplos Disponíveis
 
-# Executar testes
-./vendor/bin/phpunit
-
-# Verificar sintaxe de um exemplo
-php -l examples/app.php
-```
-
-## 📱 Testando os Endpoints
-
-### Usando curl
+### 1. **example_basic.php** - Exemplo Básico ⭐
+**O melhor para começar!**
 
 ```bash
-# Testar rota básica
+# Executar
+php -S localhost:8000 examples/example_basic.php
+
+# Testar
 curl http://localhost:8000/
+curl http://localhost:8000/api/users
+```
 
-# Testar com parâmetros
-curl http://localhost:8000/user/123
+### 2. **example_auth_simple.php** - Autenticação JWT 🔐
 
-# Testar POST
-curl -X POST http://localhost:8000/blog/posts \
+```bash
+# Executar
+php -S localhost:8000 examples/example_auth_simple.php
+
+# Fazer login
+curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"title":"Novo Post","content":"Conteúdo do post"}'
+  -d '{"email":"admin@example.com","password":"123456"}'
 
-# Testar upload (exemplo)
-curl -X POST http://localhost:8000/upload \
-  -F "file=@arquivo.txt"
+# Usar o token retornado
+curl -H "Authorization: Bearer SEU_TOKEN" http://localhost:8000/auth/me
 ```
 
-### Usando JavaScript (Frontend)
+### 3. **example_middleware.php** - Middlewares Avançados 🛡️
 
-```javascript
-// Conectar a Server-Sent Events
-const eventSource = new EventSource('http://localhost:8003/events');
-eventSource.onmessage = function(event) {
-    console.log('Event received:', event.data);
-};
+```bash
+# Executar
+php -S localhost:8000 examples/example_middleware.php
 
-// Fazer requisições AJAX
-fetch('http://localhost:8000/user/123')
-    .then(response => response.json())
-    .then(data => console.log(data));
+# Testar API de produtos
+curl http://localhost:8000/api/products
+curl http://localhost:8000/api/products?category=electronics
+
+# Criar produto
+curl -X POST http://localhost:8000/api/products \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Novo Produto","price":99.99,"category":"test"}'
 ```
 
-## 🛡️ Recursos de Segurança
+### 4. **app.php** - Aplicação Completa 🚀
+
+```bash
+# Executar
+php -S localhost:8000 examples/app.php
+
+# Explorar todas as funcionalidades
+curl http://localhost:8000/
+```
+
+## 🔧 Métodos de Execução
+
+### Método 1: Servidor Built-in (Recomendado)
+```bash
+php -S localhost:8000 examples/example_basic.php
+```
+
+### Método 2: Script de Inicialização
+```bash
+chmod +x examples/start-server.sh
+./examples/start-server.sh example_basic.php
+```
+
+## 🧪 Testes Práticos
+
+### API REST Básica
+```bash
+# Listar usuários
+curl http://localhost:8000/api/users
+
+# Criar usuário
+curl -X POST http://localhost:8000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"João Silva","email":"joao@example.com"}'
+
+# Buscar usuário específico
+curl http://localhost:8000/api/users/1
+
+# Atualizar usuário
+curl -X PUT http://localhost:8000/api/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"João Santos"}'
+```
 
 ### Autenticação JWT
 ```bash
 # 1. Fazer login
-curl -X POST http://localhost:8002/login \
+curl -X POST http://localhost:8000/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"admin","password":"password"}'
+  -d '{"email":"admin@example.com","password":"123456"}'
 
-# 2. Usar o token retornado
-curl http://localhost:8002/api/profile \
-  -H "Authorization: Bearer SEU_TOKEN_AQUI"
+# 2. Usar token para acessar rota protegida
+curl -H "Authorization: Bearer SEU_TOKEN" http://localhost:8000/auth/me
 ```
 
-### Proteção CSRF
-```bash
-# 1. Obter token CSRF
-curl http://localhost:8002/csrf-token
+## 📚 Próximos Passos
 
-# 2. Usar o token em operações sensíveis
-curl -X POST http://localhost:8002/api/sensitive/data \
-  -H "Content-Type: application/json" \
-  -H "X-CSRF-Token: SEU_TOKEN_CSRF" \
-  -d '{"data":"sensitive info"}'
-```
+1. **Começe pelo `example_basic.php`**
+2. **Estude o código** - Cada exemplo tem comentários detalhados
+3. **Modifique e experimente** - Faça suas próprias alterações
+4. **Use os snippets** - Copie código da pasta `snippets/`
+5. **Leia a documentação** - Consulte `docs/` para funcionalidades avançadas
+
+---
+
+**🎯 Divirta-se explorando o Express PHP!**
 
 ## 🔍 Monitoramento e Debug
 
