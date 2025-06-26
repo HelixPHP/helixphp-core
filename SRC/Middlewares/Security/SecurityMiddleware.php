@@ -88,22 +88,22 @@ class SecurityMiddleware
         // Configura parâmetros de sessão seguros
         if (session_status() === PHP_SESSION_NONE) {
             // Usa apenas cookies
-            ini_set('session.use_only_cookies', 1);
+            ini_set('session.use_only_cookies', '1');
 
             // Regenera ID da sessão para prevenir fixation
-            ini_set('session.use_strict_mode', 1);
+            ini_set('session.use_strict_mode', '1');
 
             // HttpOnly cookies (não acessíveis via JavaScript)
-            ini_set('session.cookie_httponly', 1);
+            ini_set('session.cookie_httponly', '1');
 
             // Secure cookies (apenas HTTPS) - descomente se usando HTTPS
-            // ini_set('session.cookie_secure', 1);
+            // ini_set('session.cookie_secure', '1');
 
             // SameSite cookies
             ini_set('session.cookie_samesite', 'Strict');
 
             // Define tempo de vida da sessão
-            ini_set('session.gc_maxlifetime', 3600); // 1 hora
+            ini_set('session.gc_maxlifetime', '3600'); // 1 hora
 
             session_start();
 
