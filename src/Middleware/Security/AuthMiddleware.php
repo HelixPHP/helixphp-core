@@ -89,14 +89,26 @@ class AuthMiddleware extends BaseMiddleware
 
         // Tenta cada método de autenticação
         foreach ($methods as $method) {
-            $result = match ($method) {
-                'jwt' => $this->authenticateJWT($request),
-                'basic' => $this->authenticateBasic($request),
-                'bearer' => $this->authenticateBearer($request),
-                'apikey' => $this->authenticateApiKey($request),
-                'custom' => $this->authenticateCustom($request),
-                default => ['success' => false, 'message' => 'Unknown auth method: ' . $method]
-            };
+            switch ($method) {
+                case 'jwt':
+                    $result = $this->authenticateJWT($request);
+                    break;
+                case 'basic':
+                    $result = $this->authenticateBasic($request);
+                    break;
+                case 'bearer':
+                    $result = $this->authenticateBearer($request);
+                    break;
+                case 'apikey':
+                    $result = $this->authenticateApiKey($request);
+                    break;
+                case 'custom':
+                    $result = $this->authenticateCustom($request);
+                    break;
+                default:
+                    $result = ['success' => false, 'message' => 'Unknown auth method: ' . $method];
+                    break;
+            }
 
             if ($result['success']) {
                 return array_merge($result, ['method' => $method]);
