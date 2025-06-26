@@ -51,7 +51,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Express\\": "SRC/"
+            "Express\\": "src/"
         }
     },
     "autoload-dev": {
@@ -83,7 +83,7 @@
         "exclude": [
             "/test",
             "/tests",
-            "/examples", 
+            "/examples",
             "/scripts",
             "/reports",
             "/.github",
