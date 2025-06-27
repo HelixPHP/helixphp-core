@@ -1,5 +1,7 @@
 <?php
 
+namespace Express\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Express\Http\Request;
 use Express\Http\Response;
