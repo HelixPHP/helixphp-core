@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        php-version: ['8.0', '8.1', '8.2', '8.3', '8.4']
 
     name: PHP ${{ matrix.php-version }} Tests
 
@@ -64,7 +64,7 @@ jobs:
     - name: Run PHPUnit tests
       run: |
         if [ -f "vendor/bin/phpunit" ]; then
-          echo "Running PHPUnit tests..."
+          echo "Running PHPUnit tests on PHP ${{ matrix.php-version }}..."
           # For PHP 8.1, try with coverage, for others just run tests
           if [ "${{ matrix.php-version }}" = "8.1" ]; then
             ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml || {
@@ -75,19 +75,8 @@ jobs:
                 ./vendor/bin/phpunit --debug || exit 1
               }
             }
-          elif [ "${{ matrix.php-version }}" = "8.0" ]; then
-            echo "Running tests on PHP 8.0 (permissive mode)..."
-            # PHP 8.0 may have compatibility issues, run in permissive mode
-            ./vendor/bin/phpunit --testdox || {
-              echo "❌ Some tests failed on PHP 8.0, but continuing CI..."
-              echo "ℹ️  PHP 8.0 compatibility is work in progress"
-              # Exit code 0 to not block CI pipeline
-              exit 0
-            }
           else
-            echo "Running tests on PHP ${{ matrix.php-version }}..."
-            # Para outras versões do PHP, aceitar risky tests relacionados a output buffers
-            # Risky tests são aceitáveis para funcionalidades legítimas como CORS/Response
+            # Para todas as versões PHP 8.0+, usar configuração padrão
             ./vendor/bin/phpunit --testdox --fail-on-warning --fail-on-incomplete --fail-on-skipped || {
               echo '❌ PHPUnit tests failed'
               echo '🔍 Running with detailed error output...'

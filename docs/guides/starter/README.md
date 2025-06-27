@@ -4,7 +4,7 @@ Este guia irá te ajudar a começar com o Express PHP em poucos minutos!
 
 ## 📋 Pré-requisitos
 
-- PHP 7.4 ou superior
+- PHP 8.0 ou superior
 - Composer
 - Servidor web (Apache, Nginx) ou PHP built-in server
 

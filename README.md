@@ -1,7 +1,7 @@
 # Express PHP Microframework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
@@ -169,7 +169,7 @@ $app->get('/data/export', function($req, $res) {
 
 ## ⚙️ Requisitos
 
-- **PHP**: 7.4.0 ou superior
+- **PHP**: 8.0.0 ou superior
 - **Extensões**: json, session
 - **Recomendado**: openssl, mbstring, fileinfo
 

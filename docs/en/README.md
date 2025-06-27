@@ -2,7 +2,7 @@
 
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](../pt-br/README.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 
 **Express PHP** is a lightweight, fast, and secure microframework inspired by Express.js for building modern web applications and APIs in PHP with native multi-method authentication system.
@@ -201,7 +201,7 @@ For complete API reference, see [objects.md](objects.md).
 
 ## ⚙️ Requirements
 
-- **PHP**: 7.4.0 or higher
+- **PHP**: 8.0.0 or higher
 - **Extensions**: json, session
 - **Recommended**: openssl, mbstring, fileinfo
 

@@ -37,7 +37,7 @@ O arquivo já está configurado corretamente:
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=8.0.0",
         "ext-json": "*",
         "ext-session": "*"
     },

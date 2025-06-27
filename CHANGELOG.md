@@ -7,11 +7,35 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### 🔥 BREAKING CHANGES
+- **PHP 8.0+ Required**: Dropped PHP 7.4 support for better performance and modern features
+- Polyfills simplified (PHP 8.0+ native functions used)
+
 ### Planejado
 - Sistema de plugins
 - CLI commands avançados
 - ORM básico integrado
 - Cache Redis driver
+
+## [2.1.0] - 2025-06-27
+
+### 🚀 Added
+- **PHP 8.0+ Requirement**: Migrated minimum requirement from PHP 7.4 to 8.0
+- **Better CI/CD**: Improved testing matrix for PHP 8.0-8.4
+- **Simplified Polyfills**: Removed complex polyfills in favor of native PHP 8.0+ functions
+
+### ⚡ Performance
+- **Native Functions**: Using built-in str_starts_with, str_contains, str_ends_with
+- **Better Type Support**: Leveraging PHP 8.0+ type system improvements
+
+### 🧹 Removed
+- **PHP 7.4 Support**: No longer supporting end-of-life PHP versions
+- **Complex Polyfills**: Simplified polyfill system for PHP 8.0+ compatibility
+
+### 📚 Documentation
+- Updated all README files to reflect PHP 8.0+ requirement
+- Updated CI workflow for PHP 8.0-8.4 testing matrix
+- Updated composer.json minimum PHP version
 
 ## [2.0.0] - 2025-06-26
 
