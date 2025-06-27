@@ -12,27 +12,13 @@ class ResponseTest extends TestCase
     protected function setUp(): void
     {
         $this->response = new Response();
-
-        // Limpar todos os buffers existentes de forma mais robusta
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
-
-        // Iniciar novo buffer para capturar output
-        ob_start();
+        // Ativar modo teste para não fazer echo direto
+        $this->response->setTestMode(true);
     }
 
     protected function tearDown(): void
     {
-        // Capturar e descartar qualquer output do teste
-        if (ob_get_level() > 0) {
-            ob_get_clean(); // Use clean em vez de end_clean para evitar warnings
-        }
-
-        // Garantir que não há buffers restantes
-        while (ob_get_level() > 0) {
-            ob_end_clean();
-        }
+        // Cleanup não é mais necessário com modo teste
     }
 
     public function testResponseInitialization(): void
@@ -45,6 +31,7 @@ class ResponseTest extends TestCase
         $result = $this->response->status(404);
         $this->assertInstanceOf(Response::class, $result);
         $this->assertSame($this->response, $result); // Should return same instance for chaining
+        $this->assertEquals(404, $this->response->getStatusCode());
     }
 
     public function testHeaderMethod(): void
@@ -52,6 +39,10 @@ class ResponseTest extends TestCase
         $result = $this->response->header('Content-Type', 'application/json');
         $this->assertInstanceOf(Response::class, $result);
         $this->assertSame($this->response, $result); // Should return same instance for chaining
+
+        $headers = $this->response->getHeaders();
+        $this->assertArrayHasKey('Content-Type', $headers);
+        $this->assertEquals('application/json', $headers['Content-Type']);
     }
 
     public function testJsonResponse(): void
@@ -59,19 +50,14 @@ class ResponseTest extends TestCase
         $data = ['message' => 'Hello World', 'status' => 'success'];
 
         $result = $this->response->json($data);
-        $output = ob_get_contents();
 
         $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(json_encode($data), $this->response->getBody());
 
-        // Em ambiente de teste, o output pode estar vazio devido ao controle de headers
-        if (!empty($output)) {
-            $this->assertEquals(json_encode($data), $output);
-        } else {
-            // Verificar se os dados foram processados corretamente verificando os headers
-            $headers = $this->response->getHeaders();
-            $this->assertArrayHasKey('Content-Type', $headers);
-            $this->assertStringContainsString('application/json', $headers['Content-Type']);
-        }
+        // Verificar se os headers foram definidos corretamente
+        $headers = $this->response->getHeaders();
+        $this->assertArrayHasKey('Content-Type', $headers);
+        $this->assertStringContainsString('application/json', $headers['Content-Type']);
     }
 
     public function testTextResponse(): void
@@ -79,10 +65,12 @@ class ResponseTest extends TestCase
         $text = 'Hello World';
 
         $result = $this->response->text($text);
-        $output = ob_get_contents();
 
         $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals($text, $output);
+        $this->assertEquals($text, $this->response->getBody());
+
+        $headers = $this->response->getHeaders();
+        $this->assertEquals('text/plain; charset=utf-8', $headers['Content-Type']);
     }
 
     public function testHtmlResponse(): void
@@ -90,10 +78,12 @@ class ResponseTest extends TestCase
         $html = '<h1>Hello World</h1><p>This is HTML content</p>';
 
         $result = $this->response->html($html);
-        $output = ob_get_contents();
 
         $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals($html, $output);
+        $this->assertEquals($html, $this->response->getBody());
+
+        $headers = $this->response->getHeaders();
+        $this->assertEquals('text/html; charset=utf-8', $headers['Content-Type']);
     }
 
     public function testMethodChaining(): void
@@ -105,10 +95,12 @@ class ResponseTest extends TestCase
             ->header('X-Custom-Header', 'custom-value')
             ->json($data);
 
-        $output = ob_get_contents();
-
         $this->assertInstanceOf(Response::class, $result);
-        $this->assertEquals(json_encode($data), $output);
+        $this->assertEquals(json_encode($data), $this->response->getBody());
+        $this->assertEquals(201, $this->response->getStatusCode());
+
+        $headers = $this->response->getHeaders();
+        $this->assertEquals('custom-value', $headers['X-Custom-Header']);
     }
 
     public function testComplexJsonResponse(): void
@@ -130,71 +122,62 @@ class ResponseTest extends TestCase
         ];
 
         $this->response->json($complexData);
-        $output = ob_get_contents();
 
-        $this->assertEquals(json_encode($complexData), $output);
+        $this->assertEquals(json_encode($complexData), $this->response->getBody());
     }
 
     public function testEmptyJsonResponse(): void
     {
         $this->response->json([]);
-        $output = ob_get_contents();
 
-        $this->assertEquals('[]', $output);
+        $this->assertEquals('[]', $this->response->getBody());
     }
 
     public function testNullJsonResponse(): void
     {
         $this->response->json(null);
-        $output = ob_get_contents();
 
-        $this->assertEquals('null', $output);
+        $this->assertEquals('null', $this->response->getBody());
     }
 
     public function testBooleanJsonResponse(): void
     {
-        $this->response->json(true);
-        $output = ob_get_contents();
+        $response1 = new Response();
+        $response1->setTestMode(true);
+        $response1->json(true);
+        $this->assertEquals('true', $response1->getBody());
 
-        $this->assertEquals('true', $output);
-
-        ob_clean();
-
-        $this->response->json(false);
-        $output = ob_get_contents();
-
-        $this->assertEquals('false', $output);
+        $response2 = new Response();
+        $response2->setTestMode(true);
+        $response2->json(false);
+        $this->assertEquals('false', $response2->getBody());
     }
 
     public function testNumericJsonResponse(): void
     {
-        $this->response->json(42);
-        $output = ob_get_contents();
+        $response1 = new Response();
+        $response1->setTestMode(true);
+        $response1->json(42);
+        $this->assertEquals('42', $response1->getBody());
 
-        $this->assertEquals('42', $output);
-
-        ob_clean();
-
-        $this->response->json(3.14);
-        $output = ob_get_contents();
-
-        $this->assertEquals('3.14', $output);
+        $response2 = new Response();
+        $response2->setTestMode(true);
+        $response2->json(3.14);
+        $this->assertEquals('3.14', $response2->getBody());
     }
 
     public function testStringJsonResponse(): void
     {
         $this->response->json('Hello World');
-        $output = ob_get_contents();
 
-        $this->assertEquals('"Hello World"', $output);
+        $this->assertEquals('"Hello World"', $this->response->getBody());
     }
 
     public function testEmptyTextResponse(): void
     {
         $this->response->text('');
-        $output = ob_get_contents();
 
-        $this->assertEquals('', $output);
+        $this->assertEquals('', $this->response->getBody());
     }
 
     public function testMultilineTextResponse(): void
@@ -202,52 +185,64 @@ class ResponseTest extends TestCase
         $text = "Line 1\nLine 2\nLine 3";
 
         $this->response->text($text);
-        $output = ob_get_contents();
 
-        $this->assertEquals($text, $output);
+        $this->assertEquals($text, $this->response->getBody());
     }
 
     public function testHtmlWithSpecialCharacters(): void
     {
-        $html = '<div>Content with &amp; special chars &lt;script&gt;</div>';
+        $html = '<div>Special chars: &amp; &lt; &gt; &quot; &#39;</div>';
 
         $this->response->html($html);
-        $output = ob_get_contents();
 
-        $this->assertEquals($html, $output);
+        $this->assertEquals($html, $this->response->getBody());
     }
 
     public function testMultipleHeaders(): void
     {
         $result = $this->response
             ->header('Content-Type', 'application/json')
-            ->header('X-API-Version', '1.0')
-            ->header('X-Rate-Limit', '1000');
+            ->header('X-Custom-Header', 'custom-value')
+            ->header('Cache-Control', 'no-cache');
 
         $this->assertInstanceOf(Response::class, $result);
 
-        // Verificar se os headers foram definidos corretamente
         $headers = $this->response->getHeaders();
         $this->assertArrayHasKey('Content-Type', $headers);
+        $this->assertArrayHasKey('X-Custom-Header', $headers);
+        $this->assertArrayHasKey('Cache-Control', $headers);
         $this->assertEquals('application/json', $headers['Content-Type']);
-        $this->assertArrayHasKey('X-API-Version', $headers);
-        $this->assertEquals('1.0', $headers['X-API-Version']);
-        $this->assertArrayHasKey('X-Rate-Limit', $headers);
-        $this->assertEquals('1000', $headers['X-Rate-Limit']);
+        $this->assertEquals('custom-value', $headers['X-Custom-Header']);
+        $this->assertEquals('no-cache', $headers['Cache-Control']);
     }
 
     public function testStatusCodes(): void
     {
-        // Test various HTTP status codes
-        $statusCodes = [200, 201, 400, 401, 403, 404, 500];
+        $response1 = new Response();
+        $response1->status(200);
+        $this->assertEquals(200, $response1->getStatusCode());
 
-        foreach ($statusCodes as $code) {
-            $result = $this->response->status($code);
-            $this->assertInstanceOf(Response::class, $result);
+        $response2 = new Response();
+        $response2->status(404);
+        $this->assertEquals(404, $response2->getStatusCode());
 
-            // Verificar se o status code foi definido corretamente
-            // Como não temos getter para statusCode, verificamos se não há exception
-            $this->assertTrue(true, "Status code {$code} set successfully");
-        }
+        $response3 = new Response();
+        $response3->status(500);
+        $this->assertEquals(500, $response3->getStatusCode());
+
+        $response4 = new Response();
+        $response4->status(201);
+        $this->assertEquals(201, $response4->getStatusCode());
+    }
+
+    public function testTestModeToggle(): void
+    {
+        $this->assertTrue($this->response->isTestMode());
+
+        $this->response->setTestMode(false);
+        $this->assertFalse($this->response->isTestMode());
+
+        $this->response->setTestMode(true);
+        $this->assertTrue($this->response->isTestMode());
     }
 }

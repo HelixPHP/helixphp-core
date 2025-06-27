@@ -85,10 +85,13 @@ jobs:
               exit 0
             }
           else
-            ./vendor/bin/phpunit --testdox || {
+            echo "Running tests on PHP ${{ matrix.php-version }}..."
+            # Para outras versões do PHP, aceitar risky tests relacionados a output buffers
+            # Risky tests são aceitáveis para funcionalidades legítimas como CORS/Response
+            ./vendor/bin/phpunit --testdox --fail-on-warning --fail-on-incomplete --fail-on-skipped || {
               echo '❌ PHPUnit tests failed'
               echo '🔍 Running with detailed error output...'
-              ./vendor/bin/phpunit --debug || exit 1
+              ./vendor/bin/phpunit --debug --fail-on-warning --fail-on-incomplete --fail-on-skipped || exit 1
             }
           fi
         else

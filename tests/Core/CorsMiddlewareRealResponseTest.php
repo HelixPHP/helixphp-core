@@ -16,6 +16,19 @@ class CorsMiddlewareRealResponseTest extends TestCase
     {
         // Reset global state
         $_SERVER = [];
+
+        // Limpar qualquer output buffer existente
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
+    }
+
+    protected function tearDown(): void
+    {
+        // Limpar qualquer output buffer restante
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
+        }
     }
 
     public function testCorsWithRealResponseObject(): void
@@ -28,6 +41,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
 
         $request = (object) ['method' => 'GET'];
         $response = new Response();
+        $response->setTestMode(true); // Ativar modo teste
         $nextCalled = false;
 
         // Define Origin header para teste
@@ -61,6 +75,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
 
         $request = (object) ['method' => 'OPTIONS'];
         $response = new Response();
+        $response->setTestMode(true); // Ativar modo teste
         $nextCalled = false;
 
         $result = $middleware($request, $response, function ($req, $res) use (&$nextCalled) {
@@ -88,6 +103,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
         $middleware = new CorsMiddleware();
         $request = (object) ['method' => 'GET'];
         $response = new Response();
+        $response->setTestMode(true); // Ativar modo teste
 
         // Se houver recursão infinita, este teste travará ou dará timeout
         $startTime = microtime(true);

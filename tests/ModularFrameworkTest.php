@@ -47,12 +47,11 @@ class ModularFrameworkTest extends TestCase
     public function testResponseJson()
     {
         $response = new Response();
+        $response->setTestMode(true); // Ativar modo teste
 
-        ob_start();
         $response->json(['test' => 'data']);
-        $output = ob_get_clean();
 
-        $this->assertEquals('{"test":"data"}', $output);
+        $this->assertEquals('{"test":"data"}', $response->getBody());
     }
 
     /**
@@ -61,8 +60,10 @@ class ModularFrameworkTest extends TestCase
     public function testStreamingResponse()
     {
         $response = new Response();
+        $response->setTestMode(true); // Ativar modo teste
 
         $result = $response->startStream('text/plain');
+
         $this->assertInstanceOf(Response::class, $result);
         $this->assertTrue($response->isStreaming());
     }

@@ -48,6 +48,13 @@ class Response
     private $streamBufferSize = 8192;
 
     /**
+     * Indica se está em modo teste (não faz echo direto).
+     *
+     * @var bool
+     */
+    private $testMode = false;
+
+    /**
      * Define o status HTTP da resposta.
      *
      * @param  int $code Código de status.
@@ -76,13 +83,55 @@ class Response
     }
 
     /**
-     * Obtém os cabeçalhos da resposta.
+     * Retorna os cabeçalhos da resposta.
      *
      * @return array<string, mixed>
      */
     public function getHeaders(): array
     {
         return $this->headers;
+    }
+
+    /**
+     * Retorna o código de status da resposta.
+     *
+     * @return int
+     */
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * Define o modo teste (não faz echo direto).
+     *
+     * @param bool $testMode
+     * @return $this
+     */
+    public function setTestMode(bool $testMode)
+    {
+        $this->testMode = $testMode;
+        return $this;
+    }
+
+    /**
+     * Verifica se está em modo teste.
+     *
+     * @return bool
+     */
+    public function isTestMode(): bool
+    {
+        return $this->testMode;
+    }
+
+    /**
+     * Retorna o corpo da resposta (para testes).
+     *
+     * @return string
+     */
+    public function getBody(): string
+    {
+        return $this->body;
     }
 
     /**
@@ -105,7 +154,12 @@ class Response
         }
 
         $this->body = $encoded;
-        echo $this->body;
+
+        // Só faz echo se não estiver em modo teste
+        if (!$this->testMode) {
+            echo $this->body;
+        }
+
         return $this;
     }
 
@@ -119,7 +173,12 @@ class Response
     {
         $this->header('Content-Type', 'text/plain; charset=utf-8');
         $this->body = $text;
-        echo $this->body;
+
+        // Só faz echo se não estiver em modo teste
+        if (!$this->testMode) {
+            echo $this->body;
+        }
+
         return $this;
     }
 
@@ -133,7 +192,12 @@ class Response
     {
         $this->header('Content-Type', 'text/html; charset=utf-8');
         $this->body = $html;
-        echo $this->body;
+
+        // Só faz echo se não estiver em modo teste
+        if (!$this->testMode) {
+            echo $this->body;
+        }
+
         return $this;
     }
 
@@ -168,7 +232,7 @@ class Response
         }
 
         // Desabilitar output buffering para streaming em tempo real apenas se não estamos em teste
-        if (!defined('PHPUNIT_TESTSUITE') && ob_get_level()) {
+        if (!defined('PHPUNIT_TESTSUITE') && !$this->testMode && ob_get_level()) {
             ob_end_flush();
         }
 
@@ -184,9 +248,12 @@ class Response
      */
     public function write(string $data, bool $flush = true): self
     {
-        echo $data;
+        // Só faz echo se não estiver em modo teste
+        if (!$this->testMode) {
+            echo $data;
+        }
 
-        if ($flush && !defined('PHPUNIT_TESTSUITE')) {
+        if ($flush && !defined('PHPUNIT_TESTSUITE') && !$this->testMode) {
             if (ob_get_level()) {
                 ob_flush();
             }
@@ -362,10 +429,10 @@ class Response
         if ($this->isStreaming) {
             $this->isStreaming = false;
 
-            if (!defined('PHPUNIT_TESTSUITE') && ob_get_level()) {
+            if (!defined('PHPUNIT_TESTSUITE') && !$this->testMode && ob_get_level()) {
                 ob_end_flush();
             }
-            if (!defined('PHPUNIT_TESTSUITE')) {
+            if (!defined('PHPUNIT_TESTSUITE') && !$this->testMode) {
                 flush();
             }
         }
