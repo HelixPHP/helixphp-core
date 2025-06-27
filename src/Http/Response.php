@@ -94,8 +94,17 @@ class Response
     public function json($data)
     {
         $this->header('Content-Type', 'application/json; charset=utf-8');
-        $encoded = json_encode($data);
-        $this->body = $encoded !== false ? $encoded : '{}';
+
+        // Sanitizar dados para UTF-8 válido antes da codificação
+        $sanitizedData = $this->sanitizeForJson($data);
+
+        $encoded = json_encode($sanitizedData);
+        if ($encoded === false) {
+            error_log('JSON encoding failed: ' . json_last_error_msg());
+            $encoded = '{}';
+        }
+
+        $this->body = $encoded;
         echo $this->body;
         return $this;
     }
@@ -196,9 +205,12 @@ class Response
      */
     public function writeJson($data, bool $flush = true): self
     {
-        $json = json_encode($data);
+        // Sanitizar dados para UTF-8 válido antes da codificação
+        $sanitizedData = $this->sanitizeForJson($data);
+
+        $json = json_encode($sanitizedData);
         if ($json === false) {
-            error_log('JSON encoding failed: ' . json_last_error_msg() . '. Input data: ' . var_export($data, true));
+            error_log('JSON encoding failed: ' . json_last_error_msg());
             $json = '{}';
         }
 
@@ -470,5 +482,29 @@ class Response
             $response['data'] = $data;
         }
         return $this->json($response);
+    }
+
+    /**
+     * Sanitiza dados para garantir codificação UTF-8 válida para JSON.
+     *
+     * @param  mixed $data Dados a serem sanitizados.
+     * @return mixed
+     */
+    private function sanitizeForJson($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->sanitizeForJson($value);
+            }
+        } elseif (is_object($data)) {
+            foreach ($data as $key => $value) {
+                $data->$key = $this->sanitizeForJson($value);
+            }
+        } elseif (is_string($data)) {
+            // Converter para UTF-8 válido, removendo/substituindo bytes inválidos
+            $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+        }
+
+        return $data;
     }
 }
