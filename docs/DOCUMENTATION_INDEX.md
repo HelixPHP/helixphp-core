@@ -48,6 +48,17 @@ Bem-vindo ao índice completo da documentação do Express PHP Framework. Esta p
 
 ## 📊 **Performance e Benchmarks**
 
+### 🎯 **Relatórios de Performance**
+- **[📈 Relatório de Otimização](implementation/PERFORMANCE_OPTIMIZATION_REPORT.md)** - Melhorias implementadas
+- **[📊 Evolução de Performance](implementation/PERFORMANCE_EVOLUTION_REPORT.md)** - Histórico de melhorias
+- **[📋 Resumo Abrangente](implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** - Análise completa
+- **[🧪 Testes de Performance](implementation/PERFORMANCE_TEST_REPORT_2025-06-27.md)** - Último relatório
+
+### 🛠️ **Implementação e Desenvolvimento**
+- **[🎉 Modernização Completa](implementation/MODERNIZATION_COMPLETE.md)** - Status da modernização
+- **[🔍 Validação Pre-commit](implementation/PRECOMMIT_VALIDATION_COMPLETE.md)** - Sistema de qualidade
+- **[📋 Setup Pre-commit](guides/PRECOMMIT_SETUP.md)** - Configuração de hooks
+
 - **[📈 Relatório Abrangente](../benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** - Performance detalhada
 - **[🔧 Como Executar Benchmarks](../benchmarks/README.md)** - Testes de performance
 - **[📊 Resultados Históricos](../benchmarks/reports/)** - Histórico de performance

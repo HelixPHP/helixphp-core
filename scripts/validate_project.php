@@ -63,7 +63,10 @@ class ProjectValidator
             'composer.json',
             'README.md',
             'docs/DOCUMENTATION_INDEX.md',
-            'docs/guides/QUICK_START_GUIDE.md'
+            'docs/guides/QUICK_START_GUIDE.md',
+            'docs/guides/PRECOMMIT_SETUP.md',
+            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
+            'scripts/README.md'
         ];
 
         foreach ($requiredFiles as $file) {
@@ -275,8 +278,11 @@ class ProjectValidator
             'docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md',
             'docs/guides/STANDARD_MIDDLEWARES.md',
             'docs/guides/SECURITY_IMPLEMENTATION.md',
-            'benchmarks/README.md',
-            'benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md'
+            'docs/guides/PRECOMMIT_SETUP.md',
+            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
+            'docs/implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY_2025-06-27.md',
+            'scripts/README.md',
+            'benchmarks/README.md'
         ];
 
         foreach ($docs as $doc) {

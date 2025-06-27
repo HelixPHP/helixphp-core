@@ -80,6 +80,8 @@
         "fix:psr12-lines": "./scripts/fix-psr12-lines.sh",
         "precommit:install": "./scripts/setup-precommit.sh",
         "precommit:test": "./scripts/pre-commit",
+        "validate:docs": "./scripts/validate-docs.sh",
+        "validate:project": "php scripts/validate_project.php",
         "examples:basic": "php examples/example_basic.php",
         "examples:auth": "php examples/example_auth.php",
         "examples:auth-simple": "php examples/example_auth_simple.php",
