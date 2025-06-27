@@ -36,8 +36,8 @@ class Event
     /**
      * Retorna um dado específico
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  string $key
+     * @param  mixed  $default
      * @return mixed
      */
     public function get(string $key, $default = null)
@@ -49,7 +49,7 @@ class Event
      * Define um dado
      *
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function set(string $key, $value): void
     {

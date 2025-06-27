@@ -11,7 +11,9 @@ use Express\Authentication\JWTHelper;
  */
 class AuthMiddleware extends BaseMiddleware
 {
-    /** @var array<string, mixed> */
+    /**
+     * @var array<string, mixed>
+     */
     private array $options;
 
     /**
@@ -19,7 +21,8 @@ class AuthMiddleware extends BaseMiddleware
      */
     public function __construct(array $options = [])
     {
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'jwtSecret' => null,
             'jwtAlgorithm' => 'HS256',
             'basicAuthCallback' => null,
@@ -39,7 +42,9 @@ class AuthMiddleware extends BaseMiddleware
                 'expired' => 'Authentication token expired',
                 'malformed' => 'Malformed authorization header'
             ]
-        ], $options);
+            ],
+            $options
+        );
     }
 
     public function handle($request, $response, callable $next)
@@ -56,11 +61,13 @@ class AuthMiddleware extends BaseMiddleware
 
         if (!$authResult['success']) {
             if ($this->options['requireAuth']) {
-                return $response->status($authResult['status'])->json([
+                return $response->status($authResult['status'])->json(
+                    [
                     'error' => true,
                     'message' => $authResult['message'],
                     'type' => 'AuthenticationError'
-                ]);
+                    ]
+                );
             }
         } else {
             // Adiciona dados do usuário à requisição
@@ -80,7 +87,8 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica a requisição usando todos os métodos configurados
-     * @param mixed $request
+     *
+     * @param  mixed $request
      * @return array<string, mixed>
      */
     private function authenticateRequest($request): array
@@ -133,6 +141,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando JWT
+     *
      * @param mixed $request
      */
     private function authenticateJWT($request): array
@@ -150,9 +159,13 @@ class AuthMiddleware extends BaseMiddleware
         }
 
         try {
-            $payload = JWTHelper::decode($token, $this->options['jwtSecret'], [
+            $payload = JWTHelper::decode(
+                $token,
+                $this->options['jwtSecret'],
+                [
                 'algorithm' => $this->options['jwtAlgorithm']
-            ]);
+                ]
+            );
             return ['success' => true, 'user' => $payload];
         } catch (\Exception $e) {
             return ['success' => false, 'message' => 'Invalid JWT token: ' . $e->getMessage()];
@@ -161,6 +174,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando Basic Auth
+     *
      * @param mixed $request
      */
     private function authenticateBasic($request): array
@@ -191,6 +205,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando Bearer Token
+     *
      * @param mixed $request
      */
     private function authenticateBearer($request): array
@@ -216,6 +231,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando API Key
+     *
      * @param mixed $request
      */
     private function authenticateApiKey($request): array
@@ -250,6 +266,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando método customizado
+     *
      * @param mixed $request
      */
     private function authenticateCustom($request): array
@@ -274,6 +291,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Obtém o header de Authorization
+     *
      * @param mixed $request
      */
     private function getAuthorizationHeader($request): ?string
@@ -286,11 +304,13 @@ class AuthMiddleware extends BaseMiddleware
      */
     public static function jwt(string $secret, string $algorithm = 'HS256'): self
     {
-        return new self([
+        return new self(
+            [
             'authMethods' => ['jwt'],
             'jwtSecret' => $secret,
             'jwtAlgorithm' => $algorithm
-        ]);
+            ]
+        );
     }
 
     /**
@@ -298,10 +318,12 @@ class AuthMiddleware extends BaseMiddleware
      */
     public static function basic(callable $callback): self
     {
-        return new self([
+        return new self(
+            [
             'authMethods' => ['basic'],
             'basicAuthCallback' => $callback
-        ]);
+            ]
+        );
     }
 
     /**
@@ -309,10 +331,12 @@ class AuthMiddleware extends BaseMiddleware
      */
     public static function bearer(callable $callback): self
     {
-        return new self([
+        return new self(
+            [
             'authMethods' => ['bearer'],
             'bearerTokenCallback' => $callback
-        ]);
+            ]
+        );
     }
 
     /**
@@ -320,10 +344,12 @@ class AuthMiddleware extends BaseMiddleware
      */
     public static function custom(callable $callback): self
     {
-        return new self([
+        return new self(
+            [
             'authMethods' => ['custom'],
             'customAuthCallback' => $callback
-        ]);
+            ]
+        );
     }
 
     /**
@@ -331,11 +357,13 @@ class AuthMiddleware extends BaseMiddleware
      */
     public static function apiKey(callable $callback, string $headerName = 'X-API-Key', string $queryParam = 'api_key'): self
     {
-        return new self([
+        return new self(
+            [
             'authMethods' => ['apikey'],
             'apiKeyCallback' => $callback,
             'headerName' => $headerName,
             'queryParam' => $queryParam
-        ]);
+            ]
+        );
     }
 }

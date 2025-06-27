@@ -14,16 +14,18 @@ class Route
     private string $pattern;
     private array $parameters = [];
     private array $middlewares = [];
-    /** @var callable */
+    /**
+     * @var callable
+     */
     private $handler;
     private array $metadata = [];
     private ?string $name = null;
 
     /**
-     * @param string $method
-     * @param string $path
-     * @param callable $handler
-     * @param array<callable> $middlewares
+     * @param string               $method
+     * @param string               $path
+     * @param callable             $handler
+     * @param array<callable>      $middlewares
      * @param array<string, mixed> $metadata
      */
     public function __construct(
@@ -43,6 +45,7 @@ class Route
 
     /**
      * Compila o padrão da rota para regex.
+     *
      * @return void
      */
     private function compilePattern(): void
@@ -63,7 +66,8 @@ class Route
 
     /**
      * Verifica se a rota corresponde ao caminho dado.
-     * @param string $path
+     *
+     * @param  string $path
      * @return bool
      */
     public function matches(string $path): bool
@@ -77,7 +81,8 @@ class Route
 
     /**
      * Extrai os parâmetros do caminho.
-     * @param string $path
+     *
+     * @param  string $path
      * @return array<string, string|int>
      */
     public function extractParameters(string $path): array
@@ -107,6 +112,7 @@ class Route
 
     /**
      * Verifica se a rota tem parâmetros.
+     *
      * @return bool
      */
     public function hasParameters(): bool
@@ -116,6 +122,7 @@ class Route
 
     /**
      * Obtém o método HTTP.
+     *
      * @return string
      */
     public function getMethod(): string
@@ -125,6 +132,7 @@ class Route
 
     /**
      * Obtém o caminho da rota.
+     *
      * @return string
      */
     public function getPath(): string
@@ -134,6 +142,7 @@ class Route
 
     /**
      * Obtém o handler da rota.
+     *
      * @return callable
      */
     public function getHandler()
@@ -143,6 +152,7 @@ class Route
 
     /**
      * Obtém os middlewares da rota.
+     *
      * @return array<callable>
      */
     public function getMiddlewares(): array
@@ -152,6 +162,7 @@ class Route
 
     /**
      * Obtém os metadados da rota.
+     *
      * @return array<string, mixed>
      */
     public function getMetadata(): array
@@ -161,7 +172,8 @@ class Route
 
     /**
      * Define o nome da rota.
-     * @param string $name
+     *
+     * @param  string $name
      * @return $this
      */
     public function name(string $name): self
@@ -172,6 +184,7 @@ class Route
 
     /**
      * Obtém o nome da rota.
+     *
      * @return string|null
      */
     public function getName(): ?string
@@ -181,7 +194,8 @@ class Route
 
     /**
      * Adiciona um middleware à rota.
-     * @param callable $middleware
+     *
+     * @param  callable $middleware
      * @return $this
      */
     public function middleware($middleware): self
@@ -196,7 +210,8 @@ class Route
 
     /**
      * Define metadados para a rota.
-     * @param array<string, mixed> $metadata
+     *
+     * @param  array<string, mixed> $metadata
      * @return $this
      */
     public function setMetadata(array $metadata): self
@@ -207,7 +222,8 @@ class Route
 
     /**
      * Gera uma URL para a rota com os parâmetros dados.
-     * @param array<string, string|int> $parameters
+     *
+     * @param  array<string, string|int> $parameters
      * @return string
      */
     public function url(array $parameters = []): string
@@ -223,6 +239,7 @@ class Route
 
     /**
      * Converte a rota para array.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array

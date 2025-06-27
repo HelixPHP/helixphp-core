@@ -23,56 +23,67 @@ class Request
 {
     /**
      * Método HTTP.
+     *
      * @var string
      */
     private $method = '';
 
     /**
      * Padrão da rota.
+     *
      * @var string
      */
     private $path = '';
 
     /**
      * Caminho real da requisição.
+     *
      * @var string
      */
     private $pathCallable = '';
 
     /**
      * Parâmetros extraídos da URL.
+     *
      * @var stdClass
      */
     private $params = null;
 
     /**
      * Parâmetros da query string.
+     *
      * @var stdClass
      */
     private $query = null;
 
     /**
      * Corpo da requisição.
+     *
      * @var stdClass
      */
     private $body = null;
 
     /**
      * Cabeçalhos da requisição.
+     *
      * @var HeaderRequest
      */
     private $headers = null;
 
     /**
      * Arquivos enviados via upload (anexos).
+     *
      * @var array<string, mixed>
      */
     private $files = [];
 
     /**
      * Construtor da classe Request.
-     * @param string $method Método HTTP.
-     * @param string $path Padrão da rota.
+     *
+     * @param string $method       Método
+     *                             HTTP.
+     * @param string $path         Padrão da
+     *                             rota.
      * @param string $pathCallable Caminho real da requisição.
      */
     public function __construct(string $method, string $path, string $pathCallable)
@@ -94,7 +105,7 @@ class Request
     /**
      * Magic method to get properties dynamically
      *
-     * @param string $name The property name
+     * @param  string $name The property name
      * @return mixed The property value
      * @throws InvalidArgumentException if the property does not exist
      */
@@ -204,8 +215,11 @@ class Request
 
     /**
      * Obtém um parâmetro específico da rota.
-     * @param string $key Nome do parâmetro.
-     * @param mixed $default Valor padrão se não encontrado.
+     *
+     * @param  string $key     Nome do
+     *                         parâmetro.
+     * @param  mixed  $default Valor padrão se não
+     *                         encontrado.
      * @return mixed
      */
     public function param(string $key, $default = null)
@@ -215,8 +229,11 @@ class Request
 
     /**
      * Obtém um parâmetro específico da query string.
-     * @param string $key Nome do parâmetro.
-     * @param mixed $default Valor padrão se não encontrado.
+     *
+     * @param  string $key     Nome do
+     *                         parâmetro.
+     * @param  mixed  $default Valor padrão se não
+     *                         encontrado.
      * @return mixed
      */
     public function get(string $key, $default = null)
@@ -226,8 +243,10 @@ class Request
 
     /**
      * Obtém um valor específico do corpo da requisição.
-     * @param string $key Nome do campo.
-     * @param mixed $default Valor padrão se não encontrado.
+     *
+     * @param  string $key     Nome do campo.
+     * @param  mixed  $default Valor padrão se não
+     *                         encontrado.
      * @return mixed
      */
     public function input(string $key, $default = null)
@@ -237,7 +256,8 @@ class Request
 
     /**
      * Obtém informações sobre um arquivo enviado.
-     * @param string $key Nome do campo do arquivo.
+     *
+     * @param  string $key Nome do campo do arquivo.
      * @return array|null
      */
     public function file(string $key): ?array
@@ -247,7 +267,8 @@ class Request
 
     /**
      * Verifica se a requisição tem um arquivo específico.
-     * @param string $key Nome do campo do arquivo.
+     *
+     * @param  string $key Nome do campo do arquivo.
      * @return bool
      */
     public function hasFile(string $key): bool
@@ -257,6 +278,7 @@ class Request
 
     /**
      * Obtém o IP do cliente.
+     *
      * @return string
      */
     public function ip(): string
@@ -286,6 +308,7 @@ class Request
 
     /**
      * Obtém o User-Agent.
+     *
      * @return string
      */
     public function userAgent(): string
@@ -295,6 +318,7 @@ class Request
 
     /**
      * Verifica se a requisição é AJAX.
+     *
      * @return bool
      */
     public function isAjax(): bool
@@ -305,6 +329,7 @@ class Request
 
     /**
      * Verifica se a requisição é HTTPS.
+     *
      * @return bool
      */
     public function isSecure(): bool
@@ -316,6 +341,7 @@ class Request
 
     /**
      * Obtém a URL completa da requisição.
+     *
      * @return string
      */
     public function fullUrl(): string

@@ -13,13 +13,16 @@ class CsrfMiddleware extends BaseMiddleware
 
     public function __construct(array $options = [])
     {
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'tokenLength' => 32,
             'sessionKey' => '_csrf_token',
             'headerName' => 'X-CSRF-Token',
             'fieldName' => '_token',
             'excludeMethods' => ['GET', 'HEAD', 'OPTIONS']
-        ], $options);
+            ],
+            $options
+        );
     }
 
     public function handle($request, $response, callable $next)
@@ -43,10 +46,12 @@ class CsrfMiddleware extends BaseMiddleware
         // Validate token
         $token = $this->getTokenFromRequest($request);
         if (!$this->validateToken($token)) {
-            return $response->status(403)->json([
+            return $response->status(403)->json(
+                [
                 'error' => true,
                 'message' => 'CSRF token mismatch'
-            ]);
+                ]
+            );
         }
 
         return $next();
@@ -115,7 +120,8 @@ class CsrfMiddleware extends BaseMiddleware
     public static function hiddenField(string $fieldName = 'csrf_token', string $sessionKey = '_csrf_token'): string
     {
         $token = self::getToken($sessionKey);
-        return sprintf('<input type="hidden" name="%s" value="%s">',
+        return sprintf(
+            '<input type="hidden" name="%s" value="%s">',
             htmlspecialchars($fieldName, ENT_QUOTES),
             htmlspecialchars($token, ENT_QUOTES)
         );
@@ -127,7 +133,8 @@ class CsrfMiddleware extends BaseMiddleware
     public static function metaTag(string $name = 'csrf-token', string $sessionKey = '_csrf_token'): string
     {
         $token = self::getToken($sessionKey);
-        return sprintf('<meta name="%s" content="%s">',
+        return sprintf(
+            '<meta name="%s" content="%s">',
             htmlspecialchars($name, ENT_QUOTES),
             htmlspecialchars($token, ENT_QUOTES)
         );

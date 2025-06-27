@@ -27,12 +27,14 @@ class ApiExpress
 
     /**
      * Referência para o array $_SERVER.
+     *
      * @var array<string, mixed>
      */
     private array $server;
 
     /**
      * Lista de middlewares globais.
+     *
      * @var array<callable>
      */
     private array $middlewares = [];
@@ -44,6 +46,7 @@ class ApiExpress
 
     /**
      * Lista de sub-routers registrados via use.
+     *
      * @var RouterInstance[]
      */
     private array $subRouters = [];
@@ -82,6 +85,7 @@ class ApiExpress
 
     /**
      * Registra um middleware global ou define um prefixo para rotas.
+     *
      * @param mixed ...$args
      */
     public function use(...$args): void
@@ -114,6 +118,7 @@ class ApiExpress
 
     /**
      * Registra uma rota GET.
+     *
      * @param mixed ...$handlers
      */
     public function get(string $path, ...$handlers): void
@@ -123,6 +128,7 @@ class ApiExpress
 
     /**
      * Registra uma rota POST.
+     *
      * @param mixed ...$handlers
      */
     public function post(string $path, ...$handlers): void
@@ -132,6 +138,7 @@ class ApiExpress
 
     /**
      * Registra uma rota PUT.
+     *
      * @param mixed ...$handlers
      */
     public function put(string $path, ...$handlers): void
@@ -141,6 +148,7 @@ class ApiExpress
 
     /**
      * Registra uma rota DELETE.
+     *
      * @param mixed ...$handlers
      */
     public function delete(string $path, ...$handlers): void
@@ -150,6 +158,7 @@ class ApiExpress
 
     /**
      * Registra uma rota PATCH.
+     *
      * @param mixed ...$handlers
      */
     public function patch(string $path, ...$handlers): void
@@ -159,6 +168,7 @@ class ApiExpress
 
     /**
      * Registra uma rota OPTIONS.
+     *
      * @param mixed ...$handlers
      */
     public function options(string $path, ...$handlers): void
@@ -168,6 +178,7 @@ class ApiExpress
 
     /**
      * Registra uma rota HEAD.
+     *
      * @param mixed ...$handlers
      */
     public function head(string $path, ...$handlers): void
@@ -177,6 +188,7 @@ class ApiExpress
 
     /**
      * Registra uma rota para qualquer método HTTP.
+     *
      * @param mixed ...$handlers
      */
     public function any(string $path, ...$handlers): void
@@ -187,7 +199,7 @@ class ApiExpress
     /**
      * Cria um router de grupo.
      */
-    public function Router(): RouterInstance
+    public function router(): RouterInstance
     {
         return new RouterInstance();
     }
@@ -218,7 +230,6 @@ class ApiExpress
 
             // Executar middlewares e handler
             $this->executeRoute($route, $request, $response);
-
         } catch (\Throwable $e) {
             $this->handleError($e);
         }
@@ -235,7 +246,7 @@ class ApiExpress
         // Criar pipeline de execução
         $pipeline = array_reverse($middlewares);
 
-        $finalHandler = function($req, $resp) use ($handler) {
+        $finalHandler = function ($req, $resp) use ($handler) {
             return call_user_func($handler, $req, $resp);
         };
 
@@ -243,7 +254,7 @@ class ApiExpress
         $next = $finalHandler;
         foreach ($pipeline as $middleware) {
             $currentNext = $next;
-            $next = function($req, $resp) use ($middleware, $currentNext) {
+            $next = function ($req, $resp) use ($middleware, $currentNext) {
                 return call_user_func($middleware, $req, $resp, $currentNext);
             };
         }
@@ -277,6 +288,7 @@ class ApiExpress
 
     /**
      * Obtém todas as rotas registradas.
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getRoutes(): array
@@ -286,6 +298,7 @@ class ApiExpress
 
     /**
      * Obtém informações da aplicação.
+     *
      * @return array<string, mixed>
      */
     public function getAppInfo(): array
@@ -350,6 +363,7 @@ class ApiExpress
 
     /**
      * Proxy para métodos HTTP customizados.
+     *
      * @param mixed[] $args
      */
     public function __call(string $method, array $args): void
@@ -370,6 +384,7 @@ class ApiExpress
 
     /**
      * Proxy para métodos estáticos.
+     *
      * @param mixed[] $args
      */
     public static function __callStatic(string $method, array $args): mixed

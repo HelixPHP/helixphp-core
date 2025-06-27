@@ -24,9 +24,12 @@ class EventDispatcher
         ];
 
         // Ordena por prioridade (maior prioridade primeiro)
-        usort($this->listeners[$event], function($a, $b) {
-            return $b['priority'] <=> $a['priority'];
-        });
+        usort(
+            $this->listeners[$event],
+            function ($a, $b) {
+                return $b['priority'] <=> $a['priority'];
+            }
+        );
     }
 
     /**

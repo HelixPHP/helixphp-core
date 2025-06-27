@@ -10,7 +10,7 @@ class MemoryCache implements CacheInterface
     private array $cache = [];
 
     /**
-     * @param mixed $default
+     * @param  mixed $default
      * @return mixed
      */
     public function get(string $key, $default = null)

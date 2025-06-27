@@ -134,7 +134,7 @@ class Database
     /**
      * Executa uma função dentro de uma transação
      *
-     * @param callable $callback
+     * @param  callable $callback
      * @return mixed
      */
     public function transaction(callable $callback)

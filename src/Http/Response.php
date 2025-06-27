@@ -14,37 +14,43 @@ class Response
 {
     /**
      * Código de status HTTP.
+     *
      * @var int
      */
     private $statusCode = 200;
 
     /**
      * Cabeçalhos da resposta.
+     *
      * @var array<string, mixed>
      */
     private $headers = [];
 
     /**
      * Corpo da resposta.
+     *
      * @var string
      */
     private $body = '';
 
     /**
      * Indica se a resposta está sendo enviada como stream.
+     *
      * @var bool
      */
     private $isStreaming = false;
 
     /**
      * Buffer size para streaming (em bytes).
+     *
      * @var int
      */
     private $streamBufferSize = 8192;
 
     /**
      * Define o status HTTP da resposta.
-     * @param int $code Código de status.
+     *
+     * @param  int $code Código de status.
      * @return $this
      */
     public function status($code)
@@ -56,8 +62,10 @@ class Response
 
     /**
      * Define um cabeçalho na resposta.
-     * @param string $name Nome do cabeçalho.
-     * @param string $value Valor do cabeçalho.
+     *
+     * @param  string $name  Nome do
+     *                       cabeçalho.
+     * @param  string $value Valor do cabeçalho.
      * @return $this
      */
     public function header($name, $value)
@@ -69,6 +77,7 @@ class Response
 
     /**
      * Obtém os cabeçalhos da resposta.
+     *
      * @return array<string, mixed>
      */
     public function getHeaders(): array
@@ -78,7 +87,8 @@ class Response
 
     /**
      * Envia resposta em formato JSON.
-     * @param mixed $data Dados a serem enviados.
+     *
+     * @param  mixed $data Dados a serem enviados.
      * @return $this
      */
     public function json($data)
@@ -92,7 +102,8 @@ class Response
 
     /**
      * Envia resposta em texto puro.
-     * @param string $text Texto a ser enviado.
+     *
+     * @param  string $text Texto a ser enviado.
      * @return $this
      */
     public function text($text)
@@ -105,7 +116,8 @@ class Response
 
     /**
      * Envia resposta em HTML.
-     * @param string $html HTML a ser enviado.
+     *
+     * @param  string $html HTML a ser enviado.
      * @return $this
      */
     public function html($html)
@@ -118,7 +130,8 @@ class Response
 
     /**
      * Define o buffer size para streaming.
-     * @param int $size Tamanho do buffer em bytes.
+     *
+     * @param  int $size Tamanho do buffer em bytes.
      * @return $this
      */
     public function setStreamBufferSize(int $size): self
@@ -129,7 +142,8 @@ class Response
 
     /**
      * Inicia o modo streaming configurando os cabeçalhos necessários.
-     * @param string|null $contentType Tipo de conteúdo (opcional).
+     *
+     * @param  string|null $contentType Tipo de conteúdo (opcional).
      * @return $this
      */
     public function startStream(?string $contentType = null): self
@@ -154,8 +168,9 @@ class Response
 
     /**
      * Envia dados como stream.
-     * @param string $data Dados a serem enviados.
-     * @param bool $flush Se deve fazer flush imediatamente.
+     *
+     * @param  string $data  Dados a serem enviados.
+     * @param  bool   $flush Se deve fazer flush imediatamente.
      * @return $this
      */
     public function write(string $data, bool $flush = true): self
@@ -174,8 +189,9 @@ class Response
 
     /**
      * Envia dados JSON como stream.
-     * @param mixed $data Dados a serem enviados em JSON.
-     * @param bool $flush Se deve fazer flush imediatamente.
+     *
+     * @param  mixed $data  Dados a serem enviados em JSON.
+     * @param  bool  $flush Se deve fazer flush imediatamente.
      * @return $this
      */
     public function writeJson($data, bool $flush = true): self
@@ -191,8 +207,10 @@ class Response
 
     /**
      * Envia um arquivo como stream.
-     * @param string $filePath Caminho para o arquivo.
-     * @param array<string, string> $headers Cabeçalhos adicionais.
+     *
+     * @param  string                $filePath Caminho para o arquivo.
+     * @param  array<string, string> $headers  Cabeçalhos
+     *                                         adicionais.
      * @return $this
      * @throws \InvalidArgumentException Se o arquivo não existir ou não for legível.
      */
@@ -237,8 +255,9 @@ class Response
 
     /**
      * Envia dados de um recurso como stream.
-     * @param resource $resource Recurso a ser transmitido.
-     * @param string|null $contentType Tipo de conteúdo.
+     *
+     * @param  resource    $resource    Recurso a ser transmitido.
+     * @param  string|null $contentType Tipo de conteúdo.
      * @return $this
      * @throws \InvalidArgumentException Se o recurso não for válido.
      */
@@ -263,10 +282,11 @@ class Response
 
     /**
      * Envia dados como Server-Sent Events (SSE).
-     * @param mixed $data Dados a serem enviados.
-     * @param string|null $event Nome do evento (opcional).
-     * @param string|null $id ID do evento (opcional).
-     * @param int|null $retry Tempo de retry em milissegundos (opcional).
+     *
+     * @param  mixed       $data  Dados a serem enviados.
+     * @param  string|null $event Nome do evento (opcional).
+     * @param  string|null $id    ID do evento (opcional).
+     * @param  int|null    $retry Tempo de retry em milissegundos (opcional).
      * @return $this
      */
     public function sendEvent($data, ?string $event = null, ?string $id = null, ?int $retry = null): self
@@ -312,6 +332,7 @@ class Response
 
     /**
      * Envia um evento de heartbeat (ping) para manter a conexão SSE ativa.
+     *
      * @return $this
      */
     public function sendHeartbeat(): self
@@ -321,6 +342,7 @@ class Response
 
     /**
      * Finaliza o stream e limpa recursos.
+     *
      * @return $this
      */
     public function endStream(): self
@@ -341,6 +363,7 @@ class Response
 
     /**
      * Verifica se a resposta está em modo streaming.
+     *
      * @return bool
      */
     public function isStreaming(): bool
@@ -350,8 +373,10 @@ class Response
 
     /**
      * Redireciona para uma URL.
-     * @param string $url URL de destino.
-     * @param int $code Código de status HTTP (301, 302, etc).
+     *
+     * @param  string $url  URL de destino.
+     * @param  int    $code Código de status HTTP (301, 302,
+     *                      etc).
      * @return $this
      */
     public function redirect(string $url, int $code = 302): self
@@ -363,13 +388,17 @@ class Response
 
     /**
      * Define um cookie.
-     * @param string $name Nome do cookie.
-     * @param string $value Valor do cookie.
-     * @param int $expires Timestamp de expiração.
-     * @param string $path Caminho do cookie.
-     * @param string $domain Domínio do cookie.
-     * @param bool $secure Se deve ser enviado apenas via HTTPS.
-     * @param bool $httponly Se deve ser acessível apenas via HTTP.
+     *
+     * @param  string $name     Nome do cookie.
+     * @param  string $value    Valor do cookie.
+     * @param  int    $expires  Timestamp de
+     *                          expiração.
+     * @param  string $path     Caminho do cookie.
+     * @param  string $domain   Domínio do
+     *                          cookie.
+     * @param  bool   $secure   Se deve ser enviado apenas via HTTPS.
+     * @param  bool   $httponly Se deve ser acessível apenas via
+     *                          HTTP.
      * @return $this
      */
     public function cookie(
@@ -387,9 +416,10 @@ class Response
 
     /**
      * Remove um cookie.
-     * @param string $name Nome do cookie.
-     * @param string $path Caminho do cookie.
-     * @param string $domain Domínio do cookie.
+     *
+     * @param  string $name   Nome do cookie.
+     * @param  string $path   Caminho do cookie.
+     * @param  string $domain Domínio do cookie.
      * @return $this
      */
     public function clearCookie(string $name, string $path = '/', string $domain = ''): self
@@ -400,8 +430,10 @@ class Response
 
     /**
      * Envia uma resposta de erro.
-     * @param int $code Código de status HTTP.
-     * @param string $message Mensagem de erro.
+     *
+     * @param  int    $code    Código de
+     *                         status HTTP.
+     * @param  string $message Mensagem de erro.
      * @return $this
      */
     public function error(int $code, string $message = ''): self
@@ -426,8 +458,9 @@ class Response
 
     /**
      * Envia uma resposta de sucesso padronizada.
-     * @param mixed $data Dados a serem enviados.
-     * @param string $message Mensagem de sucesso.
+     *
+     * @param  mixed  $data    Dados a serem enviados.
+     * @param  string $message Mensagem de sucesso.
      * @return $this
      */
     public function success($data = null, string $message = 'Success'): self

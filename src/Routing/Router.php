@@ -13,37 +13,43 @@ class Router
 {
     /**
      * Prefixo/base para rotas agrupadas.
+     *
      * @var string
      */
     private static string $current_group_prefix = '';
 
     /**
      * Lista de rotas registradas.
+     *
      * @var array<int, array<string, mixed>>
      */
     private static array $routes = [];
 
     /**
      * Caminho padrão.
+     *
      * @var string
      */
     public const DEFAULT_PATH = '/';
 
     /**
      * Métodos HTTP aceitos.
+     *
      * @var array<string>
      */
     private static array $httpMethodsAccepted = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD'];
 
     /**
      * Middlewares de grupo por prefixo de rota.
+     *
      * @var array<string, callable[]>
      */
     private static array $groupMiddlewares = [];
 
     /**
      * Permite adicionar métodos HTTP customizados.
-     * @param string $method Método HTTP customizado.
+     *
+     * @param  string $method Método HTTP customizado.
      * @return void
      */
     public static function addHttpMethod(string $method): void
@@ -56,8 +62,9 @@ class Router
 
     /**
      * Define um prefixo/base para rotas agrupadas OU registra middlewares para um grupo de rotas.
-     * @param string $prev_path Prefixo/base para rotas.
-     * @param callable ...$middlewares Middlewares para o grupo.
+     *
+     * @param  string   $prev_path      Prefixo/base para rotas.
+     * @param  callable ...$middlewares Middlewares para o grupo.
      * @throws InvalidArgumentException Se $prev_path não for string.
      * @return void
      */
@@ -75,11 +82,13 @@ class Router
 
     /**
      * Adiciona uma nova rota com método, caminho, middlewares e handler.
-     * @param string $method Método HTTP.
-     * @param string $path Caminho da rota.
-     * @param callable $handler Handler da rota.
-     * @param array $metadata Metadados da rota.
-     * @param mixed ...$middlewares Middlewares opcionais.
+     *
+     * @param  string   $method         Método
+     *                                  HTTP.
+     * @param  string   $path           Caminho da rota.
+     * @param  callable $handler        Handler da rota.
+     * @param  array    $metadata       Metadados da rota.
+     * @param  mixed    ...$middlewares Middlewares opcionais.
      * @throws InvalidArgumentException Se o método não for suportado.
      * @return void
      */
@@ -134,6 +143,7 @@ class Router
 
     /**
      * Verifica se array é associativo
+     *
      * @param mixed[] $arr
      */
     private static function isAssoc(array $arr): bool
@@ -146,8 +156,9 @@ class Router
 
     /**
      * Get routes based on method and path.
-     * @param string $method The HTTP method (GET, POST, etc.).
-     * @param string|null $path The path to match (optional).
+     *
+     * @param  string      $method The HTTP method (GET, POST, etc.).
+     * @param  string|null $path   The path to match (optional).
      * @throws InvalidArgumentException if the method is not supported.
      * @return array<string, mixed>|null The matching routes or null if not found.
      */
@@ -162,9 +173,12 @@ class Router
         }
 
         // Filter routes based on method
-        $routes = array_filter(self::$routes, function ($route) use ($method) {
-            return $route['method'] === $method;
-        });
+        $routes = array_filter(
+            self::$routes,
+            function ($route) use ($method) {
+                return $route['method'] === $method;
+            }
+        );
 
         if (empty($routes)) {
             return null; // No routes found for the specified method
@@ -227,6 +241,7 @@ class Router
 
     /**
      * Retorna todas as rotas registradas (para exportação/documentação).
+     *
      * @return array<int, array<string, mixed>>
      */
     public static function getRoutes(): array
@@ -236,6 +251,7 @@ class Router
 
     /**
      * Retorna os métodos HTTP aceitos.
+     *
      * @return array<string>
      */
     public static function getHttpMethodsAccepted(): array
@@ -288,6 +304,7 @@ class Router
 
     /**
      * Limpa todas as rotas registradas.
+     *
      * @return void
      */
     public static function clear(): void
@@ -299,8 +316,9 @@ class Router
 
     /**
      * Registra uma rota para qualquer método HTTP.
-     * @param string $path Caminho da rota.
-     * @param mixed ...$handlers Middlewares e handler final.
+     *
+     * @param  string $path        Caminho da rota.
+     * @param  mixed  ...$handlers Middlewares e handler final.
      * @return void
      */
     public static function any(string $path, ...$handlers): void
@@ -312,9 +330,11 @@ class Router
 
     /**
      * Registra múltiplas rotas para os mesmos handlers.
-     * @param array<string> $methods Métodos HTTP.
-     * @param string $path Caminho da rota.
-     * @param mixed ...$handlers Middlewares e handler final.
+     *
+     * @param  array<string> $methods     Métodos
+     *                                    HTTP.
+     * @param  string        $path        Caminho da rota.
+     * @param  mixed         ...$handlers Middlewares e handler final.
      * @return void
      */
     public static function match(array $methods, string $path, ...$handlers): void
@@ -326,9 +346,10 @@ class Router
 
     /**
      * Cria um grupo de rotas com prefixo e middlewares comuns.
-     * @param string $prefix Prefixo das rotas.
-     * @param callable $callback Callback que define as rotas do grupo.
-     * @param array<callable> $middlewares Middlewares comuns ao grupo.
+     *
+     * @param  string          $prefix      Prefixo das rotas.
+     * @param  callable        $callback    Callback que define as rotas do grupo.
+     * @param  array<callable> $middlewares Middlewares comuns ao grupo.
      * @return void
      */
     public static function group(string $prefix, callable $callback, array $middlewares = []): void
@@ -350,6 +371,7 @@ class Router
 
     /**
      * Registra uma rota GET
+     *
      * @param callable $handler
      */
     public static function get(string $path, $handler, array $metadata = []): void
@@ -359,6 +381,7 @@ class Router
 
     /**
      * Registra uma rota POST
+     *
      * @param callable $handler
      */
     public static function post(string $path, $handler, array $metadata = []): void
@@ -368,6 +391,7 @@ class Router
 
     /**
      * Registra uma rota PUT
+     *
      * @param callable $handler
      */
     public static function put(string $path, $handler, array $metadata = []): void
@@ -377,6 +401,7 @@ class Router
 
     /**
      * Registra uma rota DELETE
+     *
      * @param callable $handler
      */
     public static function delete(string $path, $handler, array $metadata = []): void
@@ -386,6 +411,7 @@ class Router
 
     /**
      * Registra uma rota PATCH
+     *
      * @param callable $handler
      */
     public static function patch(string $path, $handler, array $metadata = []): void
@@ -395,6 +421,7 @@ class Router
 
     /**
      * Registra uma rota OPTIONS
+     *
      * @param callable $handler
      */
     public static function options(string $path, $handler, array $metadata = []): void
@@ -404,6 +431,7 @@ class Router
 
     /**
      * Registra uma rota HEAD
+     *
      * @param callable $handler
      */
     public static function head(string $path, $handler, array $metadata = []): void

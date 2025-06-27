@@ -19,7 +19,8 @@ class RouteCollection
 
     /**
      * Adiciona uma rota à coleção.
-     * @param Route $route
+     *
+     * @param  Route $route
      * @return void
      */
     public function add(Route $route): void
@@ -35,8 +36,9 @@ class RouteCollection
 
     /**
      * Encontra uma rota baseada no método e caminho.
-     * @param string $method
-     * @param string $path
+     *
+     * @param  string $method
+     * @param  string $path
      * @return Route|null
      */
     public function match(string $method, string $path): ?Route
@@ -66,6 +68,7 @@ class RouteCollection
 
     /**
      * Retorna todas as rotas.
+     *
      * @return Route[]
      */
     public function all(): array
@@ -75,7 +78,8 @@ class RouteCollection
 
     /**
      * Retorna rotas por método.
-     * @param string $method
+     *
+     * @param  string $method
      * @return Route[]
      */
     public function getByMethod(string $method): array
@@ -85,6 +89,7 @@ class RouteCollection
 
     /**
      * Limpa todas as rotas.
+     *
      * @return void
      */
     public function clear(): void
@@ -95,6 +100,7 @@ class RouteCollection
 
     /**
      * Conta o número total de rotas.
+     *
      * @return int
      */
     public function count(): int

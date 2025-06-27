@@ -14,12 +14,14 @@ class HttpException extends Exception
 {
     /**
      * Código de status HTTP.
+     *
      * @var int
      */
     protected int $statusCode;
 
     /**
      * Headers HTTP adicionais.
+     *
      * @var array<string, string>
      */
     protected array $headers;
@@ -27,10 +29,13 @@ class HttpException extends Exception
     /**
      * Construtor da exceção HTTP.
      *
-     * @param int $statusCode Código de status HTTP
-     * @param string $message Mensagem da exceção
-     * @param array<string, string> $headers Headers adicionais
-     * @param Throwable|null $previous Exceção anterior
+     * @param int                   $statusCode Código de status
+     *                                          HTTP
+     * @param string                $message    Mensagem da
+     *                                          exceção
+     * @param array<string, string> $headers    Headers adicionais
+     * @param Throwable|null        $previous   Exceção
+     *                                          anterior
      */
     public function __construct(
         int $statusCode = 500,
@@ -50,6 +55,7 @@ class HttpException extends Exception
 
     /**
      * Obtém o código de status HTTP.
+     *
      * @return int
      */
     public function getStatusCode(): int
@@ -59,6 +65,7 @@ class HttpException extends Exception
 
     /**
      * Obtém os headers HTTP.
+     *
      * @return array<string, string>
      */
     public function getHeaders(): array
@@ -69,7 +76,7 @@ class HttpException extends Exception
     /**
      * Define headers HTTP.
      *
-     * @param array<string, string> $headers Headers a serem definidos
+     * @param  array<string, string> $headers Headers a serem definidos
      * @return $this
      */
     public function setHeaders(array $headers): self
@@ -81,8 +88,8 @@ class HttpException extends Exception
     /**
      * Adiciona um header HTTP.
      *
-     * @param string $name Nome do header
-     * @param string $value Valor do header
+     * @param  string $name  Nome do header
+     * @param  string $value Valor do header
      * @return $this
      */
     public function addHeader(string $name, string $value): self
@@ -94,7 +101,7 @@ class HttpException extends Exception
     /**
      * Obtém mensagem padrão para um código de status.
      *
-     * @param int $statusCode Código de status
+     * @param  int $statusCode Código de status
      * @return string
      */
     protected function getDefaultMessage(int $statusCode): string
@@ -146,6 +153,7 @@ class HttpException extends Exception
 
     /**
      * Converte a exceção para array.
+     *
      * @return array<string, mixed>
      */
     public function toArray(): array
@@ -160,6 +168,7 @@ class HttpException extends Exception
 
     /**
      * Converte a exceção para JSON.
+     *
      * @return string
      */
     public function toJson(): string

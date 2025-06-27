@@ -13,23 +13,26 @@ class JWTHelper
     /**
      * Gera um token JWT
      *
-     * @param array<string, mixed> $payload Dados do payload
-     * @param string $secret Chave secreta
-     * @param array<string, mixed> $options Opções:
-     *   - algorithm: string (algoritmo, default: 'HS256')
-     *   - expiresIn: int (segundos para expiração, default: 3600)
-     *   - issuer: string (emissor do token)
-     *   - audience: string (audiência do token)
+     * @param  array<string, mixed> $payload Dados do payload
+     * @param  string               $secret  Chave secreta
+     * @param  array<string, mixed> $options Opções:
+     *                                       - algorithm: string (algoritmo, default: 'HS256')
+     *                                       - expiresIn: int (segundos para expiração, default: 3600)
+     *                                       - issuer: string (emissor do token)
+     *                                       - audience: string (audiência do token)
      * @return string Token JWT
      */
     public static function encode(array $payload, string $secret, array $options = []): string
     {
-        $options = array_merge([
+        $options = array_merge(
+            [
             'algorithm' => 'HS256',
             'expiresIn' => 3600, // 1 hora
             'issuer' => null,
             'audience' => null
-        ], $options);
+            ],
+            $options
+        );
 
         // Adiciona claims padrão
         $now = time();
@@ -60,20 +63,23 @@ class JWTHelper
     /**
      * Decodifica um token JWT
      *
-     * @param string $token Token JWT
-     * @param string $secret Chave secreta
-     * @param array<string, mixed> $options Opções:
-     *   - algorithm: string (algoritmo esperado, default: 'HS256')
-     *   - leeway: int (margem de tempo em segundos, default: 0)
+     * @param  string               $token   Token JWT
+     * @param  string               $secret  Chave secreta
+     * @param  array<string, mixed> $options Opções:
+     *                                       - algorithm: string (algoritmo esperado, default: 'HS256')
+     *                                       - leeway: int (margem de tempo em segundos, default: 0)
      * @return array<string, mixed> Payload decodificado
      * @throws Exception Se o token for inválido
      */
     public static function decode(string $token, string $secret, array $options = []): array
     {
-        $options = array_merge([
+        $options = array_merge(
+            [
             'algorithm' => 'HS256',
             'leeway' => 0
-        ], $options);
+            ],
+            $options
+        );
 
         // Verifica se a biblioteca JWT está disponível
         if (class_exists('Firebase\JWT\JWT') && class_exists('Firebase\JWT\Key')) {
@@ -96,9 +102,9 @@ class JWTHelper
     /**
      * Verifica se um token está válido (não expirado)
      *
-     * @param string $token Token JWT
-     * @param string $secret Chave secreta
-     * @param array<string, mixed> $options Opções de decodificação
+     * @param  string               $token   Token JWT
+     * @param  string               $secret  Chave secreta
+     * @param  array<string, mixed> $options Opções de decodificação
      * @return bool True se válido
      */
     public static function isValid(string $token, string $secret, array $options = []): bool
@@ -114,7 +120,7 @@ class JWTHelper
     /**
      * Obtém o payload sem validar a assinatura (útil para debug)
      *
-     * @param string $token Token JWT
+     * @param  string $token Token JWT
      * @return array<string, mixed> Payload
      */
     public static function getPayload(string $token): array
@@ -131,8 +137,8 @@ class JWTHelper
     /**
      * Verifica se um token está expirado
      *
-     * @param string $token Token JWT
-     * @param int $leeway Margem de tempo em segundos
+     * @param  string $token  Token JWT
+     * @param  int    $leeway Margem de tempo em segundos
      * @return bool True se expirado
      */
     public static function isExpired(string $token, int $leeway = 0): bool
@@ -151,6 +157,7 @@ class JWTHelper
 
     /**
      * Implementação simples do HS256 para casos sem biblioteca
+     *
      * @param array<string, mixed> $payload
      */
     private static function encodeHS256(array $payload, string $secret): string
@@ -178,6 +185,7 @@ class JWTHelper
 
     /**
      * Implementação simples de decodificação HS256
+     *
      * @return array<string, mixed>
      */
     private static function decodeHS256(string $token, string $secret, int $leeway = 0): array
@@ -235,7 +243,7 @@ class JWTHelper
     /**
      * Gera uma chave secreta aleatória para JWT
      *
-     * @param int $length Tamanho da chave em bytes (default: 32)
+     * @param  int $length Tamanho da chave em bytes (default: 32)
      * @return string Chave secreta
      */
     public static function generateSecret(int $length = 32): string
@@ -249,26 +257,32 @@ class JWTHelper
     /**
      * Cria um token de refresh
      *
-     * @param mixed $userId ID do usuário
-     * @param string $secret Chave secreta
-     * @param int $expiresIn Tempo de expiração em segundos (default: 30 dias)
+     * @param  mixed  $userId    ID do
+     *                           usuário
+     * @param  string $secret    Chave secreta
+     * @param  int    $expiresIn Tempo de expiração em segundos (default: 30
+     *                           dias)
      * @return string Token de refresh
      */
     public static function createRefreshToken($userId, string $secret, int $expiresIn = 2592000): string
     {
-        return self::encode([
+        return self::encode(
+            [
             'user_id' => $userId,
             'type' => 'refresh'
-        ], $secret, [
+            ],
+            $secret,
+            [
             'expiresIn' => $expiresIn
-        ]);
+            ]
+        );
     }
 
     /**
      * Valida um token de refresh
      *
-     * @param string $token Token de refresh
-     * @param string $secret Chave secreta
+     * @param  string $token  Token de refresh
+     * @param  string $secret Chave secreta
      * @return array<string, mixed>|false Dados do usuário ou false se inválido
      */
     public static function validateRefreshToken(string $token, string $secret)
@@ -289,29 +303,38 @@ class JWTHelper
     /**
      * Cria um token de acesso padrão
      *
-     * @param mixed $userId ID do usuário
-     * @param array<string, mixed> $claims Claims adicionais
-     * @param string $secret Chave secreta
-     * @param int $expiresIn Tempo de expiração em segundos (default: 1 hora)
+     * @param  mixed                $userId    ID do
+     *                                         usuário
+     * @param  array<string, mixed> $claims    Claims adicionais
+     * @param  string               $secret    Chave secreta
+     * @param  int                  $expiresIn Tempo de expiração em segundos (default: 1
+     *                                         hora)
      * @return string Token de acesso
      */
     public static function createAccessToken($userId, array $claims = [], string $secret = '', int $expiresIn = 3600): string
     {
-        $payload = array_merge($claims, [
+        $payload = array_merge(
+            $claims,
+            [
             'user_id' => $userId,
             'type' => 'access'
-        ]);
+            ]
+        );
 
-        return self::encode($payload, $secret, [
+        return self::encode(
+            $payload,
+            $secret,
+            [
             'expiresIn' => $expiresIn
-        ]);
+            ]
+        );
     }
 
     /**
      * Valida um token de acesso
      *
-     * @param string $token Token de acesso
-     * @param string $secret Chave secreta
+     * @param  string $token  Token de acesso
+     * @param  string $secret Chave secreta
      * @return array<string, mixed>|false Dados do usuário ou false se inválido
      */
     public static function validateAccessToken(string $token, string $secret)

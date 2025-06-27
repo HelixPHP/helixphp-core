@@ -19,7 +19,7 @@ class FileCache implements CacheInterface
     }
 
     /**
-     * @param mixed $default
+     * @param  mixed $default
      * @return mixed
      */
     public function get(string $key, $default = null)

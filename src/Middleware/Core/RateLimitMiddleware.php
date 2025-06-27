@@ -14,7 +14,8 @@ class RateLimitMiddleware extends BaseMiddleware
 
     public function __construct(array $options = [])
     {
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'windowMs' => 900000, // 15 minutes
             'max' => 100, // limit each IP to 100 requests per windowMs
             'message' => 'Too many requests, please try again later.',
@@ -22,7 +23,9 @@ class RateLimitMiddleware extends BaseMiddleware
             'keyGenerator' => null,
             'skipSuccessfulRequests' => false,
             'skipFailedRequests' => false
-        ], $options);
+            ],
+            $options
+        );
     }
 
     public function handle($request, $response, callable $next)
@@ -58,10 +61,12 @@ class RateLimitMiddleware extends BaseMiddleware
         $currentCount = count($_SESSION['rate_limit'][$key]);
 
         if ($currentCount >= $this->options['max']) {
-            return $response->status($this->options['statusCode'])->json([
+            return $response->status($this->options['statusCode'])->json(
+                [
                 'error' => true,
                 'message' => $this->options['message']
-            ]);
+                ]
+            );
         }
 
         // Record this request

@@ -111,7 +111,7 @@ $app->get('/docs', function($request, $response) {
 // ========================================
 
 // Router de usuários
-$userRouter = $app->Router();
+$userRouter = $app->router();
 $userRouter->use(function ($request, $response, $next) {
     $response->header('X-Module', 'User');
     return $next($request, $response);
@@ -135,7 +135,7 @@ $userRouter->get('/:id', function ($request, $response) {
 });
 
 // Router administrativo
-$adminRouter = $app->Router();
+$adminRouter = $app->router();
 $adminRouter->use(function ($request, $response, $next) {
     $response->header('X-Module', 'Admin');
     return $next($request, $response);
@@ -152,7 +152,7 @@ $adminRouter->get('/logs', function ($request, $response) {
 });
 
 // Router de upload
-$uploadRouter = $app->Router();
+$uploadRouter = $app->router();
 $uploadRouter->use(function ($request, $response, $next) {
     $response->header('X-Module', 'Upload');
     return $next($request, $response);
@@ -179,7 +179,7 @@ $uploadRouter->post('/', function ($request, $response) {
 });
 
 // Router de blog
-$blogRouter = $app->Router();
+$blogRouter = $app->router();
 $blogRouter->use(function ($request, $response, $next) {
     $response->header('X-Module', 'Blog');
     return $next($request, $response);

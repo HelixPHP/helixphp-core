@@ -17,18 +17,21 @@ class Config
 {
     /**
      * Todas as configurações carregadas.
+     *
      * @var array<string, mixed>
      */
     private array $items = [];
 
     /**
      * Cache de configurações já resolvidas.
+     *
      * @var array<string, mixed>
      */
     private array $cache = [];
 
     /**
      * Diretório base de configurações.
+     *
      * @var string|null
      */
     private ?string $configPath = null;
@@ -46,7 +49,7 @@ class Config
     /**
      * Define o diretório de configurações.
      *
-     * @param string $path Caminho para o diretório
+     * @param  string $path Caminho para o diretório
      * @return $this
      */
     public function setConfigPath(string $path): self
@@ -58,7 +61,7 @@ class Config
     /**
      * Carrega configurações de um arquivo.
      *
-     * @param string $name Nome do arquivo (sem extensão)
+     * @param  string $name Nome do arquivo (sem extensão)
      * @return $this
      */
     public function load(string $name): self
@@ -70,7 +73,7 @@ class Config
         $file = $this->configPath . DIRECTORY_SEPARATOR . $name . '.php';
 
         if (file_exists($file)) {
-            $config = require $file;
+            $config = include $file;
             if (is_array($config)) {
                 $this->items[$name] = $config;
                 unset($this->cache[$name]);
@@ -106,8 +109,10 @@ class Config
     /**
      * Obtém um valor de configuração.
      *
-     * @param string|null $key Chave da configuração (dot notation)
-     * @param mixed $default Valor padrão se não encontrado
+     * @param  string|null $key     Chave da configuração (dot
+     *                              notation)
+     * @param  mixed       $default Valor padrão se não
+     *                              encontrado
      * @return mixed
      */
     public function get(?string $key = null, $default = null)
@@ -138,8 +143,9 @@ class Config
     /**
      * Define um valor de configuração.
      *
-     * @param string $key Chave da configuração (dot notation)
-     * @param mixed $value Valor a ser definido
+     * @param  string $key   Chave da configuração (dot
+     *                       notation)
+     * @param  mixed  $value Valor a ser definido
      * @return $this
      */
     public function set(string $key, $value): self
@@ -163,7 +169,7 @@ class Config
     /**
      * Verifica se uma configuração existe.
      *
-     * @param string $key Chave da configuração
+     * @param  string $key Chave da configuração
      * @return bool
      */
     public function has(string $key): bool
@@ -174,8 +180,9 @@ class Config
     /**
      * Adiciona valores a uma configuração (merge).
      *
-     * @param string $key Chave da configuração
-     * @param array<mixed> $values Valores a serem adicionados
+     * @param  string       $key    Chave da
+     *                              configuração
+     * @param  array<mixed> $values Valores a serem adicionados
      * @return $this
      */
     public function push(string $key, array $values): self
@@ -194,7 +201,7 @@ class Config
     /**
      * Remove uma configuração.
      *
-     * @param string $key Chave da configuração
+     * @param  string $key Chave da configuração
      * @return $this
      */
     public function forget(string $key): self
@@ -207,19 +214,23 @@ class Config
     /**
      * Resolve variáveis de ambiente em uma string.
      *
-     * @param string $value String com possíveis variáveis
+     * @param  string $value String com possíveis variáveis
      * @return string
      */
     private function resolveEnvironmentVariables(string $value): string
     {
-        $result = preg_replace_callback('/\$\{([^}]+)\}/', function ($matches) {
-            $envVar = $matches[1];
-            $parts = explode(':', $envVar, 2);
-            $varName = $parts[0];
-            $defaultValue = $parts[1] ?? '';
+        $result = preg_replace_callback(
+            '/\$\{([^}]+)\}/',
+            function ($matches) {
+                $envVar = $matches[1];
+                $parts = explode(':', $envVar, 2);
+                $varName = $parts[0];
+                $defaultValue = $parts[1] ?? '';
 
-            return $_ENV[$varName] ?? getenv($varName) ?: $defaultValue;
-        }, $value);
+                return $_ENV[$varName] ?? getenv($varName) ?: $defaultValue;
+            },
+            $value
+        );
 
         return $result ?? $value;
     }
@@ -227,7 +238,7 @@ class Config
     /**
      * Carrega variáveis de ambiente de um arquivo .env.
      *
-     * @param string $envFile Caminho para o arquivo .env
+     * @param  string $envFile Caminho para o arquivo .env
      * @return $this
      */
     public function loadEnvironment(string $envFile): self
@@ -266,7 +277,7 @@ class Config
     /**
      * Obtém configurações de um namespace específico.
      *
-     * @param string $namespace Namespace da configuração
+     * @param  string $namespace Namespace da configuração
      * @return array<string, mixed>
      */
     public function getNamespace(string $namespace): array
@@ -277,7 +288,7 @@ class Config
     /**
      * Mescla configurações com as existentes.
      *
-     * @param array<string, mixed> $config Configurações a serem mescladas
+     * @param  array<string, mixed> $config Configurações a serem mescladas
      * @return $this
      */
     public function merge(array $config): self
@@ -311,24 +322,28 @@ class Config
     /**
      * Cria uma instância de configuração a partir de um array.
      *
-     * @param array<string, mixed> $config Array de configuração
+     * @param  array<string, mixed> $config Array de configuração
      * @return static
      */
     public static function fromArray(array $config): self
     {
-        /** @phpstan-ignore-next-line */
+        /**
+ * @phpstan-ignore-next-line
+*/
         return new static($config);
     }
 
     /**
      * Cria uma instância carregando de um diretório.
      *
-     * @param string $configPath Caminho do diretório
+     * @param  string $configPath Caminho do diretório
      * @return static
      */
     public static function fromDirectory(string $configPath): self
     {
-        /** @phpstan-ignore-next-line */
+        /**
+ * @phpstan-ignore-next-line
+*/
         $instance = new static();
         return $instance->setConfigPath($configPath)->loadAll();
     }

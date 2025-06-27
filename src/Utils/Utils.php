@@ -9,7 +9,8 @@ class Utils
 {
     /**
      * Sanitização universal de string.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return mixed
      */
     public static function sanitizeString(mixed $value): mixed
@@ -19,7 +20,8 @@ class Utils
 
     /**
      * Sanitização de email.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return mixed
      */
     public static function sanitizeEmail(mixed $value): mixed
@@ -29,7 +31,8 @@ class Utils
 
     /**
      * Sanitização de array.
-     * @param mixed $arr
+     *
+     * @param  mixed $arr
      * @return mixed
      */
     public static function sanitizeArray(mixed $arr): mixed
@@ -39,7 +42,8 @@ class Utils
 
     /**
      * Validação de email.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return bool
      */
     public static function isEmail(mixed $value): bool
@@ -49,7 +53,8 @@ class Utils
 
     /**
      * Validação de boolean.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return bool
      */
     public static function isBool(mixed $value): bool
@@ -59,7 +64,8 @@ class Utils
 
     /**
      * Validação de inteiro.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return bool
      */
     public static function isInt(mixed $value): bool
@@ -73,7 +79,7 @@ class Utils
      * Este método retorna true apenas para valores que são do tipo string.
      * Valores numéricos (int, float) retornam false.
      *
-     * @param mixed $value O valor a ser verificado
+     * @param  mixed $value O valor a ser verificado
      * @return bool True se for string, false caso contrário
      *
      * @example
@@ -93,7 +99,7 @@ class Utils
      * Este método retorna true para strings e valores numéricos que podem
      * ser convertidos para string de forma segura.
      *
-     * @param mixed $value O valor a ser verificado
+     * @param  mixed $value O valor a ser verificado
      * @return bool True se for string ou numérico, false caso contrário
      *
      * @example
@@ -110,7 +116,8 @@ class Utils
 
     /**
      * Validação de array.
-     * @param mixed $value
+     *
+     * @param  mixed $value
      * @return bool
      */
     public static function isArray(mixed $value): bool
@@ -120,9 +127,10 @@ class Utils
 
     /**
      * Helper para cabeçalhos CORS.
-     * @param array<string> $origins
-     * @param array<string> $methods
-     * @param array<string> $headers
+     *
+     * @param  array<string> $origins
+     * @param  array<string> $methods
+     * @param  array<string> $headers
      * @return array<string, string>
      */
     public static function corsHeaders(
@@ -140,8 +148,9 @@ class Utils
 
     /**
      * Logger simples.
-     * @param string $msg
-     * @param string $level
+     *
+     * @param  string $msg
+     * @param  string $level
      * @return void
      */
     public static function log(string $msg, string $level = 'info'): void
@@ -152,7 +161,8 @@ class Utils
 
     /**
      * Geração de token seguro.
-     * @param int $length
+     *
+     * @param  int $length
      * @return string
      */
     public static function randomToken(int $length = 32): string
@@ -163,6 +173,7 @@ class Utils
 
     /**
      * Gera um token CSRF.
+     *
      * @return string
      */
     public static function csrfToken(): string
@@ -178,7 +189,8 @@ class Utils
 
     /**
      * Verifica um token CSRF.
-     * @param string $token
+     *
+     * @param  string $token
      * @return bool
      */
     public static function checkCsrf(string $token): bool
@@ -191,7 +203,8 @@ class Utils
 
     /**
      * Converte string para camelCase.
-     * @param string $string
+     *
+     * @param  string $string
      * @return string
      */
     public static function camelCase(string $string): string
@@ -201,7 +214,8 @@ class Utils
 
     /**
      * Converte string para snake_case.
-     * @param string $string
+     *
+     * @param  string $string
      * @return string
      */
     public static function snakeCase(string $string): string
@@ -212,7 +226,8 @@ class Utils
 
     /**
      * Converte string para kebab-case.
-     * @param string $string
+     *
+     * @param  string $string
      * @return string
      */
     public static function kebabCase(string $string): string
@@ -223,6 +238,7 @@ class Utils
 
     /**
      * Gera um UUID v4.
+     *
      * @return string
      */
     public static function uuid4(): string
@@ -235,8 +251,9 @@ class Utils
 
     /**
      * Formata bytes em formato legível.
-     * @param int $bytes
-     * @param int $precision
+     *
+     * @param  int $bytes
+     * @param  int $precision
      * @return string
      */
     public static function formatBytes(int $bytes, int $precision = 2): string
@@ -252,7 +269,8 @@ class Utils
 
     /**
      * Verifica se uma string é JSON válido.
-     * @param string $string
+     *
+     * @param  string $string
      * @return bool
      */
     public static function isJson(string $string): bool
@@ -263,9 +281,10 @@ class Utils
 
     /**
      * Trunca uma string com reticências.
-     * @param string $string
-     * @param int $length
-     * @param string $suffix
+     *
+     * @param  string $string
+     * @param  int    $length
+     * @param  string $suffix
      * @return string
      */
     public static function truncate(string $string, int $length, string $suffix = '...'): string
@@ -279,7 +298,8 @@ class Utils
 
     /**
      * Gera uma slug para URL.
-     * @param string $string
+     *
+     * @param  string $string
      * @return string
      */
     public static function slug(string $string): string

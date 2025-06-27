@@ -28,7 +28,8 @@ class CorsMiddleware extends BaseMiddleware
             unset($options['origin']);
         }
 
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'origins' => ['*'],
             'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
             'headers' => ['Content-Type', 'Authorization'],
@@ -36,7 +37,9 @@ class CorsMiddleware extends BaseMiddleware
             'maxAge' => 86400, // 24 hours
             'exposedHeaders' => [],
             '_wasOriginString' => $wasOriginString
-        ], $options);
+            ],
+            $options
+        );
     }
 
     /**
@@ -65,6 +68,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Verifica se a origem é permitida.
+     *
      * @phpstan-ignore-next-line
      */
     private function isOriginAllowed(?string $origin): bool
@@ -92,6 +96,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Adiciona os cabeçalhos CORS à resposta.
+     *
      * @param mixed $response
      */
     private function addCorsHeaders($response, ?string $origin): void
@@ -137,7 +142,8 @@ class CorsMiddleware extends BaseMiddleware
      */
     public static function development(): self
     {
-        return new self([
+        return new self(
+            [
             'origins' => ['*'],
             'credentials' => true,
             'headers' => [
@@ -148,7 +154,8 @@ class CorsMiddleware extends BaseMiddleware
                 'Origin',
                 'X-CSRF-Token'
             ]
-        ]);
+            ]
+        );
     }
 
     /**
@@ -158,7 +165,8 @@ class CorsMiddleware extends BaseMiddleware
      */
     public static function production(array $allowedOrigins): self
     {
-        return new self([
+        return new self(
+            [
             'origins' => $allowedOrigins,
             'credentials' => true,
             'headers' => [
@@ -168,11 +176,13 @@ class CorsMiddleware extends BaseMiddleware
                 'Accept',
                 'Origin'
             ]
-        ]);
+            ]
+        );
     }
 
     /**
      * Set a header on response (supports both Response objects and test objects)
+     *
      * @param mixed $response
      */
     private function setHeader($response, string $name, string $value): void

@@ -11,7 +11,8 @@ class OpenApiExporter
 {
     /**
      * Generates OpenAPI documentation from multiple router routes.
-     * @param array|string $routers Array of Router/RouterInstance instances or Router class name
+     *
+     * @param  array|string $routers Array of Router/RouterInstance instances or Router class name
      * @return array<string, mixed>
      */
     public static function export(mixed $routers, ?string $baseUrl = null): array
@@ -292,7 +293,9 @@ class OpenApiExporter
         foreach ($lines as $line) {
             $line = trim($line, " \t\n\r\0\x0B/*");
 
-            if (empty($line)) continue;
+            if (empty($line)) {
+                continue;
+            }
 
             if (strpos($line, '@') === 0) {
                 $parts = explode(' ', $line, 2);
@@ -310,11 +313,11 @@ class OpenApiExporter
                         // Parse parameter documentation
                         if (preg_match('/(\w+)\s+\$(\w+)\s*(.*)/', $content, $matches)) {
                             $docInfo['parameters'][] = [
-                                'name' => $matches[2],
-                                'in' => 'path',
-                                'required' => true,
-                                'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
-                                'description' => $matches[3]
+                            'name' => $matches[2],
+                            'in' => 'path',
+                            'required' => true,
+                            'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
+                            'description' => $matches[3]
                             ];
                         }
                         break;

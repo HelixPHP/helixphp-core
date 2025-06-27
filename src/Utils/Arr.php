@@ -13,9 +13,10 @@ class Arr
     /**
      * Obtém um valor de um array usando dot notation.
      *
-     * @param array<mixed> $array Array de origem
-     * @param string $key Chave em dot notation (ex: 'user.profile.name')
-     * @param mixed $default Valor padrão se não encontrado
+     * @param  array<mixed> $array   Array de origem
+     * @param  string       $key     Chave em dot notation (ex: 'user.profile.name')
+     * @param  mixed        $default Valor padrão se não
+     *                               encontrado
      * @return mixed
      */
     public static function get(array $array, string $key, $default = null)
@@ -37,9 +38,9 @@ class Arr
     /**
      * Define um valor em um array usando dot notation.
      *
-     * @param array<mixed> $array Array de destino (passado por referência)
-     * @param string $key Chave em dot notation
-     * @param mixed $value Valor a ser definido
+     * @param  array<mixed> $array Array de destino (passado por referência)
+     * @param  string       $key   Chave em dot notation
+     * @param  mixed        $value Valor a ser definido
      * @return void
      */
     public static function set(array &$array, string $key, $value): void
@@ -62,8 +63,8 @@ class Arr
     /**
      * Verifica se uma chave existe em um array usando dot notation.
      *
-     * @param array<mixed> $array Array a ser verificado
-     * @param string $key Chave em dot notation
+     * @param  array<mixed> $array Array a ser verificado
+     * @param  string       $key   Chave em dot notation
      * @return bool
      */
     public static function has(array $array, string $key): bool
@@ -85,8 +86,8 @@ class Arr
     /**
      * Remove uma chave de um array usando dot notation.
      *
-     * @param array<mixed> $array Array de origem (passado por referência)
-     * @param string $key Chave em dot notation
+     * @param  array<mixed> $array Array de origem (passado por referência)
+     * @param  string       $key   Chave em dot notation
      * @return void
      */
     public static function forget(array &$array, string $key): void
@@ -108,8 +109,8 @@ class Arr
     /**
      * Achata um array multidimensional usando dot notation.
      *
-     * @param array<mixed> $array Array a ser achatado
-     * @param string $prepend Prefixo para as chaves
+     * @param  array<mixed> $array   Array a ser achatado
+     * @param  string       $prepend Prefixo para as chaves
      * @return array<string, mixed>
      */
     public static function dot(array $array, string $prepend = ''): array
@@ -132,7 +133,7 @@ class Arr
     /**
      * Converte um array achatado de volta para multidimensional.
      *
-     * @param array<string, mixed> $array Array achatado
+     * @param  array<string, mixed> $array Array achatado
      * @return array<mixed>
      */
     public static function undot(array $array): array
@@ -149,8 +150,8 @@ class Arr
     /**
      * Filtra um array mantendo apenas as chaves especificadas.
      *
-     * @param array<mixed> $array Array de origem
-     * @param array<string>|string $keys Chaves a serem mantidas
+     * @param  array<mixed>         $array Array de origem
+     * @param  array<string>|string $keys  Chaves a serem mantidas
      * @return array<mixed>
      */
     public static function only(array $array, $keys): array
@@ -162,8 +163,8 @@ class Arr
     /**
      * Filtra um array removendo as chaves especificadas.
      *
-     * @param array<mixed> $array Array de origem
-     * @param array<string>|string $keys Chaves a serem removidas
+     * @param  array<mixed>         $array Array de origem
+     * @param  array<string>|string $keys  Chaves a serem removidas
      * @return array<mixed>
      */
     public static function except(array $array, $keys): array
@@ -175,8 +176,9 @@ class Arr
     /**
      * Obtém o primeiro elemento de um array.
      *
-     * @param array<mixed> $array Array de origem
-     * @param mixed $default Valor padrão se array estiver vazio
+     * @param  array<mixed> $array   Array de origem
+     * @param  mixed        $default Valor padrão se array estiver
+     *                               vazio
      * @return mixed
      */
     public static function first(array $array, $default = null)
@@ -191,8 +193,9 @@ class Arr
     /**
      * Obtém o último elemento de um array.
      *
-     * @param array<mixed> $array Array de origem
-     * @param mixed $default Valor padrão se array estiver vazio
+     * @param  array<mixed> $array   Array de origem
+     * @param  mixed        $default Valor padrão se array estiver
+     *                               vazio
      * @return mixed
      */
     public static function last(array $array, $default = null)
@@ -207,7 +210,7 @@ class Arr
     /**
      * Verifica se um array é associativo.
      *
-     * @param array<mixed> $array Array a ser verificado
+     * @param  array<mixed> $array Array a ser verificado
      * @return bool
      */
     public static function isAssoc(array $array): bool
@@ -222,8 +225,8 @@ class Arr
     /**
      * Merge recursivo de arrays com preservação de índices numéricos.
      *
-     * @param array<mixed> $array1 Primeiro array
-     * @param array<mixed> $array2 Segundo array
+     * @param  array<mixed> $array1 Primeiro array
+     * @param  array<mixed> $array2 Segundo array
      * @return array<mixed>
      */
     public static function mergeRecursive(array $array1, array $array2): array
@@ -244,8 +247,9 @@ class Arr
     /**
      * Mapeia um array mantendo as chaves.
      *
-     * @param array<mixed> $array Array a ser mapeado
-     * @param callable $callback Função de callback
+     * @param  array<mixed> $array    Array a ser mapeado
+     * @param  callable     $callback Função de
+     *                                callback
      * @return array<mixed>
      */
     public static function mapWithKeys(array $array, callable $callback): array
@@ -265,8 +269,8 @@ class Arr
     /**
      * Agrupa elementos de um array por uma chave.
      *
-     * @param array<mixed> $array Array a ser agrupado
-     * @param string|callable $groupBy Chave ou função para agrupamento
+     * @param  array<mixed>    $array   Array a ser agrupado
+     * @param  string|callable $groupBy Chave ou função para agrupamento
      * @return array<mixed>
      */
     public static function groupBy(array $array, $groupBy): array
@@ -284,8 +288,9 @@ class Arr
     /**
      * Achata um array multidimensional em um único nível.
      *
-     * @param array<mixed> $array Array a ser achatado
-     * @param int $depth Profundidade máxima (0 = ilimitado)
+     * @param  array<mixed> $array Array a ser achatado
+     * @param  int          $depth Profundidade máxima (0 =
+     *                             ilimitado)
      * @return array<mixed>
      */
     public static function flatten(array $array, int $depth = 0): array
@@ -307,9 +312,9 @@ class Arr
     /**
      * Divide um array em chunks de tamanho específico.
      *
-     * @param array<mixed> $array Array a ser dividido
-     * @param int $size Tamanho de cada chunk
-     * @param bool $preserveKeys Se deve preservar as chaves
+     * @param  array<mixed> $array        Array a ser dividido
+     * @param  int          $size         Tamanho de cada chunk
+     * @param  bool         $preserveKeys Se deve preservar as chaves
      * @return array<array<mixed>>
      */
     public static function chunk(array $array, int $size, bool $preserveKeys = false): array

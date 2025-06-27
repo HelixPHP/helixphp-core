@@ -18,7 +18,7 @@ class MiddlewareStack
     /**
      * Adiciona um middleware à stack.
      *
-     * @param callable $middleware
+     * @param  callable $middleware
      * @return void
      */
     public function add(callable $middleware): void
@@ -29,9 +29,9 @@ class MiddlewareStack
     /**
      * Executa todos os middlewares na stack.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param callable $finalHandler
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  callable $finalHandler
      * @return mixed
      */
     public function execute(Request $request, Response $response, callable $finalHandler)
@@ -50,7 +50,7 @@ class MiddlewareStack
         // Construir pipeline
         foreach ($pipeline as $middleware) {
             $currentNext = $next;
-            $next = function($req, $resp) use ($middleware, $currentNext) {
+            $next = function ($req, $resp) use ($middleware, $currentNext) {
                 return $middleware($req, $resp, $currentNext);
             };
         }

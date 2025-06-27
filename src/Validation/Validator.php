@@ -74,6 +74,7 @@ class Validator
 
     /**
      * Valida uma regra específica
+     *
      * @param mixed $value
      */
     private function validateRule(string $field, $value, string $rule): bool

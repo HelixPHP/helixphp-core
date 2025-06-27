@@ -10,9 +10,13 @@ use InvalidArgumentException;
 class RouterInstance
 {
     private string $prefix;
-    /** @var array<int, array<string, mixed>> */
+    /**
+     * @var array<int, array<string, mixed>>
+     */
     private array $routes = [];
-    /** @var callable[] */
+    /**
+     * @var callable[]
+     */
     private array $middlewares = [];
 
     public function __construct(string $prefix = '/')
@@ -27,7 +31,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function get(string $path, ...$handlers): void
     {
@@ -36,7 +40,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function post(string $path, ...$handlers): void
     {
@@ -45,7 +49,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function put(string $path, ...$handlers): void
     {
@@ -54,7 +58,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function delete(string $path, ...$handlers): void
     {
@@ -63,7 +67,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function patch(string $path, ...$handlers): void
     {
@@ -72,7 +76,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function options(string $path, ...$handlers): void
     {
@@ -81,7 +85,7 @@ class RouterInstance
 
     /**
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function head(string $path, ...$handlers): void
     {
@@ -90,8 +94,9 @@ class RouterInstance
 
     /**
      * Registra uma rota para qualquer método HTTP.
+     *
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     public function any(string $path, ...$handlers): void
     {
@@ -103,9 +108,10 @@ class RouterInstance
 
     /**
      * Registra múltiplas rotas para os mesmos handlers.
+     *
      * @param array<string> $methods
-     * @param string $path
-     * @param mixed ...$handlers
+     * @param string        $path
+     * @param mixed         ...$handlers
      */
     public function match(array $methods, string $path, ...$handlers): void
     {
@@ -116,6 +122,7 @@ class RouterInstance
 
     /**
      * Suporte a métodos HTTP customizados
+     *
      * @param mixed[] $args
      */
     public function __call(string $method, array $args): void
@@ -129,7 +136,7 @@ class RouterInstance
     /**
      * @param string $method
      * @param string $path
-     * @param mixed ...$handlers
+     * @param mixed  ...$handlers
      */
     private function add(string $method, string $path, ...$handlers): void
     {
@@ -178,6 +185,7 @@ class RouterInstance
 
     /**
      * Retorna as rotas deste sub-router.
+     *
      * @return array<int, array<string, mixed>>
      */
     public function getRoutes(): array
@@ -187,6 +195,7 @@ class RouterInstance
 
     /**
      * Obtém o prefixo do router.
+     *
      * @return string
      */
     public function getPrefix(): string
@@ -196,8 +205,9 @@ class RouterInstance
 
     /**
      * Cria um grupo de rotas com prefixo adicional.
-     * @param string $prefix
-     * @param callable $callback
+     *
+     * @param  string   $prefix
+     * @param  callable $callback
      * @return void
      */
     public function group(string $prefix, callable $callback): void
@@ -213,6 +223,7 @@ class RouterInstance
 
     /**
      * Limpa todas as rotas e middlewares.
+     *
      * @return void
      */
     public function clear(): void

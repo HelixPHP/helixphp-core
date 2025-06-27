@@ -13,9 +13,9 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Executa o middleware.
      *
-     * @param Request $request
-     * @param Response $response
-     * @param callable $next
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  callable $next
      * @return mixed
      */
     abstract public function handle($request, $response, callable $next);
@@ -23,9 +23,9 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Make the middleware callable for backward compatibility
      *
-     * @param Request $request
-     * @param Response $response
-     * @param callable $next
+     * @param  Request  $request
+     * @param  Response $response
+     * @param  callable $next
      * @return mixed
      */
     public function __invoke($request, $response, callable $next)
@@ -36,9 +36,9 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Obtém um valor do cabeçalho da requisição.
      *
-     * @param mixed $request
-     * @param string $header
-     * @param mixed $default
+     * @param  mixed  $request
+     * @param  string $header
+     * @param  mixed  $default
      * @return mixed
      */
     protected function getHeader($request, string $header, $default = null)
@@ -64,7 +64,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Verifica se a requisição é AJAX.
      *
-     * @param mixed $request
+     * @param  mixed $request
      * @return bool
      */
     protected function isAjaxRequest($request): bool
@@ -79,7 +79,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Obtém o IP do cliente.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return string
      */
     protected function getClientIp(Request $request): string
@@ -90,7 +90,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Verifica se a requisição é HTTPS.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return bool
      */
     protected function isSecureRequest(Request $request): bool
@@ -101,10 +101,10 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Responde com erro JSON.
      *
-     * @param Response $response
-     * @param int $statusCode
-     * @param string $message
-     * @param array<string, mixed> $data
+     * @param  Response             $response
+     * @param  int                  $statusCode
+     * @param  string               $message
+     * @param  array<string, mixed> $data
      * @return Response
      */
     protected function respondWithError(Response $response, int $statusCode, string $message, array $data = []): Response
@@ -120,9 +120,9 @@ abstract class BaseMiddleware implements MiddlewareInterface
     /**
      * Responde com sucesso JSON.
      *
-     * @param Response $response
-     * @param mixed $data
-     * @param string $message
+     * @param  Response $response
+     * @param  mixed    $data
+     * @param  string   $message
      * @return Response
      */
     protected function respondWithSuccess(Response $response, $data = null, string $message = 'Success'): Response

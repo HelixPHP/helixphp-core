@@ -18,30 +18,35 @@ class Container
 {
     /**
      * Instância singleton do container.
+     *
      * @var Container|null
      */
     private static ?Container $instance = null;
 
     /**
      * Bindings registrados no container.
+     *
      * @var array<string, mixed>
      */
     private array $bindings = [];
 
     /**
      * Instâncias singleton registradas.
+     *
      * @var array<string, object>
      */
     private array $instances = [];
 
     /**
      * Aliases registrados para classes.
+     *
      * @var array<string, string>
      */
     private array $aliases = [];
 
     /**
      * Tags para agrupamento de services.
+     *
      * @var array<string, array<string>>
      */
     private array $tags = [];
@@ -58,6 +63,7 @@ class Container
 
     /**
      * Obtém a instância singleton do container.
+     *
      * @return Container
      */
     public static function getInstance(): Container
@@ -72,9 +78,10 @@ class Container
     /**
      * Registra um binding no container.
      *
-     * @param string $abstract Nome abstrato ou interface
-     * @param mixed $concrete Implementação concreta (classe, closure, instância)
-     * @param bool $singleton Se deve ser tratado como singleton
+     * @param  string $abstract  Nome abstrato ou interface
+     * @param  mixed  $concrete  Implementação concreta (classe,
+     *                           closure, instância)
+     * @param  bool   $singleton Se deve ser tratado como singleton
      * @return $this
      */
     public function bind(string $abstract, $concrete = null, bool $singleton = false): self
@@ -95,8 +102,9 @@ class Container
     /**
      * Registra um singleton no container.
      *
-     * @param string $abstract Nome abstrato ou interface
-     * @param mixed $concrete Implementação concreta
+     * @param  string $abstract Nome abstrato ou interface
+     * @param  mixed  $concrete Implementação
+     *                          concreta
      * @return $this
      */
     public function singleton(string $abstract, $concrete = null): self
@@ -107,8 +115,9 @@ class Container
     /**
      * Registra uma instância existente como singleton.
      *
-     * @param string $abstract Nome abstrato
-     * @param mixed $instance Instância do objeto ou valor
+     * @param  string $abstract Nome abstrato
+     * @param  mixed  $instance Instância do objeto ou
+     *                          valor
      * @return $this
      */
     public function instance(string $abstract, $instance): self
@@ -120,8 +129,8 @@ class Container
     /**
      * Cria um alias para um binding.
      *
-     * @param string $abstract Nome abstrato original
-     * @param string $alias Alias a ser criado
+     * @param  string $abstract Nome abstrato original
+     * @param  string $alias    Alias a ser criado
      * @return $this
      */
     public function alias(string $abstract, string $alias): self
@@ -133,8 +142,8 @@ class Container
     /**
      * Adiciona tags a um service.
      *
-     * @param array<string>|string $tags Tags a serem adicionadas
-     * @param string $service Nome do service
+     * @param  array<string>|string $tags    Tags a serem adicionadas
+     * @param  string               $service Nome do service
      * @return $this
      */
     public function tag($tags, string $service): self
@@ -154,8 +163,8 @@ class Container
     /**
      * Resolve um service do container.
      *
-     * @param string $abstract Nome abstrato a ser resolvido
-     * @param array<mixed> $parameters Parâmetros adicionais
+     * @param  string       $abstract   Nome abstrato a ser resolvido
+     * @param  array<mixed> $parameters Parâmetros adicionais
      * @return mixed
      * @throws Exception
      */
@@ -196,8 +205,8 @@ class Container
     /**
      * Constrói uma instância de uma classe.
      *
-     * @param mixed $concrete Classe concreta ou closure
-     * @param array<mixed> $parameters Parâmetros adicionais
+     * @param  mixed        $concrete   Classe concreta ou closure
+     * @param  array<mixed> $parameters Parâmetros adicionais
      * @return mixed
      * @throws Exception
      */
@@ -224,15 +233,17 @@ class Container
     /**
      * Constrói uma instância de uma classe específica.
      *
-     * @param string $className Nome da classe
-     * @param array<mixed> $parameters Parâmetros adicionais
+     * @param  string       $className  Nome da classe
+     * @param  array<mixed> $parameters Parâmetros adicionais
      * @return object
      * @throws Exception
      */
     private function buildClass(string $className, array $parameters = []): object
     {
         try {
-            /** @phpstan-ignore-next-line */
+            /**
+ * @phpstan-ignore-next-line
+*/
             $reflection = new ReflectionClass($className);
         } catch (ReflectionException $e) {
             throw new Exception("Class {$className} not found: " . $e->getMessage());
@@ -258,8 +269,8 @@ class Container
     /**
      * Resolve as dependências de parâmetros.
      *
-     * @param array<ReflectionParameter> $parameters Parâmetros do construtor
-     * @param array<mixed> $primitives Valores primitivos fornecidos
+     * @param  array<ReflectionParameter> $parameters Parâmetros do construtor
+     * @param  array<mixed>               $primitives Valores primitivos fornecidos
      * @return array<mixed>
      * @throws Exception
      */
@@ -306,7 +317,7 @@ class Container
     /**
      * Verifica se um service está registrado.
      *
-     * @param string $abstract Nome abstrato
+     * @param  string $abstract Nome abstrato
      * @return bool
      */
     public function bound(string $abstract): bool
@@ -319,7 +330,7 @@ class Container
     /**
      * Remove um binding do container.
      *
-     * @param string $abstract Nome abstrato
+     * @param  string $abstract Nome abstrato
      * @return $this
      */
     public function forget(string $abstract): self
@@ -331,7 +342,7 @@ class Container
     /**
      * Obtém todos os services com uma tag específica.
      *
-     * @param string $tag Nome da tag
+     * @param  string $tag Nome da tag
      * @return array<mixed>
      */
     public function tagged(string $tag): array
@@ -351,8 +362,8 @@ class Container
     /**
      * Executa um callback com dependências resolvidas.
      *
-     * @param callable $callback Callback a ser executado
-     * @param array<mixed> $parameters Parâmetros adicionais
+     * @param  callable     $callback   Callback a ser executado
+     * @param  array<mixed> $parameters Parâmetros adicionais
      * @return mixed
      */
     public function call(callable $callback, array $parameters = [])
@@ -371,12 +382,15 @@ class Container
             $callback = [$class, $method];
         }
 
-        /** @phpstan-ignore-next-line */
+        /**
+ * @phpstan-ignore-next-line
+*/
         return call_user_func($callback, ...$parameters);
     }
 
     /**
      * Limpa todas as instâncias e bindings.
+     *
      * @return $this
      */
     public function flush(): self
@@ -395,6 +409,7 @@ class Container
 
     /**
      * Obtém informações de debug do container.
+     *
      * @return array<string, mixed>
      */
     public function getDebugInfo(): array

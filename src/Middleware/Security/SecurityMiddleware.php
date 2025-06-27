@@ -13,13 +13,16 @@ class SecurityMiddleware extends BaseMiddleware
 
     public function __construct(array $options = [])
     {
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'contentSecurityPolicy' => true,
             'xFrameOptions' => 'DENY',
             'xContentTypeOptions' => true,
             'referrerPolicy' => 'strict-origin-when-cross-origin',
             'permissionsPolicy' => true
-        ], $options);
+            ],
+            $options
+        );
     }
 
     public function handle($request, $response, callable $next)

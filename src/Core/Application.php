@@ -28,42 +28,49 @@ class Application
 
     /**
      * Container de dependências.
+     *
      * @var Container
      */
     protected Container $container;
 
     /**
      * Configurações da aplicação.
+     *
      * @var Config
      */
     protected Config $config;
 
     /**
      * Router da aplicação.
+     *
      * @var Router
      */
     protected Router $router;
 
     /**
      * Stack de middlewares globais.
+     *
      * @var MiddlewareStack
      */
     protected MiddlewareStack $middlewares;
 
     /**
      * Indica se a aplicação foi inicializada.
+     *
      * @var bool
      */
     protected bool $booted = false;
 
     /**
      * Providers de serviços registrados.
+     *
      * @var array<string>
      */
     protected array $providers = [];
 
     /**
      * Listeners de eventos registrados.
+     *
      * @var array<string, array<callable>>
      */
     protected array $listeners = [];
@@ -87,6 +94,7 @@ class Application
 
     /**
      * Registra bindings básicos no container.
+     *
      * @return void
      */
     protected function registerBaseBindings(): void
@@ -97,6 +105,7 @@ class Application
 
     /**
      * Registra serviços core da aplicação.
+     *
      * @return void
      */
     protected function registerCoreServices(): void
@@ -120,7 +129,7 @@ class Application
     /**
      * Define o caminho base da aplicação.
      *
-     * @param string $basePath Caminho base
+     * @param  string $basePath Caminho base
      * @return $this
      */
     public function setBasePath(string $basePath): self
@@ -136,7 +145,7 @@ class Application
     /**
      * Obtém um caminho relativo ao base path.
      *
-     * @param string $path Caminho relativo
+     * @param  string $path Caminho relativo
      * @return string
      */
     public function basePath(string $path = ''): string
@@ -147,6 +156,7 @@ class Application
 
     /**
      * Inicializa a aplicação.
+     *
      * @return $this
      */
     public function boot(): self
@@ -177,6 +187,7 @@ class Application
 
     /**
      * Carrega configurações da aplicação.
+     *
      * @return void
      */
     protected function loadConfiguration(): void
@@ -196,6 +207,7 @@ class Application
 
     /**
      * Registra providers de serviços.
+     *
      * @return void
      */
     protected function registerProviders(): void
@@ -209,6 +221,7 @@ class Application
 
     /**
      * Configura tratamento de erros.
+     *
      * @return void
      */
     protected function configureErrorHandling(): void
@@ -224,12 +237,15 @@ class Application
         }
 
         set_error_handler([$this, 'handleError']);
-        /** @phpstan-ignore-next-line */
+        /**
+ * @phpstan-ignore-next-line
+*/
         set_exception_handler([$this, 'handleException']);
     }
 
     /**
      * Carrega middlewares padrão.
+     *
      * @return void
      */
     protected function loadDefaultMiddlewares(): void
@@ -244,7 +260,7 @@ class Application
     /**
      * Registra um provider de serviços.
      *
-     * @param string $provider Classe do provider
+     * @param  string $provider Classe do provider
      * @return $this
      */
     public function register(string $provider): self
@@ -267,7 +283,7 @@ class Application
     /**
      * Adiciona um middleware global.
      *
-     * @param mixed $middleware Middleware a ser adicionado
+     * @param  mixed $middleware Middleware a ser adicionado
      * @return $this
      */
     public function use($middleware): self
@@ -279,8 +295,8 @@ class Application
     /**
      * Registra uma rota GET.
      *
-     * @param string $path Caminho da rota
-     * @param mixed $handler Handler da rota
+     * @param  string $path    Caminho da rota
+     * @param  mixed  $handler Handler da rota
      * @return $this
      */
     public function get(string $path, $handler): self
@@ -292,8 +308,8 @@ class Application
     /**
      * Registra uma rota POST.
      *
-     * @param string $path Caminho da rota
-     * @param mixed $handler Handler da rota
+     * @param  string $path    Caminho da rota
+     * @param  mixed  $handler Handler da rota
      * @return $this
      */
     public function post(string $path, $handler): self
@@ -305,8 +321,8 @@ class Application
     /**
      * Registra uma rota PUT.
      *
-     * @param string $path Caminho da rota
-     * @param mixed $handler Handler da rota
+     * @param  string $path    Caminho da rota
+     * @param  mixed  $handler Handler da rota
      * @return $this
      */
     public function put(string $path, $handler): self
@@ -318,8 +334,8 @@ class Application
     /**
      * Registra uma rota DELETE.
      *
-     * @param string $path Caminho da rota
-     * @param mixed $handler Handler da rota
+     * @param  string $path    Caminho da rota
+     * @param  mixed  $handler Handler da rota
      * @return $this
      */
     public function delete(string $path, $handler): self
@@ -331,8 +347,8 @@ class Application
     /**
      * Registra uma rota PATCH.
      *
-     * @param string $path Caminho da rota
-     * @param mixed $handler Handler da rota
+     * @param  string $path    Caminho da rota
+     * @param  mixed  $handler Handler da rota
      * @return $this
      */
     public function patch(string $path, $handler): self
@@ -344,7 +360,7 @@ class Application
     /**
      * Processa uma requisição HTTP.
      *
-     * @param Request|null $request Requisição (se null, cria automaticamente)
+     * @param  Request|null $request Requisição (se null, cria automaticamente)
      * @return Response
      */
     public function handle(?Request $request = null): Response
@@ -365,10 +381,13 @@ class Application
             }
 
             // Executar middlewares e handler
-            return $this->middlewares->handle($request, $response, function($req, $res) use ($route) {
-                return $this->callRouteHandler($route, $req, $res);
-            });
-
+            return $this->middlewares->handle(
+                $request,
+                $response,
+                function ($req, $res) use ($route) {
+                    return $this->callRouteHandler($route, $req, $res);
+                }
+            );
         } catch (Throwable $e) {
             return $this->handleException($e, $request, $response);
         }
@@ -377,9 +396,9 @@ class Application
     /**
      * Executa o handler de uma rota.
      *
-     * @param array<string, mixed> $route Dados da rota
-     * @param Request $request Requisição
-     * @param Response $response Resposta
+     * @param  array<string, mixed> $route    Dados da rota
+     * @param  Request              $request  Requisição
+     * @param  Response             $response Resposta
      * @return Response
      */
     protected function callRouteHandler(array $route, Request $request, Response $response): Response
@@ -398,10 +417,11 @@ class Application
     /**
      * Trata erros PHP.
      *
-     * @param int $level Nível do erro
-     * @param string $message Mensagem do erro
-     * @param string $file Arquivo do erro
-     * @param int $line Linha do erro
+     * @param  int    $level   Nível
+     *                         do erro
+     * @param  string $message Mensagem do erro
+     * @param  string $file    Arquivo do erro
+     * @param  int    $line    Linha do erro
      * @return bool
      */
     public function handleError(int $level, string $message, string $file, int $line): bool
@@ -416,9 +436,10 @@ class Application
     /**
      * Trata exceções não capturadas.
      *
-     * @param Throwable $e Exceção
-     * @param Request|null $request Requisição (opcional)
-     * @param Response|null $response Resposta (opcional)
+     * @param  Throwable     $e        Exceção
+     * @param  Request|null  $request  Requisição
+     *                                 (opcional)
+     * @param  Response|null $response Resposta (opcional)
      * @return Response
      */
     public function handleException(Throwable $e, ?Request $request = null, ?Response $response = null): Response
@@ -435,25 +456,29 @@ class Application
         $response->status($statusCode);
 
         if ($debug) {
-            return $response->json([
+            return $response->json(
+                [
                 'error' => true,
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
-            ]);
+                ]
+            );
         } else {
-            return $response->json([
+            return $response->json(
+                [
                 'error' => true,
                 'message' => $statusCode === 404 ? 'Not Found' : 'Internal Server Error'
-            ]);
+                ]
+            );
         }
     }
 
     /**
      * Registra uma exceção no log.
      *
-     * @param Throwable $e Exceção
+     * @param  Throwable $e Exceção
      * @return void
      */
     protected function logException(Throwable $e): void
@@ -471,8 +496,8 @@ class Application
     /**
      * Registra um listener de evento.
      *
-     * @param string $event Nome do evento
-     * @param callable $listener Listener
+     * @param  string   $event    Nome do evento
+     * @param  callable $listener Listener
      * @return $this
      */
     public function on(string $event, callable $listener): self
@@ -488,8 +513,8 @@ class Application
     /**
      * Dispara um evento.
      *
-     * @param string $event Nome do evento
-     * @param mixed ...$args Argumentos do evento
+     * @param  string $event   Nome do evento
+     * @param  mixed  ...$args Argumentos do evento
      * @return $this
      */
     public function fireEvent(string $event, ...$args): self
@@ -506,8 +531,8 @@ class Application
     /**
      * Inicia o servidor de desenvolvimento.
      *
-     * @param int $port Porta do servidor
-     * @param string $host Host do servidor
+     * @param  int    $port Porta do servidor
+     * @param  string $host Host do servidor
      * @return void
      */
     public function listen(int $port = 8000, string $host = 'localhost'): void
@@ -530,6 +555,7 @@ class Application
 
     /**
      * Executa a aplicação e envia a resposta.
+     *
      * @return void
      */
     public function run(): void
@@ -540,6 +566,7 @@ class Application
 
     /**
      * Obtém o container de dependências.
+     *
      * @return Container
      */
     public function getContainer(): Container
@@ -549,6 +576,7 @@ class Application
 
     /**
      * Obtém as configurações.
+     *
      * @return Config
      */
     public function getConfig(): Config
@@ -558,6 +586,7 @@ class Application
 
     /**
      * Obtém o router.
+     *
      * @return Router
      */
     public function getRouter(): Router
@@ -567,6 +596,7 @@ class Application
 
     /**
      * Verifica se a aplicação foi inicializada.
+     *
      * @return bool
      */
     public function isBooted(): bool
@@ -576,6 +606,7 @@ class Application
 
     /**
      * Obtém a versão do framework.
+     *
      * @return string
      */
     public function version(): string

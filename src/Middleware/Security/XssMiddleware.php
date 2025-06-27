@@ -13,13 +13,16 @@ class XssMiddleware extends BaseMiddleware
 
     public function __construct(array $options = [])
     {
-        $this->options = array_merge([
+        $this->options = array_merge(
+            [
             'mode' => 'block',
             'reportUri' => null,
             'sanitizeInput' => false,
             'allowedTags' => '',
             'checkUrls' => false
-        ], $options);
+            ],
+            $options
+        );
     }
 
     public function handle($request, $response, callable $next)
@@ -137,6 +140,7 @@ class XssMiddleware extends BaseMiddleware
 
     /**
      * Sanitiza dados da requisição
+     *
      * @param mixed $request
      */
     private function sanitizeRequestData($request): void
