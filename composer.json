@@ -1,5 +1,6 @@
 {
     "name": "express-php/microframework",
+    "version": "2.0.0",
     "description": "Express PHP - A lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs",
     "type": "library",
     "keywords": [
