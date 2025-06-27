@@ -495,7 +495,7 @@ class CorsMiddleware extends BaseMiddleware
     /**
      * Middleware CORS ultra-otimizado para casos simples
      */
-    public static function simple(string $origin = '*', array $methods = null, array $headers = null): callable
+    public static function simple(string $origin = '*', ?array $methods = null, ?array $headers = null): callable
     {
         $methods = $methods ?? self::DEFAULT_CONFIG['methods'];
         $headers = $headers ?? self::DEFAULT_CONFIG['headers'];

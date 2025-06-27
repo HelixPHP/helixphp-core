@@ -54,7 +54,7 @@ class MiddlewareStack
      * @param  string|null $cacheKey Chave para cache do pipeline compilado
      * @return mixed
      */
-    public function execute(Request $request, Response $response, callable $finalHandler, string $cacheKey = null)
+    public function execute(Request $request, Response $response, callable $finalHandler, ?string $cacheKey = null)
     {
         // Se não há middlewares, executa o handler final
         if (empty($this->middlewares)) {
@@ -116,7 +116,7 @@ class MiddlewareStack
     /**
      * Compila pipeline otimizado de middlewares
      */
-    public function compileOptimizedPipeline(array $middlewares, string $cacheKey = null): callable
+    public function compileOptimizedPipeline(array $middlewares, ?string $cacheKey = null): callable
     {
         if ($cacheKey && isset(self::$compiledPipelines[$cacheKey])) {
             return self::$compiledPipelines[$cacheKey];
