@@ -523,7 +523,7 @@ class Router
     {
         self::$sortedPrefixes = array_keys(self::$groupIndex);
 
-        usort(self::$sortedPrefixes, function($a, $b) {
+        usort(self::$sortedPrefixes, function ($a, $b) {
             return strlen($b) - strlen($a);
         });
     }
@@ -711,8 +711,12 @@ class Router
     /**
      * Registra uma rota OPTIONS.
      */
-    public static function options(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function options(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('OPTIONS', $path, $handler, $metadata, ...$middlewares);
     }
 

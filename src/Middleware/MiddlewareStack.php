@@ -126,7 +126,7 @@ class MiddlewareStack
 
         // Se não há middlewares, retorna função pass-through
         if (empty($middlewares)) {
-            $pipeline = function($req, $resp, $next) {
+            $pipeline = function ($req, $resp, $next) {
                 return $next($req, $resp);
             };
 
@@ -165,16 +165,18 @@ class MiddlewareStack
         // Reverse middlewares para execução correta
         $reversedMiddlewares = array_reverse($middlewares);
 
-        return function($req, $resp, $finalHandler = null) use ($reversedMiddlewares) {
+        return function ($req, $resp, $finalHandler = null) use ($reversedMiddlewares) {
             $startTime = microtime(true);
 
             // Cria stack de execução otimizada
-            $stack = $finalHandler ?? function($req, $resp) { return $resp; };
+            $stack = $finalHandler ?? function ($req, $resp) {
+                return $resp;
+            };
 
             // Compila middlewares em uma única função
             foreach ($reversedMiddlewares as $middleware) {
                 $currentStack = $stack;
-                $stack = function($req, $resp) use ($middleware, $currentStack) {
+                $stack = function ($req, $resp) use ($middleware, $currentStack) {
                     return call_user_func($middleware, $req, $resp, $currentStack);
                 };
             }
@@ -233,19 +235,19 @@ class MiddlewareStack
     {
         $commonMiddlewarePatterns = [
             'cors' => [
-                function($req, $resp, $next) {
+                function ($req, $resp, $next) {
                     $resp->setHeader('Access-Control-Allow-Origin', '*');
                     return $next($req, $resp);
                 }
             ],
             'json' => [
-                function($req, $resp, $next) {
+                function ($req, $resp, $next) {
                     $resp->setHeader('Content-Type', 'application/json');
                     return $next($req, $resp);
                 }
             ],
             'security' => [
-                function($req, $resp, $next) {
+                function ($req, $resp, $next) {
                     $resp->setHeader('X-Frame-Options', 'DENY');
                     $resp->setHeader('X-Content-Type-Options', 'nosniff');
                     return $next($req, $resp);
@@ -277,7 +279,9 @@ class MiddlewareStack
         // Mock request/response para benchmark
         $mockReq = new \stdClass();
         $mockResp = new \stdClass();
-        $mockNext = function($req, $resp) { return $resp; };
+        $mockNext = function ($req, $resp) {
+            return $resp;
+        };
 
         // Executa benchmark
         $executionStart = microtime(true);

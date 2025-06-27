@@ -60,40 +60,47 @@ class ApiExpress
     public function __get(string $name): mixed
     {
         if ($name === 'router') {
-            return new class {
+            return new class
+            {
                 /**
                  * @return array<string, mixed>
                  */
-                public function getGroupStats(): array {
+                public function getGroupStats(): array
+                {
                     return Router::getGroupStats();
                 }
 
-                public function warmupGroups(): void {
+                public function warmupGroups(): void
+                {
                     Router::warmupGroups();
                 }
 
                 /**
                  * @return array<string, mixed>|null
                  */
-                public function identifyByGroup(string $method, string $path): ?array {
+                public function identifyByGroup(string $method, string $path): ?array
+                {
                     return Router::identifyByGroup($method, $path);
                 }
 
                 /**
                  * @return array<string, mixed>
                  */
-                public function benchmarkGroupAccess(string $prefix, int $iterations = 1000): array {
+                public function benchmarkGroupAccess(string $prefix, int $iterations = 1000): array
+                {
                     return Router::benchmarkGroupAccess($prefix, $iterations);
                 }
             };
         }
 
         if ($name === 'middlewareStack') {
-            return new class {
+            return new class
+            {
                 /**
                  * @return array<string, mixed>
                  */
-                public function getStats(): array {
+                public function getStats(): array
+                {
                     return MiddlewareStack::getStats();
                 }
 
@@ -101,7 +108,8 @@ class ApiExpress
                  * @param array<callable> $middlewares
                  * @return array<string, mixed>
                  */
-                public function benchmarkPipeline(array $middlewares, int $iterations = 1000): array {
+                public function benchmarkPipeline(array $middlewares, int $iterations = 1000): array
+                {
                     return MiddlewareStack::benchmarkPipeline($middlewares, $iterations);
                 }
             };
@@ -509,7 +517,9 @@ class ApiExpress
     public static function __callStatic(string $method, array $args): mixed
     {
         return Router::__callStatic($method, $args);
-    }    /**
+    }
+
+    /**
      * Realiza warmup dos caches após registro das rotas
      */
     public function warmupCaches(): void

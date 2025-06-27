@@ -30,7 +30,7 @@ class CorsMiddleware extends BaseMiddleware
      * Configurações padrão otimizadas
      */
     private const DEFAULT_CONFIG = [
-        'origin' => '*',
+        'origins' => ['*'],
         'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'PATCH'],
         'headers' => ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
         'credentials' => false,
@@ -349,11 +349,11 @@ class CorsMiddleware extends BaseMiddleware
         $headers = [];
 
         // Origin
-        if (is_array($config['origin'])) {
+        if (is_array($config['origins'])) {
             // Para múltiplas origens, será tratado dinamicamente
-            $headers['Access-Control-Allow-Origin'] = $config['origin'][0] ?? '*';
+            $headers['Access-Control-Allow-Origin'] = $config['origins'][0] ?? '*';
         } else {
-            $headers['Access-Control-Allow-Origin'] = $config['origin'];
+            $headers['Access-Control-Allow-Origin'] = $config['origins'];
         }
 
         // Methods - usa string pré-concatenada
@@ -394,10 +394,14 @@ class CorsMiddleware extends BaseMiddleware
         $origin = in_array('*', $this->options['origins']) ? '*' : ($this->options['origins'][0] ?? '*');
         $parts[] = 'Access-Control-Allow-Origin: ' . $origin;
 
-        $methods = is_array($this->options['methods']) ? implode(', ', $this->options['methods']) : $this->options['methods'];
+        $methods = is_array($this->options['methods'])
+            ? implode(', ', $this->options['methods'])
+            : $this->options['methods'];
         $parts[] = 'Access-Control-Allow-Methods: ' . $methods;
 
-        $headers = is_array($this->options['headers']) ? implode(', ', $this->options['headers']) : $this->options['headers'];
+        $headers = is_array($this->options['headers'])
+            ? implode(', ', $this->options['headers'])
+            : $this->options['headers'];
         $parts[] = 'Access-Control-Allow-Headers: ' . $headers;
 
         if ($this->options['credentials']) {
@@ -407,7 +411,9 @@ class CorsMiddleware extends BaseMiddleware
         $parts[] = 'Access-Control-Max-Age: ' . $this->options['maxAge'];
 
         if (!empty($this->options['exposedHeaders'])) {
-            $exposed = is_array($this->options['exposedHeaders']) ? implode(', ', $this->options['exposedHeaders']) : $this->options['exposedHeaders'];
+            $exposed = is_array($this->options['exposedHeaders'])
+                ? implode(', ', $this->options['exposedHeaders'])
+                : $this->options['exposedHeaders'];
             $parts[] = 'Access-Control-Expose-Headers: ' . $exposed;
         }
 
@@ -421,9 +427,15 @@ class CorsMiddleware extends BaseMiddleware
     {
         $parts = [];
 
-        $parts[] = 'Access-Control-Allow-Origin: ' . (is_array($config['origin']) ? $config['origin'][0] : $config['origin']);
-        $parts[] = 'Access-Control-Allow-Methods: ' . (is_array($config['methods']) ? implode(', ', $config['methods']) : $config['methods']);
-        $parts[] = 'Access-Control-Allow-Headers: ' . (is_array($config['headers']) ? implode(', ', $config['headers']) : $config['headers']);
+        $parts[] = 'Access-Control-Allow-Origin: ' . (is_array($config['origins'])
+            ? $config['origins'][0]
+            : $config['origins']);
+        $parts[] = 'Access-Control-Allow-Methods: ' . (is_array($config['methods'])
+            ? implode(', ', $config['methods'])
+            : $config['methods']);
+        $parts[] = 'Access-Control-Allow-Headers: ' . (is_array($config['headers'])
+            ? implode(', ', $config['headers'])
+            : $config['headers']);
 
         if ($config['credentials']) {
             $parts[] = 'Access-Control-Allow-Credentials: true';
@@ -432,7 +444,9 @@ class CorsMiddleware extends BaseMiddleware
         $parts[] = 'Access-Control-Max-Age: ' . $config['maxAge'];
 
         if (!empty($config['expose'])) {
-            $parts[] = 'Access-Control-Expose-Headers: ' . (is_array($config['expose']) ? implode(', ', $config['expose']) : $config['expose']);
+            $parts[] = 'Access-Control-Expose-Headers: ' . (is_array($config['expose'])
+                ? implode(', ', $config['expose'])
+                : $config['expose']);
         }
 
         return implode("\r\n", $parts);
@@ -443,19 +457,19 @@ class CorsMiddleware extends BaseMiddleware
      */
     private static function calculateDynamicOrigin($request, array $config): string
     {
-        if (!is_array($config['origin'])) {
-            return $config['origin'];
+        if (!is_array($config['origins'])) {
+            return $config['origins'];
         }
 
         $requestOrigin = method_exists($request, 'getHeader') ? $request->getHeader('Origin', '') : '';
 
         // Verifica se origin está na lista permitida
-        if (in_array($requestOrigin, $config['origin'], true)) {
+        if (in_array($requestOrigin, $config['origins'], true)) {
             return $requestOrigin;
         }
 
         // Verifica wildcard patterns
-        foreach ($config['origin'] as $allowedOrigin) {
+        foreach ($config['origins'] as $allowedOrigin) {
             if (strpos($allowedOrigin, '*') !== false) {
                 $pattern = str_replace('*', '.*', preg_quote($allowedOrigin, '/'));
                 if (preg_match('/^' . $pattern . '$/', $requestOrigin)) {
@@ -464,7 +478,7 @@ class CorsMiddleware extends BaseMiddleware
             }
         }
 
-        return $config['origin'][0] ?? '*';
+        return $config['origins'][0] ?? '*';
     }
 
     /**
@@ -535,7 +549,8 @@ class CorsMiddleware extends BaseMiddleware
             'memory_usage' => [
                 'headers' => strlen(serialize(self::$preCompiledHeaders)),
                 'strings' => strlen(serialize(self::$compiledHeaderStrings)),
-                'total' => strlen(serialize(self::$preCompiledHeaders)) + strlen(serialize(self::$compiledHeaderStrings))
+                'total' => strlen(serialize(self::$preCompiledHeaders))
+                    + strlen(serialize(self::$compiledHeaderStrings))
             ]
         ];
     }
@@ -555,10 +570,10 @@ class CorsMiddleware extends BaseMiddleware
     public static function benchmark(int $iterations = 10000): array
     {
         $configs = [
-            'simple' => ['origin' => '*'],
-            'multiple_origins' => ['origin' => ['https://example.com', 'https://api.example.com']],
+            'simple' => ['origins' => '*'],
+            'multiple_origins' => ['origins' => ['https://example.com', 'https://api.example.com']],
             'complex' => [
-                'origin' => ['https://*.example.com', 'http://localhost:*'],
+                'origins' => ['https://*.example.com', 'http://localhost:*'],
                 'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
                 'headers' => ['Content-Type', 'Authorization', 'X-Custom-Header'],
                 'credentials' => true,
@@ -573,16 +588,29 @@ class CorsMiddleware extends BaseMiddleware
 
             // Mock request/response
             $request = (object) ['method' => 'GET'];
-            $response = new class {
-                public function header($name, $value) { return $this; }
-                public function status($code) { return $this; }
-                public function send() { return $this; }
+            $response = new class
+            {
+                public function header($name, $value)
+                {
+                    return $this;
+                }
+
+                public function status($code)
+                {
+                    return $this;
+                }
+
+                public function send()
+                {
+                    return $this;
+                }
             };
 
             $start = microtime(true);
 
             for ($i = 0; $i < $iterations; $i++) {
-                $middleware($request, $response, function() {});
+                $middleware($request, $response, function () {
+                });
             }
 
             $end = microtime(true);
