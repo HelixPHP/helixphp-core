@@ -10,70 +10,34 @@ class Arr
     /**
      * Obtém um valor do array usando notação de ponto
      *
+     * @deprecated Use Express\Utils\Arr::get() instead
      * @param  mixed $default
      * @return mixed
      */
     public static function get(array $array, string $key, $default = null)
     {
-        if (isset($array[$key])) {
-            return $array[$key];
-        }
-
-        if (strpos($key, '.') === false) {
-            return $default;
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (!is_array($array) || !array_key_exists($segment, $array)) {
-                return $default;
-            }
-            $array = $array[$segment];
-        }
-
-        return $array;
+        return \Express\Utils\Arr::get($array, $key, $default);
     }
 
     /**
      * Define um valor no array usando notação de ponto
      *
+     * @deprecated Use Express\Utils\Arr::set() instead
      * @param mixed $value
      */
     public static function set(array &$array, string $key, $value): void
     {
-        $keys = explode('.', $key);
-        $current = &$array;
-
-        foreach ($keys as $key) {
-            if (!isset($current[$key]) || !is_array($current[$key])) {
-                $current[$key] = [];
-            }
-            $current = &$current[$key];
-        }
-
-        $current = $value;
+        \Express\Utils\Arr::set($array, $key, $value);
     }
 
     /**
      * Verifica se uma chave existe usando notação de ponto
+     *
+     * @deprecated Use Express\Utils\Arr::has() instead
      */
     public static function has(array $array, string $key): bool
     {
-        if (isset($array[$key])) {
-            return true;
-        }
-
-        if (strpos($key, '.') === false) {
-            return false;
-        }
-
-        foreach (explode('.', $key) as $segment) {
-            if (!is_array($array) || !array_key_exists($segment, $array)) {
-                return false;
-            }
-            $array = $array[$segment];
-        }
-
-        return true;
+        return \Express\Utils\Arr::has($array, $key);
     }
 
     /**
@@ -96,50 +60,44 @@ class Arr
 
     /**
      * Achata um array multidimensional
+     *
+     * @deprecated Use Express\Utils\Arr::flatten() instead
      */
     public static function flatten(array $array, string $delimiter = '.'): array
     {
-        $result = [];
-
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $flattened = static::flatten($value, $delimiter);
-                foreach ($flattened as $flatKey => $flatValue) {
-                    $result[$key . $delimiter . $flatKey] = $flatValue;
-                }
-            } else {
-                $result[$key] = $value;
-            }
-        }
-
-        return $result;
+        // A implementação em Utils\Arr::flatten usa depth ao invés de delimiter
+        // Para manter compatibilidade, usamos dot() que é equivalente
+        return \Express\Utils\Arr::dot($array, '');
     }
 
     /**
      * Filtra um array mantendo apenas as chaves especificadas
+     *
+     * @deprecated Use Express\Utils\Arr::only() instead
      */
     public static function only(array $array, array $keys): array
     {
-        return array_intersect_key($array, array_flip($keys));
+        return \Express\Utils\Arr::only($array, $keys);
     }
 
     /**
      * Filtra um array removendo as chaves especificadas
+     *
+     * @deprecated Use Express\Utils\Arr::except() instead
      */
     public static function except(array $array, array $keys): array
     {
-        return array_diff_key($array, array_flip($keys));
+        return \Express\Utils\Arr::except($array, $keys);
     }
 
     /**
      * Divide um array em chunks
+     *
+     * @deprecated Use Express\Utils\Arr::chunk() instead
      */
     public static function chunk(array $array, int $size): array
     {
-        if ($size < 1) {
-            $size = 1;
-        }
-        return array_chunk($array, $size, true);
+        return \Express\Utils\Arr::chunk($array, $size, true);
     }
 
     /**
