@@ -57,10 +57,13 @@ class ApiExpress
     /**
      * Propriedade para acessar o Router estático.
      */
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
         if ($name === 'router') {
             return new class {
+                /**
+                 * @return array<string, mixed>
+                 */
                 public function getGroupStats(): array {
                     return Router::getGroupStats();
                 }
@@ -69,22 +72,35 @@ class ApiExpress
                     Router::warmupGroups();
                 }
 
+                /**
+                 * @return array<string, mixed>|null
+                 */
                 public function identifyByGroup(string $method, string $path): ?array {
                     return Router::identifyByGroup($method, $path);
                 }
 
-                public function benchmarkGroupAccess(array $routes, int $iterations = 1000): array {
-                    return Router::benchmarkGroupAccess($routes, $iterations);
+                /**
+                 * @return array<string, mixed>
+                 */
+                public function benchmarkGroupAccess(string $prefix, int $iterations = 1000): array {
+                    return Router::benchmarkGroupAccess($prefix, $iterations);
                 }
             };
         }
 
         if ($name === 'middlewareStack') {
             return new class {
+                /**
+                 * @return array<string, mixed>
+                 */
                 public function getStats(): array {
                     return MiddlewareStack::getStats();
                 }
 
+                /**
+                 * @param array<callable> $middlewares
+                 * @return array<string, mixed>
+                 */
                 public function benchmarkPipeline(array $middlewares, int $iterations = 1000): array {
                     return MiddlewareStack::benchmarkPipeline($middlewares, $iterations);
                 }

@@ -42,12 +42,6 @@ class Router
     private static array $exactMatchCache = [];
 
     /**
-     * Cache de grupos de rotas por prefixo.
-     * @var array<string, array>
-     */
-    private static array $groupCache = [];
-
-    /**
      * Índice de rotas por grupo para acesso O(1).
      * @var array<string, array>
      */
@@ -153,7 +147,7 @@ class Router
 
         // Registra estatísticas
         $executionTime = (microtime(true) - $startTime) * 1000;
-        $routesCount = count(self::$groupIndex[$prefix] ?? []);
+        $routesCount = count(self::$groupIndex[$prefix]);
 
         self::$stats['groups'][$prefix] = [
             'registration_time_ms' => $executionTime,
@@ -182,7 +176,7 @@ class Router
         string $path,
         callable $handler,
         array $metadata = [],
-        ...$middlewares
+        callable ...$middlewares
     ): void {
         if (empty($path)) {
             $path = self::DEFAULT_PATH;
@@ -630,7 +624,6 @@ class Router
         self::$preCompiledRoutes = [];
         self::$routesByMethod = [];
         self::$exactMatchCache = [];
-        self::$groupCache = [];
         self::$groupIndex = [];
         self::$sortedPrefixes = [];
         self::$prefixMatchCache = [];
@@ -675,6 +668,72 @@ class Router
         return self::$routes;
     }
 
+    /**
+     * Registra uma rota GET.
+     */
+    public static function get(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('GET', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota POST.
+     */
+    public static function post(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('POST', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota PUT.
+     */
+    public static function put(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('PUT', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota DELETE.
+     */
+    public static function delete(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('DELETE', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota PATCH.
+     */
+    public static function patch(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('PATCH', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota OPTIONS.
+     */
+    public static function options(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('OPTIONS', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota HEAD.
+     */
+    public static function head(string $path, callable $handler, callable ...$middlewares): void
+    {
+        self::add('HEAD', $path, $handler, [], ...$middlewares);
+    }
+
+    /**
+     * Registra uma rota para todos os métodos HTTP.
+     */
+    public static function any(string $path, callable $handler, callable ...$middlewares): void
+    {
+        foreach (self::$httpMethodsAccepted as $method) {
+            self::add($method, $path, $handler, [], ...$middlewares);
+        }
+    }
+
     public static function getHttpMethodsAccepted(): array
     {
         return self::$httpMethodsAccepted;
@@ -694,7 +753,7 @@ class Router
     /**
      * Remove closures, objetos e recursos de arrays recursivamente
      */
-    private static function sanitizeForJson($value)
+    private static function sanitizeForJson(mixed $value): mixed
     {
         if (is_array($value)) {
             $out = [];
@@ -814,7 +873,7 @@ class Router
             'total_time_ms' => round($totalTime, 3),
             'avg_time_microseconds' => round(($totalTime / $iterations) * 1000, 3),
             'ops_per_second' => round($iterations / ($end - $start), 0),
-            'group_stats' => self::$groupStats[$prefix] ?? null
+            'group_stats' => self::$groupStats[$prefix]
         ];
     }
 
@@ -826,7 +885,6 @@ class Router
         self::$routes = [];
         self::$routesByMethod = [];
         self::$exactMatchCache = [];
-        self::$groupCache = [];
         self::$groupIndex = [];
         self::$prefixMatchCache = [];
         self::$sortedPrefixes = [];
