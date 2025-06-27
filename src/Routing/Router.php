@@ -4,6 +4,7 @@ namespace Express\Routing;
 
 use InvalidArgumentException;
 use BadMethodCallException;
+use Express\Utils\Arr;
 
 /**
  * Classe Router responsável pelo registro e identificação otimizada de rotas HTTP.
@@ -741,17 +742,6 @@ class Router
     public static function getHttpMethodsAccepted(): array
     {
         return self::$httpMethodsAccepted;
-    }
-
-    /**
-     * Verifica se array é associativo
-     */
-    private static function isAssoc(array $arr): bool
-    {
-        if ([] === $arr) {
-            return false;
-        }
-        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     /**
