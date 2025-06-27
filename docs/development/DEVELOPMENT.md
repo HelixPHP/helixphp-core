@@ -1,156 +1,453 @@
-# Development Setup - Express PHP
+# Guia de Desenvolvimento - Express PHP Framework
 
-This document provides information about the development environment setup for Express PHP.
+## 🚀 Começando
 
-## 📁 Project Structure
+Este guia fornece todas as informações necessárias para contribuir com o desenvolvimento do Express PHP Framework.
 
-```
-Express-PHP/
-├── .gitignore          # Git ignore patterns
-├── .editorconfig       # Editor configuration
-├── composer.json       # Package configuration
-├── phpunit.xml         # PHPUnit configuration
-├── phpstan.neon        # PHPStan configuration
-├── src/                # Source code (PSR-4: Express\)
-├── tests/              # PHPUnit tests
-├── examples/           # Usage examples
-├── docs/               # Documentation
-└── vendor/             # Composer dependencies (ignored)
-```
+## 🛠️ Configuração do Ambiente
 
-## 🚫 .gitignore Overview
+### Pré-requisitos
+- **PHP 8.1+** (recomendado PHP 8.3)
+- **Composer 2.x**
+- **Git**
+- **Xdebug** (para cobertura de testes)
 
-The `.gitignore` file is configured to ignore:
-
-### Dependencies & Build
-- `/vendor/` - Composer dependencies
-- `composer.lock` - Lock file (include if you want reproducible builds)
-- `node_modules/` - Node.js dependencies (if used)
-
-### Development Tools
-- `.vscode/`, `.idea/` - IDE configuration
-- `.phpunit.cache/` - PHPUnit cache
-- `.phpstan.cache/` - PHPStan cache
-- Coverage reports and build artifacts
-
-### Runtime Files
-- `*.log` - Log files
-- `/tmp/`, `/cache/` - Temporary and cache directories
-- Session files
-
-### Environment & Security
-- `.env*` - Environment configuration files
-- `*.key`, `*.pem` - Private keys and certificates
-- Database files (`.sqlite`, `.db`)
-
-### Operating System
-- `.DS_Store` (macOS)
-- `Thumbs.db` (Windows)
-- Linux temporary files
-
-## 🔧 Development Workflow
-
-### Initial Setup
+### Instalação
 ```bash
-# Clone repository
-git clone <repository-url>
-cd Express-PHP
+# Clone o repositório
+git clone https://github.com/express-php/framework.git
+cd express-php-framework
 
-# Install dependencies
+# Instalar dependências
 composer install
 
-# Run tests
-composer test
+# Configurar hooks de pre-commit
+chmod +x .git/hooks/pre-commit
 ```
 
-### Working with Git
+## 📁 Estrutura do Projeto
+
+```
+express-php-framework/
+├── src/                     # Código fonte principal
+│   ├── ApiExpress.php      # Classe principal
+│   ├── Core/               # Componentes fundamentais
+│   ├── Routing/            # Sistema de roteamento
+│   ├── Middleware/         # Middlewares de segurança
+│   ├── Http/               # Request/Response handling
+│   ├── Authentication/     # Sistema de autenticação
+│   ├── Cache/              # Interfaces de cache
+│   ├── Database/           # Abstração de banco
+│   ├── Streaming/          # Funcionalidades de streaming
+│   ├── Support/            # Utilitários auxiliares
+│   └── Validation/         # Sistema de validação
+├── tests/                  # Testes automatizados
+├── examples/               # Exemplos de uso
+├── docs/                   # Documentação
+├── benchmarks/             # Scripts de benchmark
+├── config/                 # Configurações
+└── scripts/                # Scripts auxiliares
+```
+
+## 🧪 Executando Testes
+
+### Suite Completa
 ```bash
-# Check what will be committed
-git status
+# Todos os testes
+composer test
 
-# Stage specific files
-git add src/ tests/ docs/
+# Testes com cobertura
+composer test-coverage
 
-# Commit changes
-git commit -m "feat: add new feature"
-
-# Push changes
-git push origin main
+# Testes específicos
+vendor/bin/phpunit tests/Core/
+vendor/bin/phpunit --filter testCorsMiddleware
 ```
 
-### Files to Track vs Ignore
+### Análise Estática
+```bash
+# PHPStan (nível máximo)
+composer analyse
 
-#### ✅ Track These:
-- Source code (`src/`)
-- Tests (`tests/`)
-- Documentation (`docs/`)
-- Configuration files (`composer.json`, `phpunit.xml`)
-- Examples (`examples/`)
+# Code Style (PSR-12)
+composer style-check
 
-#### ❌ Ignore These:
-- Dependencies (`vendor/`)
-- Cache files (`.phpunit.cache/`)
-- Logs (`*.log`)
-- Environment files (`.env`)
-- IDE configuration (`.vscode/`, `.idea/`)
+# Correção automática de style
+composer style-fix
+```
 
-## 🧪 Testing Considerations
+## 📊 Benchmarks e Performance
 
-When writing tests, avoid:
-- Creating temporary files in tracked directories
-- Using absolute paths
-- Depending on external services without mocking
+### Executar Benchmarks
+```bash
+# Benchmark completo
+./benchmarks/run_benchmark.sh
 
-Use these patterns:
+# Benchmark específico
+./benchmarks/benchmark_cors.sh
+./benchmarks/benchmark_routing.sh
+
+# Profiling detalhado
+php -d xdebug.mode=profile examples/benchmark_app.php
+```
+
+### Monitoramento de Performance
 ```php
-// Use temporary directory
-$tempFile = sys_get_temp_dir() . '/test_' . uniqid();
+// Ativar profiling em desenvolvimento
+$app = new ApiExpress([
+    'debug' => true,
+    'profiling' => true
+]);
 
-// Clean up in tearDown()
-public function tearDown(): void
+// Obter estatísticas em runtime
+$stats = [
+    'router' => Router::getStats(),
+    'cors' => CorsMiddleware::getStats(),
+    'memory' => memory_get_peak_usage(true),
+    'time' => microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']
+];
+```
+
+## 🏗️ Arquitetura e Princípios
+
+### Design Patterns Utilizados
+
+#### 1. Middleware Pattern
+```php
+interface MiddlewareInterface
 {
-    if (file_exists($this->tempFile)) {
-        unlink($this->tempFile);
+    public function handle($request, $response, callable $next);
+}
+
+class CustomMiddleware implements MiddlewareInterface
+{
+    public function handle($request, $response, callable $next)
+    {
+        // Pre-processing
+        $result = $next($request, $response);
+        // Post-processing
+        return $result;
     }
 }
 ```
 
-## 📦 Distribution
+#### 2. Factory Pattern
+```php
+class MiddlewareFactory
+{
+    public static function create(string $type, array $config): MiddlewareInterface
+    {
+        return match($type) {
+            'cors' => new CorsMiddleware($config),
+            'auth' => new AuthMiddleware($config),
+            'rate-limit' => new RateLimitMiddleware($config),
+            default => throw new InvalidArgumentException("Unknown middleware: $type")
+        };
+    }
+}
+```
 
-When creating releases, these files are excluded via `composer.json`:
-- `/test` - Legacy test directory
-- `/tests` - PHPUnit tests
-- `/examples` - Usage examples
-- Development configuration files
+#### 3. Strategy Pattern
+```php
+interface AuthStrategy
+{
+    public function authenticate($request): ?array;
+}
 
-## 🔐 Security Notes
+class JwtAuthStrategy implements AuthStrategy
+{
+    public function authenticate($request): ?array
+    {
+        $token = $this->extractToken($request);
+        return JWTHelper::decode($token, $this->secret);
+    }
+}
+```
 
-Never commit:
-- Database credentials
-- API keys
-- Private keys or certificates
-- Environment-specific configuration
+### Princípios de Código
 
-Use environment variables or `.env` files (which are ignored) for sensitive data.
+#### SOLID Principles
+- **S** - Single Responsibility: Cada classe tem uma responsabilidade específica
+- **O** - Open/Closed: Extensível via interfaces e herança
+- **L** - Liskov Substitution: Subclasses substituíveis
+- **I** - Interface Segregation: Interfaces específicas e coesas
+- **D** - Dependency Inversion: Dependências via interfaces
 
-## 📝 Editor Configuration
+#### Performance First
+- Cache automático sempre que possível
+- Lazy loading para componentes pesados
+- Otimizações de memória e CPU
+- Benchmarks contínuos
 
-The `.editorconfig` file ensures consistent coding style across different editors:
-- UTF-8 encoding
-- LF line endings
-- 4 spaces for PHP
-- 2 spaces for JSON/YAML/Markdown
-- Trim trailing whitespace
+## 🔧 Desenvolvendo Funcionalidades
 
-## 🤝 Contributing
+### Adicionando um Novo Middleware
 
-When contributing:
+#### 1. Criar a classe
+```php
+<?php
+namespace Express\Middleware\Custom;
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `composer test`
-5. Check code style: `composer run cs:check`
-6. Submit a pull request
+use Express\Middleware\Core\BaseMiddleware;
 
-Make sure your changes don't add ignored files to version control!
+class MyCustomMiddleware extends BaseMiddleware
+{
+    private array $config;
+
+    public function __construct(array $config = [])
+    {
+        $this->config = array_merge([
+            'default_option' => 'value'
+        ], $config);
+    }
+
+    public function handle($request, $response, callable $next)
+    {
+        // Sua lógica aqui
+        return $next($request, $response);
+    }
+
+    public static function create(array $config = []): callable
+    {
+        $instance = new self($config);
+        return [$instance, 'handle'];
+    }
+}
+```
+
+#### 2. Criar testes
+```php
+<?php
+namespace Express\Tests\Middleware;
+
+use PHPUnit\Framework\TestCase;
+use Express\Middleware\Custom\MyCustomMiddleware;
+
+class MyCustomMiddlewareTest extends TestCase
+{
+    public function testMiddlewareExecution()
+    {
+        $middleware = new MyCustomMiddleware();
+
+        $request = $this->createMockRequest();
+        $response = $this->createMockResponse();
+        $next = function() { return 'next called'; };
+
+        $result = $middleware->handle($request, $response, $next);
+
+        $this->assertEquals('next called', $result);
+    }
+}
+```
+
+#### 3. Documentar
+```php
+/**
+ * My Custom Middleware
+ *
+ * Este middleware faz X, Y e Z para melhorar a funcionalidade A.
+ *
+ * @example
+ * $app->use(MyCustomMiddleware::create([
+ *     'option1' => 'value1',
+ *     'option2' => true
+ * ]));
+ */
+```
+
+### Adicionando uma Nova Funcionalidade
+
+#### 1. Design First
+- Escreva a interface/contrato primeiro
+- Documente o comportamento esperado
+- Considere performance implications
+
+#### 2. TDD (Test-Driven Development)
+```php
+// 1. Escreva o teste primeiro
+public function testNewFeature()
+{
+    $result = $this->feature->doSomething();
+    $this->assertEquals('expected', $result);
+}
+
+// 2. Implemente o mínimo necessário
+public function doSomething()
+{
+    return 'expected';
+}
+
+// 3. Refatore e otimize
+```
+
+#### 3. Benchmark Integration
+```php
+public function benchmarkNewFeature(): array
+{
+    $iterations = 10000;
+    $start = microtime(true);
+
+    for ($i = 0; $i < $iterations; $i++) {
+        $this->doSomething();
+    }
+
+    $time = microtime(true) - $start;
+
+    return [
+        'iterations' => $iterations,
+        'total_time' => $time,
+        'ops_per_second' => $iterations / $time
+    ];
+}
+```
+
+## 🐛 Debug e Troubleshooting
+
+### Debug Mode
+```php
+$app = new ApiExpress(['debug' => true]);
+
+// Logs detalhados
+$app->use(function($req, $res, $next) {
+    error_log("Request: {$req->method} {$req->path}");
+    $start = microtime(true);
+
+    $result = $next($req, $res);
+
+    $time = microtime(true) - $start;
+    error_log("Response time: {$time}s");
+
+    return $result;
+});
+```
+
+### Profiling
+```bash
+# Xdebug profiling
+php -d xdebug.mode=profile -d xdebug.output_dir=/tmp examples/app.php
+
+# Memory profiling
+php -d memory_limit=128M examples/memory_test.php
+```
+
+### Common Issues
+
+#### Performance Issues
+1. **Cache não funcionando:** Verifique configurações de cache
+2. **Memory leaks:** Use `unset()` em loops grandes
+3. **Slow routes:** Otimize pattern matching
+
+#### Security Issues
+1. **CORS errors:** Configure origins corretamente
+2. **Auth failures:** Verifique secrets e tokens
+3. **CSRF issues:** Certifique-se de incluir tokens
+
+## 📚 Convenções de Código
+
+### Naming Conventions
+```php
+// Classes: PascalCase
+class RouterMiddleware {}
+
+// Métodos/Funções: camelCase
+public function handleRequest() {}
+
+// Variáveis: camelCase
+$requestData = [];
+
+// Constantes: UPPER_SNAKE_CASE
+const DEFAULT_TIMEOUT = 30;
+
+// Interfaces: Interface suffix
+interface CacheInterface {}
+```
+
+### Documentation Standards
+```php
+/**
+ * Breve descrição do método
+ *
+ * Descrição mais detalhada explicando o comportamento,
+ * parâmetros especiais e casos de uso.
+ *
+ * @param string $param1 Descrição do parâmetro
+ * @param array $param2 Array de configurações
+ * @return bool Retorna true em caso de sucesso
+ *
+ * @throws InvalidArgumentException Se parâmetros inválidos
+ * @throws RuntimeException Se operação falha
+ *
+ * @example
+ * $result = $object->method('value', ['option' => true]);
+ *
+ * @since 1.0.0
+ */
+public function method(string $param1, array $param2 = []): bool
+{
+    // Implementation
+}
+```
+
+## 🚀 Processo de Release
+
+### Preparação
+```bash
+# 1. Atualizar CHANGELOG.md
+# 2. Bump version no composer.json
+# 3. Executar testes completos
+composer test-complete
+
+# 4. Executar benchmarks
+./benchmarks/run_benchmark.sh
+
+# 5. Validar projeto
+composer validate-project
+```
+
+### Release
+```bash
+# 1. Commit de release
+git add .
+git commit -m "chore: Release v1.x.x"
+
+# 2. Tag de versão
+git tag -a v1.x.x -m "Release version 1.x.x"
+
+# 3. Push
+git push origin main --tags
+```
+
+## 🤝 Contribuindo
+
+### Pull Request Process
+1. Fork o repositório
+2. Crie feature branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit suas mudanças: `git commit -m 'feat: adiciona nova funcionalidade'`
+4. Execute testes: `composer test`
+5. Push para branch: `git push origin feature/nova-funcionalidade`
+6. Abra Pull Request
+
+### Commit Message Format
+```
+type(scope): description
+
+body
+
+footer
+```
+
+**Types:**
+- `feat:` Nova funcionalidade
+- `fix:` Correção de bug
+- `docs:` Documentação
+- `style:` Formatação
+- `refactor:` Refatoração
+- `test:` Testes
+- `chore:` Manutenção
+
+## 📧 Suporte
+
+- **Issues:** GitHub Issues
+- **Discussões:** GitHub Discussions
+- **Email:** dev@express-php.com
+- **Documentation:** docs/

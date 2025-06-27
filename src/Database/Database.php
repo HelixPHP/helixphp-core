@@ -58,7 +58,12 @@ class Database
         $statement = $this->pdo->prepare($query);
         $statement->execute($bindings);
         $result = $statement->fetch();
-        return $result ?: null;
+
+        if ($result === false) {
+            return null;
+        }
+
+        return is_array($result) ? $result : null;
     }
 
     /**

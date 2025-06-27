@@ -37,6 +37,11 @@ class FileCache implements CacheInterface
 
         $data = unserialize($fileContents);
 
+        if (!is_array($data) || !isset($data['expires'], $data['value'])) {
+            $this->delete($key);
+            return $default;
+        }
+
         if ($data['expires'] && time() > $data['expires']) {
             $this->delete($key);
             return $default;

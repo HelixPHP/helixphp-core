@@ -178,16 +178,23 @@ class Request
             $this->body = new \stdClass();
             return;
         }
+
         $input = file_get_contents('php://input');
         if ($input !== false) {
             $decoded = json_decode($input);
-            $this->body = $decoded !== null ? $decoded : new \stdClass();
+            if ($decoded instanceof \stdClass) {
+                $this->body = $decoded;
+            } else {
+                $this->body = new \stdClass();
+            }
         } else {
             $this->body = new \stdClass();
         }
+
         if (json_last_error() == JSON_ERROR_NONE) {
             return;
         }
+
         // If JSON parsing fails, try to parse as form data
         if (!empty($_POST)) {
             $this->body = new stdClass();
@@ -246,7 +253,8 @@ class Request
      */
     public function file(string $key): ?array
     {
-        return $this->files[$key] ?? null;
+        $file = $this->files[$key] ?? null;
+        return is_array($file) ? $file : null;
     }
 
     /**
@@ -257,7 +265,8 @@ class Request
      */
     public function hasFile(string $key): bool
     {
-        return isset($this->files[$key]) && $this->files[$key]['error'] === UPLOAD_ERR_OK;
+        $file = $this->files[$key] ?? null;
+        return is_array($file) && isset($file['error']) && $file['error'] === UPLOAD_ERR_OK;
     }
 
     /**

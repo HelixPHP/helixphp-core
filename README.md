@@ -6,9 +6,9 @@
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
-**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com sistema nativo de autenticação multi-método.
+**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com otimizações integradas e sistema nativo de autenticação.
 
-> 🔐 **Novo na v1.0**: Sistema completo de autenticação com JWT, Basic Auth, Bearer Token, API Key e auto-detecção!
+> ⚡ **Alta Performance**: +47M ops/sec em CORS, +20M ops/sec em Response, cache integrado e roteamento otimizado!
 
 ## 🚀 Início Rápido
 
@@ -25,25 +25,23 @@ composer require cafernandes/express-php
 require_once 'vendor/autoload.php';
 
 use Express\ApiExpress;
-use Express\Middleware\Security\SecurityMiddleware;
-use Express\Middleware\Security\CorsMiddleware;
+use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 
 $app = new ApiExpress();
 
-// Aplicar middlewares de segurança
+// Middlewares de segurança
 $app->use(new SecurityMiddleware());
 $app->use(new CorsMiddleware());
+$app->use(AuthMiddleware::jwt('sua_chave_secreta'));
 
-// Rota básica
-$app->get('/', function($req, $res) {
-    $res->json(['message' => 'Olá Express PHP!']);
+// API RESTful
+$app->get('/api/users', function($req, $res) {
+    $res->json(['users' => $userService->getAll()]);
 });
 
-// Rota protegida com autenticação
 $app->post('/api/users', function($req, $res) {
-    // Dados automaticamente sanitizados pelo middleware de segurança
-    $userData = $req->body;
-    $res->json(['message' => 'Usuário criado', 'data' => $userData]);
+    $user = $userService->create($req->body);
+    $res->status(201)->json(['user' => $user]);
 });
 
 $app->run();
@@ -53,137 +51,129 @@ $app->run();
 
 - 🔐 **Autenticação Multi-método**: JWT, Basic Auth, Bearer Token, API Key
 - 🛡️ **Segurança Avançada**: CSRF, XSS, Rate Limiting, Headers de Segurança
-- 📡 **Streaming**: Suporte completo para streaming de dados, SSE e arquivos grandes
-- 📚 **Documentação OpenAPI/Swagger**: Geração automática de documentação
-- 🎯 **Middlewares Modulares**: Sistema flexível de middlewares
-- ⚡ **Performance**: Otimizado para alta performance
-- 🧪 **Testado**: 186+ testes unitários e 100% de cobertura de código
-- 📊 **Análise Estática**: PHPStan Level 8 compliance
+- 📡 **Streaming**: Server-Sent Events, Upload de arquivos grandes
+- 📚 **OpenAPI/Swagger**: Documentação automática de APIs
+- ⚡ **Performance**: Cache integrado, pipeline otimizado de middlewares
+- 🧪 **Qualidade**: 245+ testes, PHPStan Level 8, PSR-12
 
-## 📖 Documentação
+## 📊 Performance Benchmarks
 
-- **[🚀 Guia de Início](docs/guides/starter/README.md)** - Comece aqui!
-- **[📚 Documentação Completa](docs/README.md)** - Documentação detalhada
-- **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia de autenticação
-- **[📡 Streaming de Dados](docs/pt-br/STREAMING.md)** - Streaming e Server-Sent Events
-- **[🛡️ Middlewares de Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Segurança
-- **[📝 Exemplos Práticos](examples/)** - Exemplos prontos para usar
+| Operação | Ops/segundo | Tempo médio |
+|----------|-------------|-------------|
+| CORS Headers | 47.6M+ | 0.02 μs |
+| Response Creation | 20.3M+ | 0.05 μs |
+| Route Matching | 2.8M+ | 0.36 μs |
+| Middleware Execution | 2.0M+ | 0.49 μs |
+| App Initialization | 579K+ | 1.72 μs |
 
-## 🎯 Exemplos de Aprendizado
-
-O framework inclui exemplos práticos e funcionais para facilitar o aprendizado:
-
-- **[⭐ Básico](examples/example_basic.php)** - API REST básica e conceitos fundamentais
-- **[🔐 Autenticação Completa](examples/example_auth.php)** - Sistema completo de autenticação
-- **[🔑 Autenticação Simples](examples/example_auth_simple.php)** - JWT básico e controle de acesso
-- **[🛡️ Middlewares](examples/example_middleware.php)** - CORS, rate limiting e validação
-- **[🚀 App Completo](examples/app.php)** - Aplicação completa com todos os recursos
+> 📋 **[Ver relatório completo](docs/implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY_2025-06-27.md)**
 
 ## 🛡️ Sistema de Autenticação
 
 ```php
-// Autenticação JWT
-$app->use(AuthMiddleware::jwt('sua_chave_secreta'));
+// JWT simples
+$app->use(AuthMiddleware::jwt('chave_secreta'));
 
-// Múltiplos métodos de autenticação
+// Múltiplos métodos
 $app->use(new AuthMiddleware([
     'authMethods' => ['jwt', 'basic', 'apikey'],
-    'jwtSecret' => 'sua_chave_jwt',
-    'basicAuthCallback' => 'validarUsuario',
-    'apiKeyCallback' => 'validarApiKey'
+    'jwtSecret' => 'chave_jwt',
+    'routes' => ['/api/*'], // proteger apenas /api/*
+    'except' => ['/api/public'] // exceto rotas públicas
 ]));
 
-// Acessar dados do usuário autenticado
+// Acesso aos dados do usuário
 $app->get('/profile', function($req, $res) {
     $user = $req->user; // dados do usuário autenticado
-    $method = $req->auth['method']; // método de auth usado
-    $res->json(['user' => $user, 'auth_method' => $method]);
+    $res->json(['profile' => $user]);
 });
 ```
 
-## 📡 Streaming de Dados
+## 📖 Documentação
 
-O Express-PHP oferece suporte completo para streaming de dados em tempo real:
+- **[🚀 Guia de Início Rápido](docs/guides/QUICK_START_GUIDE.md)** - Setup em 5 minutos
+- **[📚 Documentação Completa](docs/DOCUMENTATION_INDEX.md)** - Índice completo
+- **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia detalhado
+- **[🛡️ Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Implementação segura
+- **[📡 Streaming](docs/pt-br/STREAMING.md)** - Server-Sent Events
+- **[🔧 Pre-commit Hooks](docs/guides/PRECOMMIT_SETUP.md)** - Validação de qualidade
 
-```php
-// Streaming de texto simples
-$app->get('/stream/text', function($req, $res) {
-    $res->startStream('text/plain; charset=utf-8');
+## 🎯 Exemplos Práticos
 
-    for ($i = 1; $i <= 10; $i++) {
-        $res->write("Chunk {$i}\n");
-        sleep(1); // Simula processamento
-    }
+| Exemplo | Descrição |
+|---------|-----------|
+| **[⭐ Básico](examples/example_basic.php)** | API REST e conceitos fundamentais |
+| **[🔐 Auth Completo](examples/example_auth.php)** | Sistema completo de autenticação |
+| **[🔑 Auth Simples](examples/example_auth_simple.php)** | JWT básico e controle de acesso |
+| **[🛡️ Middlewares](examples/example_middleware.php)** | CORS, rate limiting, validação |
+| **[📚 OpenAPI](examples/example_openapi_docs.php)** | Swagger UI automático |
+| **[🚀 App Completo](examples/example_complete_optimizations.php)** | Aplicação com todos os recursos |
 
-    $res->endStream();
-});
+## 🔧 Desenvolvimento e Qualidade
 
-// Server-Sent Events (SSE)
-$app->get('/events', function($req, $res) {
-    $res->sendEvent('Conexão estabelecida', 'connect');
+### Validação Pre-commit
 
-    for ($i = 1; $i <= 10; $i++) {
-        $data = ['counter' => $i, 'timestamp' => time()];
-        $res->sendEvent($data, 'update', (string)$i);
-        sleep(1);
-    }
-});
+```bash
+# Instalar hooks de qualidade
+composer run precommit:install
 
-// Streaming de arquivos grandes
-$app->get('/download/:file', function($req, $res) {
-    $filePath = "/path/to/{$req->params['file']}";
+# Testar validações
+composer run precommit:test
 
-    $headers = [
-        'Content-Disposition' => 'attachment; filename="' . basename($filePath) . '"'
-    ];
-
-    $res->streamFile($filePath, $headers);
-});
-
-// Streaming de dados JSON
-$app->get('/data/export', function($req, $res) {
-    $res->startStream('application/json');
-    $res->write('[');
-
-    for ($i = 1; $i <= 1000; $i++) {
-        if ($i > 1) $res->write(',');
-        $res->writeJson(['id' => $i, 'data' => "Item {$i}"]);
-    }
-
-    $res->write(']');
-    $res->endStream();
-});
+# Verificar qualidade do código
+composer run quality:check
 ```
 
-### Recursos de Streaming
+### Scripts Disponíveis
 
-- **Streaming de Texto**: Para logs e dados em tempo real
-- **Server-Sent Events**: Para dashboards e notificações
-- **Streaming de Arquivos**: Para downloads de arquivos grandes
-- **Streaming de JSON**: Para exports e APIs de dados
-- **Buffer Customizável**: Controle fino sobre performance
-- **Heartbeat**: Manutenção de conexões SSE ativas
+```bash
+composer test           # Executar testes
+composer phpstan        # Análise estática
+composer cs:check       # Verificar PSR-12
+composer cs:fix         # Corrigir PSR-12
+composer benchmark      # Executar benchmarks
+```
 
-## ⚙️ Requisitos
+## 🛠️ Middlewares Inclusos
 
-- **PHP**: 8.1.0 ou superior
-- **Extensões**: json, session
-- **Recomendado**: openssl, mbstring, fileinfo
+| Middleware | Descrição |
+|------------|-----------|
+| **SecurityMiddleware** | Headers de segurança (XSS, CSRF, etc.) |
+| **CorsMiddleware** | Cross-Origin Resource Sharing |
+| **AuthMiddleware** | Autenticação multi-método |
+| **RateLimitMiddleware** | Controle de taxa de requisições |
+| **ValidationMiddleware** | Validação de dados de entrada |
 
-## 🤝 Contribuição
+## 📊 Status do Projeto
 
-Contribuições são bem-vindas! Veja nosso [guia de contribuição](CONTRIBUTING.md).
+- ✅ **Modernização Completa**: PHP 8.1+, tipagem strict, otimizações
+- ✅ **Qualidade de Código**: PHPStan Level 8, PSR-12, pre-commit hooks
+- ✅ **Performance**: Benchmarks otimizados, cache integrado
+- ✅ **Segurança**: Middlewares de segurança, autenticação robusta
+- ✅ **Documentação**: Guias completos, exemplos práticos
+- ✅ **Testes**: 245+ testes, cobertura completa
+
+## 🤝 Contribuindo
+
+1. Fork o projeto
+2. Crie sua feature branch (`git checkout -b feature/nova-feature`)
+3. Configure os hooks: `composer run precommit:install`
+4. Commit suas mudanças (`git commit -m 'Add: nova feature'`)
+5. Push para a branch (`git push origin feature/nova-feature`)
+6. Abra um Pull Request
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
 
-## 🌟 Suporte
+## 🔗 Links Úteis
 
-- [Issues](https://github.com/CAFernandes/express-php/issues) - Reportar bugs ou solicitar recursos
-- [Discussions](https://github.com/CAFernandes/express-php/discussions) - Perguntas e discussões
-- [Wiki](https://github.com/CAFernandes/express-php/wiki) - Documentação adicional
+- **[Documentação](docs/DOCUMENTATION_INDEX.md)** - Documentação completa
+- **[Exemplos](examples/)** - Códigos de exemplo
+- **[Benchmarks](benchmarks/)** - Testes de performance
+- **[Issues](https://github.com/CAFernandes/express-php/issues)** - Reportar problemas
+- **[Releases](https://github.com/CAFernandes/express-php/releases)** - Versões disponíveis
 
 ---
 
-**🚀 Pronto para começar?** [Siga nosso guia de início rápido](docs/guides/starter/README.md)!
+*Desenvolvido com ❤️ para a comunidade PHP*

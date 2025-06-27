@@ -1,95 +1,52 @@
-# 📚 Documentação Expr## 🎯 ExExpl## 🎯 Exemplos Práticos
+# 📚 Express PHP Framework - Documentação
 
-Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
-
-- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
-- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
-- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
-- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
-- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursoslos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
-
-- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
-- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
-- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
-- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
-- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursosticos
-
-Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
-
-- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
-- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
-- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
-- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
-- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursos-vindo à documentação completa do Express PHP Microframework!
+Bem-vindo à documentação oficial do Express PHP Framework!
 
 ## 🚀 Início Rápido
 
-- **[💡 Guia de Início](guides/starter/)** - Comece aqui! Tutorial completo para iniciantes
-- **[⚡ Instalação Rápida](../README.md#-início-rápido)** - Instale e rode em 5 minutos
+- **[📖 Guia de Implementação Rápida](guides/QUICK_START_GUIDE.md)** - Comece aqui!
+- **[🔧 Criação de Middleware](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Desenvolva middleware personalizado
+- **[🔒 Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Pratique segurança
 
-## 📖 Documentação por Idioma
+## 📊 Performance
 
-| Idioma | Link | Descrição |
-|--------|------|-----------|
-| 🇧🇷 **Português** | **[pt-br/README.md](pt-br/README.md)** | Documentação completa em português |
-| 🇺🇸 **English** | **[en/README.md](en/README.md)** | Complete documentation in English |
+O Express PHP Framework é otimizado para alta performance:
 
-## 🔐 Autenticação e Segurança
+- **CORS Processing:** 47.7M ops/s
+- **Response Creation:** 23.8M ops/s
+- **Memory Usage:** 1.36KB/instance
+- **[📈 Ver Benchmarks Completos](../benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)**
 
-- **[Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - JWT, Basic Auth, API Key, Bearer Token
-- **[Middlewares de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - CSRF, XSS, Rate Limiting
-- **[Referência de API](pt-br/objetos.md)** - Objetos e métodos do framework
+## 📋 Estrutura da Documentação
 
-## 🎯 Exemplos Práticos
+### `/guides/` - Guias Práticos
+- `QUICK_START_GUIDE.md` - Implementação rápida e primeiros passos
+- `CUSTOM_MIDDLEWARE_GUIDE.md` - Criação de middleware personalizado
+- `SECURITY_IMPLEMENTATION.md` - Boas práticas de segurança
 
-Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
+### `/development/` - Desenvolvimento
+- `DEVELOPMENT.md` - Ambiente de desenvolvimento
 
-- **[� Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
-- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
-- **[� Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
-- **[�️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
-- **[📝 Blog System](../examples/example_blog.php)** - Sistema de blog com categorias
-- **[🛡️ Segurança](../examples/example_security.php)** - Demonstração de middlewares
-- **[🏗️ App Completo](../examples/example_complete.php)** - Integração de todos os recursos
-- **[📡 Streaming](../examples/example_streaming.php)** - Server-Sent Events (SSE)
+### `/implementation/` - Implementações Específicas
+- `AUTH_IMPLEMENTATION_SUMMARY.md` - Sistema de autenticação
 
-## 🛠️ Guias para Desenvolvedores
+### `/pt-br/` - Documentação em Português
+- `README.md` - Visão geral em português
+- `AUTH_MIDDLEWARE.md` - Middleware de autenticação
+- `objetos.md` - Documentação de objetos
 
-### 📦 Publicação e Deploy
-- **[Guia de Publicação](guides/PUBLISHING_GUIDE.md)** - Como publicar no Packagist
-- **[Status de Publicação](guides/READY_FOR_PUBLICATION.md)** - Checklist para release
+## 🎯 Para Começar
 
-### 🔧 Desenvolvimento Avançado
-- **[Setup de Desenvolvimento](development/DEVELOPMENT.md)** - Ambiente de desenvolvimento
-- **[Migração de Middlewares](development/MIDDLEWARE_MIGRATION.md)** - Migração e customização
-- **[Internacionalização](development/INTERNATIONALIZATION.md)** - Suporte multilíngue
-- **[Composer PSR-4](development/COMPOSER_PSR4.md)** - Autoload e estrutura
+1. **Iniciantes:** Comece com o [Guia de Implementação Rápida](guides/QUICK_START_GUIDE.md)
+2. **Desenvolvedores:** Explore [Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)
+3. **Produção:** Consulte [Segurança](guides/SECURITY_IMPLEMENTATION.md)
 
-## 📊 Relatórios Técnicos
+## 📞 Precisa de Ajuda?
 
-- **[Cobertura de Testes](TEST_COVERAGE_REPORT.md)** - 186 testes, 100% cobertura
-- **[Implementação de Autenticação](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Sistema de auth completo
-
-## 🌟 Recursos do Framework
-
-- ✅ **PHP 8.1+** compatível
-- ✅ **PHPStan Level 8** compliance
-- ✅ **PSR-12** code style
-- ✅ **186 testes** unitários
-- ✅ **Autenticação multi-método** (JWT, Basic, API Key, Bearer)
-- ✅ **Middlewares de segurança** (CSRF, XSS, Rate Limiting)
-- ✅ **Server-Sent Events** (SSE) streaming
-- ✅ **Zero dependências** obrigatórias
-- ✅ **Performance otimizada**
-
-## 🔗 Links Úteis
-
-- **[GitHub Repository](https://github.com/CAFernandes/express-php)**
-- **[Packagist Package](https://packagist.org/packages/cafernandes/express-php)**
-- **[Issues & Support](https://github.com/CAFernandes/express-php/issues)**
-- **[Contributing Guide](../CONTRIBUTING.md)**
-- **[License](../LICENSE)**
+- **Documentação Principal:** [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)
+- **Issues:** [GitHub Issues](https://github.com/cfernandes/express-php/issues)
+- **Exemplos:** [/examples](../examples/)
 
 ---
 
-**💡 Dica:** Se você é novo no Express PHP, comece com o **[Guia de Início](guides/starter/)** para ter uma experiência guiada completa!
+**Express PHP Framework** - Documentação para máxima produtividade! 🚀

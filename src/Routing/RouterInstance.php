@@ -3,6 +3,7 @@
 namespace Express\Routing;
 
 use InvalidArgumentException;
+use Express\Utils\Arr;
 
 /**
  * RouterInstance permite criar sub-routers independentes com prefixo e rotas próprias.
@@ -148,7 +149,7 @@ class RouterInstance
         $fullPath = preg_replace('/\/+/', '/', $fullPath);
 
         $metadata = [];
-        if (is_array(end($handlers)) && $this->isAssoc(end($handlers))) {
+        if (is_array(end($handlers)) && Arr::isAssoc(end($handlers))) {
             $metadata = array_pop($handlers);
         }
 
@@ -170,17 +171,6 @@ class RouterInstance
             'handler' => $handler,
             'metadata' => $metadata
         ];
-    }
-
-    /**
-     * @param mixed[] $arr
-     */
-    private function isAssoc(array $arr): bool
-    {
-        if ([] === $arr) {
-            return false;
-        }
-        return array_keys($arr) !== range(0, count($arr) - 1);
     }
 
     /**

@@ -1,315 +1,371 @@
-# Objetos e Funcionalidades do Express PHP
+# Objetos e Classes - Express PHP Framework
 
-## Índice
-- [ApiExpress](#apiexpress)
-- [Router](#router)
-- [Request](#request)
-- [Response](#response)
-- [HeaderRequest](#headerrequest)
-- [ServerExpress](#serverexpress)
-- [Middlewares](#middlewares)
-- [Middlewares de Segurança](#middlewares-de-segurança)
+## 🏗️ Arquitetura Principal
 
----
+O Express PHP Framework é organizado em uma arquitetura modular com classes bem definidas e otimizadas.
 
-## ApiExpress
-Classe principal para inicialização e execução da aplicação.
-- **Função:** Gerencia o ciclo de vida da aplicação, delegando o roteamento e execução dos handlers.
-- **Principais métodos:**
-  - `run()`: Inicia o processamento da requisição, identifica a rota e executa o handler correspondente.
-  - `use($middleware)`: Registra middlewares globais ou agrupamento de rotas.
-  - Métodos mágicos para delegar chamadas de rotas (`get`, `post`, etc) para o Router.
-- **Exemplo:**
+## 📋 Classes Principais
+
+### 🚀 ApiExpress
+Classe principal do framework que gerencia toda a aplicação.
+
 ```php
-$app = new ApiExpress();
-$app->use(function($req, $res, $next) { /* ... */ $next(); });
-$app->get('/user/:id', function($req, $res) { ... });
-$app->run();
-```
+namespace Express;
 
-## Router
-Classe estática responsável pelo registro e identificação de rotas.
-- **Função:** Permite agrupar rotas, registrar handlers e middlewares para métodos HTTP e identificar a rota correspondente a uma requisição.
-- **Principais métodos:**
-  - `use($path)`: Define um prefixo/base para rotas.
-  - `get`, `post`, `put`, `delete`, etc: Registram rotas para métodos HTTP, aceitando múltiplos middlewares e handler final.
-  - `identify($method, $path)`: Retorna o handler, middlewares e parâmetros para a rota correspondente.
+class ApiExpress
+{
+    // Propriedades principais
+    private Router $router;
+    private Container $container;
+    private array $middleware = [];
 
-## Request
-Representa a requisição HTTP recebida.
-- **Função:** Facilita o acesso a parâmetros de rota, query string, corpo da requisição e cabeçalhos.
-- **Principais propriedades:**
-  - `$method`: Método HTTP.
-  - `$path`: Padrão da rota.
-  - `$params`: Parâmetros extraídos da URL.
-  - `$query`: Parâmetros da query string.
-  - `$body`: Corpo da requisição (JSON ou form-data).
-  - `$headers`: Instância de `HeaderRequest` para acesso aos cabeçalhos.
-- **Exemplo:**
-```php
-$app->get('/user/:id', function($req, $res) {
-  $id = $req->params->id;
-  $token = $req->headers->authorization;
-});
-```
+    // Métodos HTTP
+    public function get(string $path, callable $handler, ...$middlewares): void
+    public function post(string $path, callable $handler, ...$middlewares): void
+    public function put(string $path, callable $handler, ...$middlewares): void
+    public function delete(string $path, callable $handler, ...$middlewares): void
+    public function patch(string $path, callable $handler, ...$middlewares): void
+    public function options(string $path, callable $handler, ...$middlewares): void
 
-## Response
-Constrói e envia a resposta HTTP.
-- **Função:** Permite definir status, cabeçalhos e corpo da resposta em diferentes formatos.
-- **Principais métodos:**
-  - `status($code)`: Define o status HTTP.
-  - `header($name, $value)`: Define um cabeçalho.
-  - `json($data)`: Envia resposta JSON.
-  - `text($text)`: Envia resposta em texto puro.
-  - `html($html)`: Envia resposta em HTML.
-- **Exemplo:**
-```php
-$res->status(200)->json(['ok' => true]);
-```
+    // Agrupamento e middleware
+    public function group(string $prefix, callable $callback): void
+    public function use(callable $middleware): void
 
-## HeaderRequest
-Gerencia e facilita o acesso aos cabeçalhos da requisição.
-- **Função:** Converte os cabeçalhos para camelCase e permite acesso via propriedades ou métodos.
-- **Principais métodos:**
-  - `getHeader($name)`: Retorna o valor de um cabeçalho.
-  - `getAllHeaders()`: Retorna todos os cabeçalhos.
-  - `hasHeader($name)`: Verifica se um cabeçalho existe.
-- **Exemplo:**
-```php
-if ($req->headers->hasHeader('authorization')) {
-  $token = $req->headers->authorization;
+    // Inicialização
+    public function listen(int $port = 8000): void
 }
 ```
 
-## ServerExpress
-Classe placeholder para futuras implementações de funcionalidades de servidor.
-- **Função:** Atualmente vazia, pode ser estendida para customizações.
+### 🛣️ Router
+Sistema de roteamento otimizado com cache automático.
 
-## Middlewares
-O Express PHP suporta middlewares globais e por rota, com assinatura compatível ao Express.js:
-
-- **Middleware global:**
 ```php
-$app->use(function($req, $res, $next) {
-    // Executa para todas as rotas
-    $next();
-});
+namespace Express\Routing;
+
+class Router
+{
+    // Cache de rotas
+    private static array $routeCache = [];
+    private static array $groupCache = [];
+
+    // Registro de rotas
+    public static function addRoute(string $method, string $path, callable $handler): void
+    public static function group(string $prefix, callable $callback): void
+
+    // Resolução de rotas
+    public static function resolve(string $method, string $path): ?array
+    public static function identify(string $method, string $path): ?array
+
+    // Estatísticas e performance
+    public static function getStats(): array
+    public static function getGroupStats(): array
+    public static function warmupCache(): void
+}
 ```
 
-- **Middleware por rota:**
+### 📨 Request
+Objeto que representa a requisição HTTP.
+
 ```php
-$app->get('/rota',
-    function($req, $res, $next) {
-        // Middleware 1
-        $next();
-    },
-    function($req, $res, $next) {
-        // Middleware 2
-        $next();
-    },
-    function($req, $res) {
-        // Handler final
-        $res->json(['ok' => true]);
-    }
-);
+namespace Express\Http;
+
+class Request
+{
+    public string $method;
+    public string $path;
+    public array $params = [];
+    public array $query = [];
+    public array $body = [];
+    public array $files = [];
+    public HeaderRequest $headers;
+
+    public function __construct(array $serverData = null)
+    public function param(string $key, mixed $default = null): mixed
+    public function query(string $key, mixed $default = null): mixed
+    public function body(string $key, mixed $default = null): mixed
+    public function file(string $key): ?array
+    public function ip(): string
+    public function userAgent(): string
+}
 ```
 
-- **Encadeamento:**
-  - Cada middleware deve chamar `$next()` para passar o controle adiante.
-  - É possível modificar o objeto `$request` entre middlewares.
+### 📤 Response
+Objeto que representa a resposta HTTP.
 
----
-
-## Middlewares de Segurança
-
-### SecurityMiddleware
-Middleware combinado que oferece proteção completa contra CSRF e XSS.
-- **Função:** Aplica múltiplas camadas de segurança em uma única configuração.
-- **Principais recursos:**
-  - Proteção CSRF automática
-  - Sanitização XSS de entrada
-  - Cabeçalhos de segurança
-  - Rate limiting opcional
-  - Configuração segura de sessão
-- **Exemplo:**
 ```php
-// Configuração básica
-$app->use(SecurityMiddleware::create());
+namespace Express\Http;
 
-// Configuração estrita
-$app->use(SecurityMiddleware::strict());
+class Response
+{
+    private int $statusCode = 200;
+    private array $headers = [];
+    private mixed $body = null;
 
-// Configuração personalizada
-$app->use(new SecurityMiddleware([
-    'enableCsrf' => true,
-    'enableXss' => true,
-    'rateLimiting' => false,
-    'csrf' => ['excludePaths' => ['/api/public']],
-    'xss' => ['excludeFields' => ['content']]
-]));
+    public function status(int $code): self
+    public function header(string $name, string $value): self
+    public function json(mixed $data): self
+    public function text(string $content): self
+    public function html(string $content): self
+    public function send(): void
+
+    // Streaming
+    public function startStream(): self
+    public function write(string $data): self
+    public function writeJson(mixed $data): self
+    public function endStream(): self
+}
 ```
 
-### CsrfMiddleware
-Middleware específico para proteção contra ataques CSRF.
-- **Função:** Valida tokens CSRF em requisições POST, PUT, PATCH e DELETE.
-- **Principais recursos:**
-  - Geração automática de tokens
-  - Validação em headers ou body
-  - Exclusão de caminhos específicos
-  - Métodos utilitários para formulários
-- **Exemplo:**
-```php
-$app->use(new CsrfMiddleware([
-    'headerName' => 'X-CSRF-Token',
-    'fieldName' => 'csrf_token',
-    'excludePaths' => ['/webhook'],
-    'methods' => ['POST', 'PUT', 'DELETE']
-]));
+## 🔧 Middleware e Segurança
 
-// Obter token para formulários
-$token = CsrfMiddleware::getToken();
-$hiddenField = CsrfMiddleware::hiddenField();
-$metaTag = CsrfMiddleware::metaTag();
+### 🛡️ CorsMiddleware
+Middleware CORS otimizado com cache de headers.
+
+```php
+namespace Express\Middleware\Security;
+
+class CorsMiddleware extends BaseMiddleware
+{
+    // Cache estático para performance
+    private static array $preCompiledHeaders = [];
+    private static array $compiledHeaderStrings = [];
+
+    public function __construct(array $options = [])
+    public function handle($request, $response, callable $next)
+
+    // Métodos estáticos otimizados
+    public static function create(array $config = []): callable
+    public static function simple(string $origin = '*'): callable
+    public static function development(): self
+    public static function production(array $allowedOrigins): self
+
+    // Performance e estatísticas
+    public static function getStats(): array
+    public static function benchmark(int $iterations = 10000): array
+}
 ```
 
-### XssMiddleware
-Middleware específico para proteção contra ataques XSS.
-- **Função:** Sanitiza dados de entrada e adiciona cabeçalhos de segurança.
-- **Principais recursos:**
-  - Sanitização automática de input
-  - Cabeçalhos de segurança (X-XSS-Protection, CSP, etc.)
-  - Detecção de conteúdo malicioso
-  - Tags HTML permitidas configuráveis
-  - Limpeza de URLs
-- **Exemplo:**
-```php
-$app->use(new XssMiddleware([
-    'sanitizeInput' => true,
-    'securityHeaders' => true,
-    'excludeFields' => ['rich_content'],
-    'allowedTags' => '<p><strong><em>',
-    'contentSecurityPolicy' => "default-src 'self';"
-]));
+### 🔐 AuthMiddleware
+Sistema de autenticação flexível.
 
-// Métodos utilitários
-$clean = XssMiddleware::sanitize($input);
-$hasXss = XssMiddleware::containsXss($input);
-$safeUrl = XssMiddleware::cleanUrl($url);
+```php
+namespace Express\Middleware\Security;
+
+class AuthMiddleware extends BaseMiddleware
+{
+    public static function jwt(array $config): callable
+    public static function bearer(array $config): callable
+    public static function basic(array $config): callable
+    public static function custom(callable $validator): callable
+
+    public function handle($request, $response, callable $next)
+}
 ```
 
-### Cabeçalhos de Segurança Aplicados
-Os middlewares de segurança automaticamente adicionam:
-- `X-XSS-Protection`: Proteção XSS do navegador
-- `X-Content-Type-Options`: Prevenção de MIME sniffing  
-- `X-Frame-Options`: Proteção contra clickjacking
-- `Referrer-Policy`: Controle de informações de referrer
-- `Content-Security-Policy`: Política de segurança de conteúdo
+### 🚦 RateLimitMiddleware
+Rate limiting inteligente por IP ou usuário.
 
-### Configuração de Sessão Segura
-O SecurityMiddleware configura automaticamente:
-- Cookies HttpOnly (não acessíveis via JavaScript)
-- Regeneração periódica de ID da sessão
-- SameSite cookies para proteção CSRF
-- Parâmetros seguros de tempo de vida
-
-### AuthMiddleware
-Middleware automático de autenticação com suporte nativo para múltiplos métodos.
-- **Função:** Autentica requisições usando JWT, Basic Auth, Bearer Token, API Key ou métodos customizados.
-- **Principais recursos:**
-  - Suporte a JWT com biblioteca Firebase ou implementação nativa
-  - Basic Authentication com callback customizado
-  - Bearer Token authentication
-  - API Key via header ou query parameter
-  - Autenticação customizada via callback
-  - Múltiplos métodos em uma única configuração
-  - Caminhos excluídos da autenticação
-  - Modo flexível (opcional)
-- **Exemplo JWT:**
 ```php
-// JWT apenas
-$app->use(AuthMiddleware::jwt('sua_chave_secreta'));
+namespace Express\Middleware\Security;
 
-// JWT com configurações
-$app->use(AuthMiddleware::jwt('chave_secreta', [
-    'excludePaths' => ['/public', '/login']
-]));
+class RateLimitMiddleware extends BaseMiddleware
+{
+    public static function create(array $config): callable
+    public function handle($request, $response, callable $next)
+
+    // Configurações padrão
+    private const DEFAULT_CONFIG = [
+        'max_requests' => 100,
+        'window' => 3600,
+        'storage' => 'memory'
+    ];
+}
 ```
 
-- **Exemplo Basic Auth:**
+## 🔧 Utilitários e Helpers
+
+### 🛠️ JWTHelper
+Utilitário para trabalhar com JSON Web Tokens.
+
 ```php
-function validateUser($username, $password) {
-    // Validar no banco de dados
-    return $username === 'admin' && $password === 'senha123'
-        ? ['id' => 1, 'username' => 'admin'] : false;
+namespace Express\Authentication;
+
+class JWTHelper
+{
+    public static function encode(array $payload, string $secret): string
+    public static function decode(string $token, string $secret): ?array
+    public static function isValid(string $token, string $secret): bool
+    public static function getPayload(string $token): ?array
+    public static function isExpired(string $token, int $leeway = 0): bool
+    public static function generateSecret(int $length = 32): string
+    public static function createRefreshToken(mixed $userId): string
+}
+```
+
+### 📊 Cache
+Sistema de cache flexível com múltiplos drivers.
+
+```php
+namespace Express\Cache;
+
+interface CacheInterface
+{
+    public function get(string $key, mixed $default = null): mixed
+    public function set(string $key, mixed $value, ?int $ttl = null): bool
+    public function delete(string $key): bool
+    public function clear(): bool
+    public function has(string $key): bool
 }
 
-$app->use(AuthMiddleware::basic('validateUser'));
+class FileCache implements CacheInterface
+class MemoryCache implements CacheInterface
 ```
 
-- **Exemplo API Key:**
+### 🗄️ Database
+Conexão e operações de banco de dados.
+
 ```php
-function validateApiKey($key) {
-    $validKeys = ['key123' => ['name' => 'App Mobile']];
-    return $validKeys[$key] ?? false;
+namespace Express\Database;
+
+class Database
+{
+    public function __construct(array $config)
+    public function query(string $sql, array $params = []): array
+    public function execute(string $sql, array $params = []): bool
+    public function insert(string $table, array $data): int
+    public function update(string $table, array $data, array $where): int
+    public function delete(string $table, array $where): int
+    public function beginTransaction(): void
+    public function commit(): void
+    public function rollback(): void
+}
+```
+
+## 🌊 Streaming e Eventos
+
+### 📡 Streaming
+Sistema avançado de streaming de dados.
+
+```php
+namespace Express\Streaming;
+
+class StreamingResponse
+{
+    public function startStream(): self
+    public function setBufferSize(int $size): self
+    public function write(string $data): self
+    public function writeJson(mixed $data): self
+    public function sendEvent(string $event, mixed $data): self
+    public function sendHeartbeat(): self
+    public function endStream(): self
+    public function streamFile(string $path): self
+    public function streamResource($resource): self
+}
+```
+
+### 📨 Events
+Sistema de eventos para comunicação entre componentes.
+
+```php
+namespace Express\Events;
+
+class EventDispatcher
+{
+    public function dispatch(Event $event): void
+    public function addListener(string $eventName, callable $listener): void
+    public function removeListener(string $eventName, callable $listener): void
+    public function getListeners(string $eventName = null): array
 }
 
-$app->use(AuthMiddleware::apiKey('validateApiKey'));
-// Usar: Header X-API-Key: key123 OU ?api_key=key123
-```
-
-- **Exemplo Múltiplos Métodos:**
-```php
-$app->use(new AuthMiddleware([
-    'authMethods' => ['jwt', 'basic', 'apikey'],
-    'jwtSecret' => 'chave_jwt',
-    'basicAuthCallback' => 'validateUser',
-    'apiKeyCallback' => 'validateApiKey',
-    'allowMultiple' => true,
-    'excludePaths' => ['/public']
-]));
-```
-
-- **Acessar dados do usuário:**
-```php
-$app->get('/profile', function($req, $res) {
-    $user = $req->user; // dados do usuário autenticado
-    $method = $req->auth['method']; // método usado (jwt, basic, etc)
-    $res->json(['user' => $user, 'auth_method' => $method]);
-});
-```
-
-### JWTHelper
-Helper para trabalhar com JSON Web Tokens de forma simples.
-- **Função:** Facilita criação, validação e decodificação de tokens JWT.
-- **Principais métodos:**
-  - `encode($payload, $secret, $options)`: Gera um token JWT
-  - `decode($token, $secret, $options)`: Decodifica e valida token
-  - `isValid($token, $secret)`: Verifica se token é válido
-  - `isExpired($token, $leeway)`: Verifica se token expirou
-  - `getPayload($token)`: Extrai payload sem validar assinatura
-  - `generateSecret($length)`: Gera chave secreta aleatória
-  - `createRefreshToken($userId, $secret)`: Cria refresh token
-  - `validateRefreshToken($token, $secret)`: Valida refresh token
-- **Exemplo:**
-```php
-use Express\Helpers\JWTHelper;
-
-// Gerar token
-$token = JWTHelper::encode([
-    'user_id' => 123,
-    'username' => 'usuario',
-    'role' => 'admin'
-], 'chave_secreta', [
-    'expiresIn' => 3600 // 1 hora
-]);
-
-// Validar token
-if (JWTHelper::isValid($token, 'chave_secreta')) {
-    $payload = JWTHelper::decode($token, 'chave_secreta');
-    echo "Usuário: " . $payload['username'];
+class Event
+{
+    public function __construct(string $name, array $data = [])
+    public function getName(): string
+    public function getData(): array
+    public function isPropagationStopped(): bool
+    public function stopPropagation(): void
 }
-
-// Refresh token
-$refreshToken = JWTHelper::createRefreshToken(123, 'chave_secreta');
-$refreshData = JWTHelper::validateRefreshToken($refreshToken, 'chave_secreta');
 ```
+
+## 🔍 Validação
+
+### ✅ Validator
+Sistema de validação robusto e extensível.
+
+```php
+namespace Express\Validation;
+
+class Validator
+{
+    public static function make(array $data, array $rules): self
+    public function validate(): bool
+    public function fails(): bool
+    public function errors(): array
+    public function firstError(string $field = null): ?string
+
+    // Regras disponíveis
+    private array $availableRules = [
+        'required', 'string', 'numeric', 'email',
+        'min', 'max', 'in', 'regex', 'confirmed'
+    ];
+}
+```
+
+## 📊 Performance e Benchmarks
+
+### 📈 Estatísticas
+Todas as classes principais oferecem métodos de estatísticas:
+
+```php
+// Estatísticas do Router
+Router::getStats(); // Cache hits, misses, routes count
+Router::getGroupStats(); // Group performance data
+
+// Estatísticas do CORS
+CorsMiddleware::getStats(); // Cache usage, memory consumption
+
+// Benchmarks
+CorsMiddleware::benchmark(10000); // Performance testing
+Router::benchmarkGroupAccess('/api', 1000); // Group performance
+```
+
+## 🛠️ Configuração e Container
+
+### 📦 Container
+Container de dependências simples e eficiente.
+
+```php
+namespace Express\Core;
+
+class Container
+{
+    public function bind(string $abstract, callable $concrete): void
+    public function singleton(string $abstract, callable $concrete): void
+    public function make(string $abstract): mixed
+    public function has(string $abstract): bool
+}
+```
+
+### ⚙️ Config
+Sistema de configuração centralizado.
+
+```php
+namespace Express\Core;
+
+class Config
+{
+    public static function set(string $key, mixed $value): void
+    public static function get(string $key, mixed $default = null): mixed
+    public static function has(string $key): bool
+    public static function all(): array
+    public static function load(string $file): void
+}
+```
+
+## 📚 Exemplos de Uso
+
+Para ver exemplos práticos de uso de cada classe, consulte:
+
+- [examples/](../../examples/) - Exemplos básicos
+- [examples/snippets/](../../examples/snippets/) - Snippets de código
+- [tests/](../../tests/) - Testes unitários com exemplos de uso

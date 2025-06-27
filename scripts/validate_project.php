@@ -22,6 +22,7 @@ class ProjectValidator
         $this->validateStructure();
         $this->validateComposer();
         $this->validateMiddlewares();
+        $this->validateOpenApiFeatures();
         $this->validateExamples();
         $this->validateTests();
         $this->validateDocumentation();
@@ -61,7 +62,11 @@ class ProjectValidator
             'src/Authentication/JWTHelper.php',
             'composer.json',
             'README.md',
-            'docs/guides/PUBLISHING_GUIDE.md'
+            'docs/DOCUMENTATION_INDEX.md',
+            'docs/guides/QUICK_START_GUIDE.md',
+            'docs/guides/PRECOMMIT_SETUP.md',
+            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
+            'scripts/README.md'
         ];
 
         foreach ($requiredFiles as $file) {
@@ -164,8 +169,13 @@ class ProjectValidator
         echo "📖 Validando exemplos...\n";
 
         $examples = [
+            'examples/example_basic.php',
             'examples/example_auth.php',
-            'examples/snippets/auth_snippets.php'
+            'examples/example_auth_simple.php',
+            'examples/example_middleware.php',
+            'examples/example_standard_middlewares.php',
+            'examples/example_openapi_docs.php',
+            'examples/example_complete_optimizations.php'
         ];
 
         foreach ($examples as $example) {
@@ -181,6 +191,32 @@ class ProjectValidator
                 }
             } else {
                 $this->errors[] = "Exemplo {$example} não encontrado";
+            }
+        }
+
+        // Validação específica para o exemplo OpenAPI
+        if (file_exists('examples/example_openapi_docs.php')) {
+            $content = file_get_contents('examples/example_openapi_docs.php');
+            if (strpos($content, 'OpenApiExporter') !== false) {
+                $this->passed[] = "Exemplo OpenAPI usa OpenApiExporter corretamente";
+            } else {
+                $this->warnings[] = "Exemplo OpenAPI pode não estar usando OpenApiExporter";
+            }
+
+            if (strpos($content, '/docs') !== false && strpos($content, 'swagger-ui') !== false) {
+                $this->passed[] = "Exemplo OpenAPI inclui interface Swagger UI";
+            } else {
+                $this->warnings[] = "Exemplo OpenAPI pode não ter interface Swagger UI completa";
+            }
+        }
+
+        // Verificar se o README dos exemplos está atualizado
+        if (file_exists('examples/README.md')) {
+            $exampleReadme = file_get_contents('examples/README.md');
+            if (strpos($exampleReadme, 'example_openapi_docs.php') !== false) {
+                $this->passed[] = "README dos exemplos menciona exemplo OpenAPI";
+            } else {
+                $this->warnings[] = "README dos exemplos pode não estar atualizado com exemplo OpenAPI";
             }
         }
 
@@ -238,17 +274,15 @@ class ProjectValidator
             'README.md',
             'docs/DOCUMENTATION_INDEX.md',
             'docs/README.md',
-            'docs/pt-br/README.md',
-            'docs/pt-br/AUTH_MIDDLEWARE.md',
-            'docs/pt-br/objetos.md',
-            'docs/guides/PUBLISHING_GUIDE.md',
-            'docs/guides/READY_FOR_PUBLICATION.md',
+            'docs/guides/QUICK_START_GUIDE.md',
+            'docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md',
+            'docs/guides/STANDARD_MIDDLEWARES.md',
             'docs/guides/SECURITY_IMPLEMENTATION.md',
-            'docs/implementation/AUTH_IMPLEMENTATION_SUMMARY.md',
-            'docs/development/DEVELOPMENT.md',
-            'docs/development/MIDDLEWARE_MIGRATION.md',
-            'docs/development/INTERNATIONALIZATION.md',
-            'docs/development/COMPOSER_PSR4.md'
+            'docs/guides/PRECOMMIT_SETUP.md',
+            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
+            'docs/implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY_2025-06-27.md',
+            'scripts/README.md',
+            'benchmarks/README.md'
         ];
 
         foreach ($docs as $doc) {
@@ -261,6 +295,61 @@ class ProjectValidator
                 }
             } else {
                 $this->errors[] = "Documentação {$doc} não encontrada";
+            }
+        }
+
+        // Validações específicas da nova estrutura
+        if (file_exists('docs/guides/QUICK_START_GUIDE.md')) {
+            $quickStart = file_get_contents('docs/guides/QUICK_START_GUIDE.md');
+            if (strpos($quickStart, 'composer require') !== false) {
+                $this->passed[] = "Guia rápido inclui instruções de instalação";
+            } else {
+                $this->warnings[] = "Guia rápido pode não ter instruções de instalação";
+            }
+        }
+
+        if (file_exists('docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md')) {
+            $middlewareGuide = file_get_contents('docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md');
+            if (strpos($middlewareGuide, 'MiddlewareInterface') !== false) {
+                $this->passed[] = "Guia de middleware explica interface";
+            } else {
+                $this->warnings[] = "Guia de middleware pode não explicar interface";
+            }
+        }
+
+        if (file_exists('docs/guides/STANDARD_MIDDLEWARES.md')) {
+            $standardMiddlewares = file_get_contents('docs/guides/STANDARD_MIDDLEWARES.md');
+            if (strpos($standardMiddlewares, 'SecurityMiddleware') !== false &&
+                strpos($standardMiddlewares, 'CorsMiddleware') !== false) {
+                $this->passed[] = "Documentação de middlewares padrão está completa";
+            } else {
+                $this->warnings[] = "Documentação de middlewares padrão pode estar incompleta";
+            }
+        }
+
+        // Verificar se README principal foi atualizado
+        if (file_exists('README.md')) {
+            $readme = file_get_contents('README.md');
+            if (strpos($readme, 'QUICK_START_GUIDE.md') !== false) {
+                $this->passed[] = "README principal referencia guia rápido";
+            } else {
+                $this->warnings[] = "README principal pode não referenciar guia rápido";
+            }
+
+            if (strpos($readme, 'example_openapi_docs.php') !== false) {
+                $this->passed[] = "README principal referencia exemplo OpenAPI";
+            } else {
+                $this->warnings[] = "README principal pode não referenciar exemplo OpenAPI";
+            }
+        }
+
+        // Verificar estrutura de benchmarks
+        if (file_exists('benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md')) {
+            $perfSummary = file_get_contents('benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md');
+            if (strpos($perfSummary, '2025') !== false) {
+                $this->passed[] = "Relatório de performance tem dados recentes";
+            } else {
+                $this->warnings[] = "Relatório de performance pode estar desatualizado";
             }
         }
 
@@ -345,6 +434,58 @@ class ProjectValidator
         }
 
         echo "✅ Segurança validada\n\n";
+    }
+
+    private function validateOpenApiFeatures()
+    {
+        echo "📚 Validando recursos OpenAPI/Swagger...\n";
+
+        // Verificar se OpenApiExporter existe
+        if (class_exists('Express\\Utils\\OpenApiExporter')) {
+            $this->passed[] = "OpenApiExporter carregado";
+
+            // Testar export básico
+            try {
+                if (class_exists('Express\\Routing\\Router')) {
+                    $docs = Express\Utils\OpenApiExporter::export('Express\\Routing\\Router');
+                    if (is_array($docs) && isset($docs['openapi'])) {
+                        $this->passed[] = "OpenApiExporter pode gerar documentação";
+
+                        if ($docs['openapi'] === '3.0.0') {
+                            $this->passed[] = "OpenApiExporter gera OpenAPI 3.0.0";
+                        } else {
+                            $this->warnings[] = "OpenApiExporter pode não estar usando OpenAPI 3.0.0";
+                        }
+                    } else {
+                        $this->errors[] = "OpenApiExporter não gera documentação válida";
+                    }
+                } else {
+                    $this->warnings[] = "Router não encontrado para testar OpenApiExporter";
+                }
+            } catch (Exception $e) {
+                $this->errors[] = "Erro ao testar OpenApiExporter: " . $e->getMessage();
+            }
+        } else {
+            $this->errors[] = "OpenApiExporter não encontrado";
+        }
+
+        // Verificar se o README principal menciona OpenAPI
+        if (file_exists('README.md')) {
+            $readme = file_get_contents('README.md');
+            if (strpos($readme, 'OpenAPI') !== false || strpos($readme, 'Swagger') !== false) {
+                $this->passed[] = "README principal menciona OpenAPI/Swagger";
+
+                if (strpos($readme, 'OpenApiExporter') !== false) {
+                    $this->passed[] = "README explica como usar OpenApiExporter";
+                } else {
+                    $this->warnings[] = "README pode não explicar como usar OpenApiExporter";
+                }
+            } else {
+                $this->warnings[] = "README principal pode não mencionar recursos OpenAPI";
+            }
+        }
+
+        echo "✅ Recursos OpenAPI validados\n\n";
     }
 
     private function generateReport()

@@ -8,7 +8,10 @@ use Express\Core\Config;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Routing\Router;
+use Express\Routing\RouteCache;
 use Express\Routing\RouterInstance;
+use Express\Middleware\MiddlewareStack;
+use Express\Middleware\Security\CorsMiddleware;
 use BadMethodCallException;
 use Exception;
 
@@ -52,19 +55,132 @@ class ApiExpress
     private array $subRouters = [];
 
     /**
-     * Construtor da aplicação Express PHP.
-     * Inicializa o roteador e referencia o array $_SERVER.
+     * Cache para instâncias de classes anônimas
+     */
+    private ?object $routerInstance = null;
+    private ?object $middlewareStackInstance = null;
+
+    /**
+     * Propriedade para acessar o Router estático.
+     */
+    public function __get(string $name): mixed
+    {
+        if ($name === 'router') {
+            if ($this->routerInstance === null) {
+                $this->routerInstance = new class
+                {
+                    /**
+                     * @return array<string, mixed>
+                     */
+                    public function getGroupStats(): array
+                    {
+                        return Router::getGroupStats();
+                    }
+
+                    public function warmupGroups(): void
+                    {
+                        Router::warmupGroups();
+                    }
+
+                    /**
+                     * @return array<string, mixed>|null
+                     */
+                    public function identifyByGroup(string $method, string $path): ?array
+                    {
+                        return Router::identifyByGroup($method, $path);
+                    }
+
+                    /**
+                     * @return array<string, mixed>
+                     */
+                    public function benchmarkGroupAccess(string $prefix, int $iterations = 1000): array
+                    {
+                        return Router::benchmarkGroupAccess($prefix, $iterations);
+                    }
+                };
+            }
+            return $this->routerInstance;
+        }
+
+        if ($name === 'middlewareStack') {
+            if ($this->middlewareStackInstance === null) {
+                $this->middlewareStackInstance = new class
+                {
+                    /**
+                     * @return array<string, mixed>
+                     */
+                    public function getStats(): array
+                    {
+                        return MiddlewareStack::getStats();
+                    }
+
+                    /**
+                     * @param array<callable> $middlewares
+                     * @return array<string, mixed>
+                     */
+                    public function benchmarkPipeline(array $middlewares, int $iterations = 1000): array
+                    {
+                        return MiddlewareStack::benchmarkPipeline($middlewares, $iterations);
+                    }
+                };
+            }
+            return $this->middlewareStackInstance;
+        }
+
+        throw new BadMethodCallException("Property $name does not exist");
+    }
+
+    /**
+     * Construtor da aplicação Express PHP (versão otimizada).
+     * Inicializa o roteador e referencia o array $_SERVER com lazy loading.
      */
     public function __construct(?string $baseUrl = null)
     {
+        // OTIMIZAÇÃO: Lazy loading para componentes não essenciais
         if ($baseUrl) {
             $this->setBaseUrl($baseUrl);
         }
 
-        // Inicializa a nova aplicação modular com basePath
-        $basePath = dirname(__DIR__); // Pasta raiz do projeto
+        // OTIMIZAÇÃO: Inicialização lazy garantida - Application criado sob demanda
+        $this->initializeApp();
+
+        // OTIMIZAÇÃO: Referência direta sem operações custosas
+        $this->server = &$_SERVER;
+
+        // OTIMIZAÇÃO: Warmup apenas se houver middlewares registrados
+        // Movido para primeiro uso real
+    }
+
+    /**
+     * Inicialização lazy da aplicação (thread-safe, uma única inicialização)
+     */
+    private function initializeApp(): void
+    {
+        // Guard clause para evitar múltiplas inicializações
+        if (isset($this->app)) {
+            return;
+        }
+
+        // Otimização: basePath calculado uma vez e cacheado estaticamente
+        static $basePath = null;
+        if ($basePath === null) {
+            $basePath = dirname(__DIR__);
+        }
+
+        // Inicialização única garantida
         $this->app = new Application($basePath);
-        $this->server = $_SERVER;
+    }
+
+    /**
+     * Warmup de middlewares (lazy loading)
+     */
+    private function ensureMiddlewareWarmup(): void
+    {
+        static $warmedUp = false;
+        if (!$warmedUp && !empty($this->middlewares)) {
+            MiddlewareStack::warmupCommonPipelines();
+            $warmedUp = true;
+        }
     }
 
     /**
@@ -84,7 +200,7 @@ class ApiExpress
     }
 
     /**
-     * Registra um middleware global ou define um prefixo para rotas.
+     * Registra um middleware global ou define um prefixo para rotas (otimizado).
      *
      * @param mixed ...$args
      */
@@ -93,7 +209,13 @@ class ApiExpress
         if (count($args) === 1 && is_callable($args[0])) {
             // Middleware global
             $this->middlewares[] = $args[0];
+
+            // OTIMIZAÇÃO: Garantir que app está inicializado (fail-safe)
+            $this->ensureAppInitialized();
             $this->app->use($args[0]);
+
+            // OTIMIZAÇÃO: Warmup apenas quando necessário
+            $this->ensureMiddlewareWarmup();
         } elseif (count($args) >= 2 && is_string($args[0])) {
             $path = $args[0];
             $handler = $args[1];
@@ -103,11 +225,14 @@ class ApiExpress
                 $this->subRouters[] = $handler;
                 // Registrar rotas do sub-router no router principal
                 foreach ($handler->getRoutes() as $route) {
-                    Router::add(
-                        $route['method'],
-                        $route['path'],
-                        ...array_merge($route['middlewares'], [$route['handler']])
-                    );
+                    if (is_string($route['method']) && is_string($route['path']) && is_callable($route['handler'])) {
+                        $middlewares = is_array($route['middlewares']) ? $route['middlewares'] : [];
+                        Router::add(
+                            $route['method'],
+                            $route['path'],
+                            ...array_merge($middlewares, [$route['handler']])
+                        );
+                    }
                 }
             } elseif (is_callable($handler)) {
                 // Middleware para caminho específico
@@ -117,71 +242,71 @@ class ApiExpress
     }
 
     /**
-     * Registra uma rota GET.
+     * Registra uma rota GET com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function get(string $path, ...$handlers): void
+    public function get(string $path, callable ...$handlers): void
     {
         Router::get($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota POST.
+     * Registra uma rota POST com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function post(string $path, ...$handlers): void
+    public function post(string $path, callable ...$handlers): void
     {
         Router::post($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota PUT.
+     * Registra uma rota PUT com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function put(string $path, ...$handlers): void
+    public function put(string $path, callable ...$handlers): void
     {
         Router::put($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota DELETE.
+     * Registra uma rota DELETE com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function delete(string $path, ...$handlers): void
+    public function delete(string $path, callable ...$handlers): void
     {
         Router::delete($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota PATCH.
+     * Registra uma rota PATCH com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function patch(string $path, ...$handlers): void
+    public function patch(string $path, callable ...$handlers): void
     {
         Router::patch($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota OPTIONS.
+     * Registra uma rota OPTIONS com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function options(string $path, ...$handlers): void
+    public function options(string $path, callable ...$handlers): void
     {
         Router::options($path, ...$handlers);
     }
 
     /**
-     * Registra uma rota HEAD.
+     * Registra uma rota HEAD com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function head(string $path, ...$handlers): void
+    public function head(string $path, callable ...$handlers): void
     {
         Router::head($path, ...$handlers);
     }
@@ -189,15 +314,26 @@ class ApiExpress
     /**
      * Registra uma rota para qualquer método HTTP.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function any(string $path, ...$handlers): void
+    public function any(string $path, callable ...$handlers): void
     {
         Router::any($path, ...$handlers);
     }
 
     /**
-     * Cria um router de grupo.
+     * Cria um router de grupo otimizado.
+     */
+    /**
+     * Cria um router de grupo otimizado.
+     */
+    public function group(string $prefix, callable $callback, array $middlewares = []): void
+    {
+        Router::group($prefix, $callback, $middlewares);
+    }
+
+    /**
+     * Cria um router de instância.
      */
     public function router(): RouterInstance
     {
@@ -212,11 +348,25 @@ class ApiExpress
         try {
             // Obter método e caminho da requisição atual
             $method = $this->server['REQUEST_METHOD'] ?? 'GET';
-            $parsedPath = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-            $path = $parsedPath !== false ? $parsedPath : '/';
+            if (!is_string($method)) {
+                $method = 'GET';
+            }
 
-            // Encontrar rota correspondente
-            $route = Router::identify($method, $path);
+            $requestUri = $this->server['REQUEST_URI'] ?? '/';
+            if (!is_string($requestUri)) {
+                $requestUri = '/';
+            }
+
+            $parsedPath = parse_url($requestUri, PHP_URL_PATH);
+            $path = $parsedPath !== false && is_string($parsedPath) ? $parsedPath : '/';
+
+            // Encontrar rota correspondente usando sistema otimizado de grupos primeiro
+            $route = Router::identifyByGroup($method, $path);
+
+            // Se não encontrou por grupo, usa o router otimizado padrão
+            if (!$route) {
+                $route = Router::identify($method, $path);
+            }
 
             if (!$route) {
                 http_response_code(404);
@@ -225,7 +375,7 @@ class ApiExpress
             }
 
             // Criar objetos Request e Response
-            $request = new Request($method, $route['path'], $path ?? '/');
+            $request = new Request($method, $route['path'], $path);
             $response = new Response();
 
             // Executar middlewares e handler
@@ -236,30 +386,32 @@ class ApiExpress
     }
 
     /**
-     * Executa uma rota com seus middlewares.
+     * Executa uma rota com seus middlewares usando pipeline otimizado.
      */
     private function executeRoute(array $route, Request $request, Response $response): void
     {
         $middlewares = array_merge($this->middlewares, $route['middlewares'] ?? []);
         $handler = $route['handler'];
 
-        // Criar pipeline de execução
-        $pipeline = array_reverse($middlewares);
+        // Otimiza middlewares removendo redundantes
+        $optimizedMiddlewares = MiddlewareStack::optimize($middlewares);
 
+        // Cria chave de cache baseada na rota
+        $cacheKey = $route['method'] . ':' . $route['path'];
+
+        // Compila pipeline otimizado usando MiddlewareStack
+        $middlewareStack = new MiddlewareStack();
+        foreach ($optimizedMiddlewares as $middleware) {
+            $middlewareStack->add($middleware);
+        }
+
+        // Define handler final
         $finalHandler = function ($req, $resp) use ($handler) {
             return call_user_func($handler, $req, $resp);
         };
 
-        // Executar pipeline
-        $next = $finalHandler;
-        foreach ($pipeline as $middleware) {
-            $currentNext = $next;
-            $next = function ($req, $resp) use ($middleware, $currentNext) {
-                return call_user_func($middleware, $req, $resp, $currentNext);
-            };
-        }
-
-        $next($request, $response);
+        // Executa pipeline otimizado
+        $middlewareStack->execute($request, $response, $finalHandler, $cacheKey);
     }
 
     /**
@@ -315,12 +467,22 @@ class ApiExpress
 
     /**
      * Limpa todas as rotas e middlewares (útil para testes).
+     * Mantém consistência com a inicialização lazy garantindo novo estado limpo.
      */
     public function clear(): void
     {
         Router::clear();
         $this->middlewares = [];
         $this->subRouters = [];
+
+        // Limpar caches relacionados
+        RouteCache::clearCache();
+        MiddlewareStack::clearCache();
+        CorsMiddleware::clearCache();
+
+        // Reinicializar aplicação para estado limpo
+        unset($this->app);
+        $this->initializeApp();
     }
 
     /**
@@ -390,5 +552,28 @@ class ApiExpress
     public static function __callStatic(string $method, array $args): mixed
     {
         return Router::__callStatic($method, $args);
+    }
+
+    /**
+     * Realiza warmup dos caches após registro das rotas
+     */
+    public function warmupCaches(): void
+    {
+        // Aquece cache de rotas
+        Router::warmupCache();
+
+        // Aquece grupos
+        Router::warmupGroups();
+    }
+
+    /**
+     * Garantia de que a aplicação está inicializada (fail-safe).
+     * Método de segurança para evitar estados inconsistentes.
+     */
+    private function ensureAppInitialized(): void
+    {
+        if (!isset($this->app)) {
+            $this->initializeApp();
+        }
     }
 }

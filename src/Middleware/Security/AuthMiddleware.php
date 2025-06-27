@@ -51,9 +51,15 @@ class AuthMiddleware extends BaseMiddleware
     {
         // Verifica se o caminho atual deve ser excluído
         $currentPath = $request->path ?? $_SERVER['REQUEST_URI'];
-        foreach ($this->options['excludePaths'] as $excludePath) {
-            if (strpos($currentPath, $excludePath) === 0) {
-                return $next();
+        if (!is_string($currentPath)) {
+            $currentPath = '/';
+        }
+
+        if (is_array($this->options['excludePaths'])) {
+            foreach ($this->options['excludePaths'] as $excludePath) {
+                if (is_string($excludePath) && strpos($currentPath, $excludePath) === 0) {
+                    return $next();
+                }
             }
         }
 
@@ -97,44 +103,59 @@ class AuthMiddleware extends BaseMiddleware
         $methods = $this->options['authMethods'];
 
         // Tenta cada método de autenticação
-        foreach ($methods as $method) {
-            switch ($method) {
-                case 'jwt':
-                    $result = $this->authenticateJWT($request);
-                    break;
-                case 'basic':
-                    $result = $this->authenticateBasic($request);
-                    break;
-                case 'bearer':
-                    $result = $this->authenticateBearer($request);
-                    break;
-                case 'apikey':
-                    $result = $this->authenticateApiKey($request);
-                    break;
-                case 'custom':
-                    $result = $this->authenticateCustom($request);
-                    break;
-                default:
-                    $result = ['success' => false, 'message' => 'Unknown auth method: ' . $method];
-                    break;
-            }
+        if (is_array($methods)) {
+            foreach ($methods as $method) {
+                if (!is_string($method)) {
+                    continue;
+                }
 
-            if ($result['success']) {
-                return array_merge($result, ['method' => $method]);
-            }
+                switch ($method) {
+                    case 'jwt':
+                        $result = $this->authenticateJWT($request);
+                        break;
+                    case 'basic':
+                        $result = $this->authenticateBasic($request);
+                        break;
+                    case 'bearer':
+                        $result = $this->authenticateBearer($request);
+                        break;
+                    case 'apikey':
+                        $result = $this->authenticateApiKey($request);
+                        break;
+                    case 'custom':
+                        $result = $this->authenticateCustom($request);
+                        break;
+                    default:
+                        $result = ['success' => false, 'message' => 'Unknown auth method: ' . $method];
+                        break;
+                }
 
-            $errors[$method] = $result['message'];
+                if ($result['success']) {
+                    return array_merge($result, ['method' => $method]);
+                }
+
+                $errors[$method] = $result['message'];
 
             // Se não permite múltiplos métodos, retorna o primeiro erro
-            if (!$this->options['allowMultiple']) {
-                break;
+                if (!$this->options['allowMultiple']) {
+                    break;
+                }
             }
+        }
+
+        $invalidMessage = 'Authentication failed';
+        if (
+            isset($this->options['errorMessages']) &&
+            is_array($this->options['errorMessages']) &&
+            isset($this->options['errorMessages']['invalid'])
+        ) {
+            $invalidMessage = (string) $this->options['errorMessages']['invalid'];
         }
 
         return [
             'success' => false,
             'status' => 401,
-            'message' => $this->options['errorMessages']['invalid'],
+            'message' => $invalidMessage,
             'errors' => $errors
         ];
     }
@@ -154,7 +175,7 @@ class AuthMiddleware extends BaseMiddleware
 
         $token = substr($authHeader, 7);
 
-        if (!$this->options['jwtSecret']) {
+        if (!$this->options['jwtSecret'] || !is_string($this->options['jwtSecret'])) {
             return ['success' => false, 'message' => 'JWT secret not configured'];
         }
 
@@ -192,7 +213,7 @@ class AuthMiddleware extends BaseMiddleware
 
         [$username, $password] = explode(':', $credentials, 2);
 
-        if ($this->options['basicAuthCallback']) {
+        if ($this->options['basicAuthCallback'] && is_callable($this->options['basicAuthCallback'])) {
             $callback = $this->options['basicAuthCallback'];
             $user = $callback($username, $password);
             if ($user) {
@@ -218,7 +239,7 @@ class AuthMiddleware extends BaseMiddleware
 
         $token = substr($authHeader, 7);
 
-        if ($this->options['bearerTokenCallback']) {
+        if ($this->options['bearerTokenCallback'] && is_callable($this->options['bearerTokenCallback'])) {
             $callback = $this->options['bearerTokenCallback'];
             $user = $callback($token);
             if ($user) {
@@ -240,20 +261,22 @@ class AuthMiddleware extends BaseMiddleware
 
         // Tenta obter API key do header
         $headerName = $this->options['headerName'];
-        if (isset($_SERVER['HTTP_' . str_replace('-', '_', strtoupper($headerName))])) {
-            $apiKey = $_SERVER['HTTP_' . str_replace('-', '_', strtoupper($headerName))];
+        if (is_string($headerName) && isset($_SERVER['HTTP_' . str_replace('-', '_', strtoupper($headerName))])) {
+            $serverKey = $_SERVER['HTTP_' . str_replace('-', '_', strtoupper($headerName))];
+            $apiKey = is_string($serverKey) ? $serverKey : null;
         }
 
         // Tenta obter API key do query parameter
         if (!$apiKey && isset($_GET[$this->options['queryParam']])) {
-            $apiKey = $_GET[$this->options['queryParam']];
+            $queryKey = $_GET[$this->options['queryParam']];
+            $apiKey = is_string($queryKey) ? $queryKey : null;
         }
 
         if (!$apiKey) {
             return ['success' => false, 'message' => 'Missing API key'];
         }
 
-        if ($this->options['apiKeyCallback']) {
+        if ($this->options['apiKeyCallback'] && is_callable($this->options['apiKeyCallback'])) {
             $callback = $this->options['apiKeyCallback'];
             $user = $callback($apiKey);
             if ($user) {
@@ -271,7 +294,7 @@ class AuthMiddleware extends BaseMiddleware
      */
     private function authenticateCustom($request): array
     {
-        if ($this->options['customAuthCallback']) {
+        if ($this->options['customAuthCallback'] && is_callable($this->options['customAuthCallback'])) {
             $callback = $this->options['customAuthCallback'];
             $result = $callback($request);
             if (is_array($result)) {
@@ -296,7 +319,8 @@ class AuthMiddleware extends BaseMiddleware
      */
     private function getAuthorizationHeader($request): ?string
     {
-        return $this->getHeader($request, 'authorization') ?? $this->getHeader($request, 'Authorization');
+        $result = $this->getHeader($request, 'authorization') ?? $this->getHeader($request, 'Authorization');
+        return is_string($result) ? $result : null;
     }
 
     /**

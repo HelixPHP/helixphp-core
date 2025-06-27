@@ -134,6 +134,9 @@ dist/
 # Deployer
 .dep/
 
+# Pre-commit
+.pre-commit-cache/
+
 # ==============================================
 # Environment and Configuration
 # ==============================================
@@ -230,3 +233,4 @@ yarn.lock
 TODO.md
 NOTES.md
 scratch/
+benchmarks/**/*.json

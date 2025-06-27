@@ -134,7 +134,8 @@ return [
             'methods' => explode(',', $_ENV['CORS_METHODS'] ?? 'GET,POST,PUT,DELETE,OPTIONS'),
             'headers' => explode(',', $_ENV['CORS_HEADERS'] ?? 'Content-Type,Authorization,X-API-Key'),
             'credentials' => filter_var($_ENV['CORS_CREDENTIALS'] ?? true, FILTER_VALIDATE_BOOLEAN),
-            'max_age' => $_ENV['CORS_MAX_AGE'] ?? 86400
+            'max_age' => $_ENV['CORS_MAX_AGE'] ?? 86400,
+            'expose' => !empty($_ENV['CORS_EXPOSE']) ? explode(',', $_ENV['CORS_EXPOSE']) : []
         ],
         'csrf' => [
             'enabled' => filter_var($_ENV['CSRF_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN),

@@ -93,7 +93,8 @@ class JWTHelper
 
         // Implementação simples para HS256 se a biblioteca não estiver disponível
         if ($options['algorithm'] === 'HS256') {
-            return self::decodeHS256($token, $secret, $options['leeway']);
+            $leeway = isset($options['leeway']) && is_int($options['leeway']) ? $options['leeway'] : 0;
+            return self::decodeHS256($token, $secret, $leeway);
         }
 
         throw new Exception('JWT library not found and algorithm not supported. Install firebase/php-jwt');
@@ -131,7 +132,13 @@ class JWTHelper
         }
 
         $payload = base64_decode(str_replace(['-', '_'], ['+', '/'], $parts[1]));
-        return json_decode($payload, true) ?: [];
+        $decoded = json_decode($payload, true);
+
+        if (!is_array($decoded)) {
+            throw new Exception('Invalid JWT payload');
+        }
+
+        return $decoded;
     }
 
     /**
@@ -207,17 +214,17 @@ class JWTHelper
 
         // Decodifica o payload
         $payload = json_decode(self::base64UrlDecode($payloadEncoded), true);
-        if (!$payload) {
+        if (!is_array($payload)) {
             throw new Exception('Invalid JWT payload');
         }
 
         // Verifica expiração
-        if (isset($payload['exp']) && time() > ($payload['exp'] + $leeway)) {
+        if (isset($payload['exp']) && is_int($payload['exp']) && time() > ($payload['exp'] + $leeway)) {
             throw new Exception('JWT token expired');
         }
 
         // Verifica se já é válido (nbf - not before)
-        if (isset($payload['nbf']) && time() < ($payload['nbf'] - $leeway)) {
+        if (isset($payload['nbf']) && is_int($payload['nbf']) && time() < ($payload['nbf'] - $leeway)) {
             throw new Exception('JWT token not yet valid');
         }
 

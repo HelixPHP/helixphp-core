@@ -148,7 +148,7 @@ class Validator
                 break;
 
             case 'regex':
-                if ($ruleValue && !preg_match($ruleValue, $value)) {
+                if ($ruleValue && is_string($value) && !preg_match($ruleValue, $value)) {
                     $this->addError($field, 'regex');
                     return false;
                 }
