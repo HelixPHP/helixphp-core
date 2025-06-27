@@ -7,12 +7,14 @@ namespace Express\Events;
  */
 class Event
 {
+    private string $name;
+    private array $data;
     private bool $propagationStopped = false;
 
-    public function __construct(
-        private readonly string $name,
-        private array $data = []
-    ) {
+    public function __construct(string $name, array $data = [])
+    {
+        $this->name = $name;
+        $this->data = $data;
     }
 
     /**
