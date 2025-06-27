@@ -50,7 +50,7 @@ class ApiExpressTest extends TestCase
 
     public function testUseMethod(): void
     {
-        $middleware = function($req, $res, $next) {
+        $middleware = function ($req, $res, $next) {
             $next();
         };
 
@@ -68,7 +68,7 @@ class ApiExpressTest extends TestCase
 
     public function testRouteRegistration(): void
     {
-        $handler = function($req, $res) {
+        $handler = function ($req, $res) {
             $res->json(['message' => 'Hello World']);
         };
 
@@ -84,7 +84,7 @@ class ApiExpressTest extends TestCase
 
     public function testCallMagicMethod(): void
     {
-        $handler = function($req, $res) {
+        $handler = function ($req, $res) {
             $res->json(['message' => 'Test']);
         };
 

@@ -27,7 +27,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -52,7 +52,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -77,7 +77,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -99,13 +99,15 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
         $this->assertTrue($nextCalled);
         $this->assertContains('Access-Control-Allow-Origin: null', $response->headers);
-    }    public function testOptionsPreflightRequest(): void
+    }
+
+    public function testOptionsPreflightRequest(): void
     {
         $middleware = new CorsMiddleware();
 
@@ -113,7 +115,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $result = $middleware($request, $response, function() use (&$nextCalled) {
+        $result = $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -138,14 +140,14 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
         $this->assertTrue($nextCalled);
 
         // Should not contain credentials header when set to false
-        $credentialsHeaders = array_filter($response->headers, function($header) {
+        $credentialsHeaders = array_filter($response->headers, function ($header) {
             return strpos($header, 'Access-Control-Allow-Credentials') !== false;
         });
         $this->assertEmpty($credentialsHeaders);
@@ -162,7 +164,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -180,7 +182,7 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -196,12 +198,12 @@ class CorsMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
 
         $middlewareStack = [
-            function($req, $res, $next) {
+            function ($req, $res, $next) {
                 $req->test1 = true;
                 $next();
             },
             $middleware,
-            function($req, $res, $next) {
+            function ($req, $res, $next) {
                 $req->test2 = true;
                 $next();
             }
@@ -222,17 +224,20 @@ class CorsMiddlewareTest extends TestCase
             public $headers = [];
             public $status = [];
 
-            public function header($name, $value) {
+            public function header($name, $value)
+            {
                 $this->headers[] = "$name: $value";
                 return $this;
             }
 
-            public function status($code) {
+            public function status($code)
+            {
                 $this->status[] = "Status: $code";
                 return $this;
             }
 
-            public function end() {
+            public function end()
+            {
                 return $this;
             }
         };
@@ -244,7 +249,7 @@ class CorsMiddlewareTest extends TestCase
     private function executeMiddlewareStack($middlewares, $request, $response)
     {
         $index = 0;
-        $next = function() use (&$index, $middlewares, $request, $response, &$next) {
+        $next = function () use (&$index, $middlewares, $request, $response, &$next) {
             if ($index < count($middlewares)) {
                 $middleware = $middlewares[$index++];
                 $middleware($request, $response, $next);

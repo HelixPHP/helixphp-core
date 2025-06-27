@@ -355,8 +355,11 @@ class AuthMiddleware extends BaseMiddleware
     /**
      * Factory method para API Key authentication
      */
-    public static function apiKey(callable $callback, string $headerName = 'X-API-Key', string $queryParam = 'api_key'): self
-    {
+    public static function apiKey(
+        callable $callback,
+        string $headerName = 'X-API-Key',
+        string $queryParam = 'api_key'
+    ): self {
         return new self(
             [
             'authMethods' => ['apikey'],

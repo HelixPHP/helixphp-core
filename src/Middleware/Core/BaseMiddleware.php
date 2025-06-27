@@ -107,8 +107,12 @@ abstract class BaseMiddleware implements MiddlewareInterface
      * @param  array<string, mixed> $data
      * @return Response
      */
-    protected function respondWithError(Response $response, int $statusCode, string $message, array $data = []): Response
-    {
+    protected function respondWithError(
+        Response $response,
+        int $statusCode,
+        string $message,
+        array $data = []
+    ): Response {
         $error = ['error' => $message, 'code' => $statusCode];
         if (!empty($data)) {
             $error['data'] = $data;

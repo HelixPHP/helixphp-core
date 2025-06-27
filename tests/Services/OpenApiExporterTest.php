@@ -17,7 +17,7 @@ class OpenApiExporterTest extends TestCase
     public function testBasicExport(): void
     {
         // Create a route using the Router API
-        Router::get('/users', function() {
+        Router::get('/users', function () {
             return ['users' => []];
         }, [
             'summary' => 'Get all users',
@@ -42,7 +42,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/test',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => []
             ]
@@ -58,7 +59,7 @@ class OpenApiExporterTest extends TestCase
 
     public function testRouteWithParameters(): void
     {
-        Router::get('/users/:id', function($id) {
+        Router::get('/users/:id', function ($id) {
             return ['user' => ['id' => $id]];
         }, [
             'summary' => 'Get user by ID',
@@ -93,7 +94,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/users',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => [
                     'summary' => 'List users',
@@ -125,7 +127,7 @@ class OpenApiExporterTest extends TestCase
         $this->assertCount(2, $parameters);
 
         // Check query parameters
-        $queryParams = array_filter($parameters, function($p) {
+        $queryParams = array_filter($parameters, function ($p) {
             return $p['in'] === 'query';
         });
         $this->assertCount(2, $queryParams);
@@ -140,7 +142,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'POST',
                 'path' => '/users',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => [
                     'summary' => 'Create user',
@@ -183,7 +186,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/users',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => [
                     'summary' => 'List users',
@@ -213,21 +217,24 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/users/:id',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => ['summary' => 'Get user']
             ],
             [
                 'method' => 'PUT',
                 'path' => '/users/:id',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => ['summary' => 'Update user']
             ],
             [
                 'method' => 'DELETE',
                 'path' => '/users/:id',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => ['summary' => 'Delete user']
             ]
@@ -265,11 +272,13 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/test',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => []
             ]
-        ]);        $result = OpenApiExporter::export('Express\Routing\Router');
+        ]);
+        $result = OpenApiExporter::export('Express\Routing\Router');
 
         $responses = $result['paths']['/test']['get']['responses'];
 
@@ -294,7 +303,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/api/v1/users/:userId/posts/:postId',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => [],
                 'metadata' => [
                     'summary' => 'Get user post',
@@ -327,7 +337,8 @@ class OpenApiExporterTest extends TestCase
             [
                 'method' => 'GET',
                 'path' => '/test',
-                'handler' => function() {},
+                'handler' => function () {
+                },
                 'middlewares' => []
                 // No metadata provided
             ]

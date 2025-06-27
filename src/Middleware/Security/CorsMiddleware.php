@@ -53,7 +53,9 @@ class CorsMiddleware extends BaseMiddleware
         $this->addCorsHeaders($response, $origin);
 
         // Para requisições OPTIONS (preflight), retorna imediatamente
-        $method = is_object($request) && isset($request->method) ? $request->method : ($_SERVER['REQUEST_METHOD'] ?? 'GET');
+        $method = is_object($request) && isset($request->method)
+            ? $request->method
+            : ($_SERVER['REQUEST_METHOD'] ?? 'GET');
         if ($method === 'OPTIONS') {
             $response->status(204);
             if (method_exists($response, 'text')) {
@@ -116,11 +118,15 @@ class CorsMiddleware extends BaseMiddleware
         }
 
         // Methods
-        $methods = is_array($this->options['methods']) ? $this->options['methods'] : explode(',', $this->options['methods']);
+        $methods = is_array($this->options['methods'])
+            ? $this->options['methods']
+            : explode(',', $this->options['methods']);
         $this->setHeader($response, 'Access-Control-Allow-Methods', implode(',', $methods));
 
         // Headers
-        $headers = is_array($this->options['headers']) ? $this->options['headers'] : explode(',', $this->options['headers']);
+        $headers = is_array($this->options['headers'])
+            ? $this->options['headers']
+            : explode(',', $this->options['headers']);
         $this->setHeader($response, 'Access-Control-Allow-Headers', implode(',', $headers));
 
         // Credentials
@@ -133,7 +139,11 @@ class CorsMiddleware extends BaseMiddleware
 
         // Exposed Headers
         if (!empty($this->options['exposedHeaders'])) {
-            $this->setHeader($response, 'Access-Control-Expose-Headers', implode(', ', $this->options['exposedHeaders']));
+            $this->setHeader(
+                $response,
+                'Access-Control-Expose-Headers',
+                implode(', ', $this->options['exposedHeaders'])
+            );
         }
     }
 

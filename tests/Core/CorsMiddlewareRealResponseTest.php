@@ -33,7 +33,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
         // Define Origin header para teste
         $_SERVER['HTTP_ORIGIN'] = 'https://example.com';
 
-        $result = $middleware($request, $response, function($req, $res) use (&$nextCalled) {
+        $result = $middleware($request, $response, function ($req, $res) use (&$nextCalled) {
             $nextCalled = true;
             return $res;
         });
@@ -63,7 +63,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
         $response = new Response();
         $nextCalled = false;
 
-        $result = $middleware($request, $response, function($req, $res) use (&$nextCalled) {
+        $result = $middleware($request, $response, function ($req, $res) use (&$nextCalled) {
             $nextCalled = true;
             return $res;
         });
@@ -92,7 +92,7 @@ class CorsMiddlewareRealResponseTest extends TestCase
         // Se houver recursão infinita, este teste travará ou dará timeout
         $startTime = microtime(true);
 
-        $middleware($request, $response, function($req, $res) {
+        $middleware($request, $response, function ($req, $res) {
             return $res;
         });
 

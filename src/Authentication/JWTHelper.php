@@ -311,8 +311,12 @@ class JWTHelper
      *                                         hora)
      * @return string Token de acesso
      */
-    public static function createAccessToken($userId, array $claims = [], string $secret = '', int $expiresIn = 3600): string
-    {
+    public static function createAccessToken(
+        $userId,
+        array $claims = [],
+        string $secret = '',
+        int $expiresIn = 3600
+    ): string {
         $payload = array_merge(
             $claims,
             [

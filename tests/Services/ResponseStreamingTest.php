@@ -69,7 +69,9 @@ class ResponseStreamingTest extends TestCase
         $this->assertInstanceOf(Response::class, $result);
         // Como $streamBufferSize é privado, testamos indiretamente
         // verificando se o método retorna a instância correta
-    }    public function testWrite(): void
+    }
+
+    public function testWrite(): void
     {
         $this->response->startStream();
 
@@ -285,7 +287,9 @@ class ResponseStreamingTest extends TestCase
 
         $headers = $this->response->getHeaders();
         $this->assertEquals('text/event-stream', $headers['Content-Type']);
-    }    public function testMultipleHeadersInStreamFile(): void
+    }
+
+    public function testMultipleHeadersInStreamFile(): void
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'test_headers_');
         file_put_contents($tempFile, 'test content');

@@ -43,17 +43,20 @@ class AuthMiddlewareTest extends TestCase
             public $headers = [];
             public $body = '';
 
-            public function status($code) {
+            public function status($code)
+            {
                 $this->statusCode = $code;
                 return $this;
             }
 
-            public function json($data) {
+            public function json($data)
+            {
                 $this->body = json_encode($data);
                 return $this;
             }
 
-            public function send($data) {
+            public function send($data)
+            {
                 $this->body = $data;
                 return $this;
             }
@@ -73,7 +76,7 @@ class AuthMiddlewareTest extends TestCase
         $middleware = AuthMiddleware::jwt($this->jwtSecret);
 
         // Act
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -90,7 +93,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::jwt($this->jwtSecret);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -101,7 +104,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationSuccess(): void
     {
-        $basicCallback = function($username, $password) {
+        $basicCallback = function ($username, $password) {
             return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
         };
 
@@ -111,7 +114,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::basic($basicCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -121,7 +124,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationFailure(): void
     {
-        $basicCallback = function($username, $password) {
+        $basicCallback = function ($username, $password) {
             return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
         };
 
@@ -131,7 +134,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::basic($basicCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -141,7 +144,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBearerTokenAuthentication(): void
     {
-        $bearerCallback = function($token) {
+        $bearerCallback = function ($token) {
             return $token === 'valid_token_123' ? ['token' => $token] : false;
         };
 
@@ -151,7 +154,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::bearer($bearerCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -161,7 +164,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testCustomAuthentication(): void
     {
-        $customAuth = function($request) {
+        $customAuth = function ($request) {
             if (($request->headers->customAuth ?? '') === 'valid') {
                 return ['id' => 1, 'name' => 'custom_user'];
             }
@@ -174,7 +177,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::custom($customAuth);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 

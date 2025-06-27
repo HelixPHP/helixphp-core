@@ -16,7 +16,9 @@ class RequestTest extends TestCase
         $_POST = [];
         $_FILES = [];
         $_SERVER = [];
-    }    public function testRequestInitialization(): void
+    }
+
+    public function testRequestInitialization(): void
     {
         $request = new Request('GET', '/users/:id', '/users/123');
 
@@ -46,7 +48,9 @@ class RequestTest extends TestCase
 
         $request = new Request('GET', '/users/', '/users/');
         $this->assertEquals('/users/', $request->pathCallable);
-    }    public function testParameterExtraction(): void
+    }
+
+    public function testParameterExtraction(): void
     {
         $_SERVER['QUERY_STRING'] = 'page=1&limit=10';
 
@@ -57,7 +61,9 @@ class RequestTest extends TestCase
 
         // Limpar $_SERVER após o teste
         unset($_SERVER['QUERY_STRING']);
-    }public function testBodyParsing(): void
+    }
+
+    public function testBodyParsing(): void
     {
         $_POST = ['name' => 'John', 'email' => 'john@example.com'];
 
@@ -133,7 +139,11 @@ class RequestTest extends TestCase
 
     public function testComplexRoutePattern(): void
     {
-        $request = new Request('GET', '/api/v1/users/:userId/posts/:postId/comments', '/api/v1/users/123/posts/456/comments');
+        $request = new Request(
+            'GET',
+            '/api/v1/users/:userId/posts/:postId/comments',
+            '/api/v1/users/123/posts/456/comments'
+        );
 
         $this->assertEquals('GET', $request->method);
         $this->assertEquals('/api/v1/users/:userId/posts/:postId/comments', $request->path);
@@ -145,7 +155,9 @@ class RequestTest extends TestCase
         $request = new Request('GET', '/search', '/search');
 
         $this->assertEquals('/search/', $request->pathCallable);
-    }    public function testRequestWithArrayParameters(): void
+    }
+
+    public function testRequestWithArrayParameters(): void
     {
         $_SERVER['QUERY_STRING'] = 'tags[]=php&tags[]=javascript&filters[active]=true&filters[category]=tech';
 

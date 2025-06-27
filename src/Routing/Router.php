@@ -92,8 +92,13 @@ class Router
      * @throws InvalidArgumentException Se o método não for suportado.
      * @return void
      */
-    public static function add(string $method, string $path, callable $handler, array $metadata = [], ...$middlewares): void
-    {
+    public static function add(
+        string $method,
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        ...$middlewares
+    ): void {
         if (empty($path)) {
             $path = self::DEFAULT_PATH;
         }
