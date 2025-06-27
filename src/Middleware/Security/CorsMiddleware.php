@@ -60,7 +60,7 @@ class CorsMiddleware extends BaseMiddleware
                 'headers' => ['Content-Type', 'Authorization'],
                 'credentials' => false,
                 'maxAge' => 86400, // 24 hours
-                'exposedHeaders' => [],
+                'expose' => [],
                 '_wasOriginString' => $wasOriginString
             ],
             $options
@@ -206,11 +206,11 @@ class CorsMiddleware extends BaseMiddleware
         $this->setHeader($response, 'Access-Control-Max-Age', (string)$this->options['maxAge']);
 
         // Exposed Headers
-        if (!empty($this->options['exposedHeaders'])) {
+        if (!empty($this->options['expose'])) {
             $this->setHeader(
                 $response,
                 'Access-Control-Expose-Headers',
-                implode(', ', $this->options['exposedHeaders'])
+                implode(', ', $this->options['expose'])
             );
         }
     }
@@ -332,10 +332,10 @@ class CorsMiddleware extends BaseMiddleware
         $headers['Access-Control-Max-Age'] = (string) $this->options['maxAge'];
 
         // Expose Headers
-        if (!empty($this->options['exposedHeaders'])) {
-            $headers['Access-Control-Expose-Headers'] = is_array($this->options['exposedHeaders'])
-                ? implode(', ', $this->options['exposedHeaders'])
-                : $this->options['exposedHeaders'];
+        if (!empty($this->options['expose'])) {
+            $headers['Access-Control-Expose-Headers'] = is_array($this->options['expose'])
+                ? implode(', ', $this->options['expose'])
+                : $this->options['expose'];
         }
 
         return $headers;
@@ -410,10 +410,10 @@ class CorsMiddleware extends BaseMiddleware
 
         $parts[] = 'Access-Control-Max-Age: ' . $this->options['maxAge'];
 
-        if (!empty($this->options['exposedHeaders'])) {
-            $exposed = is_array($this->options['exposedHeaders'])
-                ? implode(', ', $this->options['exposedHeaders'])
-                : $this->options['exposedHeaders'];
+        if (!empty($this->options['expose'])) {
+            $exposed = is_array($this->options['expose'])
+                ? implode(', ', $this->options['expose'])
+                : $this->options['expose'];
             $parts[] = 'Access-Control-Expose-Headers: ' . $exposed;
         }
 
