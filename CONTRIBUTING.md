@@ -25,7 +25,7 @@ composer test
 #### 📋 Padrões de Qualidade
 - **PHPStan Level 8**: Máxima análise estática
 - **PSR-12**: Padrão de code style
-- **PHP 8.0+**: Compatibilidade mínima
+- **PHP 8.1+**: Compatibilidade mínima
 - **100% Test Coverage**: Todos os recursos devem ter testes
 
 #### 🎯 Estrutura do Código
@@ -133,7 +133,7 @@ class MeuMiddlewareTest extends TestCase
 - Traduza para outros idiomas
 
 ### 🔧 Corrigir Código
-- Mantenha compatibilidade com PHP 8.0+
+- Mantenha compatibilidade com PHP 8.1+
 - Siga os padrões de qualidade
 - Adicione testes para mudanças
 
@@ -145,7 +145,7 @@ class MeuMiddlewareTest extends TestCase
 - [ ] Todos os testes passam
 - [ ] Documentação atualizada
 - [ ] Exemplos funcionando
-- [ ] Compatibilidade PHP 8.0+
+- [ ] Compatibilidade PHP 8.1+
 
 ### Hooks de Git
 O projeto inclui hooks automáticos que verificam:

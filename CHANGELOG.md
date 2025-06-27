@@ -7,18 +7,23 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### 🔥 BREAKING CHANGES
+- **PHP 8.1+ Required**: Dropped PHP 8.0 support as it's reaching end of life
+- CI/CD matrix updated to test PHP 8.1-8.4
+
 ### Removed
-- **Complete Polyfills Removal**: Removed `src/Support/Polyfills.php` file entirely since PHP 8.0+ has all required functions natively
+- **PHP 8.0 Support**: Minimum requirement increased to PHP 8.1 for better security and performance
+- **Complete Polyfills Removal**: Removed `src/Support/Polyfills.php` file entirely since PHP 8.1+ has all required functions natively
 - Removed Polyfills autoloading from `composer.json`
 
 ### Changed
-- **Modern PHP 8.0+ Features**: Updated classes to use typed properties, constructor promotion, and modern type declarations
+- **Modern PHP 8.1+ Features**: Updated classes to use typed properties, constructor promotion, and modern type declarations
 - Enhanced `Request` and `Response` classes with strict typing
 - Modernized `Event` class with readonly properties and constructor promotion
 
 ### 🔥 BREAKING CHANGES
 - **PHP 8.0+ Required**: Dropped PHP 7.4 support for better performance and modern features
-- Polyfills simplified (PHP 8.0+ native functions used)
+- Polyfills simplified (PHP 8.1+ native functions used)
 
 ### Planejado
 - Sistema de plugins
