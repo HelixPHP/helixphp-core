@@ -23,67 +23,51 @@ class Request
 {
     /**
      * Método HTTP.
-     *
-     * @var string
      */
-    private $method = '';
+    private string $method;
 
     /**
      * Padrão da rota.
-     *
-     * @var string
      */
-    private $path = '';
+    private string $path;
 
     /**
      * Caminho real da requisição.
-     *
-     * @var string
      */
-    private $pathCallable = '';
+    private string $pathCallable;
 
     /**
      * Parâmetros extraídos da URL.
-     *
-     * @var stdClass
      */
-    private $params = null;
+    private stdClass $params;
 
     /**
      * Parâmetros da query string.
-     *
-     * @var stdClass
      */
-    private $query = null;
+    private stdClass $query;
 
     /**
      * Corpo da requisição.
-     *
-     * @var stdClass
      */
-    private $body = null;
+    private stdClass $body;
 
     /**
      * Cabeçalhos da requisição.
-     *
-     * @var HeaderRequest
      */
-    private $headers = null;
+    private HeaderRequest $headers;
 
     /**
      * Arquivos enviados via upload (anexos).
      *
      * @var array<string, mixed>
      */
-    private $files = [];
+    private array $files = [];
 
     /**
      * Construtor da classe Request.
      *
-     * @param string $method       Método
-     *                             HTTP.
-     * @param string $path         Padrão da
-     *                             rota.
+     * @param string $method       Método HTTP.
+     * @param string $path         Padrão da rota.
      * @param string $pathCallable Caminho real da requisição.
      */
     public function __construct(string $method, string $path, string $pathCallable)
@@ -91,7 +75,7 @@ class Request
         $this->method = strtoupper($method);
         $this->path = $path;
         $this->pathCallable = $pathCallable;
-        if (!preg_match('/\/$/', $pathCallable)) {
+        if (!str_ends_with($pathCallable, '/')) {
             $this->pathCallable .= '/'; // Ensure path ends with a slash
         }
         $this->params = new stdClass();

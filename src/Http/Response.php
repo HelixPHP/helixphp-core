@@ -14,45 +14,35 @@ class Response
 {
     /**
      * Código de status HTTP.
-     *
-     * @var int
      */
-    private $statusCode = 200;
+    private int $statusCode = 200;
 
     /**
      * Cabeçalhos da resposta.
      *
      * @var array<string, mixed>
      */
-    private $headers = [];
+    private array $headers = [];
 
     /**
      * Corpo da resposta.
-     *
-     * @var string
      */
-    private $body = '';
+    private string $body = '';
 
     /**
      * Indica se a resposta está sendo enviada como stream.
-     *
-     * @var bool
      */
-    private $isStreaming = false;
+    private bool $isStreaming = false;
 
     /**
      * Buffer size para streaming (em bytes).
-     *
-     * @var int
      */
-    private $streamBufferSize = 8192;
+    private int $streamBufferSize = 8192;
 
     /**
      * Indica se está em modo teste (não faz echo direto).
-     *
-     * @var bool
      */
-    private $testMode = false;
+    private bool $testMode = false;
 
     /**
      * Define o status HTTP da resposta.
@@ -60,7 +50,7 @@ class Response
      * @param  int $code Código de status.
      * @return $this
      */
-    public function status($code)
+    public function status(int $code): self
     {
         $this->statusCode = $code;
         http_response_code($this->statusCode);
@@ -70,12 +60,11 @@ class Response
     /**
      * Define um cabeçalho na resposta.
      *
-     * @param  string $name  Nome do
-     *                       cabeçalho.
+     * @param  string $name  Nome do cabeçalho.
      * @param  string $value Valor do cabeçalho.
      * @return $this
      */
-    public function header($name, $value)
+    public function header(string $name, string $value): self
     {
         $this->headers[$name] = $value;
         header("{$name}: {$value}");
@@ -108,7 +97,7 @@ class Response
      * @param bool $testMode
      * @return $this
      */
-    public function setTestMode(bool $testMode)
+    public function setTestMode(bool $testMode): self
     {
         $this->testMode = $testMode;
         return $this;

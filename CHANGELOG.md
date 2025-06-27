@@ -7,6 +7,15 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Removed
+- **Complete Polyfills Removal**: Removed `src/Support/Polyfills.php` file entirely since PHP 8.0+ has all required functions natively
+- Removed Polyfills autoloading from `composer.json`
+
+### Changed
+- **Modern PHP 8.0+ Features**: Updated classes to use typed properties, constructor promotion, and modern type declarations
+- Enhanced `Request` and `Response` classes with strict typing
+- Modernized `Event` class with readonly properties and constructor promotion
+
 ### 🔥 BREAKING CHANGES
 - **PHP 8.0+ Required**: Dropped PHP 7.4 support for better performance and modern features
 - Polyfills simplified (PHP 8.0+ native functions used)

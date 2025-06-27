@@ -7,14 +7,12 @@ namespace Express\Events;
  */
 class Event
 {
-    private string $name;
-    private array $data;
     private bool $propagationStopped = false;
 
-    public function __construct(string $name, array $data = [])
-    {
-        $this->name = $name;
-        $this->data = $data;
+    public function __construct(
+        private readonly string $name,
+        private array $data = []
+    ) {
     }
 
     /**
@@ -35,23 +33,16 @@ class Event
 
     /**
      * Retorna um dado específico
-     *
-     * @param  string $key
-     * @param  mixed  $default
-     * @return mixed
      */
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null): mixed
     {
         return $this->data[$key] ?? $default;
     }
 
     /**
      * Define um dado
-     *
-     * @param string $key
-     * @param mixed  $value
      */
-    public function set(string $key, $value): void
+    public function set(string $key, mixed $value): void
     {
         $this->data[$key] = $value;
     }
