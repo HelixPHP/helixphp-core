@@ -49,7 +49,7 @@ class SerializationCache
     /**
      * Calcula o tamanho de um objeto usando cache inteligente
      */
-    public static function getSerializedSize(mixed $data, string $cacheKey = null): int
+    public static function getSerializedSize(mixed $data, string|null $cacheKey = null): int
     {
         // Gera chave de cache baseada no tipo e conteúdo dos dados
         $key = $cacheKey ?? self::generateCacheKey($data);
@@ -109,7 +109,7 @@ class SerializationCache
     /**
      * Obtém dados serializados com cache
      */
-    public static function getSerializedData(mixed $data, string $cacheKey = null): string
+    public static function getSerializedData(mixed $data, string|null $cacheKey = null): string
     {
         $key = $cacheKey ?? self::generateCacheKey($data);
 
@@ -158,7 +158,7 @@ class SerializationCache
             return 'object_' . get_class($data) . '_' . spl_object_hash($data);
         }
 
-        return 'scalar_' . gettype($data) . '_' . md5((string)$data);
+        return 'scalar_' . gettype($data) . '_' . md5(serialize($data));
     }
 
     /**

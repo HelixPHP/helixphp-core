@@ -394,7 +394,7 @@ class Response
                 $dataString = '[json encoding failed]';
             }
         } else {
-            $dataString = (string)$data;
+            $dataString = is_scalar($data) ? (string)$data : '[non-scalar data]';
         }
 
         // Dividir dados em múltiplas linhas se necessário

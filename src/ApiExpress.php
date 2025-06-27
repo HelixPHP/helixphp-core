@@ -225,11 +225,14 @@ class ApiExpress
                 $this->subRouters[] = $handler;
                 // Registrar rotas do sub-router no router principal
                 foreach ($handler->getRoutes() as $route) {
-                    Router::add(
-                        $route['method'],
-                        $route['path'],
-                        ...array_merge($route['middlewares'], [$route['handler']])
-                    );
+                    if (is_string($route['method']) && is_string($route['path']) && is_callable($route['handler'])) {
+                        $middlewares = is_array($route['middlewares']) ? $route['middlewares'] : [];
+                        Router::add(
+                            $route['method'],
+                            $route['path'],
+                            ...array_merge($middlewares, [$route['handler']])
+                        );
+                    }
                 }
             } elseif (is_callable($handler)) {
                 // Middleware para caminho específico
@@ -241,9 +244,9 @@ class ApiExpress
     /**
      * Registra uma rota GET com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function get(string $path, ...$handlers): void
+    public function get(string $path, callable ...$handlers): void
     {
         Router::get($path, ...$handlers);
     }
@@ -251,9 +254,9 @@ class ApiExpress
     /**
      * Registra uma rota POST com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function post(string $path, ...$handlers): void
+    public function post(string $path, callable ...$handlers): void
     {
         Router::post($path, ...$handlers);
     }
@@ -261,9 +264,9 @@ class ApiExpress
     /**
      * Registra uma rota PUT com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function put(string $path, ...$handlers): void
+    public function put(string $path, callable ...$handlers): void
     {
         Router::put($path, ...$handlers);
     }
@@ -271,9 +274,9 @@ class ApiExpress
     /**
      * Registra uma rota DELETE com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function delete(string $path, ...$handlers): void
+    public function delete(string $path, callable ...$handlers): void
     {
         Router::delete($path, ...$handlers);
     }
@@ -281,9 +284,9 @@ class ApiExpress
     /**
      * Registra uma rota PATCH com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function patch(string $path, ...$handlers): void
+    public function patch(string $path, callable ...$handlers): void
     {
         Router::patch($path, ...$handlers);
     }
@@ -291,9 +294,9 @@ class ApiExpress
     /**
      * Registra uma rota OPTIONS com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function options(string $path, ...$handlers): void
+    public function options(string $path, callable ...$handlers): void
     {
         Router::options($path, ...$handlers);
     }
@@ -301,9 +304,9 @@ class ApiExpress
     /**
      * Registra uma rota HEAD com otimização.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function head(string $path, ...$handlers): void
+    public function head(string $path, callable ...$handlers): void
     {
         Router::head($path, ...$handlers);
     }
@@ -311,9 +314,9 @@ class ApiExpress
     /**
      * Registra uma rota para qualquer método HTTP.
      *
-     * @param mixed ...$handlers
+     * @param callable ...$handlers
      */
-    public function any(string $path, ...$handlers): void
+    public function any(string $path, callable ...$handlers): void
     {
         Router::any($path, ...$handlers);
     }
@@ -345,8 +348,17 @@ class ApiExpress
         try {
             // Obter método e caminho da requisição atual
             $method = $this->server['REQUEST_METHOD'] ?? 'GET';
-            $parsedPath = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH);
-            $path = $parsedPath !== false ? $parsedPath : '/';
+            if (!is_string($method)) {
+                $method = 'GET';
+            }
+
+            $requestUri = $this->server['REQUEST_URI'] ?? '/';
+            if (!is_string($requestUri)) {
+                $requestUri = '/';
+            }
+
+            $parsedPath = parse_url($requestUri, PHP_URL_PATH);
+            $path = $parsedPath !== false && is_string($parsedPath) ? $parsedPath : '/';
 
             // Encontrar rota correspondente usando sistema otimizado de grupos primeiro
             $route = Router::identifyByGroup($method, $path);
@@ -363,7 +375,7 @@ class ApiExpress
             }
 
             // Criar objetos Request e Response
-            $request = new Request($method, $route['path'], $path ?? '/');
+            $request = new Request($method, $route['path'], $path);
             $response = new Response();
 
             // Executar middlewares e handler

@@ -19,7 +19,16 @@ class Router
     private static string $current_group_prefix = '';
 
     /**
-     * Lista de rotas registradas (compatibilidade).
+     * Lista de rota    private static function normalizePrefix(?string $prefix): string
+    {
+        if (empty($prefix) || $prefix === '/') {
+            return '/';
+        }
+
+        $prefix = '/' . trim($prefix, '/');
+        $normalized = preg_replace('/\/+/', '/', $prefix);
+        return $normalized !== null ? $normalized : '/';
+    }adas (compatibilidade).
      * @var array<int, array<string, mixed>>
      */
     private static array $routes = [];
@@ -423,10 +432,14 @@ class Router
 
         // 2. Tenta encontrar rota dinâmica (com parâmetros)
         foreach ($routes as $route) {
-            $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $route['path']);
+            $routePath = is_string($route['path']) ? $route['path'] : '';
+            $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $routePath);
+            if ($pattern === null) {
+                $pattern = $routePath;
+            }
             $pattern = rtrim($pattern, '/');
             $pattern = '#^' . $pattern . '/?$#';
-            if ($route['path'] === self::DEFAULT_PATH) {
+            if ($routePath === self::DEFAULT_PATH) {
                 if ($path === self::DEFAULT_PATH) {
                     return $route;
                 }
@@ -452,7 +465,8 @@ class Router
         }
 
         $prefix = '/' . trim($prefix, '/');
-        return preg_replace('/\/+/', '/', $prefix);
+        $normalized = preg_replace('/\/+/', '/', $prefix);
+        return $normalized !== null ? $normalized : $prefix;
     }
 
     private static function findMatchingPrefix(string $path): ?string
@@ -564,9 +578,12 @@ class Router
 
         // Pré-compila todas as rotas não compiladas
         foreach (self::$routes as $route) {
-            $key = self::createRouteKey($route['method'], $route['path']);
+            $method = is_string($route['method']) ? $route['method'] : 'GET';
+            $path = is_string($route['path']) ? $route['path'] : '/';
+
+            $key = self::createRouteKey($method, $path);
             if (!isset(self::$preCompiledRoutes[$key])) {
-                $compiled = RouteCache::compilePattern($route['path']);
+                $compiled = RouteCache::compilePattern($path);
 
                 $optimizedRoute = [
                     'method' => $route['method'],
@@ -654,11 +671,15 @@ class Router
     {
         $output = '';
         foreach (self::$routes as $route) {
+            $method = is_string($route['method']) ? $route['method'] : 'UNKNOWN';
+            $path = is_string($route['path']) ? $route['path'] : '/';
+            $handlerType = is_callable($route['handler']) ? 'Callable' : 'Not Callable';
+
             $output .= sprintf(
                 "%s %s => %s\n",
-                $route['method'],
-                $route['path'],
-                is_callable($route['handler']) ? 'Callable' : 'Not Callable'
+                $method,
+                $path,
+                $handlerType
             );
         }
         return $output;
@@ -902,7 +923,8 @@ class Router
                 $path = self::$current_group_prefix . $path;
                 // OTIMIZAÇÃO: regex apenas quando necessário
                 if (strpos($path, '//') !== false) {
-                    $path = preg_replace('/\/+/', '/', $path);
+                    $normalizedPath = preg_replace('/\/+/', '/', $path);
+                    $path = $normalizedPath !== null ? $normalizedPath : $path;
                 }
             }
         }

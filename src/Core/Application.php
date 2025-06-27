@@ -194,7 +194,7 @@ class Application
     {
         $configPath = $this->container->make('path.config');
 
-        if (is_dir($configPath)) {
+        if (is_string($configPath) && is_dir($configPath)) {
             $this->config->setConfigPath($configPath)->loadAll();
         }
 
@@ -214,8 +214,12 @@ class Application
     {
         $providers = $this->config->get('app.providers', []);
 
-        foreach ($providers as $provider) {
-            $this->register($provider);
+        if (is_array($providers)) {
+            foreach ($providers as $provider) {
+                if (is_string($provider)) {
+                    $this->register($provider);
+                }
+            }
         }
     }
 
@@ -252,8 +256,12 @@ class Application
     {
         $middlewares = $this->config->get('app.middleware', []);
 
-        foreach ($middlewares as $middleware) {
-            $this->middlewares->add($middleware);
+        if (is_array($middlewares)) {
+            foreach ($middlewares as $middleware) {
+                if (is_string($middleware) || is_callable($middleware)) {
+                    $this->middlewares->add($middleware);
+                }
+            }
         }
     }
 
@@ -547,7 +555,9 @@ class Application
         http_response_code($response->getStatusCode());
 
         foreach ($response->getHeaders() as $name => $value) {
-            header("{$name}: {$value}");
+            if (is_string($name) && (is_string($value) || is_numeric($value))) {
+                header("{$name}: {$value}");
+            }
         }
 
         echo $response->getContent();

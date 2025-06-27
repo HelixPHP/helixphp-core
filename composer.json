@@ -64,8 +64,22 @@
         "test:security": "vendor/bin/phpunit tests/Security/",
         "test:auth": "php test/auth_test.php",
         "phpstan": "phpstan analyse",
+        "phpstan:strict": "phpstan analyse -c phpstan-strict.neon",
         "cs:check": "phpcs --standard=PSR12 src/",
         "cs:fix": "phpcbf --standard=PSR12 src/",
+        "quality:check": [
+            "@phpstan",
+            "@test",
+            "@cs:check"
+        ],
+        "quality:fix": [
+            "@cs:fix",
+            "@phpstan",
+            "@test"
+        ],
+        "fix:psr12-lines": "./scripts/fix-psr12-lines.sh",
+        "precommit:install": "./scripts/setup-precommit.sh",
+        "precommit:test": "./scripts/pre-commit",
         "examples:basic": "php examples/example_basic.php",
         "examples:auth": "php examples/example_auth.php",
         "examples:auth-simple": "php examples/example_auth_simple.php",

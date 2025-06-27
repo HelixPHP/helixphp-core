@@ -31,7 +31,7 @@ class MiddlewareStack
 
     /**
      * Middlewares pré-processados por grupo
-     * @var array<string, array>
+     * @var array<string, callable>
      */
     private static array $groupMiddlewares = [];
 
@@ -195,13 +195,16 @@ class MiddlewareStack
 
     /**
      * Compila middlewares específicos para um grupo
+     * @param array<callable> $middlewares
      */
     public static function compileGroupMiddlewares(string $groupPrefix, array $middlewares): void
     {
         $cacheKey = 'group:' . $groupPrefix;
         $stack = new self();
         foreach ($middlewares as $middleware) {
-            $stack->add($middleware);
+            if (is_callable($middleware)) {
+                $stack->add($middleware);
+            }
         }
         self::$groupMiddlewares[$groupPrefix] = $stack->compileOptimizedPipeline($middlewares, $cacheKey);
     }
@@ -211,14 +214,19 @@ class MiddlewareStack
      */
     public static function getGroupPipeline(string $groupPrefix): ?callable
     {
-        return self::$groupMiddlewares[$groupPrefix] ?? null;
+        $pipeline = self::$groupMiddlewares[$groupPrefix] ?? null;
+        return is_callable($pipeline) ? $pipeline : null;
     }
 
     /**
      * Executa pipeline otimizado para um grupo específico
      */
-    public static function executeForGroup(string $groupPrefix, $req, $resp, callable $finalHandler): mixed
-    {
+    public static function executeForGroup(
+        string $groupPrefix,
+        Request $req,
+        Response $resp,
+        callable $finalHandler
+    ): mixed {
         $pipeline = self::getGroupPipeline($groupPrefix);
 
         if ($pipeline) {
@@ -389,7 +397,11 @@ class MiddlewareStack
             return 'closure:' . $reflection->getFileName() . ':' . $reflection->getStartLine();
         }
 
-        return 'unknown:' . spl_object_hash($middleware);
+        if (is_object($middleware)) {
+            return 'object:' . spl_object_hash($middleware);
+        }
+
+        return 'unknown:' . gettype($middleware);
     }
 
     /**

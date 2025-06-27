@@ -282,7 +282,8 @@ class Config
      */
     public function getNamespace(string $namespace): array
     {
-        return $this->get($namespace, []);
+        $value = $this->get($namespace, []);
+        return is_array($value) ? $value : [];
     }
 
     /**

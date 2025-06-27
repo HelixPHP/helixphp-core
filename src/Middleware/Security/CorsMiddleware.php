@@ -293,23 +293,23 @@ class CorsMiddleware extends BaseMiddleware
     /**
      * Aplica headers CORS de forma otimizada
      */
-    private static function applyOptimizedHeaders($response, string $configHash, array $config, $request): void
-    {
+    private static function applyOptimizedHeaders(
+        Response $response,
+        string $configHash,
+        array $config,
+        Request $request
+    ): void {
         $headers = self::$preCompiledHeaders[$configHash];
 
         // Aplica headers em batch para melhor performance
         foreach ($headers as $name => $value) {
-            if (method_exists($response, 'header')) {
-                $response->header($name, $value);
-            }
+            $response->header($name, $value);
         }
 
         // Handle dynamic origin se necessário
         if (isset($config['dynamic_origin'])) {
             $origin = self::calculateDynamicOrigin($request, $config);
-            if (method_exists($response, 'header')) {
-                $response->header('Access-Control-Allow-Origin', $origin);
-            }
+            $response->header('Access-Control-Allow-Origin', $origin);
         }
     }
 
@@ -469,13 +469,13 @@ class CorsMiddleware extends BaseMiddleware
     /**
      * Calcula origin dinâmica (para casos complexos)
      */
-    private static function calculateDynamicOrigin($request, array $config): string
+    private static function calculateDynamicOrigin(Request $request, array $config): string
     {
         if (!is_array($config['origins'])) {
-            return $config['origins'];
+            return (string) $config['origins'];
         }
 
-        $requestOrigin = method_exists($request, 'getHeader') ? $request->getHeader('Origin', '') : '';
+        $requestOrigin = $request->getHeader('Origin', '');
 
         // Verifica se origin está na lista permitida
         if (in_array($requestOrigin, $config['origins'], true)) {
@@ -534,7 +534,7 @@ class CorsMiddleware extends BaseMiddleware
 
         return function ($request, $response, $next) use ($origin, $methodsString, $headersString) {
             // Aplica headers diretamente sem array intermediário
-            if (method_exists($response, 'header')) {
+            if ($response instanceof Response) {
                 $response->header('Access-Control-Allow-Origin', $origin);
                 $response->header('Access-Control-Allow-Methods', $methodsString);
                 $response->header('Access-Control-Allow-Headers', $headersString);
@@ -542,7 +542,7 @@ class CorsMiddleware extends BaseMiddleware
             }
 
             if (isset($request->method) && $request->method === 'OPTIONS') {
-                if (method_exists($response, 'status') && method_exists($response, 'send')) {
+                if ($response instanceof Response) {
                     $response->status(200)->send();
                 }
                 return;
@@ -591,13 +591,10 @@ class CorsMiddleware extends BaseMiddleware
         $stringsMemory = SerializationCache::getSerializedSize(
             self::$compiledHeaderStrings,
             'cors_compiled_strings'
-        );
-
-        self::$memoryUsageCache = [
+        );        self::$memoryUsageCache = [
             'headers' => $headersMemory,
             'strings' => $stringsMemory,
-            'total' => $headersMemory + $stringsMemory,
-            'serialization_stats' => SerializationCache::getStats()
+            'total' => $headersMemory + $stringsMemory
         ];
         self::$lastDataHash = $currentDataHash;
 
@@ -653,17 +650,17 @@ class CorsMiddleware extends BaseMiddleware
             $request = (object) ['method' => 'GET'];
             $response = new class
             {
-                public function header($name, $value)
+                public function header(string $name, string $value): self
                 {
                     return $this;
                 }
 
-                public function status($code)
+                public function status(int $code): self
                 {
                     return $this;
                 }
 
-                public function send()
+                public function send(): self
                 {
                     return $this;
                 }

@@ -157,7 +157,20 @@ class Arr
     public static function only(array $array, $keys): array
     {
         $keys = is_array($keys) ? $keys : func_get_args()[1];
-        return array_intersect_key($array, array_flip($keys));
+
+        // Garantir que $keys seja array de strings/ints para array_flip
+        if (!is_array($keys)) {
+            return [];
+        }
+
+        $validKeys = [];
+        foreach ($keys as $key) {
+            if (is_string($key) || is_int($key)) {
+                $validKeys[] = $key;
+            }
+        }
+
+        return array_intersect_key($array, array_flip($validKeys));
     }
 
     /**
@@ -170,7 +183,20 @@ class Arr
     public static function except(array $array, $keys): array
     {
         $keys = is_array($keys) ? $keys : func_get_args()[1];
-        return array_diff_key($array, array_flip($keys));
+
+        // Garantir que $keys seja array de strings/ints para array_flip
+        if (!is_array($keys)) {
+            return $array;
+        }
+
+        $validKeys = [];
+        foreach ($keys as $key) {
+            if (is_string($key) || is_int($key)) {
+                $validKeys[] = $key;
+            }
+        }
+
+        return array_diff_key($array, array_flip($validKeys));
     }
 
     /**
@@ -278,7 +304,13 @@ class Arr
         $results = [];
 
         foreach ($array as $item) {
-            $key = is_callable($groupBy) ? $groupBy($item) : static::get($item, $groupBy);
+            if (is_callable($groupBy)) {
+                $key = $groupBy($item);
+            } elseif (is_array($item)) {
+                $key = static::get($item, $groupBy);
+            } else {
+                $key = 'unknown';
+            }
             $results[$key][] = $item;
         }
 

@@ -186,7 +186,9 @@ class RouteCache
         ];
 
         // Cache results em múltiplos lugares para acesso rápido
-        self::setPattern($path, $compiledPattern);
+        if ($compiledPattern !== null) {
+            self::setPattern($path, $compiledPattern);
+        }
         self::setParameters($path, $parameters);
         self::$fastParameterCache[$path] = $result;
         self::$routeTypeCache['dynamic'][$path] = true;
@@ -306,7 +308,8 @@ class RouteCache
 
         // Se o cache é válido, retorna os dados em cache
         if (self::$memoryUsageCache !== null && self::$lastDataHash === $currentDataHash) {
-            return self::$memoryUsageCache['formatted'];
+            $formatted = self::$memoryUsageCache['formatted'] ?? '';
+            return is_string($formatted) ? $formatted : '';
         }
 
         // Recalcula o uso de memória usando cache de serialização otimizado

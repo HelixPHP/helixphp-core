@@ -33,7 +33,7 @@ class Container
     /**
      * Instâncias singleton registradas.
      *
-     * @var array<string, object>
+     * @var array<string, mixed>
      */
     private array $instances = [];
 
@@ -116,8 +116,7 @@ class Container
      * Registra uma instância existente como singleton.
      *
      * @param  string $abstract Nome abstrato
-     * @param  mixed  $instance Instância do objeto ou
-     *                          valor
+     * @param  mixed  $instance Instância do objeto ou valor
      * @return $this
      */
     public function instance(string $abstract, $instance): self
@@ -183,6 +182,10 @@ class Container
         // Verificar binding registrado
         if (isset($this->bindings[$abstract])) {
             $binding = $this->bindings[$abstract];
+
+            if (!is_array($binding) || !isset($binding['singleton'], $binding['instance'], $binding['concrete'])) {
+                throw new Exception("Invalid binding configuration for {$abstract}");
+            }
 
             if ($binding['singleton'] && $binding['instance'] !== null) {
                 return $binding['instance'];

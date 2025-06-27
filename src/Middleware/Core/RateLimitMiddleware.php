@@ -84,10 +84,12 @@ class RateLimitMiddleware extends BaseMiddleware
      */
     private function getKey($request): string
     {
-        if ($this->options['keyGenerator']) {
-            return call_user_func($this->options['keyGenerator'], $request);
+        if ($this->options['keyGenerator'] && is_callable($this->options['keyGenerator'])) {
+            $result = call_user_func($this->options['keyGenerator'], $request);
+            return is_string($result) ? $result : 'unknown';
         }
 
-        return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        $remoteAddr = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        return is_string($remoteAddr) ? $remoteAddr : 'unknown';
     }
 }
