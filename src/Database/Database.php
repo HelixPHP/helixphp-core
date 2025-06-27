@@ -47,7 +47,7 @@ class Database
     {
         $statement = $this->pdo->prepare($query);
         $statement->execute($bindings);
-        return $statement->fetchAll();
+        return (array) $statement->fetchAll();
     }
 
     /**
