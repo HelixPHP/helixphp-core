@@ -52,7 +52,10 @@
     "autoload": {
         "psr-4": {
             "Express\\": "src/"
-        }
+        },
+        "files": [
+            "src/Support/Polyfills.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
