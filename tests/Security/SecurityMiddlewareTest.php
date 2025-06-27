@@ -262,37 +262,7 @@ class SecurityMiddlewareTest extends TestCase
      */
     private function createMockResponse()
     {
-        return new class {
-            public $headers = [];
-            public $status = [];
-
-            public function header($name, $value)
-            {
-                $this->headers[] = "$name: $value";
-                return $this;
-            }
-
-            public function status($code)
-            {
-                $this->status[] = "Status: $code";
-                return $this;
-            }
-
-            public function json($data)
-            {
-                return $this;
-            }
-
-            public function text($text)
-            {
-                return $this;
-            }
-
-            public function end()
-            {
-                return $this;
-            }
-        };
+        return new MockSecurityResponse();
     }
 
     /**
@@ -308,5 +278,41 @@ class SecurityMiddlewareTest extends TestCase
             }
         };
         $next();
+    }
+}
+
+/**
+ * Mock Response class for security middleware testing
+ */
+class MockSecurityResponse
+{
+    public $headers = [];
+    public $status = [];
+
+    public function header($name, $value)
+    {
+        $this->headers[] = "$name: $value";
+        return $this;
+    }
+
+    public function status($code)
+    {
+        $this->status[] = "Status: $code";
+        return $this;
+    }
+
+    public function json($data)
+    {
+        return $this;
+    }
+
+    public function text($text)
+    {
+        return $this;
+    }
+
+    public function end()
+    {
+        return $this;
     }
 }

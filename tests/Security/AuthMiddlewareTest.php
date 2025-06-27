@@ -36,31 +36,9 @@ class AuthMiddlewareTest extends TestCase
         ];
     }
 
-    private function createMockResponse(): object
+    private function createMockResponse(): MockResponse
     {
-        return new class {
-            public $statusCode = 200;
-            public $headers = [];
-            public $body = '';
-
-            public function status($code)
-            {
-                $this->statusCode = $code;
-                return $this;
-            }
-
-            public function json($data)
-            {
-                $this->body = json_encode($data);
-                return $this;
-            }
-
-            public function send($data)
-            {
-                $this->body = $data;
-                return $this;
-            }
-        };
+        return new MockResponse();
     }
 
     public function testJWTAuthenticationSuccess(): void
@@ -183,5 +161,33 @@ class AuthMiddlewareTest extends TestCase
 
         $this->assertTrue($nextCalled);
         $this->assertTrue(property_exists($request, 'user'));
+    }
+}
+
+/**
+ * Mock Response class for testing
+ */
+class MockResponse
+{
+    public $statusCode = 200;
+    public $headers = [];
+    public $body = '';
+
+    public function status($code)
+    {
+        $this->statusCode = $code;
+        return $this;
+    }
+
+    public function json($data)
+    {
+        $this->body = json_encode($data);
+        return $this;
+    }
+
+    public function send($data)
+    {
+        $this->body = $data;
+        return $this;
     }
 }

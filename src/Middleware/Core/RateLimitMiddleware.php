@@ -45,7 +45,9 @@ class RateLimitMiddleware extends BaseMiddleware
         // Clean old entries
         $_SESSION['rate_limit'] = array_filter(
             $_SESSION['rate_limit'],
-            fn($timestamp) => $timestamp > $windowStart
+            function($timestamp) use ($windowStart) {
+                return $timestamp > $windowStart;
+            }
         );
 
         if (!isset($_SESSION['rate_limit'][$key])) {
@@ -55,7 +57,9 @@ class RateLimitMiddleware extends BaseMiddleware
         // Clean old entries for this key
         $_SESSION['rate_limit'][$key] = array_filter(
             $_SESSION['rate_limit'][$key],
-            fn($timestamp) => $timestamp > $windowStart
+            function($timestamp) use ($windowStart) {
+                return $timestamp > $windowStart;
+            }
         );
 
         $currentCount = count($_SESSION['rate_limit'][$key]);
