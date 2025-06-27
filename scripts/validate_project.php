@@ -31,7 +31,7 @@ class ProjectValidator
         $this->validateSecurity();
 
         // Relatório final
-        $this->generateReport();
+        return $this->generateReport();
     }
 
     private function validateStructure()

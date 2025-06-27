@@ -9,27 +9,27 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
-    
+
     name: PHP ${{ matrix.php-version }} Tests
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
         extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, json, session
         coverage: xdebug
-    
+
     - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-    
+      run: composer validate --strict || { echo 'Composer validation failed'; exit 1; }
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
@@ -38,41 +38,50 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-    
+
     - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-    
+      run: composer install --prefer-dist --no-progress || { echo 'Composer install failed'; exit 1; }
+
     - name: Check PHP syntax
-      run: find src -name "*.php" -exec php -l {} \;
-    
+      run: find src -name "*.php" -exec php -l {} \; || { echo 'PHP syntax check failed'; exit 1; }
+
     - name: Run PHPStan
       run: |
         if [ -f "vendor/bin/phpstan" ]; then
-          ./vendor/bin/phpstan analyse --no-progress
+          ./vendor/bin/phpstan analyse --no-progress || { echo 'PHPStan analysis failed'; exit 1; }
         else
           echo "PHPStan not installed, skipping static analysis"
         fi
-    
+
     - name: Run PHP CS
       run: |
         if [ -f "vendor/bin/phpcs" ]; then
-          ./vendor/bin/phpcs --standard=PSR12 src/
+          ./vendor/bin/phpcs --standard=PSR12 src/ || { echo 'PHPCS check failed'; exit 1; }
         else
           echo "PHPCS not installed, skipping code style check"
         fi
-    
+
     - name: Run PHPUnit tests
       run: |
         if [ -f "vendor/bin/phpunit" ]; then
-          ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml
+          echo "Running PHPUnit tests..."
+          # For PHP 8.1, try with coverage, for others just run tests
+          if [ "${{ matrix.php-version }}" = "8.1" ]; then
+            ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml 2>/dev/null || {
+              echo "Coverage failed, running without coverage..."
+              ./vendor/bin/phpunit || { echo 'PHPUnit tests failed'; exit 1; }
+            }
+          else
+            ./vendor/bin/phpunit || { echo 'PHPUnit tests failed'; exit 1; }
+          fi
         else
           echo "PHPUnit not installed, running basic tests"
           php test/auth_test.php
         fi
-    
+
     - name: Run custom validation
-      run: php scripts/validate_project.php
-    
+      run: php scripts/validate_project.php || { echo 'Custom validation failed'; exit 1; }
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       if: matrix.php-version == '8.1'
@@ -84,20 +93,20 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     name: Code Quality
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-    
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
         extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
-    
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-    
+
     - name: Security Check
       run: |
         if [ -f "vendor/bin/security-checker" ]; then
@@ -105,6 +114,6 @@ jobs:
         else
           echo "Security checker not installed"
         fi
-    
+
     - name: Dependency Check
       run: composer outdated --direct
