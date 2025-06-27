@@ -6,9 +6,9 @@
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
-**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com sistema nativo de autenticação multi-método.
+**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com otimizações integradas e sistema nativo de autenticação.
 
-> 🔐 **Novo na v1.0**: Sistema completo de autenticação com JWT, Basic Auth, Bearer Token, API Key e auto-detecção!
+> ⚡ **Otimizado**: Cache integrado, roteamento por grupos, pipeline de middlewares otimizado e CORS ultra-rápido!
 
 ## 🚀 Início Rápido
 
@@ -163,6 +163,45 @@ $app->get('/data/export', function($req, $res) {
 - **Streaming de JSON**: Para exports e APIs de dados
 - **Buffer Customizável**: Controle fino sobre performance
 - **Heartbeat**: Manutenção de conexões SSE ativas
+
+## ⚡ Performance & Benchmarks
+
+O Express PHP foi projetado para máxima performance. Execute nossos benchmarks para ver os resultados:
+
+```bash
+# Benchmark rápido (100 iterações)
+./benchmarks/run_benchmark.sh -q
+
+# Benchmark completo (1000 iterações)
+./benchmarks/run_benchmark.sh
+
+# Benchmark extensivo (10000 iterações)
+./benchmarks/run_benchmark.sh -f
+
+# Todos os benchmarks + relatório abrangente
+./benchmarks/run_benchmark.sh -a
+```
+
+### Resultados de Performance (PHP 8.1)
+
+| Métrica | Operações/seg | Tempo Médio |
+|---------|---------------|-------------|
+| **Inicialização de App** | ~485,000 | 2.06 μs |
+| **Registro de Rotas** | ~310,000 | 3.22 μs |
+| **Middleware Stack** | ~1,300,000 | 0.75 μs |
+| **JWT Token Gen/Valid** | ~160,000/61,000 | 6.25/16.29 μs |
+| **JSON Encode/Decode** | ~10M/2,500 | 0.10/395 μs |
+| **CORS Processing** | ~32M | 0.03 μs |
+
+### Características de Performance
+
+- **Baixo Overhead**: Apenas 1.37 KB de memória por instância de app
+- **Roteamento Eficiente**: Pattern matching otimizado com regex
+- **Middleware Leve**: Execução de middleware stack ultra-rápida
+- **JSON Otimizado**: Processamento JSON nativo do PHP
+- **Memória Controlada**: Gerenciamento eficiente de recursos
+
+📊 **[Ver Relatório Abrangente](benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** | 🛠️ **[Executar Benchmarks](benchmarks/README.md)**
 
 ## ⚙️ Requisitos
 

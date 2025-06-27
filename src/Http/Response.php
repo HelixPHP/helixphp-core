@@ -53,7 +53,12 @@ class Response
     public function status(int $code): self
     {
         $this->statusCode = $code;
-        http_response_code($this->statusCode);
+
+        // Só define o status code se os headers ainda não foram enviados
+        if (!headers_sent()) {
+            http_response_code($this->statusCode);
+        }
+
         return $this;
     }
 
@@ -67,7 +72,12 @@ class Response
     public function header(string $name, string $value): self
     {
         $this->headers[$name] = $value;
-        header("{$name}: {$value}");
+
+        // Só envia o header se os headers ainda não foram enviados
+        if (!headers_sent()) {
+            header("{$name}: {$value}");
+        }
+
         return $this;
     }
 

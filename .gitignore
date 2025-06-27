@@ -230,3 +230,4 @@ yarn.lock
 TODO.md
 NOTES.md
 scratch/
+*/reports/*.json

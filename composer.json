@@ -70,7 +70,10 @@
         "examples:auth": "php examples/example_auth.php",
         "examples:auth-simple": "php examples/example_auth_simple.php",
         "examples:middleware": "php examples/example_middleware.php",
-        "examples:app": "php examples/app.php"
+        "examples:app": "php examples/app.php",
+        "benchmark": "./benchmarks/run_benchmark.sh",
+        "benchmark:quick": "./benchmarks/run_benchmark.sh -q",
+        "benchmark:simple": "php benchmarks/SimpleBenchmark.php"
     },
     "config": {
         "optimize-autoloader": true,

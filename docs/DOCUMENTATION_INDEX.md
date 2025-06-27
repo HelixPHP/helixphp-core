@@ -1,90 +1,112 @@
-# 📋 Índice da Documentação - Express PHP
+# 📚 Express PHP Framework - Documentação
 
-Este arquivo serve como um mapa completo de toda a documentação disponível no projeto Express PHP.
+## 🚀 Quick Start
 
-## 📁 Estrutura da Documentação
+```php
+<?php
+require_once 'vendor/autoload.php';
 
-```
-docs/
-├── README.md                          # 📚 Índice principal da documentação
-├── DOCUMENTATION_INDEX.md             # 📋 Este arquivo - mapa completo
-│
-├── pt-br/                             # 🇧🇷 Documentação em Português
-│   ├── README.md                      # Documentação principal PT-BR
-│   ├── AUTH_MIDDLEWARE.md             # Sistema de autenticação completo
-│   ├── MODULARIZATION.md              # Arquitetura modular do framework
-│   ├── STREAMING.md                   # Streaming e Server-Sent Events
-│   └── objetos.md                     # Referência de API e objetos
-│
-├── en/                                # 🇺🇸 Documentação em Inglês
-│   ├── README.md                      # Complete English documentation
-│   └── objects.md                     # API reference and objects
-│
-├── guides/                            # 📖 Guias de Usuário
-│   ├── PUBLISHING_GUIDE.md            # Como publicar no Packagist
-│   ├── READY_FOR_PUBLICATION.md       # Checklist de publicação
-│   ├── SECURITY_IMPLEMENTATION.md     # Implementação de segurança
-│   └── starter/                       # 🚀 Guia de início
-│       └── README.md                  # Tutorial completo para iniciantes
-│
-├── development/                       # 🔧 Guias para Desenvolvedores
-│   ├── DEVELOPMENT.md                 # Setup de ambiente de desenvolvimento
-│   ├── COMPOSER_PSR4.md               # Configuração Composer e PSR-4
-│   ├── INTERNATIONALIZATION.md        # Sistema de internacionalização
-│   └── MIDDLEWARE_MIGRATION.md        # Migração e criação de middlewares
-│
-└── implementation/                    # 🛠️ Documentação Técnica
-    └── AUTH_IMPLEMENTATION_SUMMARY.md # Sumário técnico da implementação
+use Express\ApiExpress;
+
+$app = new ApiExpress();
+
+// Rotas básicas
+$app->get('/', function() {
+    return ['message' => 'Express PHP Framework'];
+});
+
+// Rotas organizadas por grupos (com otimizações automáticas)
+$app->group('/api/v1', function() use ($app) {
+    $app->get('/users', function() {
+        return ['users' => []];
+    });
+    $app->post('/users', function() {
+        return ['created' => true];
+    });
+});
+
+$app->listen(3000);
 ```
 
-## 🎯 Guias por Objetivo
+## 📊 Performance & Benchmarks
 
-### 👶 Iniciante - Primeiros Passos
-1. **[Guia de Início](guides/starter/README.md)** - Comece aqui!
-2. **[README Principal PT-BR](pt-br/README.md)** - Visão geral completa
-3. **[Exemplo Básico](../examples/example_basic.php)** - Primeiro código
+### 1. **[Resultados Completos](../OPTIMIZATION_RESULTS.md)** - Análise detalhada de performance
+### 2. **[Benchmark de Grupos](../benchmarks/benchmark_group_features.sh)** - Teste específico de funcionalidades de grupo
+### 3. **[Benchmark Geral](../benchmarks/run_benchmark.sh)** - Suite completa de testes
 
-### 🔐 Implementando Autenticação
-1. **[Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - Guia completo
-2. **[Exemplo Completo](../examples/example_auth.php)** - Código prático completo
-3. **[Exemplo Simples](../examples/example_auth_simple.php)** - Versão simplificada
-4. **[Implementação Técnica](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Detalhes internos
+**Performance Highlights:**
+- **CORS Processing:** 32M+ ops/s
+- **Route Pattern Matching:** 1.6M+ ops/s
+- **Cache Hit Ratio:** 99.6%
+- **Memory per instance:** 1.43 KB
 
-### 🛡️ Segurança e Middlewares
-1. **[Middlewares de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Guia completo
-2. **[Exemplo de Middlewares](../examples/example_middleware.php)** - Demonstração prática
-3. **[Migração de Middlewares](development/MIDDLEWARE_MIGRATION.md)** - Desenvolvimento
+## 🎯 Funcionalidades Principais
 
-### 📡 Streaming e Tempo Real
-1. **[Guia de Streaming](pt-br/STREAMING.md)** - Documentação completa
-2. **[Exemplo de Middleware](../examples/example_middleware.php)** - Inclui streaming básico
+### ✅ **Roteamento Otimizado**
+- Cache automático de rotas (O(1) access)
+- Organização por grupos
+- Pattern matching pré-compilado
+- Estatísticas em tempo real
 
-### 🌍 Documentação Internacional
-- **[Português](pt-br/README.md)** - Documentação completa em PT-BR
-- **[English](en/README.md)** - Complete documentation in English
+### ✅ **Middleware Pipeline**
+- Pipeline pré-compilado (1.5M+ ops/s)
+- Cache de middlewares
+- Detecção de redundâncias
 
-### 🚀 Publicação e Deploy
-1. **[Guia de Publicação](guides/PUBLISHING_GUIDE.md)** - Como publicar
-2. **[Checklist de Publicação](guides/READY_FOR_PUBLICATION.md)** - Status
+### ✅ **CORS Integrado**
+- Performance excepcional (32M+ ops/s)
+- Cache de headers
+- Configuração flexível
 
-### 🔧 Desenvolvimento Avançado
-1. **[Setup de Desenvolvimento](development/DEVELOPMENT.md)** - Ambiente
-2. **[Arquitetura Modular](pt-br/MODULARIZATION.md)** - Estrutura interna
-3. **[Internacionalização](development/INTERNATIONALIZATION.md)** - Multi-idioma
+### ✅ **Security Built-in**
+- XSS Protection (3.5M+ ops/s)
+- JWT Token support
+- Sanitização automática
 
-## 📚 Referências Rápidas
+## 📈 Exemplos de Uso
 
-### API e Objetos
-- **[Referência PT-BR](pt-br/objetos.md)** - Todos os objetos e métodos
-- **[English Reference](en/objects.md)** - Complete API reference
+### Básico
+```bash
+cd examples && php example_basic.php
+```
 
-##  Precisa de Ajuda?
+### Com Grupos (Recomendado)
+```bash
+cd examples && php example_optimized_groups.php
+```
 
-1. **Consulte primeiro**: [Guia de Início](guides/starter/README.md)
-2. **Busque exemplos**: [Pasta Examples](../examples/)
-3. **Documentação completa**: [README PT-BR](pt-br/README.md)
-4. **Issues no GitHub**: [Express PHP Issues](https://github.com/CAFernandes/express-php/issues)
+### Middleware Completo
+```bash
+cd examples && php example_complete_optimizations.php
+```
+
+## 🔧 Benchmark & Teste
+
+```bash
+# Benchmark rápido
+./benchmarks/run_benchmark.sh -q
+
+# Benchmark completo
+./benchmarks/run_benchmark.sh -a
+
+# Teste específico de grupos
+./benchmarks/benchmark_group_features.sh
+```
+
+## 📋 API Reference
+
+### Router Methods
+- `$app->get($path, $handler)`
+- `$app->post($path, $handler)`
+- `$app->put($path, $handler)`
+- `$app->delete($path, $handler)`
+- `$app->group($prefix, $callback, $middlewares)`
+
+### Utilities
+- `$app->router->getGroupStats()` - Estatísticas de grupos
+- `$app->router->warmupGroups()` - Aquecimento de cache
+- `$app->middlewareStack->getStats()` - Stats de middleware
 
 ---
 
-**💡 Dica**: Para começar rapidamente, consulte o [Guia de Início](guides/starter/README.md) e execute os [exemplos](../examples/)!
+**Express PHP Framework** - Performance, simplicidade e flexibilidade. 🚀
