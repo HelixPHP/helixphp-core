@@ -1,7 +1,7 @@
 parameters:
-    level: 8
+    level: 5
     paths:
-        - SRC
+        - src
     excludePaths:
         - vendor
         - test

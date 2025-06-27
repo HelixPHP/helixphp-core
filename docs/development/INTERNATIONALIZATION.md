@@ -34,17 +34,17 @@ This document summarizes the standardization changes made to Express PHP for bet
 ```
 docs/
 ├── en/                    # English documentation (primary)
-│   ├── README.md         
-│   └── objects.md        
+│   ├── README.md
+│   └── objects.md
 └── pt-br/                # Portuguese documentation (secondary)
-    ├── README.md         
-    ├── middlewares.md    
-    └── objetos.md        
+    ├── README.md
+    ├── middlewares.md
+    └── objetos.md
 ```
 
 ### Main Files
 - `README.md` - Now in English as primary language
-- `SRC/Middlewares/README.md` - English documentation for middlewares
+- `src/Middleware/README.md` - English documentation for middlewares
 - All documentation references updated to use English filenames
 
 ## 🔄 Compatibility
@@ -64,7 +64,7 @@ docs/
 All documentation files were updated to reference the new English filenames:
 
 - `README.md` (main)
-- `SRC/Middlewares/README.md`
+- `src/Middleware/README.md`
 - `SECURITY_IMPLEMENTATION.md`
 - `MIDDLEWARE_MIGRATION.md`
 - `CONTRIBUTING.md`

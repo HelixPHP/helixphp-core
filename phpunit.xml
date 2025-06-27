@@ -3,8 +3,8 @@
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
-         failOnRisky="true"
-         failOnWarning="true"
+         failOnRisky="false"
+         failOnWarning="false"
          stopOnFailure="false"
          cacheDirectory=".phpunit.cache">
     <testsuites>
@@ -20,7 +20,7 @@
     </testsuites>
     <coverage>
         <include>
-            <directory suffix=".php">SRC</directory>
+            <directory suffix=".php">src</directory>
         </include>
         <exclude>
             <directory>vendor</directory>

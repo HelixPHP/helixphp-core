@@ -39,7 +39,7 @@ $app->use(AuthMiddleware::jwt('sua_chave_secreta'));
 // Login para obter token
 $app->post('/login', function($req, $res) {
     // Validar credenciais...
-    
+
     $token = JWTHelper::encode([
         'user_id' => $userId,
         'username' => $username,
@@ -47,7 +47,7 @@ $app->post('/login', function($req, $res) {
     ], 'sua_chave_secreta', [
         'expiresIn' => 3600 // 1 hora
     ]);
-    
+
     $res->json(['token' => $token]);
 });
 
@@ -60,7 +60,7 @@ $app->post('/login', function($req, $res) {
 function validateUser($username, $password) {
     // Consultar banco de dados
     $users = ['admin' => 'senha123'];
-    
+
     return isset($users[$username]) && $users[$username] === $password
         ? ['id' => 1, 'username' => $username] : false;
 }
@@ -78,7 +78,7 @@ function validateApiKey($key) {
         'key123456' => ['name' => 'App Mobile', 'permissions' => ['read', 'write']],
         'service_key' => ['name' => 'Integration', 'permissions' => ['read']]
     ];
-    
+
     return $validKeys[$key] ?? false;
 }
 
@@ -108,29 +108,29 @@ $app->use(new AuthMiddleware([
 $app->use(new AuthMiddleware([
     // Métodos de autenticação suportados
     'authMethods' => ['jwt', 'basic', 'bearer', 'apikey', 'custom'],
-    
+
     // Configurações JWT
     'jwtSecret' => 'sua_chave_jwt_super_secreta',
     'jwtAlgorithm' => 'HS256',
-    
+
     // Callbacks de validação
     'basicAuthCallback' => 'validateBasicAuth',
     'bearerTokenCallback' => 'validateBearerToken',
     'apiKeyCallback' => 'validateApiKey',
     'customAuthCallback' => 'customAuthentication',
-    
+
     // Configurações de API Key
     'headerName' => 'X-API-Key',
     'queryParam' => 'api_key',
-    
+
     // Comportamento
     'requireAuth' => true,
     'allowMultiple' => false,
     'userProperty' => 'user', // $req->user
-    
+
     // Caminhos excluídos
     'excludePaths' => ['/health', '/docs', '/public'],
-    
+
     // Mensagens personalizadas
     'errorMessages' => [
         'missing' => 'Autenticação requerida',
@@ -144,7 +144,7 @@ $app->use(new AuthMiddleware([
 
 ```php
 // Rota específica com JWT
-$app->get('/admin/users', 
+$app->get('/admin/users',
     AuthMiddleware::jwt('chave_secreta'),
     function($req, $res) {
         // Apenas usuários com JWT válido
@@ -179,7 +179,7 @@ $app->get('/mixed', function($req, $res) {
         // Usuário anônimo
         $message = "Olá, visitante";
     }
-    
+
     $res->json(['message' => $message]);
 });
 ```
@@ -217,16 +217,16 @@ $refreshData = JWTHelper::validateRefreshToken($refreshToken, $secret);
 // Login com refresh token
 $app->post('/login', function($req, $res) {
     // Validar credenciais...
-    
+
     $accessToken = JWTHelper::encode([
         'user_id' => $userId
     ], 'jwt_secret', ['expiresIn' => 900]); // 15 min
-    
+
     $refreshToken = JWTHelper::createRefreshToken(
-        $userId, 
+        $userId,
         'refresh_secret'
     ); // 30 dias
-    
+
     $res->json([
         'access_token' => $accessToken,
         'refresh_token' => $refreshToken,
@@ -238,12 +238,12 @@ $app->post('/login', function($req, $res) {
 $app->post('/refresh', function($req, $res) {
     $refreshToken = $req->body['refresh_token'];
     $payload = JWTHelper::validateRefreshToken($refreshToken, 'refresh_secret');
-    
+
     if ($payload) {
         $newToken = JWTHelper::encode([
             'user_id' => $payload['user_id']
         ], 'jwt_secret');
-        
+
         $res->json(['access_token' => $newToken]);
     } else {
         $res->status(401)->json(['error' => 'Invalid refresh token']);
@@ -259,11 +259,11 @@ Após autenticação bem-sucedida:
 $app->get('/profile', function($req, $res) {
     // Dados do usuário autenticado
     $user = $req->user;
-    
+
     // Informações da autenticação
     $authMethod = $req->auth['method']; // 'jwt', 'basic', 'apikey', etc.
     $authenticated = $req->auth['authenticated']; // true
-    
+
     $res->json([
         'user' => $user,
         'auth_method' => $authMethod,
@@ -288,12 +288,12 @@ function requireAdmin($req, $res, $next) {
 function requirePermission($permission) {
     return function($req, $res, $next) use ($permission) {
         $userPermissions = $req->user['permissions'] ?? [];
-        
+
         if (!in_array($permission, $userPermissions)) {
             $res->status(403)->json(['error' => "Permission '{$permission}' required"]);
             return;
         }
-        
+
         $next();
     };
 }
@@ -354,7 +354,7 @@ php test/auth_test.php
 
 ## 📋 Exemplos Completos
 
-- **Exemplo básico:** [`examples/example_auth.php`](examples/example_auth.php)
+- **Exemplo básico:** [`examples/example_auth.php`](../../examples/example_auth.php)
 - **Snippets rápidos:** [`examples/snippets/auth_snippets.php`](examples/snippets/auth_snippets.php)
 
 ## 🔧 Configuração de Produção

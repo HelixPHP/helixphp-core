@@ -25,12 +25,12 @@ composer test
 #### 📋 Padrões de Qualidade
 - **PHPStan Level 8**: Máxima análise estática
 - **PSR-12**: Padrão de code style
-- **PHP 7.4+**: Compatibilidade mínima
+- **PHP 8.1+**: Compatibilidade mínima
 - **100% Test Coverage**: Todos os recursos devem ter testes
 
 #### 🎯 Estrutura do Código
 ```
-SRC/
+src/
 ├── ApiExpress.php           # Classe principal
 ├── Controller/              # Roteamento
 ├── Services/               # Serviços (Request, Response)
@@ -74,8 +74,8 @@ class MeuMiddleware
 ```
 
 #### Localização dos Middlewares
-- **Core**: `SRC/Middlewares/Core/` - Funcionalidades principais
-- **Security**: `SRC/Middlewares/Security/` - Segurança e autenticação
+- **Core**: `src/Middleware/Core/` - Funcionalidades principais
+- **Security**: `src/Middleware/Security/` - Segurança e autenticação
 
 ### 4. Testes
 
@@ -89,10 +89,10 @@ composer test
 ./vendor/bin/phpstan analyse
 
 # Verificação de code style
-./vendor/bin/phpcs --standard=PSR12 SRC/
+./vendor/bin/phpcs --standard=PSR12 src/
 
 # Correção automática de style
-./vendor/bin/phpcbf --standard=PSR12 SRC/
+./vendor/bin/phpcbf --standard=PSR12 src/
 ```
 
 #### Criar Novos Testes
@@ -133,7 +133,7 @@ class MeuMiddlewareTest extends TestCase
 - Traduza para outros idiomas
 
 ### 🔧 Corrigir Código
-- Mantenha compatibilidade com PHP 7.4+
+- Mantenha compatibilidade com PHP 8.1+
 - Siga os padrões de qualidade
 - Adicione testes para mudanças
 
@@ -145,7 +145,7 @@ class MeuMiddlewareTest extends TestCase
 - [ ] Todos os testes passam
 - [ ] Documentação atualizada
 - [ ] Exemplos funcionando
-- [ ] Compatibilidade PHP 7.4+
+- [ ] Compatibilidade PHP 8.1+
 
 ### Hooks de Git
 O projeto inclui hooks automáticos que verificam:
@@ -232,9 +232,8 @@ test: add middleware integration tests
 ## 📖 Development Resources
 
 - [Express PHP Documentation](docs/en/README.md)
-- [Middleware Documentation](SRC/Middlewares/README.md)
-- [Security Implementation Guide](SECURITY_IMPLEMENTATION.md)
-- [Migration Guide](MIDDLEWARE_MIGRATION.md)
+- [Security Implementation Guide](docs/guides/SECURITY_IMPLEMENTATION.md)
+- [Migration Guide](docs/development/MIDDLEWARE_MIGRATION.md)
 
 ## 🎯 Contribution Areas
 

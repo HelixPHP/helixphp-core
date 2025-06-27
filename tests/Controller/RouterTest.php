@@ -3,7 +3,7 @@
 namespace Express\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Express\Controller\Router;
+use Express\Routing\Router;
 
 class RouterTest extends TestCase
 {
@@ -105,7 +105,7 @@ class RouterTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         try {
-            Router::get('/test', function() {
+            Router::get('/test', function () {
                 return 'test';
             });
         } catch (\Exception $e) {
@@ -120,7 +120,7 @@ class RouterTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         try {
-            Router::use('/test', function($req, $res, $next) {
+            Router::use('/test', function ($req, $res, $next) {
                 $next();
             });
         } catch (\Exception $e) {
@@ -131,7 +131,7 @@ class RouterTest extends TestCase
 
     public function testRegisterRoute(): void
     {
-        $handler = function($req, $res) {
+        $handler = function ($req, $res) {
             return 'test';
         };
 

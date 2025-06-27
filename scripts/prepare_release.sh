@@ -1,30 +1,30 @@
 #!/bin/bash
 
-# Script de preparação para publicação do Express PHP
-# Este script limpa e valida o projeto antes da publicação
+# Script de preparação para publicação do Express PHP v2.0.0
+# Este script limpa, valida e prepara o projeto para release
 
 set -e
 
-echo "🧹 Preparando Express PHP para publicação..."
-echo "=============================================="
+# Cores
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+NC='\033[0m'
 
-# Função para exibir status
-status() {
-    echo "✅ $1"
-}
+title() { echo -e "${PURPLE}🚀 $1${NC}"; }
+info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+success() { echo -e "${GREEN}✅ $1${NC}"; }
+warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-warning() {
-    echo "⚠️  $1"
-}
-
-error() {
-    echo "❌ $1"
-    exit 1
-}
+title "Express PHP v2.0.0 - Release Preparation"
+echo ""
 
 # Verificar se estamos na raiz do projeto
 if [ ! -f "composer.json" ]; then
-    error "Este script deve ser executado na raiz do projeto"
+    error "Execute este script na raiz do projeto Express-PHP"
 fi
 
 # 1. Verificar se há arquivos sensíveis
@@ -39,7 +39,7 @@ if [ -d "vendor" ]; then
 fi
 
 if [ -f "composer.lock" ]; then
-    status "composer.lock encontrado - normal para aplicações, opcional para bibliotecas"
+    info "composer.lock encontrado - normal para aplicações, opcional para bibliotecas"
 fi
 
 # 2. Validar estrutura básica
@@ -48,16 +48,16 @@ echo "📁 Validando estrutura do projeto..."
 required_files=("composer.json" "README.md" "LICENSE")
 for file in "${required_files[@]}"; do
     if [ -f "$file" ]; then
-        status "Arquivo $file presente"
+        info "Arquivo $file presente"
     else
         error "Arquivo obrigatório $file não encontrado"
     fi
 done
 
-required_dirs=("SRC" "docs")
+required_dirs=("src" "docs")
 for dir in "${required_dirs[@]}"; do
     if [ -d "$dir" ]; then
-        status "Diretório $dir presente"
+        info "Diretório $dir presente"
     else
         error "Diretório obrigatório $dir não encontrado"
     fi
@@ -66,9 +66,9 @@ done
 # 3. Verificar sintaxe PHP
 echo "🔧 Verificando sintaxe PHP..."
 
-find SRC -name "*.php" -exec php -l {} \; > /dev/null
+find src -name "*.php" -exec php -l {} \; > /dev/null
 if [ $? -eq 0 ]; then
-    status "Sintaxe PHP válida em todos os arquivos"
+    info "Sintaxe PHP válida em todos os arquivos"
 else
     error "Erros de sintaxe encontrados"
 fi
@@ -78,10 +78,10 @@ echo "🧪 Executando testes..."
 
 if [ -f "vendor/bin/phpunit" ]; then
     ./vendor/bin/phpunit --no-coverage --stop-on-failure
-    status "Testes passaram"
+    info "Testes passaram"
 elif [ -f "phpunit.phar" ]; then
     php phpunit.phar --no-coverage --stop-on-failure
-    status "Testes passaram"
+    info "Testes passaram"
 else
     warning "PHPUnit não encontrado - testes não executados"
 fi
@@ -91,7 +91,7 @@ echo "🔍 Análise estática..."
 
 if [ -f "vendor/bin/phpstan" ]; then
     ./vendor/bin/phpstan analyse --no-progress
-    status "Análise estática passou"
+    info "Análise estática passou"
 else
     warning "PHPStan não encontrado - análise estática não executada"
 fi
@@ -102,7 +102,7 @@ echo "📦 Validando composer.json..."
 # Verificar se composer.json é válido
 composer validate --no-check-all --no-check-lock
 if [ $? -eq 0 ]; then
-    status "composer.json válido"
+    info "composer.json válido"
 else
     error "composer.json inválido"
 fi
@@ -110,7 +110,7 @@ fi
 # 7. Verificar se há mudanças não commitadas (se for um repositório Git)
 if [ -d ".git" ]; then
     echo "📝 Verificando status do Git..."
-    
+
     if [ -n "$(git status --porcelain)" ]; then
         warning "Há mudanças não commitadas:"
         git status --porcelain
@@ -121,7 +121,7 @@ if [ -d ".git" ]; then
             error "Cancelado pelo usuário"
         fi
     else
-        status "Todos os arquivos estão commitados"
+        info "Todos os arquivos estão commitados"
     fi
 fi
 
@@ -131,7 +131,7 @@ echo "🎯 Executando validação personalizada..."
 if [ -f "scripts/validate_project.php" ]; then
     php scripts/validate_project.php
     if [ $? -eq 0 ]; then
-        status "Validação personalizada passou"
+        info "Validação personalizada passou"
     else
         error "Validação personalizada falhou"
     fi
@@ -145,30 +145,30 @@ echo "🧹 Limpando arquivos temporários..."
 # Remover cache de desenvolvimento
 if [ -d ".phpunit.cache" ]; then
     rm -rf .phpunit.cache
-    status "Cache do PHPUnit removido"
+    info "Cache do PHPUnit removido"
 fi
 
 if [ -f ".phpunit.result.cache" ]; then
     rm -f .phpunit.result.cache
-    status "Cache de resultados do PHPUnit removido"
+    info "Cache de resultados do PHPUnit removido"
 fi
 
 if [ -d ".phpstan.cache" ]; then
     rm -rf .phpstan.cache
-    status "Cache do PHPStan removido"
+    info "Cache do PHPStan removido"
 fi
 
 # Limpar logs de desenvolvimento
 if [ -d "logs" ]; then
     find logs -name "*.log" -type f -delete 2>/dev/null || true
-    status "Logs de desenvolvimento limpos"
+    info "Logs de desenvolvimento limpos"
 fi
 
 # 10. Verificar tamanho do projeto
 echo "📊 Análise do tamanho do projeto..."
 
 project_size=$(du -sh . 2>/dev/null | cut -f1)
-status "Tamanho total do projeto: $project_size"
+info "Tamanho total do projeto: $project_size"
 
 # Verificar arquivos grandes
 echo "Arquivos maiores que 1MB:"

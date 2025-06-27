@@ -1,13 +1,120 @@
 # Changelog
 
-Todas as mudanças notáveis neste projeto serão documentadas neste arquivo.
+Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
-e este projeto adere ao [Semantic Versioning](https://semver.org/lang/pt-BR/).
+e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-06-26
+## [Unreleased]
+
+### 🔥 BREAKING CHANGES
+- **PHP 8.1+ Required**: Dropped PHP 8.0 support as it's reaching end of life
+- CI/CD matrix updated to test PHP 8.1-8.4
+
+### Removed
+- **PHP 8.0 Support**: Minimum requirement increased to PHP 8.1 for better security and performance
+- **Complete Polyfills Removal**: Removed `src/Support/Polyfills.php` file entirely since PHP 8.1+ has all required functions natively
+- Removed Polyfills autoloading from `composer.json`
+
+### Changed
+- **Modern PHP 8.1+ Features**: Updated classes to use typed properties, constructor promotion, and modern type declarations
+- Enhanced `Request` and `Response` classes with strict typing
+- Modernized `Event` class with readonly properties and constructor promotion
+
+### 🔥 BREAKING CHANGES
+- **PHP 8.0+ Required**: Dropped PHP 7.4 support for better performance and modern features
+- Polyfills simplified (PHP 8.1+ native functions used)
+
+### Planejado
+- Sistema de plugins
+- CLI commands avançados
+- ORM básico integrado
+- Cache Redis driver
+
+## [2.1.0] - 2025-06-27
+
+### 🚀 Added
+- **PHP 8.0+ Requirement**: Migrated minimum requirement from PHP 7.4 to 8.0
+- **Better CI/CD**: Improved testing matrix for PHP 8.0-8.4
+- **Simplified Polyfills**: Removed complex polyfills in favor of native PHP 8.0+ functions
+
+### ⚡ Performance
+- **Native Functions**: Using built-in str_starts_with, str_contains, str_ends_with
+- **Better Type Support**: Leveraging PHP 8.0+ type system improvements
+
+### 🧹 Removed
+- **PHP 7.4 Support**: No longer supporting end-of-life PHP versions
+- **Complex Polyfills**: Simplified polyfill system for PHP 8.0+ compatibility
+
+### 📚 Documentation
+- Updated all README files to reflect PHP 8.0+ requirement
+- Updated CI workflow for PHP 8.0-8.4 testing matrix
+- Updated composer.json minimum PHP version
+
+## [2.0.0] - 2025-06-26
+
+### 🎉 MAJOR RELEASE - Modularização Completa
+
+Esta é uma **release principal** que introduz uma arquitetura completamente nova e modular para o Express-PHP Framework.
 
 ### ✨ Adicionado
+
+#### 🏗️ Arquitetura Modular
+- **PSR-4 Compliant**: Estrutura de namespaces moderna e organizada
+- **8 Módulos Core**: Core, Http, Routing, Middleware, Authentication, Utils, Exceptions
+- **6 Módulos Avançados**: Validation, Cache, Events, Logging, Support, Database
+- **Container DI**: Sistema básico de injeção de dependência
+- **Sistema de Configuração**: Gerenciamento centralizado de configurações
+
+#### 🛡️ Sistema de Middleware Completo
+- **CorsMiddleware**: Suporte completo a CORS com configuração flexível
+- **AuthMiddleware**: JWT, Basic Auth, Bearer Token e autenticação customizada
+- **SecurityMiddleware**: Headers de segurança (HSTS, CSP, X-Frame-Options)
+- **XssMiddleware**: Detecção e sanitização automática de XSS
+- **CsrfMiddleware**: Proteção CSRF com tokens
+- **RateLimitMiddleware**: Controle de taxa de requisições
+
+#### 🔧 Módulos Avançados
+- **Validation**: Sistema robusto de validação de dados
+- **Cache**: Cache em arquivo e memória com TTL
+- **Events**: Sistema de eventos com prioridades e listeners
+- **Logging**: Logger estruturado com diferentes handlers
+- **Support**: Helpers utilitários (Str, Arr) inspirados no Laravel
+- **Database**: Conexão PDO simplificada com query builder básico
+
+#### 📊 OpenAPI & Documentação
+- **OpenAPI Export**: Geração automática de documentação da API
+- **Metadata Support**: Anotações nas rotas para documentação
+- **Swagger UI**: Interface web para documentação da API
+
+#### 🧪 Testing & Quality
+- **219 Testes**: Cobertura abrangente de todos os módulos
+- **PHPUnit Integration**: Testes automatizados
+- **PHPStan**: Análise estática de código
+- **Git Hooks**: Pre-commit e pre-push validation
+
+### 🔄 Modificado
+- **Router**: Sistema de roteamento reescrito com suporte a metadados
+- **Request/Response**: Classes HTTP modernizadas
+- **Error Handling**: Sistema de exceções estruturado
+- **Examples**: Todos os exemplos atualizados para nova arquitetura
+
+### 🏠 Compatibilidade
+- **ApiExpress Facade**: Mantém compatibilidade com versões anteriores
+- **Smooth Migration**: Guias de migração para facilitar upgrade
+- **Legacy Support**: Suporte a código existente através de facades
+
+### 📚 Documentação
+- **README_v2.md**: Documentação completa em português
+- **COMO_USAR.md**: Guia prático de uso
+- **Migration Guides**: Instruções de migração detalhadas
+- **Advanced Examples**: Exemplos demonstrando novos recursos
+
+### 🚀 Performance
+- **Autoloading**: PSR-4 autoloading otimizado
+- **Middleware Stack**: Sistema de middleware eficiente
+- **Caching**: Sistema de cache integrado
+- **Lazy Loading**: Carregamento sob demanda de módulos
 
 #### 🔐 Sistema de Autenticação Multi-método
 - **JWT Authentication**: Suporte completo a JSON Web Tokens

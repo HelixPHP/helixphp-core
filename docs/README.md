@@ -4,17 +4,17 @@ Bem-vindo à documentação completa do Express PHP Microframework!
 
 ## 🚀 Início Rápido
 
-- **[� Guia de Início](guides/starter/README.md)** - Comece aqui! Tutorial completo para iniciantes
+- **[💡 Guia de Início](guides/starter/)** - Comece aqui! Tutorial completo para iniciantes
 - **[⚡ Instalação Rápida](../README.md#-início-rápido)** - Instale e rode em 5 minutos
 
 ## 📖 Documentação por Idioma
 
 | Idioma | Link | Descrição |
 |--------|------|-----------|
-| �� **Português** | **[pt-br/README.md](pt-br/README.md)** | Documentação principal em português |
-| �� **English** | **[en/README.md](en/README.md)** | Main documentation in English |
+| 🇧🇷 **Português** | **[pt-br/README.md](pt-br/README.md)** | Documentação completa em português |
+| 🇺🇸 **English** | **[en/README.md](en/README.md)** | Complete documentation in English |
 
-##  Autenticação e Segurança
+## 🔐 Autenticação e Segurança
 
 - **[Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - JWT, Basic Auth, API Key, Bearer Token
 - **[Middlewares de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - CSRF, XSS, Rate Limiting
@@ -24,13 +24,14 @@ Bem-vindo à documentação completa do Express PHP Microframework!
 
 Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
 
-- **[Usuários](../examples/example_user.php)** - Sistema de usuários e autenticação
-- **[CRUD Produtos](../examples/example_product.php)** - API RESTful completa
-- **[Upload de Arquivos](../examples/example_upload.php)** - Upload e manipulação de arquivos
-- **[Área Admin](../examples/example_admin.php)** - Rotas administrativas protegidas
-- **[Blog System](../examples/example_blog.php)** - Sistema de blog com categorias
-- **[Segurança](../examples/example_security.php)** - Demonstração de middlewares
-- **[App Completo](../examples/example_complete.php)** - Integração de todos os recursos
+- **[👥 Usuários](../examples/example_user.php)** - Sistema de usuários e autenticação
+- **[📦 CRUD Produtos](../examples/example_product.php)** - API RESTful completa
+- **[📤 Upload de Arquivos](../examples/example_upload.php)** - Upload e manipulação de arquivos
+- **[🔐 Área Admin](../examples/example_admin.php)** - Rotas administrativas protegidas
+- **[📝 Blog System](../examples/example_blog.php)** - Sistema de blog com categorias
+- **[🛡️ Segurança](../examples/example_security.php)** - Demonstração de middlewares
+- **[🏗️ App Completo](../examples/example_complete.php)** - Integração de todos os recursos
+- **[📡 Streaming](../examples/example_streaming.php)** - Server-Sent Events (SSE)
 
 ## 🛠️ Guias para Desenvolvedores
 
@@ -47,8 +48,7 @@ Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes 
 ## 📊 Relatórios Técnicos
 
 - **[Cobertura de Testes](TEST_COVERAGE_REPORT.md)** - 186 testes, 100% cobertura
-- **[Sumário de Implementação](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Recursos implementados
-- **[Status do Projeto](implementation/PROJECT_COMPLETION.md)** - Validações e qualidade
+- **[Implementação de Autenticação](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Sistema de auth completo
 
 ## 🌟 Recursos do Framework
 
@@ -58,8 +58,8 @@ Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes 
 - ✅ **186 testes** unitários
 - ✅ **Autenticação multi-método** (JWT, Basic, API Key, Bearer)
 - ✅ **Middlewares de segurança** (CSRF, XSS, Rate Limiting)
-- ✅ **Documentação OpenAPI/Swagger** automática
-- ✅ **Zero dependências** opcionais
+- ✅ **Server-Sent Events** (SSE) streaming
+- ✅ **Zero dependências** obrigatórias
 - ✅ **Performance otimizada**
 
 ## 🔗 Links Úteis
@@ -72,31 +72,4 @@ Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes 
 
 ---
 
-**💡 Dica:** Se você é novo no Express PHP, comece com o **[Guia de Início](guides/starter/README.md)** para ter uma experiência guiada completa!
-│   └── SECURITY_IMPLEMENTATION.md      # Implementação de segurança
-├── development/                        # Guias de desenvolvimento
-│   ├── DEVELOPMENT.md                  # Guia de desenvolvimento
-│   ├── MIDDLEWARE_MIGRATION.md         # Migração de middlewares
-│   ├── INTERNATIONALIZATION.md         # Internacionalização
-│   └── COMPOSER_PSR4.md               # Configuração PSR-4
-└── implementation/                     # Documentação de implementação
-    ├── AUTH_IMPLEMENTATION_SUMMARY.md  # Sumário de implementação
-    ├── PROJECT_COMPLETION.md           # Conclusão do projeto
-    └── PROJECT_ORGANIZATION.md         # Organização do projeto
-```
-
-## 🤝 Contribuindo para a Documentação
-
-1. **Encontrou um erro?** Abra uma [issue](https://github.com/CAFernandes/express-php/issues)
-2. **Quer melhorar?** Faça um [pull request](https://github.com/CAFernandes/express-php/pulls)
-3. **Tem uma pergunta?** Use as [discussions](https://github.com/CAFernandes/express-php/discussions)
-
-## 📞 Precisa de Ajuda?
-
-- **Issues**: https://github.com/CAFernandes/express-php/issues
-- **Discussions**: https://github.com/CAFernandes/express-php/discussions
-
----
-
-**Express PHP** - Microframework inspirado no Express.js
-Desenvolvido com ❤️ por [Caio Alberto Fernandes](https://github.com/CAFernandes)
+**💡 Dica:** Se você é novo no Express PHP, comece com o **[Guia de Início](guides/starter/)** para ter uma experiência guiada completa!

@@ -5,7 +5,7 @@
 Foram implementados com sucesso os seguintes middlewares de segurança para o framework Express PHP:
 
 ### 🛡️ 1. CsrfMiddleware
-**Arquivo:** `SRC/Services/CsrfMiddleware.php`
+**Arquivo:** `src/Services/CsrfMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Proteção contra ataques CSRF (Cross-Site Request Forgery)
@@ -20,8 +20,8 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - `hiddenField()` - Gera campo hidden HTML
 - `metaTag()` - Gera meta tag HTML para AJAX
 
-### 🔒 2. XssMiddleware  
-**Arquivo:** `SRC/Services/XssMiddleware.php`
+### 🔒 2. XssMiddleware
+**Arquivo:** `src/Services/XssMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Proteção contra ataques XSS (Cross-Site Scripting)
@@ -37,7 +37,7 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 - `cleanUrl()` - Limpa URLs maliciosas
 
 ### 🛡️🔒 3. SecurityMiddleware
-**Arquivo:** `SRC/Services/SecurityMiddleware.php`
+**Arquivo:** `src/Services/SecurityMiddleware.php`
 
 **Funcionalidades:**
 - ✅ Middleware combinado (CSRF + XSS)
@@ -56,16 +56,16 @@ Foram implementados com sucesso os seguintes middlewares de segurança para o fr
 
 ### Arquivos de Documentação:
 - ✅ `README.md` - Documentação principal atualizada
-- ✅ `docs/objetos.md` - Documentação de objetos atualizada
+- ✅ **[`docs/pt-br/objetos.md`](../pt-br/objetos.md)** - Documentação de objetos atualizada
 
 ### Exemplos Práticos:
-- ✅ `examples/example_security.php` - Complete usage example
-- ✅ `examples/snippets/utils_csrf.php` - Snippets CSRF
-- ✅ `examples/snippets/utils_xss.php` - Snippets XSS  
-- ✅ `examples/snippets/utils_seguranca.php` - Configurações
+- ✅ **[`examples/example_security.php`](../../examples/example_security.php)** - Complete usage example
+- ✅ **[`examples/snippets/utils_csrf.php`](../../examples/snippets/utils_csrf.php)** - Snippets CSRF
+- ✅ **[`examples/snippets/utils_xss.php`](../../examples/snippets/utils_xss.php)** - Snippets XSS
+- ✅ **[`examples/snippets/utils_seguranca.php`](../../examples/snippets/utils_seguranca.php)** - Configurações
 
 ### Testes:
-- ✅ `test/security_test.php` - Complete middleware testing
+- ✅ **[`tests/Security/`](../../tests/Security/)** - Complete middleware testing
 
 ## 🔧 Cabeçalhos de Segurança Implementados
 
@@ -83,7 +83,7 @@ Content-Security-Policy: [configurável]
 
 ### Uso Básico (Recomendado):
 ```php
-use Express\SRC\Services\SecurityMiddleware;
+use Express\Services\SecurityMiddleware;
 
 $app = new ApiExpress();
 $app->use(SecurityMiddleware::create());
@@ -96,8 +96,8 @@ $app->use(SecurityMiddleware::strict());
 
 ### Uso Individual:
 ```php
-use Express\SRC\Services\CsrfMiddleware;
-use Express\SRC\Services\XssMiddleware;
+use Express\Services\CsrfMiddleware;
+use Express\Services\XssMiddleware;
 
 $app->use(new XssMiddleware());
 $app->use(new CsrfMiddleware());
@@ -137,18 +137,18 @@ fetch('/api/endpoint', {
 
 ## 🧪 Testes Realizados
 
-✅ Geração e validação de tokens CSRF  
-✅ Sanitização de dados XSS  
-✅ Detecção de conteúdo malicioso  
-✅ Configuração de middlewares  
-✅ Simulação de requisições  
-✅ Cabeçalhos de segurança  
-✅ Configuração de sessão segura  
+✅ Geração e validação de tokens CSRF
+✅ Sanitização de dados XSS
+✅ Detecção de conteúdo malicioso
+✅ Configuração de middlewares
+✅ Simulação de requisições
+✅ Cabeçalhos de segurança
+✅ Configuração de sessão segura
 
 ## 📋 Checklist de Segurança
 
 - [x] Proteção CSRF implementada
-- [x] Proteção XSS implementada  
+- [x] Proteção XSS implementada
 - [x] Cabeçalhos de segurança configurados
 - [x] Sanitização de entrada automática
 - [x] Configuração de sessão segura

@@ -14,7 +14,7 @@ Foi implementado com sucesso um **sistema completo de autenticação automática
 ### 🆕 Novos Componentes Criados
 
 #### 1. **AuthMiddleware** - Middleware de Autenticação Automática
-- **Local:** `SRC/Middlewares/Security/AuthMiddleware.php`
+- **Local:** `src/Middleware/Security/AuthMiddleware.php`
 - **Funcionalidades:**
   - ✅ **JWT Authentication** - Suporte completo com implementação nativa HS256
   - ✅ **Basic Authentication** - Autenticação HTTP básica com callback customizado
@@ -26,7 +26,7 @@ Foi implementado com sucesso um **sistema completo de autenticação automática
   - ✅ **Modo Flexível** - Autenticação opcional para rotas mistas
 
 #### 2. **JWTHelper** - Utilitário JWT
-- **Local:** `SRC/Helpers/JWTHelper.php`
+- **Local:** `src/Helpers/JWTHelper.php`
 - **Funcionalidades:**
   - ✅ **Codificação JWT** - Geração de tokens com configurações flexíveis
   - ✅ **Decodificação JWT** - Validação e extração de dados
@@ -94,7 +94,7 @@ $app->use(new AuthMiddleware([
 $app->get('/profile', function($req, $res) {
     $user = $req->user; // dados do usuário autenticado
     $method = $req->auth['method']; // método usado
-    
+
     $res->json([
         'user' => $user,
         'auth_method' => $method
@@ -107,7 +107,7 @@ $app->get('/profile', function($req, $res) {
 Todos os testes passaram com sucesso:
 
 - ✅ **JWT Helper:** Funcional
-- ✅ **JWT Middleware:** Funcional  
+- ✅ **JWT Middleware:** Funcional
 - ✅ **Basic Auth Middleware:** Funcional
 - ✅ **API Key Middleware:** Funcional
 - ✅ **Múltiplos Métodos:** Funcional

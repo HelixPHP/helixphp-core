@@ -6,12 +6,12 @@ This document details the Composer and PSR-4 autoload implementation in Express 
 
 **Package Name**: `express-php/microframework`
 **PSR-4 Namespace**: `Express\`
-**Minimum PHP Version**: 7.4.0
+**Minimum PHP Version**: 8.0.0
 
 ## 🗂️ PSR-4 Namespace Structure
 
 ```
-Express\                        # Root namespace (SRC/)
+Express\                        # Root namespace (src/)
 ├── ApiExpress                  # Main framework class
 ├── Controller\                 # Controllers
 │   ├── Router
@@ -114,9 +114,9 @@ composer run examples:complete
 
 ### Before (Old):
 ```php
-use Express\SRC\ApiExpress;
-use Express\SRC\Middlewares\Security\CsrfMiddleware;
-use Express\SRC\Controller\Router;
+use Express\src\ApiExpress;
+use Express\src\Middlewares\Security\CsrfMiddleware;
+use Express\src\Controller\Router;
 ```
 
 ### After (New PSR-4):

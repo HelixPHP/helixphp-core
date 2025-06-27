@@ -3,7 +3,7 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Security\SecurityMiddleware;
+use Express\Middleware\Security\SecurityMiddleware;
 
 class SecurityMiddlewareTest extends TestCase
 {
@@ -39,7 +39,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -61,7 +61,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -82,7 +82,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -103,7 +103,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -125,7 +125,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -144,7 +144,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -162,15 +162,15 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
 
         $middlewareStack = [
-            function($req, $res, $next) {
+            function ($req, $res, $next) {
                 $req->test1 = true;
                 $next();
             },
-            function($req, $res, $next) {
+            function ($req, $res, $next) {
                 // Simular middleware que não requer CSRF para GET
                 $next();
             },
-            function($req, $res, $next) {
+            function ($req, $res, $next) {
                 $req->test2 = true;
                 $next();
             }
@@ -195,7 +195,7 @@ class SecurityMiddlewareTest extends TestCase
 
             // Para métodos que não são GET, simular bypass do CSRF ou usar middleware mais simples
             if ($method === 'GET') {
-                $middleware($request, $response, function() use (&$nextCalled) {
+                $middleware($request, $response, function () use (&$nextCalled) {
                     $nextCalled = true;
                 });
             } else {
@@ -225,7 +225,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -250,7 +250,7 @@ class SecurityMiddlewareTest extends TestCase
         $response = $this->createMockResponse();
         $nextCalled = false;
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -262,32 +262,7 @@ class SecurityMiddlewareTest extends TestCase
      */
     private function createMockResponse()
     {
-        return new class {
-            public $headers = [];
-            public $status = [];
-
-            public function header($name, $value) {
-                $this->headers[] = "$name: $value";
-                return $this;
-            }
-
-            public function status($code) {
-                $this->status[] = "Status: $code";
-                return $this;
-            }
-
-            public function json($data) {
-                return $this;
-            }
-
-            public function text($text) {
-                return $this;
-            }
-
-            public function end() {
-                return $this;
-            }
-        };
+        return new MockSecurityResponse();
     }
 
     /**
@@ -296,12 +271,48 @@ class SecurityMiddlewareTest extends TestCase
     private function executeMiddlewareStack($middlewares, $request, $response)
     {
         $index = 0;
-        $next = function() use (&$index, $middlewares, $request, $response, &$next) {
+        $next = function () use (&$index, $middlewares, $request, $response, &$next) {
             if ($index < count($middlewares)) {
                 $middleware = $middlewares[$index++];
                 $middleware($request, $response, $next);
             }
         };
         $next();
+    }
+}
+
+/**
+ * Mock Response class for security middleware testing
+ */
+class MockSecurityResponse
+{
+    public $headers = [];
+    public $status = [];
+
+    public function header($name, $value)
+    {
+        $this->headers[] = "$name: $value";
+        return $this;
+    }
+
+    public function status($code)
+    {
+        $this->status[] = "Status: $code";
+        return $this;
+    }
+
+    public function json($data)
+    {
+        return $this;
+    }
+
+    public function text($text)
+    {
+        return $this;
+    }
+
+    public function end()
+    {
+        return $this;
     }
 }

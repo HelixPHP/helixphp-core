@@ -1,7 +1,7 @@
 <?php
 /**
  * Configuração Principal do Express PHP
- * 
+ *
  * Este arquivo centraliza todas as configurações do framework
  */
 
@@ -15,7 +15,7 @@ return [
         'timezone' => $_ENV['APP_TIMEZONE'] ?? 'UTC',
         'locale' => $_ENV['APP_LOCALE'] ?? 'en'
     ],
-    
+
     // Configurações do servidor
     'server' => [
         'host' => $_ENV['SERVER_HOST'] ?? 'localhost',
@@ -24,7 +24,7 @@ return [
         'max_execution_time' => $_ENV['MAX_EXECUTION_TIME'] ?? 30,
         'memory_limit' => $_ENV['MEMORY_LIMIT'] ?? '256M'
     ],
-    
+
     // Banco de dados
     'database' => [
         'default' => $_ENV['DB_CONNECTION'] ?? 'mysql',
@@ -54,7 +54,7 @@ return [
             ]
         ]
     ],
-    
+
     // Cache
     'cache' => [
         'default' => $_ENV['CACHE_DRIVER'] ?? 'file',
@@ -77,7 +77,7 @@ return [
         'prefix' => $_ENV['CACHE_PREFIX'] ?? 'express_php:',
         'ttl' => $_ENV['CACHE_TTL'] ?? 3600
     ],
-    
+
     // Sessões
     'session' => [
         'driver' => $_ENV['SESSION_DRIVER'] ?? 'file',
@@ -90,7 +90,7 @@ return [
             'same_site' => $_ENV['SESSION_SAME_SITE'] ?? 'lax'
         ]
     ],
-    
+
     // Autenticação
     'auth' => [
         'default' => 'jwt',
@@ -125,7 +125,7 @@ return [
             'fallback_to_guest' => false
         ]
     ],
-    
+
     // Segurança
     'security' => [
         'cors' => [
@@ -168,7 +168,7 @@ return [
             'Content-Security-Policy' => "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"
         ]
     ],
-    
+
     // Logging
     'logging' => [
         'default' => $_ENV['LOG_CHANNEL'] ?? 'file',
@@ -191,7 +191,7 @@ return [
         ],
         'deprecations' => filter_var($_ENV['LOG_DEPRECATIONS'] ?? true, FILTER_VALIDATE_BOOLEAN)
     ],
-    
+
     // Upload de arquivos
     'uploads' => [
         'max_file_size' => $_ENV['UPLOAD_MAX_SIZE'] ?? '10M',
@@ -200,7 +200,7 @@ return [
         'url_prefix' => $_ENV['UPLOAD_URL_PREFIX'] ?? '/uploads',
         'virus_scan' => filter_var($_ENV['UPLOAD_VIRUS_SCAN'] ?? false, FILTER_VALIDATE_BOOLEAN)
     ],
-    
+
     // Email
     'mail' => [
         'default' => $_ENV['MAIL_MAILER'] ?? 'smtp',
@@ -223,7 +223,7 @@ return [
             'name' => $_ENV['MAIL_FROM_NAME'] ?? 'Express PHP'
         ]
     ],
-    
+
     // Monitoramento
     'monitoring' => [
         'enabled' => filter_var($_ENV['MONITORING_ENABLED'] ?? false, FILTER_VALIDATE_BOOLEAN),
@@ -243,7 +243,7 @@ return [
             'slack_webhook' => $_ENV['SLACK_WEBHOOK'] ?? ''
         ]
     ],
-    
+
     // Middlewares
     'middlewares' => [
         'global' => [
@@ -261,18 +261,18 @@ return [
             'throttle:api'
         ]
     ],
-    
-    // Providers de serviços
+
+    // Providers de serviços (desabilitado temporariamente)
     'providers' => [
-        'Express\\Providers\\AuthServiceProvider',
-        'Express\\Providers\\CacheServiceProvider',
-        'Express\\Providers\\DatabaseServiceProvider',
-        'Express\\Providers\\LoggingServiceProvider',
-        'Express\\Providers\\MailServiceProvider',
-        'Express\\Providers\\SecurityServiceProvider',
-        'Express\\Providers\\ValidationServiceProvider'
+        // 'Express\\Providers\\AuthServiceProvider',
+        // 'Express\\Providers\\CacheServiceProvider',
+        // 'Express\\Providers\\DatabaseServiceProvider',
+        // 'Express\\Providers\\LoggingServiceProvider',
+        // 'Express\\Providers\\MailServiceProvider',
+        // 'Express\\Providers\\SecurityServiceProvider',
+        // 'Express\\Providers\\ValidationServiceProvider'
     ],
-    
+
     // Aliases
     'aliases' => [
         'Auth' => 'Express\\Facades\\Auth',

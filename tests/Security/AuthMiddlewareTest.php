@@ -3,8 +3,8 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middlewares\Security\AuthMiddleware;
-use Express\Helpers\JWTHelper;
+use Express\Middleware\Security\AuthMiddleware;
+use Express\Authentication\JWTHelper;
 
 class AuthMiddlewareTest extends TestCase
 {
@@ -36,38 +36,31 @@ class AuthMiddlewareTest extends TestCase
         ];
     }
 
-    private function createMockResponse(): object
+    private function createMockResponse(): MockResponse
     {
-        return new class {
-            public $statusCode = 200;
-            public $headers = [];
-            public $body = '';
-
-            public function status($code) {
-                $this->statusCode = $code;
-                return $this;
-            }
-
-            public function json($data) {
-                $this->body = json_encode($data);
-                return $this;
-            }
-
-            public function send($data) {
-                $this->body = $data;
-                return $this;
-            }
-        };
+        return new MockResponse();
     }
 
     public function testJWTAuthenticationSuccess(): void
     {
-        // Test básico - apenas verificar se o middleware pode ser criado
-        $middleware = AuthMiddleware::jwt($this->jwtSecret);
-        $this->assertInstanceOf(AuthMiddleware::class, $middleware);
+        // Arrange
+        $payload = ['user_id' => 1, 'username' => 'testuser'];
+        $token = JWTHelper::encode($payload, $this->jwtSecret);
 
-        // Se chegou até aqui, consideramos sucesso básico
-        $this->assertTrue(true);
+        $request = $this->createMockRequest(['authorization' => "Bearer $token"]);
+        $response = $this->createMockResponse();
+        $nextCalled = false;
+
+        $middleware = AuthMiddleware::jwt($this->jwtSecret);
+
+        // Act
+        $middleware($request, $response, function () use (&$nextCalled) {
+            $nextCalled = true;
+        });
+
+        // Assert
+        $this->assertTrue($nextCalled);
+        $this->assertTrue(property_exists($request, 'user'));
     }
 
     public function testJWTAuthenticationFailure(): void
@@ -78,7 +71,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::jwt($this->jwtSecret);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -89,7 +82,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationSuccess(): void
     {
-        $basicCallback = function($username, $password) {
+        $basicCallback = function ($username, $password) {
             return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
         };
 
@@ -99,7 +92,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::basic($basicCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -109,7 +102,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBasicAuthenticationFailure(): void
     {
-        $basicCallback = function($username, $password) {
+        $basicCallback = function ($username, $password) {
             return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
         };
 
@@ -119,7 +112,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::basic($basicCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -129,7 +122,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testBearerTokenAuthentication(): void
     {
-        $bearerCallback = function($token) {
+        $bearerCallback = function ($token) {
             return $token === 'valid_token_123' ? ['token' => $token] : false;
         };
 
@@ -139,7 +132,7 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::bearer($bearerCallback);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
@@ -149,7 +142,7 @@ class AuthMiddlewareTest extends TestCase
 
     public function testCustomAuthentication(): void
     {
-        $customAuth = function($request) {
+        $customAuth = function ($request) {
             if (($request->headers->customAuth ?? '') === 'valid') {
                 return ['id' => 1, 'name' => 'custom_user'];
             }
@@ -162,11 +155,39 @@ class AuthMiddlewareTest extends TestCase
 
         $middleware = AuthMiddleware::custom($customAuth);
 
-        $middleware($request, $response, function() use (&$nextCalled) {
+        $middleware($request, $response, function () use (&$nextCalled) {
             $nextCalled = true;
         });
 
         $this->assertTrue($nextCalled);
         $this->assertTrue(property_exists($request, 'user'));
+    }
+}
+
+/**
+ * Mock Response class for testing
+ */
+class MockResponse
+{
+    public $statusCode = 200;
+    public $headers = [];
+    public $body = '';
+
+    public function status($code)
+    {
+        $this->statusCode = $code;
+        return $this;
+    }
+
+    public function json($data)
+    {
+        $this->body = json_encode($data);
+        return $this;
+    }
+
+    public function send($data)
+    {
+        $this->body = $data;
+        return $this;
     }
 }

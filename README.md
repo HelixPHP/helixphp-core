@@ -1,7 +1,7 @@
 # Express PHP Microframework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
@@ -25,13 +25,13 @@ composer require cafernandes/express-php
 require_once 'vendor/autoload.php';
 
 use Express\ApiExpress;
-use Express\Middlewares\Security\SecurityMiddleware;
-use Express\Middlewares\Core\CorsMiddleware;
+use Express\Middleware\Security\SecurityMiddleware;
+use Express\Middleware\Security\CorsMiddleware;
 
 $app = new ApiExpress();
 
 // Aplicar middlewares de segurança
-$app->use(SecurityMiddleware::create());
+$app->use(new SecurityMiddleware());
 $app->use(new CorsMiddleware());
 
 // Rota básica
@@ -65,8 +65,8 @@ $app->run();
 - **[🚀 Guia de Início](docs/guides/starter/README.md)** - Comece aqui!
 - **[📚 Documentação Completa](docs/README.md)** - Documentação detalhada
 - **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia de autenticação
-- **[� Streaming de Dados](docs/pt-br/STREAMING.md)** - Streaming e Server-Sent Events
-- **[�🛡️ Middlewares de Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Segurança
+- **[📡 Streaming de Dados](docs/pt-br/STREAMING.md)** - Streaming e Server-Sent Events
+- **[🛡️ Middlewares de Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Segurança
 - **[📝 Exemplos Práticos](examples/)** - Exemplos prontos para usar
 
 ## 🎯 Exemplos de Aprendizado
@@ -169,7 +169,7 @@ $app->get('/data/export', function($req, $res) {
 
 ## ⚙️ Requisitos
 
-- **PHP**: 7.4.0 ou superior
+- **PHP**: 8.1.0 ou superior
 - **Extensões**: json, session
 - **Recomendado**: openssl, mbstring, fileinfo
 

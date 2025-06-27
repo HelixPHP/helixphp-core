@@ -16,7 +16,7 @@ express-php/
 ├── composer.json          # ✅ Configuração do Composer
 ├── README.md              # ✅ Documentação principal
 ├── LICENSE                # ✅ Licença MIT
-├── SRC/                   # ✅ Código fonte
+├── src/                   # ✅ Código fonte
 │   ├── ApiExpress.php
 │   ├── Middlewares/
 │   └── Helpers/
@@ -37,13 +37,13 @@ O arquivo já está configurado corretamente:
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": ">=7.4.0",
+        "php": ">=8.0.0",
         "ext-json": "*",
         "ext-session": "*"
     },
     "autoload": {
         "psr-4": {
-            "Express\\": "SRC/"
+            "Express\\": "src/"
         }
     }
 }
@@ -223,7 +223,7 @@ class AuthService
     public static function login($username, $password)
     {
         $user = User::findByUsername($username);
-        
+
         if ($user && password_verify($password, $user['password'])) {
             $token = JWTHelper::encode([
                 'user_id' => $user['id'],
@@ -233,12 +233,12 @@ class AuthService
             ], $_ENV['JWT_SECRET'], [
                 'expiresIn' => (int)$_ENV['JWT_EXPIRE_TIME']
             ]);
-            
+
             $refreshToken = JWTHelper::createRefreshToken(
-                $user['id'], 
+                $user['id'],
                 $_ENV['REFRESH_SECRET']
             );
-            
+
             return [
                 'success' => true,
                 'user' => $user,
@@ -247,14 +247,14 @@ class AuthService
                 'expires_in' => (int)$_ENV['JWT_EXPIRE_TIME']
             ];
         }
-        
+
         return ['success' => false, 'message' => 'Invalid credentials'];
     }
-    
+
     public static function validateApiKey($apiKey)
     {
         $key = ApiKey::findByKey($apiKey);
-        
+
         if ($key && $key['active']) {
             return [
                 'id' => $key['id'],
@@ -263,20 +263,20 @@ class AuthService
                 'rate_limit' => $key['rate_limit']
             ];
         }
-        
+
         return false;
     }
-    
+
     public static function refreshToken($refreshToken)
     {
         $payload = JWTHelper::validateRefreshToken(
-            $refreshToken, 
+            $refreshToken,
             $_ENV['REFRESH_SECRET']
         );
-        
+
         if ($payload) {
             $user = User::findById($payload['user_id']);
-            
+
             if ($user) {
                 $newToken = JWTHelper::encode([
                     'user_id' => $user['id'],
@@ -284,7 +284,7 @@ class AuthService
                     'role' => $user['role'],
                     'permissions' => $user['permissions']
                 ], $_ENV['JWT_SECRET']);
-                
+
                 return [
                     'success' => true,
                     'access_token' => $newToken,
@@ -292,7 +292,7 @@ class AuthService
                 ];
             }
         }
-        
+
         return ['success' => false, 'message' => 'Invalid refresh token'];
     }
 }
@@ -309,16 +309,16 @@ use App\Services\AuthService;
 $app->post('/auth/login', function($req, $res) {
     $username = $req->body['username'] ?? '';
     $password = $req->body['password'] ?? '';
-    
+
     if (empty($username) || empty($password)) {
         $res->status(400)->json([
             'error' => 'Username and password are required'
         ]);
         return;
     }
-    
+
     $result = AuthService::login($username, $password);
-    
+
     if ($result['success']) {
         $res->json($result);
     } else {
@@ -329,16 +329,16 @@ $app->post('/auth/login', function($req, $res) {
 // Refresh Token
 $app->post('/auth/refresh', function($req, $res) {
     $refreshToken = $req->body['refresh_token'] ?? '';
-    
+
     if (empty($refreshToken)) {
         $res->status(400)->json([
             'error' => 'Refresh token is required'
         ]);
         return;
     }
-    
+
     $result = AuthService::refreshToken($refreshToken);
-    
+
     if ($result['success']) {
         $res->json($result);
     } else {
@@ -352,7 +352,7 @@ $app->post('/auth/logout', function($req, $res) {
     // 1. Adicionar o token a uma blacklist
     // 2. Remover refresh token do banco
     // 3. Log da ação
-    
+
     $res->json(['message' => 'Logged out successfully']);
 });
 
@@ -382,27 +382,27 @@ $app->get('/public/status', function($req, $res) {
 });
 
 // Rotas de usuários (protegidas)
-$app->get('/api/users', 
+$app->get('/api/users',
     RequirePermission::check('users.read'),
     [UserController::class, 'index']
 );
 
-$app->get('/api/users/:id', 
+$app->get('/api/users/:id',
     RequirePermission::check('users.read'),
     [UserController::class, 'show']
 );
 
-$app->post('/api/users', 
+$app->post('/api/users',
     RequirePermission::check('users.create'),
     [UserController::class, 'create']
 );
 
-$app->put('/api/users/:id', 
+$app->put('/api/users/:id',
     RequirePermission::check('users.update'),
     [UserController::class, 'update']
 );
 
-$app->delete('/api/users/:id', 
+$app->delete('/api/users/:id',
     RequirePermission::check('users.delete'),
     [UserController::class, 'delete']
 );
@@ -410,7 +410,7 @@ $app->delete('/api/users/:id',
 // Rotas de produtos
 $app->get('/api/products', [ProductController::class, 'index']);
 $app->get('/api/products/:id', [ProductController::class, 'show']);
-$app->post('/api/products', 
+$app->post('/api/products',
     RequirePermission::check('products.create'),
     [ProductController::class, 'create']
 );
@@ -436,24 +436,24 @@ class UserController
             'requested_by' => $req->user['username']
         ]);
     }
-    
+
     public static function show($req, $res)
     {
         $id = $req->params->id;
         $user = User::findById($id);
-        
+
         if (!$user) {
             $res->status(404)->json(['error' => 'User not found']);
             return;
         }
-        
+
         $res->json(['user' => $user]);
     }
-    
+
     public static function create($req, $res)
     {
         $data = $req->body;
-        
+
         // Validação
         if (empty($data['username']) || empty($data['email'])) {
             $res->status(400)->json([
@@ -461,58 +461,58 @@ class UserController
             ]);
             return;
         }
-        
+
         // Hash da senha
         if (!empty($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
-        
+
         $user = User::create($data);
-        
+
         $res->status(201)->json([
             'message' => 'User created successfully',
             'user' => $user,
             'created_by' => $req->user['username']
         ]);
     }
-    
+
     public static function update($req, $res)
     {
         $id = $req->params->id;
         $data = $req->body;
-        
+
         $user = User::findById($id);
         if (!$user) {
             $res->status(404)->json(['error' => 'User not found']);
             return;
         }
-        
+
         // Hash da senha se fornecida
         if (!empty($data['password'])) {
             $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
-        
+
         $updatedUser = User::update($id, $data);
-        
+
         $res->json([
             'message' => 'User updated successfully',
             'user' => $updatedUser,
             'updated_by' => $req->user['username']
         ]);
     }
-    
+
     public static function delete($req, $res)
     {
         $id = $req->params->id;
-        
+
         $user = User::findById($id);
         if (!$user) {
             $res->status(404)->json(['error' => 'User not found']);
             return;
         }
-        
+
         User::delete($id);
-        
+
         $res->json([
             'message' => 'User deleted successfully',
             'deleted_by' => $req->user['username']
@@ -538,10 +538,10 @@ class RequirePermission
                 $res->status(401)->json(['error' => 'Authentication required']);
                 return;
             }
-            
+
             // Verifica permissões
             $userPermissions = $req->user['permissions'] ?? [];
-            
+
             if (!in_array($permission, $userPermissions) && !in_array('*', $userPermissions)) {
                 $res->status(403)->json([
                     'error' => 'Permission denied',
@@ -550,7 +550,7 @@ class RequirePermission
                 ]);
                 return;
             }
-            
+
             $next();
         };
     }
@@ -571,7 +571,7 @@ class User
     private static function getConnection()
     {
         static $pdo = null;
-        
+
         if ($pdo === null) {
             $pdo = new PDO(
                 "mysql:host={$_ENV['DB_HOST']};dbname={$_ENV['DB_NAME']}",
@@ -580,10 +580,10 @@ class User
                 [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
             );
         }
-        
+
         return $pdo;
     }
-    
+
     public static function all()
     {
         $stmt = self::getConnection()->query(
@@ -591,7 +591,7 @@ class User
         );
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
     public static function findById($id)
     {
         $stmt = self::getConnection()->prepare(
@@ -600,7 +600,7 @@ class User
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
+
     public static function findByUsername($username)
     {
         $stmt = self::getConnection()->prepare(
@@ -609,13 +609,13 @@ class User
         $stmt->execute([$username]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    
+
     public static function create($data)
     {
         $stmt = self::getConnection()->prepare(
             "INSERT INTO users (username, email, password, role, permissions) VALUES (?, ?, ?, ?, ?)"
         );
-        
+
         $stmt->execute([
             $data['username'],
             $data['email'],
@@ -623,32 +623,32 @@ class User
             $data['role'] ?? 'user',
             json_encode($data['permissions'] ?? ['users.read'])
         ]);
-        
+
         return self::findById(self::getConnection()->lastInsertId());
     }
-    
+
     public static function update($id, $data)
     {
         $fields = [];
         $values = [];
-        
+
         foreach ($data as $key => $value) {
             if (in_array($key, ['username', 'email', 'password', 'role', 'permissions'])) {
                 $fields[] = "$key = ?";
                 $values[] = $key === 'permissions' ? json_encode($value) : $value;
             }
         }
-        
+
         $values[] = $id;
-        
+
         $stmt = self::getConnection()->prepare(
             "UPDATE users SET " . implode(', ', $fields) . " WHERE id = ?"
         );
         $stmt->execute($values);
-        
+
         return self::findById($id);
     }
-    
+
     public static function delete($id)
     {
         $stmt = self::getConnection()->prepare("DELETE FROM users WHERE id = ?");
@@ -673,13 +673,13 @@ server {
     listen 80;
     server_name meuapp.com;
     root /var/www/meu-projeto-api/public;
-    
+
     index index.php;
-    
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
-    
+
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         fastcgi_index index.php;
@@ -746,17 +746,17 @@ class LogService
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? 'unknown',
             'data' => $data
         ];
-        
+
         $logFile = __DIR__ . '/../../logs/auth.log';
         $logDir = dirname($logFile);
-        
+
         if (!is_dir($logDir)) {
             mkdir($logDir, 0755, true);
         }
-        
+
         file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
     }
-    
+
     public static function logApiAccess($endpoint, $method, $statusCode, $user = null)
     {
         $logData = [
@@ -767,14 +767,14 @@ class LogService
             'user_id' => $user['id'] ?? null,
             'ip' => $_SERVER['REMOTE_ADDR'] ?? 'unknown'
         ];
-        
+
         $logFile = __DIR__ . '/../../logs/api.log';
         $logDir = dirname($logFile);
-        
+
         if (!is_dir($logDir)) {
             mkdir($logDir, 0755, true);
         }
-        
+
         file_put_contents($logFile, json_encode($logData) . "\n", FILE_APPEND | LOCK_EX);
     }
 }
@@ -794,13 +794,13 @@ class LoggingMiddleware
     public function __invoke($req, $res, $next)
     {
         $startTime = microtime(true);
-        
+
         // Continua para o próximo middleware
         $next();
-        
+
         // Calcula tempo de resposta
         $responseTime = microtime(true) - $startTime;
-        
+
         // Log da requisição
         LogService::logApiAccess(
             $req->path ?? $_SERVER['REQUEST_URI'],
@@ -808,7 +808,7 @@ class LoggingMiddleware
             http_response_code(),
             $req->user ?? null
         );
-        
+
         // Adiciona header de tempo de resposta
         $res->header('X-Response-Time', round($responseTime * 1000, 2) . 'ms');
     }
@@ -831,7 +831,7 @@ return [
         'expire_time' => 3600, // 1 hora
         'refresh_expire_time' => 2592000 // 30 dias
     ],
-    
+
     'rate_limiting' => [
         'enabled' => true,
         'max_requests' => 100,
@@ -841,14 +841,14 @@ return [
             'lockout_time' => 900 // 15 minutos
         ]
     ],
-    
+
     'cors' => [
         'allowed_origins' => explode(',', $_ENV['CORS_ORIGINS'] ?? '*'),
         'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
         'allowed_headers' => ['Content-Type', 'Authorization', 'X-API-Key'],
         'credentials' => true
     ],
-    
+
     'api_keys' => [
         'header_name' => 'X-API-Key',
         'query_param' => 'api_key',
@@ -864,7 +864,7 @@ return [
 <?php
 return [
     'default' => 'mysql',
-    
+
     'connections' => [
         'mysql' => [
             'driver' => 'mysql',
@@ -1071,7 +1071,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8.0
@@ -1084,13 +1084,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
         php-version: '8.1'
         extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, iconv, json, mbstring, pdo
-    
+
     - name: Cache Composer packages
       id: composer-cache
       uses: actions/cache@v3
@@ -1099,13 +1099,13 @@ jobs:
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
           ${{ runner.os }}-php-
-    
+
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
-    
+
     - name: Run PHPStan
       run: ./vendor/bin/phpstan analyse
-    
+
     - name: Run PHPUnit tests
       run: ./vendor/bin/phpunit
       env:
@@ -1114,7 +1114,7 @@ jobs:
         DB_USER: root
         DB_PASS: password
         JWT_SECRET: test_jwt_secret
-    
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       if: matrix.php-version == '8.1'
@@ -1125,10 +1125,10 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    
+
     steps:
     - uses: actions/checkout@v3
-    
+
     - name: Deploy to production
       uses: appleboy/ssh-action@v0.1.5
       with:
@@ -1157,7 +1157,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Deploy to server
       uses: appleboy/ssh-action@v0.1.5
@@ -1182,13 +1182,13 @@ jobs:
 
 ```php
 <?php
-// SRC/Middlewares/Core/MetricsMiddleware.php
+// src/Middlewares/Core/MetricsMiddleware.php
 namespace Express\Middlewares\Core;
 
 class MetricsMiddleware
 {
     private $config;
-    
+
     public function __construct($config = [])
     {
         $this->config = array_merge([
@@ -1198,23 +1198,23 @@ class MetricsMiddleware
             'includeExecutionTime' => true
         ], $config);
     }
-    
+
     public function handle($req, $res, $next)
     {
         if (!$this->config['enabled']) {
             return $next();
         }
-        
+
         $startTime = microtime(true);
         $startMemory = memory_get_usage();
-        
+
         // Executar próximo middleware
         $next();
-        
+
         // Calcular métricas
         $endTime = microtime(true);
         $endMemory = memory_get_usage();
-        
+
         $metrics = [
             'timestamp' => date('Y-m-d H:i:s'),
             'method' => $req->method,
@@ -1226,20 +1226,20 @@ class MetricsMiddleware
             'user_agent' => $req->headers['User-Agent'] ?? 'Unknown',
             'ip' => $req->ip ?? '0.0.0.0'
         ];
-        
+
         // Log das métricas
         $this->logMetrics($metrics);
-        
+
         // Enviar para sistema de monitoramento (opcional)
         $this->sendToMonitoring($metrics);
     }
-    
+
     private function logMetrics($metrics)
     {
         $logEntry = json_encode($metrics) . "\n";
         file_put_contents($this->config['logFile'], $logEntry, FILE_APPEND | LOCK_EX);
     }
-    
+
     private function sendToMonitoring($metrics)
     {
         // Integração com Prometheus, DataDog, New Relic, etc.
@@ -1247,7 +1247,7 @@ class MetricsMiddleware
             $this->sendWebhook($_ENV['MONITORING_WEBHOOK'], $metrics);
         }
     }
-    
+
     private function sendWebhook($url, $data)
     {
         $options = [
@@ -1257,7 +1257,7 @@ class MetricsMiddleware
                 'content' => json_encode($data)
             ]
         ];
-        
+
         $context = stream_context_create($options);
         @file_get_contents($url, false, $context);
     }
@@ -1290,7 +1290,7 @@ $app->get('/metrics', function($req, $res) {
             'disk_usage' => $this->getDiskUsage()
         ]
     ];
-    
+
     $res->json($metrics);
 });
 ```
@@ -1329,14 +1329,14 @@ return [
         'Cross-Origin-Opener-Policy' => 'same-origin',
         'Cross-Origin-Resource-Policy' => 'same-origin'
     ],
-    
+
     'rate_limiting' => [
         'enabled' => true,
         'requests_per_minute' => 60,
         'burst_limit' => 100,
         'storage' => 'redis' // redis, file, memory
     ],
-    
+
     'cors' => [
         'origin' => explode(',', $_ENV['CORS_ORIGINS'] ?? '*'),
         'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -1344,7 +1344,7 @@ return [
         'credentials' => true,
         'max_age' => 86400
     ],
-    
+
     'csrf' => [
         'enabled' => true,
         'token_lifetime' => 3600,
@@ -1356,7 +1356,7 @@ return [
 ### 2. Middleware de Segurança Avançado
 
 ```php
-// SRC/Middlewares/Security/SecurityHeadersMiddleware.php
+// src/Middlewares/Security/SecurityHeadersMiddleware.php
 namespace Express\Middlewares\Security;
 
 class SecurityHeadersMiddleware
@@ -1374,27 +1374,27 @@ class SecurityHeadersMiddleware
             'Cross-Origin-Opener-Policy' => 'same-origin',
             'Cross-Origin-Resource-Policy' => 'same-origin'
         ];
-        
+
         foreach ($securityHeaders as $header => $value) {
             $res->setHeader($header, $value);
         }
-        
+
         // HSTS apenas em HTTPS
         if ($req->isSecure()) {
             $res->setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
         }
-        
+
         // CSP dinâmico baseado no ambiente
         $csp = $this->buildCSP($req);
         $res->setHeader('Content-Security-Policy', $csp);
-        
+
         $next();
     }
-    
+
     private function buildCSP($req)
     {
         $isDev = ($_ENV['APP_ENV'] ?? 'production') === 'development';
-        
+
         $directives = [
             "default-src 'self'",
             "script-src 'self'" . ($isDev ? " 'unsafe-eval' 'unsafe-inline'" : ""),
@@ -1406,7 +1406,7 @@ class SecurityHeadersMiddleware
             "base-uri 'self'",
             "form-action 'self'"
         ];
-        
+
         return implode('; ', $directives);
     }
 }
@@ -1415,7 +1415,7 @@ class SecurityHeadersMiddleware
 ### 3. Auditoria e Logs de Segurança
 
 ```php
-// SRC/Services/SecurityAuditService.php
+// src/Services/SecurityAuditService.php
 namespace Express\Services;
 
 class SecurityAuditService
@@ -1432,45 +1432,45 @@ class SecurityAuditService
             'session_id' => session_id(),
             'request_id' => uniqid()
         ];
-        
+
         // Log local
         error_log(json_encode($event), 3, 'logs/security.log');
-        
+
         // Alertas críticos
         if ($severity === 'critical') {
             self::sendSecurityAlert($event);
         }
-        
+
         // SIEM integration
         if (isset($_ENV['SIEM_ENDPOINT'])) {
             self::sendToSIEM($event);
         }
     }
-    
+
     public static function detectSuspiciousActivity($req)
     {
         $suspicious = [];
-        
+
         // Rate limiting
         if (self::isRateLimited($req->ip)) {
             $suspicious[] = 'rate_limit_exceeded';
         }
-        
+
         // SQL Injection patterns
         if (self::containsSQLInjection($req->body)) {
             $suspicious[] = 'sql_injection_attempt';
         }
-        
+
         // XSS patterns
         if (self::containsXSS($req->body)) {
             $suspicious[] = 'xss_attempt';
         }
-        
+
         // Directory traversal
         if (self::containsDirectoryTraversal($req->path)) {
             $suspicious[] = 'directory_traversal';
         }
-        
+
         if (!empty($suspicious)) {
             self::logSecurityEvent('suspicious_activity', [
                 'patterns' => $suspicious,
@@ -1481,10 +1481,10 @@ class SecurityAuditService
                 ]
             ], 'high');
         }
-        
+
         return $suspicious;
     }
-    
+
     private static function sendSecurityAlert($event)
     {
         // Email, Slack, webhook, etc.
@@ -1502,7 +1502,7 @@ class SecurityAuditService
                     ]
                 ]
             ];
-            
+
             $ch = curl_init($_ENV['SECURITY_WEBHOOK']);
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
             curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -1529,7 +1529,7 @@ return [
         'ttl' => 3600,
         'prefix' => 'express_app:'
     ],
-    
+
     'session' => [
         'driver' => 'redis',
         'lifetime' => 120, // minutos
@@ -1537,13 +1537,13 @@ return [
         'http_only' => true,
         'same_site' => 'lax'
     ],
-    
+
     'compression' => [
         'enabled' => true,
         'level' => 6,
         'threshold' => 1024 // bytes
     ],
-    
+
     'opcache' => [
         'enabled' => true,
         'validate_timestamps' => false,
@@ -1611,10 +1611,10 @@ server {
 server {
     listen 443 ssl http2;
     server_name api.meuapp.com;
-    
+
     root /var/www/express-php/public;
     index index.php;
-    
+
     # SSL Configuration
     ssl_certificate /etc/letsencrypt/live/api.meuapp.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/api.meuapp.com/privkey.pem;
@@ -1623,18 +1623,18 @@ server {
     ssl_prefer_server_ciphers off;
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
-    
+
     # Security Headers
     add_header X-Frame-Options "DENY" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
-    
+
     # Rate Limiting
     limit_req_zone $binary_remote_addr zone=api:10m rate=60r/m;
     limit_req zone=api burst=100 nodelay;
-    
+
     # Compression
     gzip on;
     gzip_vary on;
@@ -1642,46 +1642,46 @@ server {
     gzip_proxied any;
     gzip_comp_level 6;
     gzip_types text/plain text/css text/xml text/javascript application/json application/javascript application/xml+rss;
-    
+
     # Main location
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
-    
+
     # PHP handling
     location ~ \.php$ {
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
-        
+
         # Security
         fastcgi_hide_header X-Powered-By;
         fastcgi_buffer_size 128k;
         fastcgi_buffers 4 256k;
         fastcgi_busy_buffers_size 256k;
     }
-    
+
     # Static files
     location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|woff|woff2|ttf|eot)$ {
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
     }
-    
+
     # Deny access to sensitive files
     location ~ /\. {
         deny all;
         access_log off;
         log_not_found off;
     }
-    
+
     location ~ /(vendor|tests|storage|logs|config)/ {
         deny all;
         access_log off;
         log_not_found off;
     }
-    
+
     # Monitoring endpoints
     location = /health {
         access_log off;
@@ -1762,7 +1762,7 @@ $app->get('/dashboard/metrics', function($req, $res) {
             'disk_usage' => $this->getSystemMetric('disk')
         ]
     ];
-    
+
     $res->json($metrics);
 });
 ```
@@ -1780,57 +1780,57 @@ class LogAnalyzer
     {
         $lines = file($logFile, FILE_IGNORE_NEW_LINES);
         $metrics = [];
-        
+
         foreach ($lines as $line) {
             $data = json_decode($line, true);
             if (!$data) continue;
-            
+
             $hour = date('H', strtotime($data['timestamp']));
-            
+
             // Requests por hora
             $metrics['requests_per_hour'][$hour] = ($metrics['requests_per_hour'][$hour] ?? 0) + 1;
-            
+
             // Tempo de resposta médio
             $metrics['response_times'][] = $data['execution_time'];
-            
+
             // Status codes
             $status = $data['status_code'];
             $metrics['status_codes'][$status] = ($metrics['status_codes'][$status] ?? 0) + 1;
-            
+
             // Endpoints mais acessados
             $path = $data['path'];
             $metrics['popular_endpoints'][$path] = ($metrics['popular_endpoints'][$path] ?? 0) + 1;
         }
-        
+
         // Calcular médias e estatísticas
         $metrics['avg_response_time'] = array_sum($metrics['response_times']) / count($metrics['response_times']);
         $metrics['success_rate'] = ($metrics['status_codes']['200'] ?? 0) / array_sum($metrics['status_codes']) * 100;
-        
+
         // Ordenar endpoints por popularidade
         arsort($metrics['popular_endpoints']);
         $metrics['top_endpoints'] = array_slice($metrics['popular_endpoints'], 0, 10, true);
-        
+
         return $metrics;
     }
-    
+
     public function generateReport($metrics)
     {
         $report = "# Relatório de Análise - " . date('Y-m-d H:i:s') . "\n\n";
-        
+
         $report .= "## Performance\n";
         $report .= "- Tempo de resposta médio: " . round($metrics['avg_response_time'], 2) . "ms\n";
         $report .= "- Taxa de sucesso: " . round($metrics['success_rate'], 2) . "%\n\n";
-        
+
         $report .= "## Endpoints Mais Acessados\n";
         foreach ($metrics['top_endpoints'] as $endpoint => $count) {
             $report .= "- {$endpoint}: {$count} requests\n";
         }
-        
+
         $report .= "\n## Distribuição de Status Codes\n";
         foreach ($metrics['status_codes'] as $code => $count) {
             $report .= "- {$code}: {$count}\n";
         }
-        
+
         return $report;
     }
 }
@@ -1899,18 +1899,18 @@ class HealthChecker
             'ssl_certificate' => $this->checkSSL(),
             'external_services' => $this->checkExternalServices()
         ];
-        
+
         $allHealthy = array_reduce($checks, function($carry, $check) {
             return $carry && $check['status'] === 'ok';
         }, true);
-        
+
         return [
             'overall_status' => $allHealthy ? 'healthy' : 'unhealthy',
             'timestamp' => date('Y-m-d H:i:s'),
             'checks' => $checks
         ];
     }
-    
+
     private function checkDatabase()
     {
         try {
@@ -1919,10 +1919,10 @@ class HealthChecker
                 $_ENV['DB_USER'],
                 $_ENV['DB_PASS']
             );
-            
+
             $stmt = $pdo->query('SELECT 1');
             $result = $stmt->fetch();
-            
+
             return [
                 'status' => 'ok',
                 'message' => 'Database connection successful',
@@ -1937,32 +1937,32 @@ class HealthChecker
             ];
         }
     }
-    
+
     private function checkSSL()
     {
         $domain = $_ENV['APP_DOMAIN'] ?? 'localhost';
-        
+
         try {
             $context = stream_context_create(['ssl' => ['capture_peer_cert' => true]]);
             $socket = stream_socket_client("ssl://{$domain}:443", $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $context);
-            
+
             if (!$socket) {
                 return ['status' => 'error', 'message' => 'SSL connection failed'];
             }
-            
+
             $cert = stream_context_get_params($socket)['options']['ssl']['peer_certificate'];
             $certInfo = openssl_x509_parse($cert);
-            
+
             $expiryDate = $certInfo['validTo_time_t'];
             $daysToExpiry = ceil(($expiryDate - time()) / 86400);
-            
+
             if ($daysToExpiry < 30) {
                 return [
                     'status' => 'warning',
                     'message' => "SSL certificate expires in {$daysToExpiry} days"
                 ];
             }
-            
+
             return [
                 'status' => 'ok',
                 'message' => 'SSL certificate is valid',
@@ -1975,7 +1975,7 @@ class HealthChecker
             ];
         }
     }
-    
+
     private function measureTime($callback)
     {
         $start = microtime(true);
@@ -1994,7 +1994,7 @@ echo json_encode($health, JSON_PRETTY_PRINT) . "\n";
 if ($health['overall_status'] !== 'healthy') {
     // Enviar notificação
     error_log("HEALTH CHECK FAILED: " . json_encode($health));
-    
+
     // Webhook para Slack/Discord
     if (isset($_ENV['ALERT_WEBHOOK'])) {
         $payload = [
@@ -2019,7 +2019,7 @@ if ($health['overall_status'] !== 'healthy') {
                 ]
             ]
         ];
-        
+
         $ch = curl_init($_ENV['ALERT_WEBHOOK']);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -2027,7 +2027,7 @@ if ($health['overall_status'] !== 'healthy') {
         curl_exec($ch);
         curl_close($ch);
     }
-    
+
     exit(1);
 }
 

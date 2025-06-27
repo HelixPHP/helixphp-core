@@ -4,7 +4,7 @@ Este guia irá te ajudar a começar com o Express PHP em poucos minutos!
 
 ## 📋 Pré-requisitos
 
-- PHP 7.4 ou superior
+- PHP 8.1 ou superior
 - Composer
 - Servidor web (Apache, Nginx) ou PHP built-in server
 
@@ -304,9 +304,9 @@ $app->run();
 ## 🎯 Próximos Passos
 
 1. **[Exemplos Avançados](../../examples/)** - Explore exemplos mais complexos
-2. **[Middlewares](../guides/SECURITY_IMPLEMENTATION.md)** - Aprenda sobre middlewares
-3. **[Autenticação](../pt-br/AUTH_MIDDLEWARE.md)** - Guia completo de autenticação
-4. **[Deploy](../guides/PUBLISHING_GUIDE.md)** - Como fazer deploy da aplicação
+2. **[Middlewares](../SECURITY_IMPLEMENTATION.md)** - Aprenda sobre middlewares
+3. **[Autenticação](../../pt-br/AUTH_MIDDLEWARE.md)** - Guia completo de autenticação
+4. **[Deploy](../PUBLISHING_GUIDE.md)** - Como fazer deploy da aplicação
 
 ## 🐛 Problemas Comuns
 
@@ -350,4 +350,4 @@ $app->use(new CorsMiddleware([
 
 **🎉 Parabéns!** Você agora tem uma base sólida para desenvolver com Express PHP.
 
-Para mais informações, consulte a **[documentação completa](../README.md)**.
+Para mais informações, consulte a **[documentação completa](../../README.md)**.

@@ -1,6 +1,6 @@
 <?php
 
-use Express\SRC\Controller\RouterInstance;
+use Express\Controller\RouterInstance;
 
 // Sub-router especializado para upload de arquivos
 $uploadRouter = new RouterInstance('/upload');

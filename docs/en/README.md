@@ -1,74 +1,44 @@
 # Express PHP - Complete Documentation
 
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](../pt-br/README.md)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)](https://php.net)
+[![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 
-## Table of Contents
+**Express PHP** is a lightweight, fast, and secure microframework inspired by Express.js for building modern web applications and APIs in PHP with native multi-method authentication system.
 
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Basic Usage](#basic-usage)
-4. [Routing](#routing)
-5. [Middlewares](#middlewares)
-6. [Security](#security)
-7. [Request and Response](#request-and-response)
-8. [File Uploads](#file-uploads)
-9. [OpenAPI Documentation](#openapi-documentation)
-10. [Examples](#examples)
-11. [API Reference](#api-reference)
+> 🔐 **New in v1.0**: Complete authentication system with JWT, Basic Auth, Bearer Token, API Key, and auto-detection!
 
-## Introduction
+## 🚀 Quick Start
 
-Express PHP is a lightweight microframework for PHP that brings the simplicity and flexibility of Express.js to the PHP world. It's designed for building modern web applications and APIs with security and performance in mind.
+### Installation
 
-### Key Features
-
-- **Express.js-inspired syntax**: Familiar routing and middleware system
-- **Zero dependencies**: Works without external libraries (Composer optional)
-- **Built-in security**: CSRF, XSS protection, and security headers
-- **Automatic documentation**: OpenAPI/Swagger generation
-- **Modular architecture**: Organized middleware system
-- **File upload handling**: Built-in multipart/form-data support
-- **CORS support**: Cross-origin request handling
-
-## Installation
-
-### Option 1: Direct Download
 ```bash
-git clone https://github.com/your-username/Express-PHP.git
-cd Express-PHP
+composer require cafernandes/express-php
 ```
 
-### Option 2: With Composer (Optional)
-```bash
-composer create-project express/php-framework my-app
-cd my-app
-```
-
-## Basic Usage
-
-### Creating Your First App
+### Basic Example
 
 ```php
 <?php
-require_once 'vendor/autoload.php'; // or include framework files
+require_once 'vendor/autoload.php';
 
-use Express\SRC\ApiExpress;
+use Express\ApiExpress;
+use Express\Middlewares\Security\SecurityMiddleware;
 
 $app = new ApiExpress();
+
+// Apply security middleware
+$app->use(SecurityMiddleware::create());
 
 // Basic route
 $app->get('/', function($req, $res) {
     $res->json(['message' => 'Hello Express PHP!']);
 });
 
-// Route with parameter
-$app->get('/user/:id', function($req, $res) {
-    $userId = $req->params->id;
-    $res->json(['user_id' => $userId]);
-});
-
-// POST route
+// Protected route with authentication
 $app->post('/api/users', function($req, $res) {
+    // Data automatically sanitized by security middleware
     $userData = $req->body;
     $res->json(['message' => 'User created', 'data' => $userData]);
 });
@@ -76,442 +46,212 @@ $app->post('/api/users', function($req, $res) {
 $app->run();
 ```
 
-## Routing
+## ✨ Key Features
 
-### HTTP Methods
+- 🔐 **Multi-method Authentication**: JWT, Basic Auth, Bearer Token, API Key
+- 🛡️ **Advanced Security**: CSRF, XSS, Rate Limiting, Security Headers
+- 📡 **Streaming**: Complete support for data streaming, SSE and large files
+- 📚 **OpenAPI/Swagger Documentation**: Automatic documentation generation
+- 🎯 **Modular Middlewares**: Flexible middleware system
+- ⚡ **Performance**: Optimized for high performance
+- 🧪 **Tested**: 186+ unit tests and 100% code coverage
+- 📊 **Static Analysis**: PHPStan Level 8 compliance
 
-Express PHP supports all standard HTTP methods:
+## 📖 Documentation
+
+- **[🚀 Getting Started](../guides/starter/)** - Start here!
+- **[📚 Complete Documentation (PT-BR)](../pt-br/README.md)** - Detailed documentation
+- **[🔐 Authentication System](../pt-br/AUTH_MIDDLEWARE.md)** - Authentication guide
+- **[📡 Data Streaming](../pt-br/STREAMING.md)** - Streaming and Server-Sent Events
+- **[🛡️ Security Middlewares](../guides/SECURITY_IMPLEMENTATION.md)** - Security guide
+- **[📝 Practical Examples](../../examples/)** - Ready-to-use examples
+
+## 🎯 Learning Examples
+
+The framework includes modular examples to facilitate learning:
+
+- **[👥 Users](../../examples/example_user.php)** - User routes and authentication
+- **[📦 Products](../../examples/example_product.php)** - CRUD and route parameters
+- **[📤 Upload](../../examples/example_upload.php)** - File uploads
+- **[🔐 Admin](../../examples/example_admin.php)** - Administrative routes
+- **[📝 Blog](../../examples/example_blog.php)** - Blog system
+- **[📡 Streaming](../../examples/example_streaming.php)** - Data streaming and SSE
+- **[🛡️ Security](../../examples/example_security.php)** - Middleware demonstration
+- **[🏗️ Complete](../../examples/example_complete.php)** - Integration of all features
+
+## 🛡️ Authentication System
 
 ```php
-$app->get('/path', $handler);
-$app->post('/path', $handler);
-$app->put('/path', $handler);
-$app->delete('/path', $handler);
-$app->patch('/path', $handler);
-$app->options('/path', $handler);
+// JWT Authentication
+$app->use(AuthMiddleware::jwt('your_secret_key'));
+
+// Multiple authentication methods
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt', 'basic', 'apikey'],
+    'jwtSecret' => 'your_jwt_key',
+    'basicAuthCallback' => 'validateUser',
+    'apiKeyCallback' => 'validateApiKey'
+]));
+
+// Access authenticated user data
+$app->get('/profile', function($req, $res) {
+    $user = $req->user; // authenticated user data
+    $method = $req->auth['method']; // auth method used
+    $res->json(['user' => $user, 'auth_method' => $method]);
+});
 ```
 
-### Route Parameters
+## 📡 Data Streaming
+
+Express PHP offers complete support for real-time data streaming:
 
 ```php
-// Single parameter
-$app->get('/user/:id', function($req, $res) {
-    $id = $req->params->id;
-    $res->json(['id' => $id]);
+// Simple text streaming
+$app->get('/stream/text', function($req, $res) {
+    $res->startStream('text/plain; charset=utf-8');
+
+    for ($i = 1; $i <= 10; $i++) {
+        $res->write("Chunk {$i}\n");
+        sleep(1); // Simulate processing
+    }
+
+    $res->endStream();
 });
 
-// Multiple parameters
-$app->get('/user/:userId/post/:postId', function($req, $res) {
-    $userId = $req->params->userId;
-    $postId = $req->params->postId;
-    $res->json(['user' => $userId, 'post' => $postId]);
+// Server-Sent Events (SSE)
+$app->get('/events', function($req, $res) {
+    $res->sendEvent('Connection established', 'connect');
+
+    for ($i = 1; $i <= 10; $i++) {
+        $data = ['counter' => $i, 'timestamp' => time()];
+        $res->sendEvent($data, 'update', (string)$i);
+        sleep(1);
+    }
 });
 ```
 
-### Query Parameters
+## 🔧 Basic Routing
 
 ```php
-$app->get('/search', function($req, $res) {
-    $query = $req->query->q ?? '';
-    $page = $req->query->page ?? 1;
-    $res->json(['query' => $query, 'page' => $page]);
-});
-// GET /search?q=express&page=2
-```
-
-### Route Groups
-
-```php
-// Group routes with prefix
-$app->use('/api');
-
+// HTTP Methods
 $app->get('/users', function($req, $res) {
-    // This handles GET /api/users
+    $res->json(['users' => []]);
 });
 
 $app->post('/users', function($req, $res) {
-    // This handles POST /api/users
+    $userData = $req->body;
+    $res->json(['created' => $userData]);
+});
+
+// Route parameters
+$app->get('/user/:id', function($req, $res) {
+    $id = $req->params['id'];
+    $res->json(['user_id' => $id]);
+});
+
+// Query parameters
+$app->get('/search', function($req, $res) {
+    $query = $req->query['q'] ?? '';
+    $res->json(['search' => $query]);
 });
 ```
 
-## Middlewares
-
-### Global Middleware
+## 🛡️ Security Middlewares
 
 ```php
-// Applies to all routes
-$app->use(function($req, $res, $next) {
-    // Middleware logic here
-    echo "Global middleware executed\\n";
-    $next(); // Call next middleware
-});
-```
+use Express\Middlewares\Security\SecurityMiddleware;
+use Express\Middlewares\Core\CorsMiddleware;
 
-### Route-specific Middleware
-
-```php
-$app->get('/protected', 
-    function($req, $res, $next) {
-        // Authentication middleware
-        if (!isAuthenticated($req)) {
-            $res->status(401)->json(['error' => 'Unauthorized']);
-            return;
-        }
-        $next();
-    },
-    function($req, $res) {
-        // Route handler
-        $res->json(['message' => 'Protected content']);
-    }
-);
-```
-
-### Built-in Middlewares
-
-#### CORS Middleware
-
-```php
-use Express\SRC\Middlewares\Core\CorsMiddleware;
-
-$app->use(new CorsMiddleware([
-    'origin' => ['http://localhost:3000', 'https://myapp.com'],
-    'methods' => 'GET,POST,PUT,DELETE',
-    'headers' => 'Content-Type,Authorization',
-    'credentials' => true
-]));
-```
-
-#### Rate Limiting
-
-```php
-use Express\SRC\Middlewares\Core\RateLimitMiddleware;
-
-$app->use(new RateLimitMiddleware([
-    'max' => 100,        // 100 requests
-    'window' => 60       // per 60 seconds
-]));
-```
-
-#### Error Handling
-
-```php
-use Express\SRC\Middlewares\Core\ErrorHandlerMiddleware;
-
-$app->use(new ErrorHandlerMiddleware([
-    'debug' => true,     // Show detailed errors in development
-    'logErrors' => true  // Log errors to file
-]));
-```
-
-## Security
-
-Express PHP includes comprehensive security features:
-
-### Security Middleware (All-in-One)
-
-```php
-use Express\SRC\Middlewares\Security\SecurityMiddleware;
-
-// Basic security (recommended)
+// Complete security in one line
 $app->use(SecurityMiddleware::create());
 
-// Strict security (maximum protection)
-$app->use(SecurityMiddleware::strict());
-
-// Custom configuration
-$app->use(new SecurityMiddleware([
-    'enableCsrf' => true,
-    'enableXss' => true,
-    'rateLimiting' => false,
-    'csrf' => [
-        'excludePaths' => ['/api/webhook'],
-        'generateTokenResponse' => true
-    ],
-    'xss' => [
-        'excludeFields' => ['rich_content'],
-        'allowedTags' => '<p><strong><em>'
-    ]
+// Custom CORS
+$app->use(new CorsMiddleware([
+    'origin' => ['http://localhost:3000'],
+    'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
+    'headers' => ['Content-Type', 'Authorization']
 ]));
 ```
 
-### CSRF Protection
+### Security Features
+- Automatic input sanitization
+- XSS protection
+- CSRF prevention
+- Configurable rate limiting
+- Automatic security headers
+- Robust input validation
 
-```php
-use Express\SRC\Middlewares\Security\CsrfMiddleware;
+## 📚 API Reference
 
-$app->use(new CsrfMiddleware([
-    'headerName' => 'X-CSRF-Token',
-    'fieldName' => 'csrf_token',
-    'excludePaths' => ['/api/public'],
-    'methods' => ['POST', 'PUT', 'PATCH', 'DELETE']
-]));
+### Main Classes
 
-// Get CSRF token for forms
-$app->get('/token', function($req, $res) {
-    $token = CsrfMiddleware::getToken();
-    $res->json(['csrf_token' => $token]);
-});
-```
+- **[ApiExpress](objects.md#apiexpress)** - Main framework class
+- **[Request](objects.md#request)** - HTTP request object
+- **[Response](objects.md#response)** - HTTP response object
+- **[Router](objects.md#router)** - Routing system
 
-### XSS Protection
+### Middlewares
 
-```php
-use Express\SRC\Middlewares\Security\XssMiddleware;
+- **[AuthMiddleware](objects.md#authmiddleware)** - Authentication
+- **[SecurityMiddleware](objects.md#securitymiddleware)** - Security
+- **[CorsMiddleware](objects.md#corsmiddleware)** - CORS
+- **[RateLimitMiddleware](objects.md#ratelimitmiddleware)** - Rate limiting
 
-$app->use(new XssMiddleware([
-    'sanitizeInput' => true,
-    'securityHeaders' => true,
-    'excludeFields' => ['content'],
-    'allowedTags' => '<p><br><strong><em>',
-    'contentSecurityPolicy' => "default-src 'self'"
-]));
+For complete API reference, see [objects.md](objects.md).
 
-// Manual sanitization
-$clean = XssMiddleware::sanitize($userInput);
-$safe = XssMiddleware::cleanUrl($url);
-```
+## ⚙️ Requirements
 
-### Security Headers
+- **PHP**: 8.0.0 or higher
+- **Extensions**: json, session
+- **Recommended**: openssl, mbstring, fileinfo
 
-Automatically applied security headers:
+## 🧪 Testing
 
-- `X-XSS-Protection: 1; mode=block`
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-- `Content-Security-Policy: [configurable]`
-
-## Request and Response
-
-### Request Object
-
-```php
-$app->post('/api/data', function($req, $res) {
-    // HTTP method
-    $method = $req->method;
-    
-    // Route parameters
-    $id = $req->params->id;
-    
-    // Query parameters
-    $search = $req->query->search;
-    
-    // Request body (JSON or form data)
-    $data = $req->body;
-    
-    // Headers
-    $authHeader = $req->headers->get('Authorization');
-    
-    // Files (multipart uploads)
-    $file = $req->file('avatar');
-});
-```
-
-### Response Object
-
-```php
-$app->get('/api/users', function($req, $res) {
-    // JSON response
-    $res->json(['users' => $users]);
-    
-    // Status code
-    $res->status(201)->json(['created' => true]);
-    
-    // Headers
-    $res->header('Custom-Header', 'value');
-    
-    // Text response
-    $res->send('Hello World');
-    
-    // File download
-    $res->download('/path/to/file.pdf');
-    
-    // Redirect
-    $res->redirect('/login');
-});
-```
-
-## File Uploads
-
-### Basic Upload Handling
-
-```php
-use Express\SRC\Middlewares\Core\AttachmentMiddleware;
-
-// Enable file upload middleware
-$app->use(new AttachmentMiddleware([
-    'uploadDir' => 'uploads/',
-    'maxSize' => 10 * 1024 * 1024, // 10MB
-    'allowedTypes' => ['image/jpeg', 'image/png', 'application/pdf']
-]));
-
-$app->post('/upload', function($req, $res) {
-    $file = $req->file('document');
-    
-    if ($file) {
-        // File info
-        $name = $file['name'];
-        $size = $file['size'];
-        $type = $file['type'];
-        $tmpPath = $file['tmp_name'];
-        
-        // Move to permanent location
-        $uploadPath = 'uploads/' . $name;
-        if (move_uploaded_file($tmpPath, $uploadPath)) {
-            $res->json(['message' => 'File uploaded successfully']);
-        } else {
-            $res->status(500)->json(['error' => 'Upload failed']);
-        }
-    } else {
-        $res->status(400)->json(['error' => 'No file provided']);
-    }
-});
-```
-
-### Multiple File Uploads
-
-```php
-$app->post('/upload-multiple', function($req, $res) {
-    $files = $req->files('documents'); // Array of files
-    
-    foreach ($files as $file) {
-        // Process each file
-        $uploadPath = 'uploads/' . $file['name'];
-        move_uploaded_file($file['tmp_name'], $uploadPath);
-    }
-    
-    $res->json(['message' => 'All files uploaded']);
-});
-```
-
-## OpenAPI Documentation
-
-### Automatic Documentation Generation
-
-```php
-use Express\SRC\Middlewares\Core\OpenApiDocsMiddleware;
-
-$app->use(new OpenApiDocsMiddleware([
-    'title' => 'My API',
-    'version' => '1.0.0',
-    'description' => 'API documentation',
-    'docsPath' => '/docs'
-]));
-
-// Routes with OpenAPI metadata
-$app->get('/api/users/:id', 
-    function($req, $res) {
-        $res->json(['user' => $user]);
-    },
-    [
-        'summary' => 'Get user by ID',
-        'parameters' => [
-            'id' => ['type' => 'integer', 'description' => 'User ID']
-        ],
-        'responses' => [
-            200 => ['description' => 'User found'],
-            404 => ['description' => 'User not found']
-        ],
-        'tags' => ['Users']
-    ]
-);
-```
-
-### Accessing Documentation
-
-- Swagger UI: `GET /docs/index`
-- OpenAPI JSON: `GET /docs/openapi.json`
-- Redoc UI: `GET /docs/redoc`
-
-## Examples
-
-The framework includes comprehensive examples in the `examples/` folder:
-
-### Running Examples
+The project has complete test coverage:
 
 ```bash
-# User management example
-php examples/example_user.php
+# Run all tests
+composer test
 
-# Product catalog example  
-php examples/example_product.php
+# Run tests with coverage
+composer test:coverage
 
-# File upload example
-php examples/example_upload.php
-
-# Security demonstration
-php examples/example_security.php
-
-# Complete integration example
-php examples/example_complete.php
+# Static analysis with PHPStan
+composer analyze
 ```
 
-### Example Structure
+### Test Statistics
+- **186 tests** executed
+- **100% coverage**
+- **PHPStan Level 8** (maximum)
+- Unit and integration tests
 
-Each example demonstrates:
-- Route definitions
-- Middleware usage
-- Request/response handling
-- Security implementation
-- OpenAPI documentation
+## 🌟 Quality & Features
 
-## API Reference
+- ✅ **PHP 7.4+** compatible
+- ✅ **PHPStan Level 8** compliance
+- ✅ **PSR-12** code style
+- ✅ **186 unit tests**
+- ✅ **Multi-method authentication** (JWT, Basic, API Key, Bearer)
+- ✅ **Security middlewares** (CSRF, XSS, Rate Limiting)
+- ✅ **Server-Sent Events** (SSE) streaming
+- ✅ **Zero required dependencies**
+- ✅ **Optimized performance**
 
-### ApiExpress Class
+## 🤝 Contributing
 
-Main application class for creating Express PHP applications.
+Contributions are welcome! See our [contribution guide](../../CONTRIBUTING.md).
 
-```php
-$app = new ApiExpress($baseUrl = null);
-```
+## 📄 License
 
-#### Methods
+This project is licensed under the [MIT License](../../LICENSE).
 
-- `get($path, ...$handlers)` - Register GET route
-- `post($path, ...$handlers)` - Register POST route
-- `put($path, ...$handlers)` - Register PUT route
-- `delete($path, ...$handlers)` - Register DELETE route
-- `patch($path, ...$handlers)` - Register PATCH route
-- `options($path, ...$handlers)` - Register OPTIONS route
-- `use($middleware)` - Register global middleware
-- `run()` - Start the application
+## 🌟 Support
 
-### Request Object Properties
-
-- `$method` - HTTP method (GET, POST, etc.)
-- `$path` - Request path
-- `$params` - Route parameters object
-- `$query` - Query parameters object  
-- `$body` - Request body (parsed JSON/form data)
-- `$headers` - Headers object
-
-### Response Object Methods
-
-- `json($data)` - Send JSON response
-- `send($text)` - Send text response
-- `status($code)` - Set status code
-- `header($name, $value)` - Set header
-- `redirect($url)` - Redirect request
-- `download($file)` - Send file download
-
-### Utility Classes
-
-#### Utils
-
-Static utility methods for common operations:
-
-```php
-use Express\SRC\Helpers\Utils;
-
-Utils::sanitizeString($input);
-Utils::isEmail($email);
-Utils::csrfToken();
-Utils::checkCsrf($token);
-Utils::randomToken($length);
-```
-
-For more detailed API documentation, see the [Objects Documentation](objects.md).
+- [Issues](https://github.com/CAFernandes/express-php/issues) - Report bugs or request features
+- [Discussions](https://github.com/CAFernandes/express-php/discussions) - Questions and discussions
+- [Wiki](https://github.com/CAFernandes/express-php/wiki) - Additional documentation
 
 ---
 
-**Express PHP** - Simple, secure, and powerful PHP framework for modern web development.
+**🚀 Ready to start?** Follow our [quick start guide](../guides/starter/)!

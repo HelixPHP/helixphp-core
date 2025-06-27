@@ -4,8 +4,8 @@
 require_once '../vendor/autoload.php';
 
 use Express\ApiExpress;
-use Express\Middlewares\Security\AuthMiddleware;
-use Express\Helpers\JWTHelper;
+use Express\Middleware\Security\AuthMiddleware;
+use Express\Authentication\JWTHelper;
 
 // Cria a aplicação
 $app = new ApiExpress();
@@ -25,7 +25,7 @@ function validateBasicAuth($username, $password) {
         'user' => 'user123',
         'test' => 'test123'
     ];
-    
+
     if (isset($users[$username]) && $users[$username] === $password) {
         return [
             'id' => uniqid(),
@@ -34,7 +34,7 @@ function validateBasicAuth($username, $password) {
             'authenticated_at' => date('Y-m-d H:i:s')
         ];
     }
-    
+
     return false;
 }
 
@@ -46,7 +46,7 @@ function validateBearerToken($token) {
         'admin_token' => ['id' => 2, 'username' => 'bearer_admin', 'role' => 'admin'],
         'api_token_xyz' => ['id' => 3, 'username' => 'api_service', 'role' => 'service']
     ];
-    
+
     return $validTokens[$token] ?? false;
 }
 
@@ -58,7 +58,7 @@ function validateApiKey($apiKey) {
         'service_key' => ['id' => 2, 'name' => 'Service Integration', 'permissions' => ['read']],
         'admin_key' => ['id' => 3, 'name' => 'Admin Panel', 'permissions' => ['read', 'write', 'delete']]
     ];
-    
+
     return $validKeys[$apiKey] ?? false;
 }
 
@@ -66,7 +66,7 @@ function validateApiKey($apiKey) {
 function customAuth($request) {
     // Exemplo: autenticação por cookie de sessão
     $sessionId = $_COOKIE['session_id'] ?? null;
-    
+
     if ($sessionId) {
         // Em produção, valide a sessão no banco/cache
         if ($sessionId === 'valid_session_123') {
@@ -78,7 +78,7 @@ function customAuth($request) {
             ];
         }
     }
-    
+
     return false;
 }
 
@@ -146,10 +146,10 @@ $app->get('/public/status', function($req, $res) {
 $app->post('/login', function($req, $res) {
     $username = $req->body['username'] ?? '';
     $password = $req->body['password'] ?? '';
-    
+
     // Valida credenciais (exemplo simples)
     $user = validateBasicAuth($username, $password);
-    
+
     if ($user) {
         // Gera token JWT
         $token = JWTHelper::encode([
@@ -159,10 +159,10 @@ $app->post('/login', function($req, $res) {
         ], $jwtSecret, [
             'expiresIn' => 3600 // 1 hora
         ]);
-        
+
         // Gera refresh token
         $refreshToken = JWTHelper::createRefreshToken($user['id'], $jwtSecret);
-        
+
         $res->json([
             'message' => 'Login successful',
             'access_token' => $token,
@@ -181,16 +181,16 @@ $app->post('/login', function($req, $res) {
 // Rota para refresh token
 $app->post('/refresh', function($req, $res) use ($jwtSecret) {
     $refreshToken = $req->body['refresh_token'] ?? '';
-    
+
     $payload = JWTHelper::validateRefreshToken($refreshToken, $jwtSecret);
-    
+
     if ($payload) {
         // Gera novo access token
         $newToken = JWTHelper::encode([
             'user_id' => $payload['user_id'],
             'refreshed_at' => time()
         ], $jwtSecret);
-        
+
         $res->json([
             'access_token' => $newToken,
             'token_type' => 'Bearer',
@@ -223,7 +223,7 @@ $app->get('/admin/users', function($req, $res) {
         ]);
         return;
     }
-    
+
     $res->json([
         'message' => 'Lista de usuários (apenas admins)',
         'users' => [

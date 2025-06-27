@@ -36,7 +36,7 @@ jobs:
       run: composer validate --strict
 
     - name: Check PHP syntax
-      run: find SRC -name "*.php" -exec php -l {} \;
+      run: find src -name "*.php" -exec php -l {} \;
 
     - name: Run PHPStan (Level 8)
       run: ./vendor/bin/phpstan analyse --no-progress
@@ -45,7 +45,7 @@ jobs:
       run: ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml
 
     - name: Check code style (PSR-12)
-      run: ./vendor/bin/phpcs --standard=PSR12 SRC/ --report=summary
+      run: ./vendor/bin/phpcs --standard=PSR12 src/ --report=summary
 
     - name: Run release preparation script
       run: |
@@ -88,7 +88,7 @@ jobs:
       run: composer install --prefer-dist --no-progress --no-dev
 
     - name: Check PHP syntax
-      run: find SRC -name "*.php" -exec php -l {} \;
+      run: find src -name "*.php" -exec php -l {} \;
 
     - name: Test autoload
       run: php -r "require 'vendor/autoload.php'; echo 'Autoload OK\n';"
