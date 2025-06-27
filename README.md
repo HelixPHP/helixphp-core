@@ -71,16 +71,13 @@ $app->run();
 
 ## 🎯 Exemplos de Aprendizado
 
-O framework inclui exemplos modulares para facilitar o aprendizado:
+O framework inclui exemplos práticos e funcionais para facilitar o aprendizado:
 
-- **[Usuários](examples/example_user.php)** - Rotas de usuário e autenticação
-- **[Produtos](examples/example_product.php)** - CRUD e parâmetros de rota
-- **[Upload](examples/example_upload.php)** - Upload de arquivos
-- **[Admin](examples/example_admin.php)** - Rotas administrativas
-- **[Blog](examples/example_blog.php)** - Sistema de blog
-- **[Streaming](examples/example_streaming.php)** - Streaming de dados e SSE
-- **[Segurança](examples/example_security.php)** - Demonstração de middlewares
-- **[Completo](examples/example_complete.php)** - Integração de todos os recursos
+- **[⭐ Básico](examples/example_basic.php)** - API REST básica e conceitos fundamentais
+- **[🔐 Autenticação Completa](examples/example_auth.php)** - Sistema completo de autenticação
+- **[🔑 Autenticação Simples](examples/example_auth_simple.php)** - JWT básico e controle de acesso
+- **[🛡️ Middlewares](examples/example_middleware.php)** - CORS, rate limiting e validação
+- **[🚀 App Completo](examples/app.php)** - Aplicação completa com todos os recursos
 
 ## 🛡️ Sistema de Autenticação
 

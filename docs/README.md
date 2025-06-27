@@ -1,6 +1,26 @@
-# 📚 Documentação Express PHP
+# 📚 Documentação Expr## 🎯 ExExpl## 🎯 Exemplos Práticos
 
-Bem-vindo à documentação completa do Express PHP Microframework!
+Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
+
+- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
+- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
+- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
+- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
+- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursoslos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
+
+- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
+- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
+- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
+- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
+- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursosticos
+
+Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
+
+- **[⭐ Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
+- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
+- **[🔑 Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
+- **[🛡️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
+- **[🚀 App Completo](../examples/app.php)** - Aplicação completa com todos os recursos-vindo à documentação completa do Express PHP Microframework!
 
 ## 🚀 Início Rápido
 
@@ -24,10 +44,10 @@ Bem-vindo à documentação completa do Express PHP Microframework!
 
 Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes aspectos do framework:
 
-- **[👥 Usuários](../examples/example_user.php)** - Sistema de usuários e autenticação
-- **[📦 CRUD Produtos](../examples/example_product.php)** - API RESTful completa
-- **[📤 Upload de Arquivos](../examples/example_upload.php)** - Upload e manipulação de arquivos
-- **[🔐 Área Admin](../examples/example_admin.php)** - Rotas administrativas protegidas
+- **[� Básico](../examples/example_basic.php)** - Conceitos fundamentais e API REST
+- **[🔐 Autenticação Completa](../examples/example_auth.php)** - JWT, múltiplos métodos de auth
+- **[� Autenticação Simples](../examples/example_auth_simple.php)** - Implementação básica de JWT
+- **[�️ Middlewares](../examples/example_middleware.php)** - Segurança, CORS, streaming
 - **[📝 Blog System](../examples/example_blog.php)** - Sistema de blog com categorias
 - **[🛡️ Segurança](../examples/example_security.php)** - Demonstração de middlewares
 - **[🏗️ App Completo](../examples/example_complete.php)** - Integração de todos os recursos
@@ -52,7 +72,7 @@ Explore os exemplos na pasta [examples/](../examples/) para aprender diferentes 
 
 ## 🌟 Recursos do Framework
 
-- ✅ **PHP 7.4+** compatível
+- ✅ **PHP 8.1+** compatível
 - ✅ **PHPStan Level 8** compliance
 - ✅ **PSR-12** code style
 - ✅ **186 testes** unitários

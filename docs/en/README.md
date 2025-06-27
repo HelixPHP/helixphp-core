@@ -2,7 +2,7 @@
 
 [![English](https://img.shields.io/badge/Language-English-blue)](README.md) [![Português](https://img.shields.io/badge/Language-Português-green)](../pt-br/README.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 
 **Express PHP** is a lightweight, fast, and secure microframework inspired by Express.js for building modern web applications and APIs in PHP with native multi-method authentication system.
@@ -68,16 +68,13 @@ $app->run();
 
 ## 🎯 Learning Examples
 
-The framework includes modular examples to facilitate learning:
+The framework includes practical examples to facilitate learning:
 
-- **[👥 Users](../../examples/example_user.php)** - User routes and authentication
-- **[📦 Products](../../examples/example_product.php)** - CRUD and route parameters
-- **[📤 Upload](../../examples/example_upload.php)** - File uploads
-- **[🔐 Admin](../../examples/example_admin.php)** - Administrative routes
-- **[📝 Blog](../../examples/example_blog.php)** - Blog system
-- **[📡 Streaming](../../examples/example_streaming.php)** - Data streaming and SSE
-- **[🛡️ Security](../../examples/example_security.php)** - Middleware demonstration
-- **[🏗️ Complete](../../examples/example_complete.php)** - Integration of all features
+- **[⭐ Basic](../../examples/example_basic.php)** - Fundamental concepts and REST API
+- **[� Complete Authentication](../../examples/example_auth.php)** - Full authentication system
+- **[� Simple Authentication](../../examples/example_auth_simple.php)** - Basic JWT implementation
+- **[🛡️ Middlewares](../../examples/example_middleware.php)** - CORS, rate limiting, validation
+- **[🚀 Complete App](../../examples/app.php)** - Full application with all features
 
 ## 🛡️ Authentication System
 
@@ -201,7 +198,7 @@ For complete API reference, see [objects.md](objects.md).
 
 ## ⚙️ Requirements
 
-- **PHP**: 8.0.0 or higher
+- **PHP**: 8.1.0 or higher
 - **Extensions**: json, session
 - **Recommended**: openssl, mbstring, fileinfo
 
@@ -228,7 +225,7 @@ composer analyze
 
 ## 🌟 Quality & Features
 
-- ✅ **PHP 7.4+** compatible
+- ✅ **PHP 8.1+** compatible
 - ✅ **PHPStan Level 8** compliance
 - ✅ **PSR-12** code style
 - ✅ **186 unit tests**

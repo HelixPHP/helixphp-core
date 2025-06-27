@@ -8,8 +8,6 @@ Este arquivo serve como um mapa completo de toda a documentação disponível no
 docs/
 ├── README.md                          # 📚 Índice principal da documentação
 ├── DOCUMENTATION_INDEX.md             # 📋 Este arquivo - mapa completo
-├── TEST_COVERAGE_REPORT.md            # 📊 Relatório de cobertura de testes
-├── MODERNIZATION_SUMMARY.md           # 🚀 Resumo da modernização PHP 8.0+
 │
 ├── pt-br/                             # 🇧🇷 Documentação em Português
 │   ├── README.md                      # Documentação principal PT-BR
@@ -44,21 +42,22 @@ docs/
 ### 👶 Iniciante - Primeiros Passos
 1. **[Guia de Início](guides/starter/README.md)** - Comece aqui!
 2. **[README Principal PT-BR](pt-br/README.md)** - Visão geral completa
-3. **[Exemplos Básicos](../examples/README.md)** - Códigos práticos
+3. **[Exemplo Básico](../examples/example_basic.php)** - Primeiro código
 
 ### 🔐 Implementando Autenticação
 1. **[Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - Guia completo
-2. **[Exemplo de Auth](../examples/example_auth.php)** - Código prático
-3. **[Implementação Técnica](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Detalhes internos
+2. **[Exemplo Completo](../examples/example_auth.php)** - Código prático completo
+3. **[Exemplo Simples](../examples/example_auth_simple.php)** - Versão simplificada
+4. **[Implementação Técnica](implementation/AUTH_IMPLEMENTATION_SUMMARY.md)** - Detalhes internos
 
 ### 🛡️ Segurança e Middlewares
 1. **[Middlewares de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Guia completo
-2. **[Exemplo de Segurança](../examples/example_security.php)** - Demonstração prática
+2. **[Exemplo de Middlewares](../examples/example_middleware.php)** - Demonstração prática
 3. **[Migração de Middlewares](development/MIDDLEWARE_MIGRATION.md)** - Desenvolvimento
 
 ### 📡 Streaming e Tempo Real
 1. **[Guia de Streaming](pt-br/STREAMING.md)** - Documentação completa
-2. **[Exemplo de Streaming](../examples/example_streaming.php)** - Código prático
+2. **[Exemplo de Middleware](../examples/example_middleware.php)** - Inclui streaming básico
 
 ### 🌍 Documentação Internacional
 - **[Português](pt-br/README.md)** - Documentação completa em PT-BR
@@ -79,90 +78,13 @@ docs/
 - **[Referência PT-BR](pt-br/objetos.md)** - Todos os objetos e métodos
 - **[English Reference](en/objects.md)** - Complete API reference
 
-### Exemplos por Categoria
-- **[Básicos](../examples/example_user.php)** - Usuários, rotas, JSON
-- **[CRUD](../examples/example_product.php)** - API REST completa
-- **[Upload](../examples/example_upload.php)** - Manipulação de arquivos
-- **[Admin](../examples/example_admin.php)** - Área administrativa
-- **[Blog](../examples/example_blog.php)** - Sistema de blog
-- **[Streaming](../examples/example_streaming.php)** - Tempo real
-- **[Completo](../examples/example_complete.php)** - Integração total
-
-### Testes e Qualidade
-- **[Relatório de Testes](TEST_COVERAGE_REPORT.md)** - Cobertura e estatísticas
-
-## 🗺️ Mapas de Navegação
-
-### Por Experiência
-
-#### 🟢 Iniciante
-```
-1. guides/starter/README.md → Aprenda o básico
-2. ../examples/example_user.php → Primeiro código
-3. pt-br/README.md → Visão completa
-```
-
-#### 🟡 Intermediário
-```
-1. pt-br/AUTH_MIDDLEWARE.md → Sistema de auth
-2. guides/SECURITY_IMPLEMENTATION.md → Segurança
-3. ../examples/example_complete.php → App completo
-```
-
-#### 🔴 Avançado
-```
-1. pt-br/STREAMING.md → Streaming/SSE
-2. development/MIDDLEWARE_MIGRATION.md → Middlewares customizados
-3. pt-br/MODULARIZATION.md → Arquitetura interna
-```
-
-### Por Funcionalidade
-
-#### 🔐 Autenticação
-```
-AUTH_MIDDLEWARE.md → ../examples/example_auth.php → implementation/AUTH_IMPLEMENTATION_SUMMARY.md
-```
-
-#### 🛡️ Segurança
-```
-SECURITY_IMPLEMENTATION.md → ../examples/example_security.php
-```
-
-#### 📡 Streaming
-```
-STREAMING.md → ../examples/example_streaming.php
-```
-
-#### 📚 Documentação
-```
-README.md → pt-br/README.md → en/README.md
-```
-
-## 🔍 Como Buscar Informações
-
-### Por Palavra-chave
-- **JWT**: `pt-br/AUTH_MIDDLEWARE.md`
-- **CORS**: `guides/SECURITY_IMPLEMENTATION.md`
-- **SSE**: `pt-br/STREAMING.md`
-- **Upload**: `../examples/example_upload.php`
-- **Middleware**: `development/MIDDLEWARE_MIGRATION.md`
-- **API**: `pt-br/objetos.md`
-
-### Por Caso de Uso
-- **"Como fazer login?"** → `pt-br/AUTH_MIDDLEWARE.md`
-- **"Como proteger rotas?"** → `guides/SECURITY_IMPLEMENTATION.md`
-- **"Como fazer streaming?"** → `pt-br/STREAMING.md`
-- **"Como começar?"** → `guides/starter/README.md`
-- **"Como contribuir?"** → `../CONTRIBUTING.md`
-
-## 📞 Precisa de Ajuda?
+##  Precisa de Ajuda?
 
 1. **Consulte primeiro**: [Guia de Início](guides/starter/README.md)
 2. **Busque exemplos**: [Pasta Examples](../examples/)
 3. **Documentação completa**: [README PT-BR](pt-br/README.md)
 4. **Issues no GitHub**: [Express PHP Issues](https://github.com/CAFernandes/express-php/issues)
-5. **Discussões**: [GitHub Discussions](https://github.com/CAFernandes/express-php/discussions)
 
 ---
 
-**💡 Dica**: Este índice é mantido atualizado com a estrutura da documentação. Se encontrar alguma inconsistência, por favor, reporte!
+**💡 Dica**: Para começar rapidamente, consulte o [Guia de Início](guides/starter/README.md) e execute os [exemplos](../examples/)!

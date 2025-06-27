@@ -1,7 +1,7 @@
 # Express PHP Microframework - Documentação Completa
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![PHP Version](https://img.shields.io/badge/PHP-8.0%2B-blue.svg)](https://php.net)
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
 
 **Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web e APIs modernas em PHP com sistema nativo de autenticação multi-método.
@@ -103,23 +103,21 @@ Explore os exemplos na pasta `examples/` para aprender diferentes aspectos:
 
 | Exemplo | Arquivo | O que ensina |
 |---------|---------|--------------|
-| 👥 **Usuários** | `example_user.php` | Sistema de usuários, autenticação, perfis |
-| 📦 **Produtos** | `example_product.php` | CRUD completo, parâmetros de rota, validação |
-| 📤 **Upload** | `example_upload.php` | Upload de arquivos, validação, storage |
-| 🔐 **Admin** | `example_admin.php` | Área administrativa, permissões, dashboards |
-| 📝 **Blog** | `example_blog.php` | Sistema de blog, categorias, comentários |
-| 🛡️ **Segurança** | `example_security.php` | Todos os middlewares de segurança |
-| 🏗️ **Completo** | `example_complete.php` | Integração de todos os recursos |
+| ⭐ **Básico** | `example_basic.php` | API REST, conceitos fundamentais, CRUD |
+| � **Autenticação Completa** | `example_auth.php` | Sistema completo de autenticação, JWT |
+| � **Autenticação Simples** | `example_auth_simple.php` | JWT básico, login, rotas protegidas |
+| �️ **Middlewares** | `example_middleware.php` | CORS, rate limiting, validação, produtos |
+| � **Aplicação Completa** | `app.php` | Integração de todos os recursos |
 
 ### Como usar os exemplos
 ```bash
 # Testar exemplo específico
-php examples/example_user.php
+php -S localhost:8000 examples/example_basic.php
 # Acessar: http://localhost:8000
 
-# Ver documentação do exemplo
-php examples/example_complete.php
-# Acessar: http://localhost:8000/docs
+# App completo com todas as funcionalidades
+php -S localhost:8000 examples/app.php
+# Acessar: http://localhost:8000
 ```
 
 ## 📖 CRUD Completo - Exemplo Prático
@@ -341,7 +339,7 @@ location / {
 - ✅ **186 testes unitários** - 100% de cobertura
 - ✅ **PHPStan Level 8** - Máxima análise estática
 - ✅ **PSR-12** - Code style padronizado
-- ✅ **PHP 7.4+** - Compatibilidade ampla
+- ✅ **PHP 8.1+** - Versão moderna e segura
 - ✅ **Zero dependências** obrigatórias
 - ✅ **CI/CD completo** - GitHub Actions
 

@@ -66,9 +66,11 @@
         "phpstan": "phpstan analyse",
         "cs:check": "phpcs --standard=PSR12 src/",
         "cs:fix": "phpcbf --standard=PSR12 src/",
-        "examples:security": "php examples/example_security.php",
+        "examples:basic": "php examples/example_basic.php",
         "examples:auth": "php examples/example_auth.php",
-        "examples:complete": "php examples/example_complete.php"
+        "examples:auth-simple": "php examples/example_auth_simple.php",
+        "examples:middleware": "php examples/example_middleware.php",
+        "examples:app": "php examples/app.php"
     },
     "config": {
         "optimize-autoloader": true,

@@ -137,13 +137,14 @@ Use ferramentas como:
 
 ```
 examples/
-├── app.php                    # Aplicação completa
-├── app_clean.php             # Versão limpa (backup)
-├── example_modular.php       # Básico modular
-├── example_security_new.php  # Segurança
-├── example_streaming_new.php # Streaming
-├── example_auth.php          # Autenticação (em atualização)
-└── router.php               # Router para servidor built-in
+├── app.php                   # 🚀 Aplicação completa
+├── example_basic.php         # ⭐ Conceitos básicos - COMECE AQUI
+├── example_auth.php          # 🔐 Sistema completo de autenticação
+├── example_auth_simple.php   # 🔑 Autenticação JWT simples
+├── example_middleware.php    # 🛡️ Middlewares avançados
+├── router.php               # 📡 Router para servidor built-in
+├── snippets/                # 🧩 Códigos reutilizáveis
+└── start-server.sh          # 🎬 Script de inicialização
 ```
 
 ## 🎯 Próximos Passos

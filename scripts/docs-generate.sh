@@ -337,24 +337,13 @@ Esta pasta contém exemplos práticos demonstrando todas as funcionalidades do E
 
 ### Aplicações Completas
 - **[app.php](app.php)** - Aplicação completa com todos os recursos
-- **[app_clean.php](app_clean.php)** - Versão limpa e simplificada
-
-### Arquitetura Modular
-- **[example_modular.php](example_modular.php)** - Demonstra a nova arquitetura modular
-- **[example_advanced.php](example_advanced.php)** - Todos os módulos avançados
-- **[example_advanced_simple.php](example_advanced_simple.php)** - Versão simplificada
 
 ### Funcionalidades Específicas
-- **[example_auth.php](example_auth.php)** - Sistema de autenticação
-- **[example_security_new.php](example_security_new.php)** - Middlewares de segurança
-- **[example_streaming_new.php](example_streaming_new.php)** - Resposta streaming
-
-### Exemplos Legacy (Compatibilidade)
-- **[example_user.php](example_user.php)** - CRUD de usuários
-- **[example_blog.php](example_blog.php)** - Sistema de blog
-- **[example_product.php](example_product.php)** - CRUD de produtos
-- **[example_upload.php](example_upload.php)** - Upload de arquivos
-- **[example_admin.php](example_admin.php)** - Painel administrativo
+- **[example_basic.php](example_basic.php)** - API REST básica e conceitos fundamentais
+- **[example_auth.php](example_auth.php)** - Sistema completo de autenticação
+- **[example_auth_simple.php](example_auth_simple.php)** - Implementação básica de JWT
+- **[example_middleware.php](example_middleware.php)** - Middlewares avançados e API de produtos
+- **[example_middleware.php](example_middleware.php)** - Middlewares avançados e API de produtos
 
 ## 🧩 Snippets Reutilizáveis
 

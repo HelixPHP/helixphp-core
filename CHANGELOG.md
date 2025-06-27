@@ -145,15 +145,13 @@ Esta é uma **release principal** que introduz uma arquitetura completamente nov
 - **Exemplos práticos**: Requests e responses de exemplo
 - **Respostas globais**: Documentação automática de códigos 400, 401, 404, 500
 
-#### 🎯 Exemplos Modulares de Aprendizado
-- **example_user.php**: Sistema de usuários e autenticação
-- **example_product.php**: CRUD completo de produtos
-- **example_upload.php**: Upload e manipulação de arquivos
-- **example_admin.php**: Área administrativa protegida
-- **example_blog.php**: Sistema de blog com categorias
-- **example_security.php**: Demonstração de todos os middlewares
-- **example_complete.php**: Integração completa de recursos
-- **snippets/**: Sub-routers reutilizáveis
+#### 🎯 Exemplos Práticos e Funcionais
+- **example_basic.php**: API REST básica e conceitos fundamentais
+- **example_auth.php**: Sistema completo de autenticação JWT
+- **example_auth_simple.php**: Implementação simples de autenticação
+- **example_middleware.php**: Middlewares avançados e API de produtos
+- **app.php**: Aplicação completa com todos os recursos
+- **snippets/**: Códigos reutilizáveis para desenvolvimento
 
 #### 🔧 Sistema de Roteamento Avançado
 - **Rotas dinâmicas**: Suporte a parâmetros (ex: `/users/:id`)
@@ -163,7 +161,7 @@ Esta é uma **release principal** que introduz uma arquitetura completamente nov
 - **Múltiplos métodos HTTP**: GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD
 
 #### 🚀 Performance e Qualidade
-- **PHP 7.4+**: Compatibilidade ampla
+- **PHP 8.1+**: Versão moderna e segura
 - **PHPStan Level 8**: Máxima análise estática
 - **PSR-12**: Code style padronizado
 - **186 testes unitários**: Cobertura abrangente
@@ -206,7 +204,7 @@ $app->use('/docs', new OpenApiDocsMiddleware()); // Swagger UI automático
 - **✅ 186 testes unitários** - Cobertura abrangente
 - **✅ PHPStan Level 8** - Máxima análise estática
 - **✅ PSR-12 compliant** - Code style padronizado
-- **✅ PHP 7.4+ compatível** - Ampla compatibilidade
+- **✅ PHP 8.1+ compatível** - Versão moderna e segura
 - **✅ Zero breaking changes** - API estável
 - **✅ Documentação completa** - Guias e exemplos
 - **✅ CI/CD automatizado** - GitHub Actions
