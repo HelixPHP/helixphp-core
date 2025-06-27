@@ -202,31 +202,13 @@ class Router
             }
         }
 
-        // Aplica prefixo de grupo se houver
-        if (!empty(self::$current_group_prefix) && self::$current_group_prefix !== '/') {
-            if (strpos($path, self::$current_group_prefix) !== 0) {
-                $path = self::$current_group_prefix . $path;
-                $path = preg_replace('/\/+/', '/', $path);
-            }
-        }
-
-        // Ensure the path starts with a slash
-        if (!empty($path) && $path[0] !== '/') {
-            $path = '/' . $path;
-        }
-
-        // Adiciona middlewares de grupo se houver para o prefixo
-        $groupMiddlewares = [];
-        foreach (self::$groupMiddlewares as $prefix => $groupMws) {
-            if (!empty($path) && strpos($path, $prefix) === 0) {
-                $groupMiddlewares = array_merge($groupMiddlewares, $groupMws);
-            }
-        }
+        // OTIMIZAÇÃO: processamento de path
+        $path = self::optimizePathProcessing($path);
 
         $routeData = [
             'method' => $method,
             'path' => $path,
-            'middlewares' => array_merge($groupMiddlewares, $middlewares),
+            'middlewares' => array_merge(self::getGroupMiddlewaresForPath($path), $middlewares),
             'handler' => $handler,
             'metadata' => self::sanitizeForJson($metadata)
         ];
@@ -350,7 +332,7 @@ class Router
     }
 
     /**
-     * Identificação otimizada global.
+     * Identificação otimizada global (versão melhorada).
      */
     private static function identifyOptimized(string $method, string $path): ?array
     {
@@ -373,19 +355,46 @@ class Router
             return null;
         }
 
-        // 4. Primeiro tenta exact match nos caminhos sem parâmetros
+        // 4. OTIMIZAÇÃO: Separar rotas estáticas das dinâmicas
+        $staticRoutes = [];
+        $dynamicRoutes = [];
+
         foreach (self::$routesByMethod[$method] as $route) {
-            if (!$route['has_parameters'] && $route['path'] === $path) {
+            if (!$route['has_parameters']) {
+                $staticRoutes[] = $route;
+            } else {
+                $dynamicRoutes[] = $route;
+            }
+        }
+
+        // 5. Primeiro busca em rotas estáticas (mais rápido)
+        foreach ($staticRoutes as $route) {
+            if ($route['path'] === $path) {
                 self::$exactMatchCache[$exactKey] = $route;
                 return $route;
             }
         }
 
-        // 5. Depois tenta pattern matching apenas nos caminhos com parâmetros
-        foreach (self::$routesByMethod[$method] as $route) {
-            if ($route['has_parameters'] && isset($route['pattern'])) {
-                if (preg_match($route['pattern'], $path)) {
-                    return $route;
+        // 6. OTIMIZAÇÃO PARA PARÂMETROS: Pattern matching melhorado
+        foreach ($dynamicRoutes as $route) {
+            if (isset($route['pattern']) && $route['pattern'] !== null) {
+                // Verifica se o pattern é válido antes de usar
+                if (@preg_match($route['pattern'], $path, $matches)) {
+                    // Cache o resultado para próximas consultas
+                    $routeWithParams = $route;
+                    if (!empty($route['parameters']) && count($matches) > 1) {
+                        $params = [];
+                        for ($i = 1; $i < count($matches); $i++) {
+                            if (isset($route['parameters'][$i - 1])) {
+                                $params[$route['parameters'][$i - 1]] = $matches[$i];
+                            }
+                        }
+                        $routeWithParams['matched_params'] = $params;
+                    }
+
+                    // Cache para próximas consultas idênticas
+                    self::$exactMatchCache[$exactKey] = $routeWithParams;
+                    return $routeWithParams;
                 }
             }
         }
@@ -828,5 +837,48 @@ class Router
 
         // Limpa cache do RouteCache também
         RouteCache::clear();
+    }
+
+    /**
+     * Otimiza processamento de path
+     */
+    private static function optimizePathProcessing(string $path): string
+    {
+        // Aplica prefixo de grupo se houver
+        if (!empty(self::$current_group_prefix) && self::$current_group_prefix !== '/') {
+            if (strpos($path, self::$current_group_prefix) !== 0) {
+                $path = self::$current_group_prefix . $path;
+                // OTIMIZAÇÃO: regex apenas quando necessário
+                if (strpos($path, '//') !== false) {
+                    $path = preg_replace('/\/+/', '/', $path);
+                }
+            }
+        }
+
+        // Ensure the path starts with a slash
+        if (!empty($path) && $path[0] !== '/') {
+            $path = '/' . $path;
+        }
+
+        return $path;
+    }
+
+    /**
+     * Obtém middlewares de grupo para path (lazy loading)
+     */
+    private static function getGroupMiddlewaresForPath(string $path): array
+    {
+        if (empty(self::$groupMiddlewares)) {
+            return [];
+        }
+
+        $groupMiddlewares = [];
+        foreach (self::$groupMiddlewares as $prefix => $groupMws) {
+            if (!empty($path) && strpos($path, $prefix) === 0) {
+                $groupMiddlewares = array_merge($groupMiddlewares, $groupMws);
+            }
+        }
+
+        return $groupMiddlewares;
     }
 }

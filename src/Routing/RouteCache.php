@@ -26,6 +26,19 @@ class RouteCache
     private static array $compiledPatterns = [];
 
     /**
+     * Cache de patterns pré-compilados para evitar recompilação
+     */
+    private static array $fastParameterCache = [];
+
+    /**
+     * Cache de rotas por tipo (com ou sem parâmetros)
+     */
+    private static array $routeTypeCache = [
+        'static' => [],
+        'dynamic' => []
+    ];
+
+    /**
      * Estatísticas de cache
      * @var array<string, int>
      */
@@ -99,44 +112,84 @@ class RouteCache
     }
 
     /**
-     * Compila pattern de rota para regex otimizada
+     * Compila pattern de rota para regex otimizada (versão melhorada)
      */
     public static function compilePattern(string $path): array
     {
+        // Verifica cache rápido primeiro
+        if (isset(self::$fastParameterCache[$path])) {
+            return self::$fastParameterCache[$path];
+        }
+
         $cachedPattern = self::getPattern($path);
         $cachedParams = self::getParameters($path);
 
         if ($cachedPattern !== null && $cachedParams !== null) {
-            return [
+            $result = [
                 'pattern' => $cachedPattern,
                 'parameters' => $cachedParams
             ];
+            self::$fastParameterCache[$path] = $result;
+            return $result;
         }
 
-        // Compilar pattern
+        // Verifica se é rota estática (sem parâmetros) - otimização especial
+        if (strpos($path, ':') === false) {
+            $result = [
+                'pattern' => null, // Rotas estáticas não precisam de regex
+                'parameters' => []
+            ];
+            self::$fastParameterCache[$path] = $result;
+            self::$routeTypeCache['static'][$path] = true;
+            return $result;
+        }
+
+        // Compilar pattern apenas para rotas dinâmicas
         $pattern = $path;
         $parameters = [];
 
-        // Encontra parâmetros na rota (:param)
-        if (preg_match_all('/\/:([^\/]+)/', $pattern, $matches)) {
-            $parameters = $matches[1];
+        // Encontra parâmetros na rota (:param) - otimização melhorada
+        if (preg_match_all('/\/:([^\/]+)/', $pattern, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $parameters[] = $match[1];
+            }
         }
 
-        // Converte parâmetros para regex otimizada
-        $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
+        // Converte parâmetros para regex otimizada - apenas uma vez
+        if (!empty($parameters)) {
+            $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
+            $pattern = rtrim($pattern ?? '', '/');
+            $compiledPattern = '#^' . $pattern . '/?$#';
+        } else {
+            $compiledPattern = null; // Não deveria acontecer, mas fallback
+        }
 
-        // Permite barra final opcional
-        $pattern = rtrim($pattern ?? '', '/');
-        $compiledPattern = '#^' . $pattern . '/?$#';
-
-        // Cache results
-        self::setPattern($path, $compiledPattern);
-        self::setParameters($path, $parameters);
-
-        return [
+        $result = [
             'pattern' => $compiledPattern,
             'parameters' => $parameters
         ];
+
+        // Cache results em múltiplos lugares para acesso rápido
+        self::setPattern($path, $compiledPattern);
+        self::setParameters($path, $parameters);
+        self::$fastParameterCache[$path] = $result;
+        self::$routeTypeCache['dynamic'][$path] = true;
+
+        return $result;
+    }
+
+    /**
+     * Verifica se uma rota é estática (sem parâmetros)
+     */
+    public static function isStaticRoute(string $path): bool
+    {
+        if (isset(self::$routeTypeCache['static'][$path])) {
+            return true;
+        }
+        if (isset(self::$routeTypeCache['dynamic'][$path])) {
+            return false;
+        }
+        return strpos($path, ':') === false;
     }
 
     /**
@@ -163,6 +216,11 @@ class RouteCache
         self::$compiledRoutes = [];
         self::$parameterMappings = [];
         self::$compiledPatterns = [];
+        self::$fastParameterCache = [];
+        self::$routeTypeCache = [
+            'static' => [],
+            'dynamic' => []
+        ];
         self::$stats = [
             'hits' => 0,
             'misses' => 0,

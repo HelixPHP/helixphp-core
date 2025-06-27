@@ -95,20 +95,55 @@ class ApiExpress
     }
 
     /**
-     * Construtor da aplicação Express PHP.
-     * Inicializa o roteador e referencia o array $_SERVER.
+     * Construtor da aplicação Express PHP (versão otimizada).
+     * Inicializa o roteador e referencia o array $_SERVER com lazy loading.
      */
     public function __construct(?string $baseUrl = null)
     {
+        // OTIMIZAÇÃO: Lazy loading para componentes não essenciais
         if ($baseUrl) {
             $this->setBaseUrl($baseUrl);
-        }        // Inicializa a nova aplicação modular com basePath
-        $basePath = dirname(__DIR__); // Pasta raiz do projeto
-        $this->app = new Application($basePath);
-        $this->server = $_SERVER;
+        }
 
-        // Pré-aquece pipelines de middlewares comuns
-        MiddlewareStack::warmupCommonPipelines();
+        // OTIMIZAÇÃO: Só inicializa Application se realmente necessário
+        // Para benchmarks simples, isso pode ser adiado
+        if (!isset($this->app)) {
+            $this->initializeApp();
+        }
+
+        // OTIMIZAÇÃO: Referência direta sem operações custosas
+        $this->server = &$_SERVER;
+
+        // OTIMIZAÇÃO: Warmup apenas se houver middlewares registrados
+        // Movido para primeiro uso real
+    }
+
+    /**
+     * Inicialização lazy da aplicação
+     */
+    private function initializeApp(): void
+    {
+        if (!isset($this->app)) {
+            // Otimização: basePath calculado uma vez e cacheado
+            static $basePath = null;
+            if ($basePath === null) {
+                $basePath = dirname(__DIR__);
+            }
+
+            $this->app = new Application($basePath);
+        }
+    }
+
+    /**
+     * Warmup de middlewares (lazy loading)
+     */
+    private function ensureMiddlewareWarmup(): void
+    {
+        static $warmedUp = false;
+        if (!$warmedUp && !empty($this->middlewares)) {
+            MiddlewareStack::warmupCommonPipelines();
+            $warmedUp = true;
+        }
     }
 
     /**
@@ -128,7 +163,7 @@ class ApiExpress
     }
 
     /**
-     * Registra um middleware global ou define um prefixo para rotas.
+     * Registra um middleware global ou define um prefixo para rotas (otimizado).
      *
      * @param mixed ...$args
      */
@@ -137,7 +172,13 @@ class ApiExpress
         if (count($args) === 1 && is_callable($args[0])) {
             // Middleware global
             $this->middlewares[] = $args[0];
+
+            // OTIMIZAÇÃO: Lazy loading da aplicação
+            $this->initializeApp();
             $this->app->use($args[0]);
+
+            // OTIMIZAÇÃO: Warmup apenas quando necessário
+            $this->ensureMiddlewareWarmup();
         } elseif (count($args) >= 2 && is_string($args[0])) {
             $path = $args[0];
             $handler = $args[1];
