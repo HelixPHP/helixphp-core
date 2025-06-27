@@ -27,6 +27,17 @@ class CorsMiddleware extends BaseMiddleware
     private static array $compiledHeaderStrings = [];
 
     /**
+     * Cache para estatísticas de uso de memória
+     * @var array<string, int>|null
+     */
+    private static ?array $memoryUsageCache = null;
+
+    /**
+     * Hash dos dados para invalidação do cache de memória
+     */
+    private static ?string $lastDataHash = null;
+
+    /**
      * Configurações padrão otimizadas
      */
     private const DEFAULT_CONFIG = [
@@ -80,6 +91,7 @@ class CorsMiddleware extends BaseMiddleware
         if (!isset(self::$preCompiledHeaders[$configHash])) {
             self::$preCompiledHeaders[$configHash] = $this->buildOptimizedHeaders();
             self::$compiledHeaderStrings[$configHash] = $this->buildHeaderString();
+            self::invalidateMemoryCache();
         }
     }
 
@@ -95,6 +107,7 @@ class CorsMiddleware extends BaseMiddleware
         if (!isset(self::$preCompiledHeaders[$configHash])) {
             self::$preCompiledHeaders[$configHash] = self::buildOptimizedHeadersStatic($finalConfig);
             self::$compiledHeaderStrings[$configHash] = self::buildHeaderStringStatic($finalConfig);
+            self::invalidateMemoryCache();
         }
 
         return function ($request, $response, $next) use ($configHash, $finalConfig) {
@@ -546,13 +559,44 @@ class CorsMiddleware extends BaseMiddleware
         return [
             'cached_configs' => count(self::$preCompiledHeaders),
             'header_strings' => count(self::$compiledHeaderStrings),
-            'memory_usage' => [
-                'headers' => strlen(serialize(self::$preCompiledHeaders)),
-                'strings' => strlen(serialize(self::$compiledHeaderStrings)),
-                'total' => strlen(serialize(self::$preCompiledHeaders))
-                    + strlen(serialize(self::$compiledHeaderStrings))
-            ]
+            'memory_usage' => self::getMemoryUsage()
         ];
+    }
+
+    /**
+     * Calcula o uso de memória com cache para melhor performance
+     *
+     * @return array<string, int>
+     */
+    private static function getMemoryUsage(): array
+    {
+        // Gera hash dos dados atuais para verificar se mudaram
+        $currentDataHash = md5(
+            serialize([
+                'headers_count' => count(self::$preCompiledHeaders),
+                'strings_count' => count(self::$compiledHeaderStrings),
+                'headers_keys' => array_keys(self::$preCompiledHeaders),
+                'strings_keys' => array_keys(self::$compiledHeaderStrings)
+            ])
+        );
+
+        // Se o cache é válido, retorna os dados em cache
+        if (self::$memoryUsageCache !== null && self::$lastDataHash === $currentDataHash) {
+            return self::$memoryUsageCache;
+        }
+
+        // Recalcula o uso de memória apenas quando necessário
+        $headersMemory = strlen(serialize(self::$preCompiledHeaders));
+        $stringsMemory = strlen(serialize(self::$compiledHeaderStrings));
+
+        self::$memoryUsageCache = [
+            'headers' => $headersMemory,
+            'strings' => $stringsMemory,
+            'total' => $headersMemory + $stringsMemory
+        ];
+        self::$lastDataHash = $currentDataHash;
+
+        return self::$memoryUsageCache;
     }
 
     /**
@@ -562,6 +606,17 @@ class CorsMiddleware extends BaseMiddleware
     {
         self::$preCompiledHeaders = [];
         self::$compiledHeaderStrings = [];
+        self::$memoryUsageCache = null;
+        self::$lastDataHash = null;
+    }
+
+    /**
+     * Invalida o cache de uso de memória
+     */
+    private static function invalidateMemoryCache(): void
+    {
+        self::$memoryUsageCache = null;
+        self::$lastDataHash = null;
     }
 
     /**

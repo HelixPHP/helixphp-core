@@ -77,7 +77,8 @@ O framework inclui exemplos práticos e funcionais para facilitar o aprendizado:
 - **[🔐 Autenticação Completa](examples/example_auth.php)** - Sistema completo de autenticação
 - **[🔑 Autenticação Simples](examples/example_auth_simple.php)** - JWT básico e controle de acesso
 - **[🛡️ Middlewares](examples/example_middleware.php)** - CORS, rate limiting e validação
-- **[🚀 App Completo](examples/app.php)** - Aplicação completa com todos os recursos
+- **[� Documentação OpenAPI](examples/example_openapi_docs.php)** - Swagger UI automático e especificação OpenAPI
+- **[�🚀 App Completo](examples/example_complete_optimizations.php)** - Aplicação completa com todos os recursos
 
 ## 🛡️ Sistema de Autenticação
 
@@ -164,6 +165,234 @@ $app->get('/data/export', function($req, $res) {
 - **Buffer Customizável**: Controle fino sobre performance
 - **Heartbeat**: Manutenção de conexões SSE ativas
 
+## 📚 Documentação OpenAPI/Swagger Nativa
+
+O Express PHP possui um sistema nativo para gerar documentação OpenAPI 3.0 (Swagger) automaticamente das suas rotas. A documentação é criada a partir dos metadados definidos nas rotas.
+
+### 🚀 Como Ativar
+
+```php
+<?php
+require_once 'vendor/autoload.php';
+
+use Express\ApiExpress;
+use Express\Utils\OpenApiExporter;
+use Express\Routing\Router;
+
+$app = new ApiExpress();
+
+// Definir rotas com metadados para documentação
+$app->get('/api/users', function($req, $res) {
+    $res->json(['users' => []]);
+}, [
+    'summary' => 'Listar usuários',
+    'description' => 'Retorna uma lista de todos os usuários cadastrados',
+    'tags' => ['Usuários'],
+    'responses' => [
+        '200' => [
+            'description' => 'Lista de usuários retornada com sucesso',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'users' => ['type' => 'array']
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+]);
+
+$app->get('/api/users/:id', function($req, $res) {
+    $id = $req->getParam('id');
+    $res->json(['user' => ['id' => $id]]);
+}, [
+    'summary' => 'Buscar usuário por ID',
+    'description' => 'Retorna os dados de um usuário específico',
+    'tags' => ['Usuários'],
+    'parameters' => [
+        'id' => [
+            'type' => 'integer',
+            'description' => 'ID único do usuário',
+            'required' => true
+        ]
+    ],
+    'responses' => [
+        '200' => [
+            'description' => 'Usuário encontrado',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'user' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'id' => ['type' => 'integer'],
+                                    'name' => ['type' => 'string'],
+                                    'email' => ['type' => 'string']
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        '404' => ['description' => 'Usuário não encontrado']
+    ]
+]);
+
+// Criar endpoint para servir a documentação
+$app->get('/docs/openapi.json', function($req, $res) {
+    $docs = OpenApiExporter::export(Router::class, 'https://api.example.com');
+    $res->json($docs);
+});
+
+// Opcional: Servir interface Swagger UI
+$app->get('/docs', function($req, $res) {
+    $html = '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>API Documentation</title>
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui.css" />
+    </head>
+    <body>
+        <div id="swagger-ui"></div>
+        <script src="https://unpkg.com/swagger-ui-dist@3.25.0/swagger-ui-bundle.js"></script>
+        <script>
+        SwaggerUIBundle({
+            url: "/docs/openapi.json",
+            dom_id: "#swagger-ui",
+            presets: [
+                SwaggerUIBundle.presets.apis,
+                SwaggerUIBundle.presets.standalone
+            ]
+        });
+        </script>
+    </body>
+    </html>';
+
+    $res->send($html);
+});
+
+$app->run();
+```
+
+### 📋 Metadados Suportados
+
+| Campo | Descrição | Exemplo |
+|-------|-----------|---------|
+| `summary` | Resumo da operação | `'Criar usuário'` |
+| `description` | Descrição detalhada | `'Cria um novo usuário no sistema'` |
+| `tags` | Grupos/categorias | `['Usuários', 'API v1']` |
+| `parameters` | Parâmetros da rota | `['id' => ['type' => 'integer']]` |
+| `queryParams` | Parâmetros de consulta | `['limit' => ['type' => 'integer']]` |
+| `responses` | Respostas possíveis | `['200' => ['description' => 'OK']]` |
+| `security` | Requisitos de autenticação | `[['bearerAuth' => []]]` |
+
+### 🎯 Exemplo Avançado com Validação
+
+```php
+// POST com validação e documentação completa
+$app->post('/api/users', function($req, $res) {
+    $userData = $req->body;
+    // Lógica de criação do usuário
+    $res->status(201)->json(['message' => 'Usuário criado', 'id' => 123]);
+}, [
+    'summary' => 'Criar novo usuário',
+    'description' => 'Cria um novo usuário no sistema com validação completa',
+    'tags' => ['Usuários'],
+    'requestBody' => [
+        'required' => true,
+        'content' => [
+            'application/json' => [
+                'schema' => [
+                    'type' => 'object',
+                    'required' => ['name', 'email'],
+                    'properties' => [
+                        'name' => [
+                            'type' => 'string',
+                            'minLength' => 2,
+                            'maxLength' => 100,
+                            'description' => 'Nome completo do usuário'
+                        ],
+                        'email' => [
+                            'type' => 'string',
+                            'format' => 'email',
+                            'description' => 'Email único do usuário'
+                        ],
+                        'age' => [
+                            'type' => 'integer',
+                            'minimum' => 18,
+                            'maximum' => 120,
+                            'description' => 'Idade do usuário (opcional)'
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ],
+    'responses' => [
+        '201' => [
+            'description' => 'Usuário criado com sucesso',
+            'content' => [
+                'application/json' => [
+                    'schema' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'message' => ['type' => 'string'],
+                            'id' => ['type' => 'integer']
+                        ]
+                    ]
+                ]
+            ]
+        ],
+        '400' => ['description' => 'Dados inválidos'],
+        '409' => ['description' => 'Email já existe']
+    ],
+    'security' => [['bearerAuth' => []]]
+]);
+```
+
+### 🔧 Configuração de Segurança
+
+```php
+// Adicionar esquemas de segurança à documentação
+$docs = OpenApiExporter::export(Router::class, 'https://api.example.com');
+
+// Adicionar definições de segurança
+$docs['components']['securitySchemes'] = [
+    'bearerAuth' => [
+        'type' => 'http',
+        'scheme' => 'bearer',
+        'bearerFormat' => 'JWT'
+    ],
+    'apiKeyAuth' => [
+        'type' => 'apiKey',
+        'in' => 'header',
+        'name' => 'X-API-Key'
+    ]
+];
+
+// Aplicar segurança globalmente
+$docs['security'] = [
+    ['bearerAuth' => []],
+    ['apiKeyAuth' => []]
+];
+```
+
+### 💡 Dicas de Uso
+
+1. **Acesse a documentação**: Vá para `/docs` para ver a interface Swagger UI
+2. **JSON da API**: Endpoint `/docs/openapi.json` retorna a especificação OpenAPI
+3. **Organize por tags**: Use tags para agrupar endpoints relacionados
+4. **Documente erros**: Sempre inclua respostas de erro comuns (400, 401, 404, 500)
+5. **Valide dados**: Use os schemas para documentar e validar entrada/saída
+6. **Teste direto**: A interface Swagger permite testar endpoints diretamente
+
 ## ⚡ Performance & Benchmarks
 
 O Express PHP foi projetado para máxima performance. Execute nossos benchmarks para ver os resultados:
@@ -182,26 +411,45 @@ O Express PHP foi projetado para máxima performance. Execute nossos benchmarks 
 ./benchmarks/run_benchmark.sh -a
 ```
 
-### Resultados de Performance (PHP 8.1)
+### 🎯 Resultados de Performance (Última Atualização - PHP 8.1)
 
-| Métrica | Operações/seg | Tempo Médio |
-|---------|---------------|-------------|
-| **Inicialização de App** | ~485,000 | 2.06 μs |
-| **Registro de Rotas** | ~310,000 | 3.22 μs |
-| **Middleware Stack** | ~1,300,000 | 0.75 μs |
-| **JWT Token Gen/Valid** | ~160,000/61,000 | 6.25/16.29 μs |
-| **JSON Encode/Decode** | ~10M/2,500 | 0.10/395 μs |
-| **CORS Processing** | ~32M | 0.03 μs |
+| Componente | Ops/Segundo | Tempo Médio | Grade |
+|------------|-------------|-------------|-------|
+| **CORS Headers Processing** | **45.6M** | **0.02 μs** | 🏆 |
+| **Response Object Creation** | **20.9M** | **0.05 μs** | 🏆 |
+| **JSON Encode (Small)** | **11.2M** | **0.09 μs** | 🥇 |
+| **XSS Protection Logic** | **4.4M** | **0.23 μs** | 🥇 |
+| **Route Pattern Matching** | **2.0M** | **0.49 μs** | 🥈 |
+| **Middleware Execution** | **1.4M** | **0.74 μs** | 🥈 |
+| **App Initialization** | **451K** | **2.22 μs** | 🥉 |
 
-### Características de Performance
+### ⚡ Características de Performance
 
-- **Baixo Overhead**: Apenas 1.37 KB de memória por instância de app
-- **Roteamento Eficiente**: Pattern matching otimizado com regex
-- **Middleware Leve**: Execução de middleware stack ultra-rápida
-- **JSON Otimizado**: Processamento JSON nativo do PHP
-- **Memória Controlada**: Gerenciamento eficiente de recursos
+- **Ultra Performance**: CORS com 45M+ operações/segundo
+- **Baixo Overhead**: Apenas **1.36 KB** de memória por instância
+- **Cache Inteligente**: Hit ratio de **98%** para grupos de rotas
+- **Escalabilidade**: Performance linear até 50K+ operações
+- **Memory Efficient**: Sistema de cache de apenas **2KB** total
 
 📊 **[Ver Relatório Abrangente](benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** | 🛠️ **[Executar Benchmarks](benchmarks/README.md)**
+
+## 📚 Documentação
+
+### 🚀 **Guias Essenciais**
+- **[📖 Guia de Implementação Rápida](docs/guides/QUICK_START_GUIDE.md)** - Setup completo em minutos
+- **[🔧 Middleware Personalizado](docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Crie middleware sob medida
+- **[�️ Middlewares Padrão](docs/guides/STANDARD_MIDDLEWARES.md)** - Referência completa dos middlewares inclusos
+- **[�🔒 Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Boas práticas de segurança
+- **[📋 Índice Completo](docs/DOCUMENTATION_INDEX.md)** - Toda a documentação
+
+### 📊 **Performance & Benchmarks**
+- **[📈 Benchmarks Completos](benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** - Performance detalhada
+- **[🔧 Como Executar Benchmarks](benchmarks/README.md)** - Testes de performance
+
+### 🎯 **Para Começar**
+1. **Iniciantes:** [Guia Rápido](docs/guides/QUICK_START_GUIDE.md) → Primeira API em 5 minutos
+2. **Desenvolvedores:** [Middleware Avançado](docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md) → Funcionalidades customizadas
+3. **Produção:** [Segurança](docs/guides/SECURITY_IMPLEMENTATION.md) → Deploy seguro
 
 ## ⚙️ Requisitos
 
@@ -225,4 +473,4 @@ Este projeto está licenciado sob a [Licença MIT](LICENSE).
 
 ---
 
-**🚀 Pronto para começar?** [Siga nosso guia de início rápido](docs/guides/starter/README.md)!
+**🚀 Pronto para começar?** [Siga nosso guia de implementação rápida](docs/guides/QUICK_START_GUIDE.md)!

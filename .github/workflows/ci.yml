@@ -126,3 +126,92 @@ jobs:
 
     - name: Dependency Check
       run: composer outdated --direct
+
+  documentation:
+    runs-on: ubuntu-latest
+    name: Documentation Validation
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Validate Documentation Structure
+      run: |
+        echo "🔍 Validating documentation structure..."
+
+        # Check if main documentation files exist
+        required_files=(
+          "docs/DOCUMENTATION_INDEX.md"
+          "docs/README.md"
+          "docs/guides/QUICK_START_GUIDE.md"
+          "docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md"
+          "docs/guides/STANDARD_MIDDLEWARES.md"
+          "docs/guides/SECURITY_IMPLEMENTATION.md"
+          "benchmarks/README.md"
+          "benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md"
+        )
+
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Required documentation file missing: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+
+        echo "🎉 All required documentation files present!"
+
+    - name: Check Documentation Links
+      run: |
+        echo "🔗 Checking documentation links..."
+
+        # Check for broken internal links in markdown files
+        find docs/ -name "*.md" -exec grep -l "\[.*\](.*\.md)" {} \; | while read file; do
+          echo "Checking links in: $file"
+
+          # Extract markdown links and check if target files exist
+          grep -o '\[.*\](.*\.md)' "$file" | sed 's/.*](\(.*\))/\1/' | while read link; do
+            # Convert relative path to absolute if needed
+            if [[ "$link" == ../* ]]; then
+              target_file="$link"
+            else
+              target_file="docs/$link"
+            fi
+
+            if [ ! -f "$target_file" ]; then
+              echo "⚠️  Potentially broken link in $file: $link"
+            fi
+          done
+        done
+
+    - name: Performance Report Validation
+      run: |
+        echo "📊 Validating performance reports..."
+
+        # Check if performance summary has recent data
+        if [ -f "benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md" ]; then
+          if grep -q "2025-06-27" "benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md"; then
+            echo "✅ Performance report contains recent data"
+          else
+            echo "⚠️  Performance report may be outdated"
+          fi
+        fi
+
+        # Check if benchmark results exist
+        if [ -d "benchmarks/reports/" ]; then
+          report_count=$(find benchmarks/reports/ -name "*.json" | wc -l)
+          echo "📈 Found $report_count benchmark result files"
+        fi
+
+    - name: Validate OpenAPI Features
+      run: |
+        echo "📚 Validating OpenAPI/Swagger features..."
+
+        # Run the OpenAPI validation script
+        if [ -f "scripts/validate_openapi.sh" ]; then
+          chmod +x scripts/validate_openapi.sh
+          ./scripts/validate_openapi.sh
+        else
+          echo "⚠️  OpenAPI validation script not found"
+        fi

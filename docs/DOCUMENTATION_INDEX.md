@@ -1,112 +1,125 @@
-# 📚 Express PHP Framework - Documentação
+# 📋 Índice da Documentação - Express PHP
 
-## 🚀 Quick Start
+Bem-vindo ao índice completo da documentação do Express PHP Framework. Esta página organiza toda a documentação disponível para facilitar o aprendizado e uso do framework.
 
-```php
-<?php
-require_once 'vendor/autoload.php';
+## 🚀 **Começando**
 
-use Express\ApiExpress;
+### Para Iniciantes
+- **[📖 Guia de Implementação Rápida](guides/QUICK_START_GUIDE.md)** - Setup completo em 5 minutos
+- **[📚 Visão Geral da Documentação](README.md)** - Introdução geral ao framework
 
-$app = new ApiExpress();
+### Para Desenvolvedores
+- **[🔧 Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Crie middleware sob medida
+- **[�️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Documentação completa dos middlewares inclusos
+- **[�🔒 Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Boas práticas de segurança
 
-// Rotas básicas
-$app->get('/', function() {
-    return ['message' => 'Express PHP Framework'];
-});
+## 📖 **Documentação por Categoria**
 
-// Rotas organizadas por grupos (com otimizações automáticas)
-$app->group('/api/v1', function() use ($app) {
-    $app->get('/users', function() {
-        return ['users' => []];
-    });
-    $app->post('/users', function() {
-        return ['created' => true];
-    });
-});
+### 🏗️ **Arquitetura e Conceitos**
+- **[📚 Documentação Principal](README.md)** - Conceitos principais do framework
+- **[🎯 Middleware System](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Sistema de middlewares
+- **[�️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Referência completa dos middlewares inclusos
+- **[�📡 Streaming e SSE](pt-br/STREAMING.md)** - Streaming de dados em tempo real
 
-$app->listen(3000);
-```
+### 🔐 **Autenticação e Segurança**
+- **[🔑 Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - Guia completo de autenticação
+- **[🛡️ Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Segurança avançada
+- **[🔒 Middlewares de Segurança](guides/SECURITY_IMPLEMENTATION.md#middlewares-de-segurança)** - CSRF, XSS, Rate Limiting
 
-## 📊 Performance & Benchmarks
+### 📚 **API e Documentação**
+- **[📋 OpenAPI/Swagger](../README.md#-documentação-openapi-swagger-nativa)** - Documentação automática de APIs
+- **[🌐 Objetos HTTP](pt-br/objetos.md)** - Request e Response objects
 
-### 1. **[Resultados Completos](../OPTIMIZATION_RESULTS.md)** - Análise detalhada de performance
-### 2. **[Benchmark de Grupos](../benchmarks/benchmark_group_features.sh)** - Teste específico de funcionalidades de grupo
-### 3. **[Benchmark Geral](../benchmarks/run_benchmark.sh)** - Suite completa de testes
+## 🎯 **Guias Práticos**
 
-**Performance Highlights:**
-- **CORS Processing:** 32M+ ops/s
-- **Route Pattern Matching:** 1.6M+ ops/s
-- **Cache Hit Ratio:** 99.6%
-- **Memory per instance:** 1.43 KB
+### 🚀 **Implementação Rápida**
+1. **[⚡ Guia Rápido](guides/QUICK_START_GUIDE.md)** - Primeira API em 5 minutos
+2. **[📖 Exemplos Básicos](../examples/example_basic.php)** - Conceitos fundamentais
+3. **[🔐 Autenticação Simples](../examples/example_auth_simple.php)** - JWT básico
 
-## 🎯 Funcionalidades Principais
+### 🔧 **Funcionalidades Avançadas**
+1. **[🛡️ Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Crie suas próprias extensões
+2. **[📚 Documentação OpenAPI](../examples/example_openapi_docs.php)** - Swagger UI automático
+3. **[🚀 App Completo](../examples/example_complete_optimizations.php)** - Aplicação otimizada
 
-### ✅ **Roteamento Otimizado**
-- Cache automático de rotas (O(1) access)
-- Organização por grupos
-- Pattern matching pré-compilado
-- Estatísticas em tempo real
+### 🌐 **Deploy e Produção**
+1. **[🔒 Segurança em Produção](guides/SECURITY_IMPLEMENTATION.md)** - Deploy seguro
+2. **[📊 Performance](../benchmarks/README.md)** - Otimização e benchmarks
 
-### ✅ **Middleware Pipeline**
-- Pipeline pré-compilado (1.5M+ ops/s)
-- Cache de middlewares
-- Detecção de redundâncias
+## 📊 **Performance e Benchmarks**
 
-### ✅ **CORS Integrado**
-- Performance excepcional (32M+ ops/s)
-- Cache de headers
-- Configuração flexível
+- **[📈 Relatório Abrangente](../benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** - Performance detalhada
+- **[🔧 Como Executar Benchmarks](../benchmarks/README.md)** - Testes de performance
+- **[📊 Resultados Históricos](../benchmarks/reports/)** - Histórico de performance
 
-### ✅ **Security Built-in**
-- XSS Protection (3.5M+ ops/s)
-- JWT Token support
-- Sanitização automática
+## 📝 **Exemplos Práticos**
 
-## 📈 Exemplos de Uso
+### 🌟 **Exemplos Principais**
+- **[⭐ Básico](../examples/example_basic.php)** - API REST básica
+- **[🔐 Autenticação Completa](../examples/example_auth.php)** - Sistema completo de auth
+- **[🔑 Auth Simples](../examples/example_auth_simple.php)** - JWT básico
+- **[🛡️ Middlewares](../examples/example_middleware.php)** - CORS, rate limiting
+- **[📚 OpenAPI Docs](../examples/example_openapi_docs.php)** - Documentação automática
+- **[🚀 App Otimizado](../examples/example_complete_optimizations.php)** - Performance
 
-### Básico
+### 📋 **Como Usar os Exemplos**
 ```bash
-cd examples && php example_basic.php
+# Executar um exemplo
+php -S localhost:8080 examples/example_basic.php
+
+# Acessar documentação OpenAPI
+# Executar: php -S localhost:8080 examples/example_openapi_docs.php
+# Acessar: http://localhost:8080/docs
 ```
 
-### Com Grupos (Recomendado)
-```bash
-cd examples && php example_optimized_groups.php
-```
+## 🎓 **Trilhas de Aprendizado**
 
-### Middleware Completo
-```bash
-cd examples && php example_complete_optimizations.php
-```
+### 🥇 **Trilha Iniciante** (30 minutos)
+1. Leia a [Documentação Principal](README.md)
+2. Siga o [Guia Rápido](guides/QUICK_START_GUIDE.md)
+3. Execute o [Exemplo Básico](../examples/example_basic.php)
+4. Teste o [Exemplo de Auth Simples](../examples/example_auth_simple.php)
 
-## 🔧 Benchmark & Teste
+### 🥈 **Trilha Intermediária** (2 horas)
+1. Complete a Trilha Iniciante
+2. Estude [Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)
+3. Implemente [Segurança](guides/SECURITY_IMPLEMENTATION.md)
+4. Execute [Exemplo OpenAPI](../examples/example_openapi_docs.php)
+5. Explore [Streaming](pt-br/STREAMING.md)
 
-```bash
-# Benchmark rápido
-./benchmarks/run_benchmark.sh -q
+### 🥉 **Trilha Avançada** (1 dia)
+1. Complete as trilhas anteriores
+2. Analise [App Completo](../examples/example_complete_optimizations.php)
+3. Execute [Benchmarks](../benchmarks/README.md)
+4. Configure para produção
+5. Implemente features customizadas
 
-# Benchmark completo
-./benchmarks/run_benchmark.sh -a
+## 🔍 **Busca Rápida**
 
-# Teste específico de grupos
-./benchmarks/benchmark_group_features.sh
-```
+### Por Funcionalidade
+- **Rotas**: [Guia Rápido](guides/QUICK_START_GUIDE.md#definindo-rotas)
+- **Middleware**: [Middleware Guide](guides/CUSTOM_MIDDLEWARE_GUIDE.md)
+- **Middlewares Padrão**: [Standard Middlewares](guides/STANDARD_MIDDLEWARES.md)
+- **Autenticação**: [Auth Middleware](pt-br/AUTH_MIDDLEWARE.md)
+- **Segurança**: [Security Guide](guides/SECURITY_IMPLEMENTATION.md)
+- **Streaming**: [Streaming Docs](pt-br/STREAMING.md)
+- **OpenAPI**: [README OpenAPI](../README.md#-documentação-openapi-swagger-nativa)
 
-## 📋 API Reference
+### Por Tipo de Projeto
+- **API REST**: [Exemplo Básico](../examples/example_basic.php)
+- **API com Auth**: [Exemplo Auth](../examples/example_auth.php)
+- **API Documentada**: [Exemplo OpenAPI](../examples/example_openapi_docs.php)
+- **App Produção**: [Exemplo Completo](../examples/example_complete_optimizations.php)
 
-### Router Methods
-- `$app->get($path, $handler)`
-- `$app->post($path, $handler)`
-- `$app->put($path, $handler)`
-- `$app->delete($path, $handler)`
-- `$app->group($prefix, $callback, $middlewares)`
+## 🆘 **Suporte e Recursos**
 
-### Utilities
-- `$app->router->getGroupStats()` - Estatísticas de grupos
-- `$app->router->warmupGroups()` - Aquecimento de cache
-- `$app->middlewareStack->getStats()` - Stats de middleware
+- **[🐛 Issues](https://github.com/CAFernandes/express-php/issues)** - Reportar bugs
+- **[💬 Discussions](https://github.com/CAFernandes/express-php/discussions)** - Perguntas e discussões
+- **[📖 Wiki](https://github.com/CAFernandes/express-php/wiki)** - Documentação adicional
+- **[📦 Packagist](https://packagist.org/packages/cafernandes/express-php)** - Instalação via Composer
 
 ---
 
-**Express PHP Framework** - Performance, simplicidade e flexibilidade. 🚀
+**📋 Dica:** Use Ctrl+F para buscar rapidamente por funcionalidades específicas nesta página.
+
+**🚀 Novo no Express PHP?** Comece com o [Guia de Implementação Rápida](guides/QUICK_START_GUIDE.md)!

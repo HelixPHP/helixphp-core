@@ -1,0 +1,140 @@
+{
+    "timestamp": "2025-06-27 16:25:54",
+    "php_version": "8.1.32",
+    "memory_limit": "-1",
+    "iterations": 1000,
+    "results": {
+        "App Initialization": {
+            "total_time": 0.002218008041381836,
+            "avg_time_microseconds": 2.218008041381836,
+            "ops_per_second": 450854.9930130066,
+            "memory_used": 0
+        },
+        "Basic Route Registration (GET)": {
+            "total_time": 0.004884004592895508,
+            "avg_time_microseconds": 4.884004592895508,
+            "ops_per_second": 204750.01220405175,
+            "memory_used": 804416
+        },
+        "Basic Route Registration (POST)": {
+            "total_time": 0.0053119659423828125,
+            "avg_time_microseconds": 5.3119659423828125,
+            "ops_per_second": 188254.21903052065,
+            "memory_used": 792768
+        },
+        "Route with Parameters (PUT)": {
+            "total_time": 0.004906177520751953,
+            "avg_time_microseconds": 4.906177520751953,
+            "ops_per_second": 203824.6671202255,
+            "memory_used": 825536
+        },
+        "Complex Route Registration": {
+            "total_time": 0.004364013671875,
+            "avg_time_microseconds": 4.364013671875,
+            "ops_per_second": 229146.85314685316,
+            "memory_used": 760000
+        },
+        "Route Pattern Matching": {
+            "total_time": 0.0004949569702148438,
+            "avg_time_microseconds": 0.49495697021484375,
+            "ops_per_second": 2020377.6493256262,
+            "memory_used": 0
+        },
+        "Middleware Stack Creation": {
+            "total_time": 0.006081104278564453,
+            "avg_time_microseconds": 6.081104278564453,
+            "ops_per_second": 164443.81714106485,
+            "memory_used": 923840
+        },
+        "Middleware Function Execution": {
+            "total_time": 0.0007369518280029297,
+            "avg_time_microseconds": 0.7369518280029297,
+            "ops_per_second": 1356940.7958589452,
+            "memory_used": 0
+        },
+        "Security Middleware Creation": {
+            "total_time": 0.003632068634033203,
+            "avg_time_microseconds": 3.632068634033203,
+            "ops_per_second": 275325.1936457923,
+            "memory_used": 760000
+        },
+        "CORS Headers Processing": {
+            "total_time": 2.193450927734375e-5,
+            "avg_time_microseconds": 0.02193450927734375,
+            "ops_per_second": 45590260.86956522,
+            "memory_used": 0
+        },
+        "XSS Protection Logic": {
+            "total_time": 0.0002269744873046875,
+            "avg_time_microseconds": 0.2269744873046875,
+            "ops_per_second": 4405781.512605042,
+            "memory_used": 0
+        },
+        "JWT Token Generation": {
+            "total_time": 0.003962039947509766,
+            "avg_time_microseconds": 3.962039947509765,
+            "ops_per_second": 252395.2340835239,
+            "memory_used": 0
+        },
+        "JWT Token Validation": {
+            "total_time": 0.004343986511230469,
+            "avg_time_microseconds": 4.343986511230469,
+            "ops_per_second": 230203.2930845225,
+            "memory_used": 0
+        },
+        "Request Object Creation": {
+            "total_time": 0.003863096237182617,
+            "avg_time_microseconds": 3.863096237182617,
+            "ops_per_second": 258859.71733629575,
+            "memory_used": 0
+        },
+        "Response Object Creation": {
+            "total_time": 4.792213439941406e-5,
+            "avg_time_microseconds": 0.04792213439941406,
+            "ops_per_second": 20867184.07960199,
+            "memory_used": 0
+        },
+        "Response JSON Setup (100 items)": {
+            "total_time": 0.006311893463134766,
+            "avg_time_microseconds": 6.311893463134766,
+            "ops_per_second": 158431.06444058323,
+            "memory_used": 0
+        },
+        "JSON Encode (Small)": {
+            "total_time": 8.893013000488281e-5,
+            "avg_time_microseconds": 0.08893013000488281,
+            "ops_per_second": 11244782.841823056,
+            "memory_used": 0
+        },
+        "JSON Encode (Large - 1000 items)": {
+            "total_time": 0.09038996696472168,
+            "avg_time_microseconds": 90.38996696472168,
+            "ops_per_second": 11063.174748036918,
+            "memory_used": 0
+        },
+        "JSON Decode (Large - 1000 items)": {
+            "total_time": 0.41881489753723145,
+            "avg_time_microseconds": 418.81489753723145,
+            "ops_per_second": 2387.689659275081,
+            "memory_used": 0
+        },
+        "CORS Configuration Processing": {
+            "total_time": 8.606910705566406e-5,
+            "avg_time_microseconds": 0.08606910705566406,
+            "ops_per_second": 11618570.637119114,
+            "memory_used": 0
+        },
+        "CORS Headers Generation": {
+            "total_time": 3.314018249511719e-5,
+            "avg_time_microseconds": 0.03314018249511719,
+            "ops_per_second": 30174848.920863308,
+            "memory_used": 0
+        },
+        "Memory Usage": {
+            "memory_per_app": 1395.76,
+            "total_memory": 139576,
+            "memory_before": 6915448,
+            "memory_after": 7055024
+        }
+    }
+}
