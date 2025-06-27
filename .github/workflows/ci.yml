@@ -69,7 +69,11 @@ jobs:
           if [ "${{ matrix.php-version }}" = "8.1" ]; then
             ./vendor/bin/phpunit --coverage-text --coverage-clover coverage.xml || {
               echo "Coverage failed, running without coverage..."
-              ./vendor/bin/phpunit --testdox || { echo 'PHPUnit tests failed'; exit 1; }
+              ./vendor/bin/phpunit --testdox || {
+                echo '❌ PHPUnit tests failed'
+                echo '🔍 Running with detailed error output...'
+                ./vendor/bin/phpunit --debug || exit 1
+              }
             }
           elif [ "${{ matrix.php-version }}" = "8.0" ]; then
             echo "Running tests on PHP 8.0 (permissive mode)..."
@@ -81,7 +85,11 @@ jobs:
               exit 0
             }
           else
-            ./vendor/bin/phpunit --testdox || { echo 'PHPUnit tests failed'; exit 1; }
+            ./vendor/bin/phpunit --testdox || {
+              echo '❌ PHPUnit tests failed'
+              echo '🔍 Running with detailed error output...'
+              ./vendor/bin/phpunit --debug || exit 1
+            }
           fi
         else
           echo "PHPUnit not installed, running basic tests"
