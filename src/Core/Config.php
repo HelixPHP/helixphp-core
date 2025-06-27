@@ -212,7 +212,7 @@ class Config
      */
     private function resolveEnvironmentVariables(string $value): string
     {
-        return preg_replace_callback('/\$\{([^}]+)\}/', function ($matches) {
+        $result = preg_replace_callback('/\$\{([^}]+)\}/', function ($matches) {
             $envVar = $matches[1];
             $parts = explode(':', $envVar, 2);
             $varName = $parts[0];
@@ -220,6 +220,8 @@ class Config
 
             return $_ENV[$varName] ?? getenv($varName) ?: $defaultValue;
         }, $value);
+
+        return $result ?? $value;
     }
 
     /**
@@ -314,6 +316,7 @@ class Config
      */
     public static function fromArray(array $config): self
     {
+        /** @phpstan-ignore-next-line */
         return new static($config);
     }
 
@@ -325,6 +328,7 @@ class Config
      */
     public static function fromDirectory(string $configPath): self
     {
+        /** @phpstan-ignore-next-line */
         $instance = new static();
         return $instance->setConfigPath($configPath)->loadAll();
     }

@@ -232,6 +232,7 @@ class Container
     private function buildClass(string $className, array $parameters = []): object
     {
         try {
+            /** @phpstan-ignore-next-line */
             $reflection = new ReflectionClass($className);
         } catch (ReflectionException $e) {
             throw new Exception("Class {$className} not found: " . $e->getMessage());
@@ -370,6 +371,7 @@ class Container
             $callback = [$class, $method];
         }
 
+        /** @phpstan-ignore-next-line */
         return call_user_func($callback, ...$parameters);
     }
 

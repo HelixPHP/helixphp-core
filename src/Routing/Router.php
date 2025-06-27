@@ -339,7 +339,7 @@ class Router
         $newPrefix = $previousPrefix . $prefix;
         $newPrefix = preg_replace('/\/+/', '/', $newPrefix); // Remove duplicate slashes
 
-        self::use($newPrefix, ...$middlewares);
+        self::use($newPrefix ?? '', ...$middlewares);
 
         // Executar callback que define as rotas
         $callback();
@@ -350,6 +350,7 @@ class Router
 
     /**
      * Registra uma rota GET
+     * @param callable $handler
      */
     public static function get(string $path, $handler, array $metadata = []): void
     {
@@ -358,6 +359,7 @@ class Router
 
     /**
      * Registra uma rota POST
+     * @param callable $handler
      */
     public static function post(string $path, $handler, array $metadata = []): void
     {
@@ -366,6 +368,7 @@ class Router
 
     /**
      * Registra uma rota PUT
+     * @param callable $handler
      */
     public static function put(string $path, $handler, array $metadata = []): void
     {
@@ -374,6 +377,7 @@ class Router
 
     /**
      * Registra uma rota DELETE
+     * @param callable $handler
      */
     public static function delete(string $path, $handler, array $metadata = []): void
     {
@@ -382,6 +386,7 @@ class Router
 
     /**
      * Registra uma rota PATCH
+     * @param callable $handler
      */
     public static function patch(string $path, $handler, array $metadata = []): void
     {
@@ -390,9 +395,19 @@ class Router
 
     /**
      * Registra uma rota OPTIONS
+     * @param callable $handler
      */
     public static function options(string $path, $handler, array $metadata = []): void
     {
         self::add('OPTIONS', $path, $handler, $metadata);
+    }
+
+    /**
+     * Registra uma rota HEAD
+     * @param callable $handler
+     */
+    public static function head(string $path, $handler, array $metadata = []): void
+    {
+        self::add('HEAD', $path, $handler, $metadata);
     }
 }

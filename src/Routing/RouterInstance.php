@@ -204,7 +204,7 @@ class RouterInstance
     {
         $previousPrefix = $this->prefix;
         $this->prefix = rtrim($this->prefix, '/') . '/' . ltrim($prefix, '/');
-        $this->prefix = preg_replace('/\/+/', '/', $this->prefix);
+        $this->prefix = preg_replace('/\/+/', '/', $this->prefix) ?? $this->prefix;
 
         $callback($this);
 

@@ -74,6 +74,7 @@ class Validator
 
     /**
      * Valida uma regra específica
+     * @param mixed $value
      */
     private function validateRule(string $field, $value, string $rule): bool
     {
@@ -138,7 +139,7 @@ class Validator
                 break;
 
             case 'in':
-                $allowed = explode(',', $ruleValue);
+                $allowed = explode(',', $ruleValue ?? '');
                 if (!in_array($value, $allowed)) {
                     $this->addError($field, 'in', ['values' => implode(', ', $allowed)]);
                     return false;
@@ -146,7 +147,7 @@ class Validator
                 break;
 
             case 'regex':
-                if (!preg_match($ruleValue, $value)) {
+                if ($ruleValue && !preg_match($ruleValue, $value)) {
                     $this->addError($field, 'regex');
                     return false;
                 }

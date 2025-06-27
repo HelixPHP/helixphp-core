@@ -80,6 +80,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica a requisição usando todos os métodos configurados
+     * @param mixed $request
      * @return array<string, mixed>
      */
     private function authenticateRequest($request): array
@@ -132,6 +133,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando JWT
+     * @param mixed $request
      */
     private function authenticateJWT($request): array
     {
@@ -159,6 +161,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando Basic Auth
+     * @param mixed $request
      */
     private function authenticateBasic($request): array
     {
@@ -188,6 +191,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando Bearer Token
+     * @param mixed $request
      */
     private function authenticateBearer($request): array
     {
@@ -212,6 +216,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando API Key
+     * @param mixed $request
      */
     private function authenticateApiKey($request): array
     {
@@ -245,6 +250,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Autentica usando método customizado
+     * @param mixed $request
      */
     private function authenticateCustom($request): array
     {
@@ -268,6 +274,7 @@ class AuthMiddleware extends BaseMiddleware
 
     /**
      * Obtém o header de Authorization
+     * @param mixed $request
      */
     private function getAuthorizationHeader($request): ?string
     {

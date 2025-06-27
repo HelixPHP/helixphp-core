@@ -206,7 +206,8 @@ class Utils
      */
     public static function snakeCase(string $string): string
     {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
+        $result = preg_replace('/(?<!^)[A-Z]/', '_$0', $string);
+        return strtolower($result ?? $string);
     }
 
     /**
@@ -216,7 +217,8 @@ class Utils
      */
     public static function kebabCase(string $string): string
     {
-        return strtolower(preg_replace('/(?<!^)[A-Z]/', '-$0', $string));
+        $result = preg_replace('/(?<!^)[A-Z]/', '-$0', $string);
+        return strtolower($result ?? $string);
     }
 
     /**
@@ -282,8 +284,8 @@ class Utils
      */
     public static function slug(string $string): string
     {
-        $string = preg_replace('/[^\p{L}\d\s-]/u', '', $string);
-        $string = preg_replace('/[\s-]+/', '-', trim($string));
+        $string = preg_replace('/[^\p{L}\d\s-]/u', '', $string) ?? $string;
+        $string = preg_replace('/[\s-]+/', '-', trim($string)) ?? $string;
         return strtolower($string);
     }
 }

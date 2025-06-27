@@ -7,7 +7,6 @@ use Express\Http\Response;
 use Express\Routing\Router;
 use Express\Middleware\MiddlewareStack;
 use Express\Exceptions\HttpException;
-use Express\Exceptions\NotFoundException;
 use Throwable;
 
 /**
@@ -108,12 +107,12 @@ class Application
         $this->container->alias(Config::class, 'config');
 
         // Router
-        $this->router = new Router($this->container);
+        $this->router = new Router();
         $this->container->instance(Router::class, $this->router);
         $this->container->alias(Router::class, 'router');
 
         // Middleware Stack
-        $this->middlewares = new MiddlewareStack($this->container);
+        $this->middlewares = new MiddlewareStack();
         $this->container->instance(MiddlewareStack::class, $this->middlewares);
         $this->container->alias(MiddlewareStack::class, 'middleware');
     }
@@ -225,6 +224,7 @@ class Application
         }
 
         set_error_handler([$this, 'handleError']);
+        /** @phpstan-ignore-next-line */
         set_exception_handler([$this, 'handleException']);
     }
 
@@ -255,7 +255,7 @@ class Application
 
         $instance = $this->container->make($provider);
 
-        if (method_exists($instance, 'register')) {
+        if (is_object($instance) && method_exists($instance, 'register')) {
             $instance->register($this);
         }
 
@@ -361,7 +361,7 @@ class Application
             $route = $this->router->resolve($request);
 
             if (!$route) {
-                throw new NotFoundException('Route not found');
+                throw new HttpException(404, 'Route not found');
             }
 
             // Executar middlewares e handler

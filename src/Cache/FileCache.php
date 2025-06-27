@@ -18,6 +18,10 @@ class FileCache implements CacheInterface
         }
     }
 
+    /**
+     * @param mixed $default
+     * @return mixed
+     */
     public function get(string $key, $default = null)
     {
         $file = $this->getFilePath($key);
@@ -26,7 +30,12 @@ class FileCache implements CacheInterface
             return $default;
         }
 
-        $data = unserialize(file_get_contents($file));
+        $fileContents = file_get_contents($file);
+        if ($fileContents === false) {
+            return $default;
+        }
+
+        $data = unserialize($fileContents);
 
         if ($data['expires'] && time() > $data['expires']) {
             $this->delete($key);
@@ -36,6 +45,9 @@ class FileCache implements CacheInterface
         return $data['value'];
     }
 
+    /**
+     * @param mixed $value
+     */
     public function set(string $key, $value, int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
@@ -64,9 +76,11 @@ class FileCache implements CacheInterface
     {
         $files = glob($this->cacheDir . '/*');
 
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
+        if ($files !== false) {
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
             }
         }
 

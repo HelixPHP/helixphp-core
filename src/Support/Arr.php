@@ -9,6 +9,8 @@ class Arr
 {
     /**
      * Obtém um valor do array usando notação de ponto
+     * @param mixed $default
+     * @return mixed
      */
     public static function get(array $array, string $key, $default = null)
     {
@@ -32,6 +34,7 @@ class Arr
 
     /**
      * Define um valor no array usando notação de ponto
+     * @param mixed $value
      */
     public static function set(array &$array, string $key, $value): void
     {
@@ -131,6 +134,9 @@ class Arr
      */
     public static function chunk(array $array, int $size): array
     {
+        if ($size < 1) {
+            $size = 1;
+        }
         return array_chunk($array, $size, true);
     }
 

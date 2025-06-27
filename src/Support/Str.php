@@ -29,8 +29,8 @@ class Str
      */
     public static function snake(string $value, string $delimiter = '_'): string
     {
-        $value = preg_replace('/\s+/u', '', ucwords($value));
-        $value = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value);
+        $value = preg_replace('/\s+/u', '', ucwords($value)) ?? $value;
+        $value = preg_replace('/(.)(?=[A-Z])/u', '$1' . $delimiter, $value) ?? $value;
         return mb_strtolower($value, 'UTF-8');
     }
 

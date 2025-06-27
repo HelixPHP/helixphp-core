@@ -104,7 +104,7 @@ class Database
      */
     public function lastInsertId(): string
     {
-        return $this->pdo->lastInsertId();
+        return $this->pdo->lastInsertId() ?: '';
     }
 
     /**
@@ -133,6 +133,9 @@ class Database
 
     /**
      * Executa uma função dentro de uma transação
+     *
+     * @param callable $callback
+     * @return mixed
      */
     public function transaction(callable $callback)
     {

@@ -54,9 +54,16 @@ class CsrfMiddleware extends BaseMiddleware
 
     private function generateToken(): string
     {
-        return bin2hex(random_bytes($this->options['tokenLength'] / 2));
+        $length = (int) ($this->options['tokenLength'] / 2);
+        if ($length < 1) {
+            $length = 16;
+        }
+        return bin2hex(random_bytes($length));
     }
 
+    /**
+     * @param mixed $request
+     */
     private function getTokenFromRequest($request): ?string
     {
         // Check header
@@ -92,7 +99,11 @@ class CsrfMiddleware extends BaseMiddleware
         }
 
         if (!isset($_SESSION[$sessionKey])) {
-            $_SESSION[$sessionKey] = bin2hex(random_bytes($tokenLength / 2));
+            $length = (int) ($tokenLength / 2);
+            if ($length < 1) {
+                $length = 16;
+            }
+            $_SESSION[$sessionKey] = bin2hex(random_bytes($length));
         }
 
         return $_SESSION[$sessionKey];

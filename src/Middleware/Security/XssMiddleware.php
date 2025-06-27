@@ -98,13 +98,13 @@ class XssMiddleware extends BaseMiddleware
         $input = strip_tags($input, $allowedTags);
 
         // Remove javascript: e data: URLs
-        $input = preg_replace('/javascript:/i', '', $input);
-        $input = preg_replace('/vbscript:/i', '', $input);
-        $input = preg_replace('/data:/i', '', $input);
+        $input = preg_replace('/javascript:/i', '', $input) ?? $input;
+        $input = preg_replace('/vbscript:/i', '', $input) ?? $input;
+        $input = preg_replace('/data:/i', '', $input) ?? $input;
 
         // Remove event handlers
-        $input = preg_replace('/on\w+\s*=\s*["\'][^"\']*["\']/i', '', $input);
-        $input = preg_replace('/on\w+\s*=\s*[^>\s]+/i', '', $input);
+        $input = preg_replace('/on\w+\s*=\s*["\'][^"\']*["\']/i', '', $input) ?? $input;
+        $input = preg_replace('/on\w+\s*=\s*[^>\s]+/i', '', $input) ?? $input;
 
         // Escapa caracteres perigosos
         $input = htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -130,18 +130,19 @@ class XssMiddleware extends BaseMiddleware
         }
 
         // Remove caracteres potencialmente perigosos
-        $url = preg_replace('/[<>"\']/', '', $url);
+        $cleanedUrl = preg_replace('/[<>"\']/', '', $url);
 
-        return $url;
+        return $cleanedUrl ?? $url;
     }
 
     /**
      * Sanitiza dados da requisição
+     * @param mixed $request
      */
     private function sanitizeRequestData($request): void
     {
         // Sanitiza GET
-        if (isset($_GET)) {
+        if (!empty($_GET)) {
             foreach ($_GET as $key => $value) {
                 if (is_string($value)) {
                     $_GET[$key] = self::sanitize($value, $this->options['allowedTags']);
@@ -150,7 +151,7 @@ class XssMiddleware extends BaseMiddleware
         }
 
         // Sanitiza POST
-        if (isset($_POST)) {
+        if (!empty($_POST)) {
             foreach ($_POST as $key => $value) {
                 if (is_string($value)) {
                     $_POST[$key] = self::sanitize($value, $this->options['allowedTags']);

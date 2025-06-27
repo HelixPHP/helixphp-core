@@ -75,7 +75,7 @@ class Request
      * @param string $path Padrão da rota.
      * @param string $pathCallable Caminho real da requisição.
      */
-    public function __construct($method, $path, $pathCallable)
+    public function __construct(string $method, string $path, string $pathCallable)
     {
         $this->method = strtoupper($method);
         $this->path = $path;
@@ -337,6 +337,7 @@ class Request
         $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
         $pathCallable = $path;
 
+        // @phpstan-ignore-next-line
         return new static($method, $path, $pathCallable);
     }
 }

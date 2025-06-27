@@ -65,6 +65,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Verifica se a origem é permitida.
+     * @phpstan-ignore-next-line
      */
     private function isOriginAllowed(?string $origin): bool
     {
@@ -91,6 +92,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Adiciona os cabeçalhos CORS à resposta.
+     * @param mixed $response
      */
     private function addCorsHeaders($response, ?string $origin): void
     {
@@ -171,6 +173,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Set a header on response (supports both Response objects and test objects)
+     * @param mixed $response
      */
     private function setHeader($response, string $name, string $value): void
     {

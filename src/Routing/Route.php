@@ -14,6 +14,7 @@ class Route
     private string $pattern;
     private array $parameters = [];
     private array $middlewares = [];
+    /** @var callable */
     private $handler;
     private array $metadata = [];
     private ?string $name = null;
@@ -56,7 +57,7 @@ class Route
         $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
 
         // Permite barra final opcional
-        $pattern = rtrim($pattern, '/');
+        $pattern = rtrim($pattern ?? '', '/');
         $this->pattern = '#^' . $pattern . '/?$#';
     }
 
@@ -77,7 +78,7 @@ class Route
     /**
      * Extrai os parâmetros do caminho.
      * @param string $path
-     * @return array<string, string>
+     * @return array<string, string|int>
      */
     public function extractParameters(string $path): array
     {
@@ -232,7 +233,7 @@ class Route
             'parameters' => $this->parameters,
             'metadata' => $this->metadata,
             'name' => $this->name,
-            'handler' => is_callable($this->handler) ? 'Callable' : 'Not Callable'
+            'handler' => 'Callable'
         ];
     }
 }

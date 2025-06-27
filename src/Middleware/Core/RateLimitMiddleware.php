@@ -3,6 +3,7 @@
 namespace Express\Middleware\Core;
 
 use Express\Middleware\Core\BaseMiddleware;
+use Express\Http\Request;
 
 /**
  * Middleware de Rate Limiting para Express PHP.
@@ -69,6 +70,9 @@ class RateLimitMiddleware extends BaseMiddleware
         return $next();
     }
 
+    /**
+     * @param Request $request
+     */
     private function getKey($request): string
     {
         if ($this->options['keyGenerator']) {

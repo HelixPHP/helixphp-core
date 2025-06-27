@@ -82,6 +82,7 @@ class ApiExpress
 
     /**
      * Registra um middleware global ou define um prefixo para rotas.
+     * @param mixed ...$args
      */
     public function use(...$args): void
     {
@@ -113,6 +114,7 @@ class ApiExpress
 
     /**
      * Registra uma rota GET.
+     * @param mixed ...$handlers
      */
     public function get(string $path, ...$handlers): void
     {
@@ -121,6 +123,7 @@ class ApiExpress
 
     /**
      * Registra uma rota POST.
+     * @param mixed ...$handlers
      */
     public function post(string $path, ...$handlers): void
     {
@@ -129,6 +132,7 @@ class ApiExpress
 
     /**
      * Registra uma rota PUT.
+     * @param mixed ...$handlers
      */
     public function put(string $path, ...$handlers): void
     {
@@ -137,6 +141,7 @@ class ApiExpress
 
     /**
      * Registra uma rota DELETE.
+     * @param mixed ...$handlers
      */
     public function delete(string $path, ...$handlers): void
     {
@@ -145,6 +150,7 @@ class ApiExpress
 
     /**
      * Registra uma rota PATCH.
+     * @param mixed ...$handlers
      */
     public function patch(string $path, ...$handlers): void
     {
@@ -153,6 +159,7 @@ class ApiExpress
 
     /**
      * Registra uma rota OPTIONS.
+     * @param mixed ...$handlers
      */
     public function options(string $path, ...$handlers): void
     {
@@ -161,6 +168,7 @@ class ApiExpress
 
     /**
      * Registra uma rota HEAD.
+     * @param mixed ...$handlers
      */
     public function head(string $path, ...$handlers): void
     {
@@ -169,6 +177,7 @@ class ApiExpress
 
     /**
      * Registra uma rota para qualquer método HTTP.
+     * @param mixed ...$handlers
      */
     public function any(string $path, ...$handlers): void
     {
@@ -191,7 +200,8 @@ class ApiExpress
         try {
             // Obter método e caminho da requisição atual
             $method = $this->server['REQUEST_METHOD'] ?? 'GET';
-            $path = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?? '/';
+            $parsedPath = parse_url($this->server['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+            $path = $parsedPath !== false ? $parsedPath : '/';
 
             // Encontrar rota correspondente
             $route = Router::identify($method, $path);
@@ -203,7 +213,7 @@ class ApiExpress
             }
 
             // Criar objetos Request e Response
-            $request = new Request($method, $route['path'], $path);
+            $request = new Request($method, $route['path'], $path ?? '/');
             $response = new Response();
 
             // Executar middlewares e handler
@@ -307,7 +317,8 @@ class ApiExpress
     {
         // Implementação simplificada para funcionar
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-        $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $parsedUri = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+        $path = $parsedUri !== false ? $parsedUri : null;
 
         // Se estamos rodando via CLI ou servidor built-in do PHP
         if (php_sapi_name() === 'cli-server' || php_sapi_name() === 'cli') {
@@ -348,7 +359,10 @@ class ApiExpress
 
         if (in_array(strtolower($method), $httpMethods)) {
             // Delega para os métodos estáticos do Router
-            call_user_func_array([Router::class, $method], $args);
+            $callback = [Router::class, $method];
+            if (is_callable($callback)) {
+                call_user_func_array($callback, $args);
+            }
         } else {
             throw new BadMethodCallException("Method {$method} does not exist");
         }

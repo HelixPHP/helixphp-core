@@ -107,7 +107,7 @@ class OpenApiExporter
         foreach (array_unique($allTags) as $tag) {
             $tagDefinitions[] = [
                 'name' => $tag,
-                'description' => $tagDescriptions[$tag] ?? ucfirst($tag) . ' operations'
+                'description' => ucfirst($tag) . ' operations'
             ];
         }
 
@@ -132,7 +132,8 @@ class OpenApiExporter
         if (empty($path)) {
             return '/';
         }
-        return preg_replace('/:(\w+)/', '{$1}', $path);
+        $result = preg_replace('/:(\w+)/', '{$1}', $path);
+        return $result ?? $path;
     }
 
     /**
@@ -178,12 +179,21 @@ class OpenApiExporter
             $handler = $route['handler'] ?? $route['callback'] ?? null;
             if ($handler && is_callable($handler)) {
                 try {
-                    $reflection = new \ReflectionFunction($handler);
-                    $docComment = $reflection->getDocComment();
+                    if (is_string($handler)) {
+                        $reflection = new \ReflectionFunction($handler);
+                    } elseif ($handler instanceof \Closure) {
+                        $reflection = new \ReflectionFunction($handler);
+                    } else {
+                        $reflection = null;
+                    }
 
-                    if ($docComment) {
-                        $parsedDoc = self::parseDocComment($docComment);
-                        $docInfo = array_merge($docInfo, array_filter($parsedDoc));
+                    if ($reflection) {
+                        $docComment = $reflection->getDocComment();
+
+                        if ($docComment) {
+                            $parsedDoc = self::parseDocComment($docComment);
+                            $docInfo = array_merge($docInfo, array_filter($parsedDoc));
+                        }
                     }
                 } catch (\Exception $e) {
                     // Ignore reflection errors
@@ -304,7 +314,7 @@ class OpenApiExporter
                                 'in' => 'path',
                                 'required' => true,
                                 'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
-                                'description' => $matches[3] ?? ''
+                                'description' => $matches[3]
                             ];
                         }
                         break;

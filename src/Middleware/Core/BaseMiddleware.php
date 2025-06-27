@@ -22,6 +22,11 @@ abstract class BaseMiddleware implements MiddlewareInterface
 
     /**
      * Make the middleware callable for backward compatibility
+     *
+     * @param Request $request
+     * @param Response $response
+     * @param callable $next
+     * @return mixed
      */
     public function __invoke($request, $response, callable $next)
     {
