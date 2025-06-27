@@ -497,9 +497,12 @@ class Response
                 $data[$key] = $this->sanitizeForJson($value);
             }
         } elseif (is_object($data)) {
-            foreach ($data as $key => $value) {
-                $data->$key = $this->sanitizeForJson($value);
+            // Converter objeto para array, sanitizar e retornar como stdClass
+            $dataArray = (array) $data;
+            foreach ($dataArray as $key => $value) {
+                $dataArray[$key] = $this->sanitizeForJson($value);
             }
+            $data = (object) $dataArray;
         } elseif (is_string($data)) {
             // Converter para UTF-8 válido, removendo/substituindo bytes inválidos
             $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
