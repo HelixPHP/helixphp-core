@@ -141,11 +141,8 @@ class ApiExpress
             $this->setBaseUrl($baseUrl);
         }
 
-        // OTIMIZAÇÃO: Só inicializa Application se realmente necessário
-        // Para benchmarks simples, isso pode ser adiado
-        if (!isset($this->app)) {
-            $this->initializeApp();
-        }
+        // OTIMIZAÇÃO: Inicialização lazy garantida - Application criado sob demanda
+        $this->initializeApp();
 
         // OTIMIZAÇÃO: Referência direta sem operações custosas
         $this->server = &$_SERVER;
@@ -155,19 +152,23 @@ class ApiExpress
     }
 
     /**
-     * Inicialização lazy da aplicação
+     * Inicialização lazy da aplicação (thread-safe, uma única inicialização)
      */
     private function initializeApp(): void
     {
-        if (!isset($this->app)) {
-            // Otimização: basePath calculado uma vez e cacheado
-            static $basePath = null;
-            if ($basePath === null) {
-                $basePath = dirname(__DIR__);
-            }
-
-            $this->app = new Application($basePath);
+        // Guard clause para evitar múltiplas inicializações
+        if (isset($this->app)) {
+            return;
         }
+
+        // Otimização: basePath calculado uma vez e cacheado estaticamente
+        static $basePath = null;
+        if ($basePath === null) {
+            $basePath = dirname(__DIR__);
+        }
+
+        // Inicialização única garantida
+        $this->app = new Application($basePath);
     }
 
     /**
@@ -209,8 +210,8 @@ class ApiExpress
             // Middleware global
             $this->middlewares[] = $args[0];
 
-            // OTIMIZAÇÃO: Lazy loading da aplicação
-            $this->initializeApp();
+            // OTIMIZAÇÃO: Garantir que app está inicializado (fail-safe)
+            $this->ensureAppInitialized();
             $this->app->use($args[0]);
 
             // OTIMIZAÇÃO: Warmup apenas quando necessário
@@ -454,12 +455,22 @@ class ApiExpress
 
     /**
      * Limpa todas as rotas e middlewares (útil para testes).
+     * Mantém consistência com a inicialização lazy garantindo novo estado limpo.
      */
     public function clear(): void
     {
         Router::clear();
         $this->middlewares = [];
         $this->subRouters = [];
+
+        // Limpar caches relacionados
+        RouteCache::clearCache();
+        MiddlewareStack::clearCache();
+        CorsMiddleware::clearCache();
+
+        // Reinicializar aplicação para estado limpo
+        unset($this->app);
+        $this->initializeApp();
     }
 
     /**
@@ -541,5 +552,16 @@ class ApiExpress
 
         // Aquece grupos
         Router::warmupGroups();
+    }
+
+    /**
+     * Garantia de que a aplicação está inicializada (fail-safe).
+     * Método de segurança para evitar estados inconsistentes.
+     */
+    private function ensureAppInitialized(): void
+    {
+        if (!isset($this->app)) {
+            $this->initializeApp();
+        }
     }
 }
