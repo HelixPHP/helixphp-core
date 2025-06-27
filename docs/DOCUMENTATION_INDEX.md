@@ -9,6 +9,7 @@ docs/
 ├── README.md                          # 📚 Índice principal da documentação
 ├── DOCUMENTATION_INDEX.md             # 📋 Este arquivo - mapa completo
 ├── TEST_COVERAGE_REPORT.md            # 📊 Relatório de cobertura de testes
+├── MODERNIZATION_SUMMARY.md           # 🚀 Resumo da modernização PHP 8.0+
 │
 ├── pt-br/                             # 🇧🇷 Documentação em Português
 │   ├── README.md                      # Documentação principal PT-BR
