@@ -9,7 +9,7 @@ class FileCache implements CacheInterface
 {
     private string $cacheDir;
 
-    public function __construct(string $cacheDir = null)
+    public function __construct(?string $cacheDir = null)
     {
         $this->cacheDir = $cacheDir ?? sys_get_temp_dir() . '/express-cache';
 
@@ -48,7 +48,7 @@ class FileCache implements CacheInterface
     /**
      * @param mixed $value
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, $value, ?int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
         $expires = $ttl ? time() + $ttl : null;

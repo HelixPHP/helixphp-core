@@ -32,7 +32,7 @@ class MemoryCache implements CacheInterface
     /**
      * @param mixed $value
      */
-    public function set(string $key, $value, int $ttl = null): bool
+    public function set(string $key, $value, ?int $ttl = null): bool
     {
         $expires = $ttl ? time() + $ttl : null;
 

@@ -28,45 +28,39 @@ private int $statusCode = 200;
 private array $headers = [];
 ```
 
-### 2. Constructor Promotion (Promoção de Construtor)
-- **Classes atualizadas**: `Event`
-- **Benefícios**: Código mais conciso, menos boilerplate
+### 2. Modern Syntax and Type Safety
+- **Classes atualizadas**: `Request`, `Response`, `Event`
+- **Benefícios**: Código mais legível, melhor performance, type safety
 
 ```php
-// Antes
+// Atualização para sintaxe moderna
 class Event {
-    private string $name;
+    private string $name;          // Typed properties
     private array $data;
+    private bool $propagationStopped = false;
 
     public function __construct(string $name, array $data = []) {
         $this->name = $name;
         $this->data = $data;
     }
-}
 
-// Depois
-class Event {
-    public function __construct(
-        private readonly string $name,
-        private array $data = []
-    ) {
+    public function set(string $key, mixed $value): void {
+        $this->data[$key] = $value;
     }
 }
 ```
 
-### 3. Readonly Properties (Propriedades Somente Leitura)
-- **Classes atualizadas**: `Event`
-- **Benefícios**: Imutabilidade garantida pelo compilador
-
-### 4. Union Types e Mixed Type
-- **Classes atualizadas**: `Event`
+### 3. Mixed Types e Type Safety
+- **Classes atualizadas**: `Event`, `Request`, `Response`
 - **Benefícios**: Flexibilidade com segurança de tipos
 
 ```php
 public function get(string $key, mixed $default = null): mixed
+public function status(int $code): self
+public function header(string $name, string $value): self
 ```
 
-### 5. Self Return Types
+### 4. Self Return Types
 - **Classes atualizadas**: `Response`
 - **Benefícios**: Method chaining mais seguro
 
@@ -75,7 +69,7 @@ public function status(int $code): self
 public function header(string $name, string $value): self
 ```
 
-### 6. Native String Functions
+### 5. Native String Functions
 - **Removido**: `src/Support/Polyfills.php` completamente
 - **Benefícios**: Performance nativa do PHP 8.0+
 
