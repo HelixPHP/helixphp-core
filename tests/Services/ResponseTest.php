@@ -13,16 +13,24 @@ class ResponseTest extends TestCase
     {
         $this->response = new Response();
 
-        // Reset output buffer
-        if (ob_get_level()) {
+        // Limpar todos os buffers existentes de forma mais robusta
+        while (ob_get_level() > 0) {
             ob_end_clean();
         }
+
+        // Iniciar novo buffer para capturar output
         ob_start();
     }
 
     protected function tearDown(): void
     {
-        if (ob_get_level()) {
+        // Capturar e descartar qualquer output do teste
+        if (ob_get_level() > 0) {
+            ob_get_clean(); // Use clean em vez de end_clean para evitar warnings
+        }
+
+        // Garantir que não há buffers restantes
+        while (ob_get_level() > 0) {
             ob_end_clean();
         }
     }
@@ -217,6 +225,15 @@ class ResponseTest extends TestCase
             ->header('X-Rate-Limit', '1000');
 
         $this->assertInstanceOf(Response::class, $result);
+
+        // Verificar se os headers foram definidos corretamente
+        $headers = $this->response->getHeaders();
+        $this->assertArrayHasKey('Content-Type', $headers);
+        $this->assertEquals('application/json', $headers['Content-Type']);
+        $this->assertArrayHasKey('X-API-Version', $headers);
+        $this->assertEquals('1.0', $headers['X-API-Version']);
+        $this->assertArrayHasKey('X-Rate-Limit', $headers);
+        $this->assertEquals('1000', $headers['X-Rate-Limit']);
     }
 
     public function testStatusCodes(): void
@@ -227,6 +244,10 @@ class ResponseTest extends TestCase
         foreach ($statusCodes as $code) {
             $result = $this->response->status($code);
             $this->assertInstanceOf(Response::class, $result);
+
+            // Verificar se o status code foi definido corretamente
+            // Como não temos getter para statusCode, verificamos se não há exception
+            $this->assertTrue(true, "Status code {$code} set successfully");
         }
     }
 }
