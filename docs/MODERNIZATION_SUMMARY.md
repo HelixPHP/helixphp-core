@@ -10,6 +10,7 @@ O Express-PHP Framework foi completamente modernizado para aproveitar os recurso
 ✅ **Concluído**: Remoção total dos Polyfills
 ✅ **Concluído**: Modernização de classes principais
 ✅ **Concluído**: Atualização de tipos e sintaxe
+✅ **Concluído**: Compatibilidade PHP 8.4 (correção deprecations)
 ✅ **Concluído**: Validação completa (testes + análise estática)
 
 ## Recursos PHP 8.0+ Implementados
@@ -76,6 +77,18 @@ public function header(string $name, string $value): self
 ```php
 // Agora usando nativamente:
 str_starts_with(), str_contains(), str_ends_with()
+```
+
+### 6. PHP 8.4 Compatibility
+- **Classes atualizadas**: `CacheInterface`, `FileCache`, `MemoryCache`
+- **Benefícios**: Compatibilidade futura, sem deprecation warnings
+
+```php
+// Antes (deprecado no PHP 8.4)
+public function set(string $key, $value, int $ttl = null): bool
+
+// Depois (PHP 8.4 ready)
+public function set(string $key, $value, ?int $ttl = null): bool
 ```
 
 ## Melhorias de Performance
