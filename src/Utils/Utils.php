@@ -13,7 +13,7 @@ class Utils
      * @param  mixed $value
      * @return mixed
      */
-    public static function sanitizeString(mixed $value): mixed
+    public static function sanitizeString($value)
     {
         return is_string($value) ? trim(strip_tags($value)) : $value;
     }
@@ -24,7 +24,7 @@ class Utils
      * @param  mixed $value
      * @return mixed
      */
-    public static function sanitizeEmail(mixed $value): mixed
+    public static function sanitizeEmail($value)
     {
         return is_string($value) ? trim($value) : $value;
     }
@@ -35,7 +35,7 @@ class Utils
      * @param  mixed $arr
      * @return mixed
      */
-    public static function sanitizeArray(mixed $arr): mixed
+    public static function sanitizeArray($arr)
     {
         return is_array($arr) ? array_map([self::class, 'sanitizeString'], $arr) : $arr;
     }
@@ -46,7 +46,7 @@ class Utils
      * @param  mixed $value
      * @return bool
      */
-    public static function isEmail(mixed $value): bool
+    public static function isEmail($value): bool
     {
         return is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
     }
@@ -57,7 +57,7 @@ class Utils
      * @param  mixed $value
      * @return bool
      */
-    public static function isBool(mixed $value): bool
+    public static function isBool($value): bool
     {
         return is_bool($value) || $value === '0' || $value === '1' || $value === 0 || $value === 1;
     }
@@ -68,7 +68,7 @@ class Utils
      * @param  mixed $value
      * @return bool
      */
-    public static function isInt(mixed $value): bool
+    public static function isInt($value): bool
     {
         return is_numeric($value) && (int)$value == $value;
     }
@@ -88,7 +88,7 @@ class Utils
      * Utils::isString(123);      // false
      * Utils::isString(12.34);    // false
      */
-    public static function isString(mixed $value): bool
+    public static function isString($value): bool
     {
         return is_string($value);
     }
@@ -109,7 +109,7 @@ class Utils
      * Utils::isStringOrNumeric(12.34);    // true
      * Utils::isStringOrNumeric([]);       // false
      */
-    public static function isStringOrNumeric(mixed $value): bool
+    public static function isStringOrNumeric($value): bool
     {
         return is_string($value) || is_numeric($value);
     }
@@ -120,7 +120,7 @@ class Utils
      * @param  mixed $value
      * @return bool
      */
-    public static function isArray(mixed $value): bool
+    public static function isArray($value): bool
     {
         return is_array($value);
     }

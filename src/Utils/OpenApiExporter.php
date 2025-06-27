@@ -15,7 +15,7 @@ class OpenApiExporter
      * @param  array|string $routers Array of Router/RouterInstance instances or Router class name
      * @return array<string, mixed>
      */
-    public static function export(mixed $routers, ?string $baseUrl = null): array
+    public static function export($routers, ?string $baseUrl = null): array
     {
         $allRoutes = [];
         if (is_string($routers)) {

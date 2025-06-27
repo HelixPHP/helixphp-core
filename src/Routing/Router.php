@@ -267,7 +267,7 @@ class Router
     /**
      * Remove closures, objetos e recursos de arrays recursivamente
      */
-    private static function sanitizeForJson(mixed $value): mixed
+    private static function sanitizeForJson($value)
     {
         if (is_array($value)) {
             $out = [];
