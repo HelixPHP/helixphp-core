@@ -266,6 +266,9 @@ class Router
 
     /**
      * Remove closures, objetos e recursos de arrays recursivamente
+     *
+     * @param mixed $value Valor a ser sanitizado
+     * @return mixed Valor sanitizado compatível com JSON
      */
     private static function sanitizeForJson($value)
     {
