@@ -671,66 +671,66 @@ class Router
     /**
      * Registra uma rota GET.
      */
-    public static function get(string $path, callable $handler, callable ...$middlewares): void
+    public static function get(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('GET', $path, $handler, [], ...$middlewares);
+        self::add('GET', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota POST.
      */
-    public static function post(string $path, callable $handler, callable ...$middlewares): void
+    public static function post(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('POST', $path, $handler, [], ...$middlewares);
+        self::add('POST', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota PUT.
      */
-    public static function put(string $path, callable $handler, callable ...$middlewares): void
+    public static function put(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('PUT', $path, $handler, [], ...$middlewares);
+        self::add('PUT', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota DELETE.
      */
-    public static function delete(string $path, callable $handler, callable ...$middlewares): void
+    public static function delete(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('DELETE', $path, $handler, [], ...$middlewares);
+        self::add('DELETE', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota PATCH.
      */
-    public static function patch(string $path, callable $handler, callable ...$middlewares): void
+    public static function patch(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('PATCH', $path, $handler, [], ...$middlewares);
+        self::add('PATCH', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota OPTIONS.
      */
-    public static function options(string $path, callable $handler, callable ...$middlewares): void
+    public static function options(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('OPTIONS', $path, $handler, [], ...$middlewares);
+        self::add('OPTIONS', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota HEAD.
      */
-    public static function head(string $path, callable $handler, callable ...$middlewares): void
+    public static function head(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
-        self::add('HEAD', $path, $handler, [], ...$middlewares);
+        self::add('HEAD', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota para todos os métodos HTTP.
      */
-    public static function any(string $path, callable $handler, callable ...$middlewares): void
+    public static function any(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
     {
         foreach (self::$httpMethodsAccepted as $method) {
-            self::add($method, $path, $handler, [], ...$middlewares);
+            self::add($method, $path, $handler, $metadata, ...$middlewares);
         }
     }
 
