@@ -72,12 +72,21 @@ jobs:
               ./vendor/bin/phpunit --testdox || { echo 'PHPUnit tests failed'; exit 1; }
             }
           elif [ "${{ matrix.php-version }}" = "8.0" ]; then
-            # PHP 8.0 com configurações mais permissivas para debugging
             echo "Running tests on PHP 8.0 with detailed output..."
-            ./vendor/bin/phpunit --testdox --do-not-fail-on-warning --do-not-fail-on-risky || {
-              echo "Tests failed on PHP 8.0, trying basic run..."
-              ./vendor/bin/phpunit || { echo 'PHPUnit tests failed on PHP 8.0'; exit 1; }
-            }
+            # Check if PHPUnit supports the flags before using them
+            if ./vendor/bin/phpunit --help | grep -q "do-not-fail-on-risky"; then
+              echo "Using PHPUnit with risky/warning tolerance..."
+              ./vendor/bin/phpunit --testdox --do-not-fail-on-warning --do-not-fail-on-risky || {
+                echo "Tests failed on PHP 8.0, trying basic run..."
+                ./vendor/bin/phpunit || { echo 'PHPUnit tests failed on PHP 8.0'; exit 1; }
+              }
+            else
+              echo "PHPUnit version doesn't support risky/warning flags, running with testdox..."
+              ./vendor/bin/phpunit --testdox || {
+                echo "Tests failed on PHP 8.0, trying basic run..."
+                ./vendor/bin/phpunit || { echo 'PHPUnit tests failed on PHP 8.0'; exit 1; }
+              }
+            fi
           else
             ./vendor/bin/phpunit --testdox || { echo 'PHPUnit tests failed'; exit 1; }
           fi
