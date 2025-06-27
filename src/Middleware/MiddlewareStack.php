@@ -4,6 +4,7 @@ namespace Express\Middleware;
 
 use Express\Http\Request;
 use Express\Http\Response;
+use Express\Utils\SerializationCache;
 
 /**
  * Classe para gerenciar e executar uma stack de middlewares com otimizações.
@@ -265,7 +266,9 @@ class MiddlewareStack
      */
     public static function benchmarkPipeline(array $middlewares, int $iterations = 1000): array
     {
-        $cacheKey = 'benchmark:' . md5(serialize($middlewares));
+        // Usa cache de serialização otimizado para gerar chave
+        $serializedData = SerializationCache::getSerializedData($middlewares, 'middleware_benchmark');
+        $cacheKey = 'benchmark:' . md5($serializedData);
 
         // Compila pipeline
         $compilationStart = microtime(true);
@@ -331,13 +334,16 @@ class MiddlewareStack
     }
 
     /**
-     * Limpa caches e estatísticas
+     * Limpa caches e estatísticas incluindo cache de serialização
      */
     public static function clearCache(): void
     {
         self::$compiledPipelines = [];
         self::$stats = [];
         self::$groupMiddlewares = [];
+
+        // Limpa cache de serialização relacionado
+        SerializationCache::clearCache();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Express\Middleware\Security;
 use Express\Middleware\Core\BaseMiddleware;
 use Express\Http\Request;
 use Express\Http\Response;
+use Express\Utils\SerializationCache;
 
 /**
  * Middleware CORS (Cross-Origin Resource Sharing) com otimizações de performance.
@@ -570,14 +571,11 @@ class CorsMiddleware extends BaseMiddleware
      */
     private static function getMemoryUsage(): array
     {
-        // Gera hash dos dados atuais para verificar se mudaram
+        // Gera hash dos dados atuais de forma mais eficiente
         $currentDataHash = md5(
-            serialize([
-                'headers_count' => count(self::$preCompiledHeaders),
-                'strings_count' => count(self::$compiledHeaderStrings),
-                'headers_keys' => array_keys(self::$preCompiledHeaders),
-                'strings_keys' => array_keys(self::$compiledHeaderStrings)
-            ])
+            count(self::$preCompiledHeaders) . '|' .
+            count(self::$compiledHeaderStrings) . '|' .
+            serialize(array_keys(self::$preCompiledHeaders))
         );
 
         // Se o cache é válido, retorna os dados em cache
@@ -585,14 +583,21 @@ class CorsMiddleware extends BaseMiddleware
             return self::$memoryUsageCache;
         }
 
-        // Recalcula o uso de memória apenas quando necessário
-        $headersMemory = strlen(serialize(self::$preCompiledHeaders));
-        $stringsMemory = strlen(serialize(self::$compiledHeaderStrings));
+        // Recalcula o uso de memória usando cache de serialização otimizado
+        $headersMemory = SerializationCache::getSerializedSize(
+            self::$preCompiledHeaders,
+            'cors_precompiled_headers'
+        );
+        $stringsMemory = SerializationCache::getSerializedSize(
+            self::$compiledHeaderStrings,
+            'cors_compiled_strings'
+        );
 
         self::$memoryUsageCache = [
             'headers' => $headersMemory,
             'strings' => $stringsMemory,
-            'total' => $headersMemory + $stringsMemory
+            'total' => $headersMemory + $stringsMemory,
+            'serialization_stats' => SerializationCache::getStats()
         ];
         self::$lastDataHash = $currentDataHash;
 
@@ -608,6 +613,9 @@ class CorsMiddleware extends BaseMiddleware
         self::$compiledHeaderStrings = [];
         self::$memoryUsageCache = null;
         self::$lastDataHash = null;
+
+        // Limpa cache de serialização relacionado
+        SerializationCache::clearCache();
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Express\Routing;
 
+use Express\Utils\SerializationCache;
+
 /**
  * Cache para rotas compiladas para melhorar performance
  */
@@ -253,7 +255,7 @@ class RouteCache
     }
 
     /**
-     * Limpa todos os caches
+     * Limpa todos os caches incluindo cache de serialização
      */
     public static function clearCache(): void
     {
@@ -264,6 +266,9 @@ class RouteCache
         self::$routeTypeCache = ['static' => [], 'dynamic' => []];
         self::$stats = ['hits' => 0, 'misses' => 0, 'compilations' => 0];
         self::invalidateMemoryCache();
+
+        // Limpa cache de serialização relacionado
+        SerializationCache::clearCache();
     }
 
     /**
@@ -287,20 +292,16 @@ class RouteCache
     }
 
     /**
-     * Calcula uso de memória do cache com cache para melhor performance
+     * Calcula uso de memória do cache com cache otimizado para melhor performance
      */
     private static function getMemoryUsage(): string
     {
-        // Gera hash dos dados atuais para verificar se mudaram
+        // Gera hash dos dados atuais de forma mais eficiente
         $currentDataHash = md5(
-            serialize([
-                'routes_count' => count(self::$compiledRoutes),
-                'patterns_count' => count(self::$compiledPatterns),
-                'parameters_count' => count(self::$parameterMappings),
-                'routes_keys' => array_keys(self::$compiledRoutes),
-                'patterns_keys' => array_keys(self::$compiledPatterns),
-                'parameters_keys' => array_keys(self::$parameterMappings)
-            ])
+            count(self::$compiledRoutes) . '|' .
+            count(self::$compiledPatterns) . '|' .
+            count(self::$parameterMappings) . '|' .
+            serialize(array_keys(self::$compiledRoutes))
         );
 
         // Se o cache é válido, retorna os dados em cache
@@ -308,10 +309,15 @@ class RouteCache
             return self::$memoryUsageCache['formatted'];
         }
 
-        // Recalcula o uso de memória apenas quando necessário
-        $size = strlen(serialize(self::$compiledRoutes)) +
-               strlen(serialize(self::$parameterMappings)) +
-               strlen(serialize(self::$compiledPatterns));
+        // Recalcula o uso de memória usando cache de serialização otimizado
+        $objects = [
+            'routes' => self::$compiledRoutes,
+            'patterns' => self::$compiledPatterns,
+            'parameters' => self::$parameterMappings
+        ];
+
+        $cacheKeys = ['route_cache_routes', 'route_cache_patterns', 'route_cache_parameters'];
+        $size = SerializationCache::getTotalSerializedSize(array_values($objects), $cacheKeys);
 
         $formatted = '';
         if ($size < 1024) {
@@ -322,13 +328,19 @@ class RouteCache
             $formatted = round($size / 1048576, 2) . ' MB';
         }
 
+        // Calcula tamanhos individuais usando cache
+        $routesSize = SerializationCache::getSerializedSize(self::$compiledRoutes, 'route_cache_routes');
+        $patternsSize = SerializationCache::getSerializedSize(self::$compiledPatterns, 'route_cache_patterns');
+        $parametersSize = SerializationCache::getSerializedSize(self::$parameterMappings, 'route_cache_parameters');
+
         // Armazena no cache
         self::$memoryUsageCache = [
             'raw_size' => $size,
             'formatted' => $formatted,
-            'routes_memory' => strlen(serialize(self::$compiledRoutes)),
-            'patterns_memory' => strlen(serialize(self::$compiledPatterns)),
-            'parameters_memory' => strlen(serialize(self::$parameterMappings))
+            'routes_memory' => $routesSize,
+            'patterns_memory' => $patternsSize,
+            'parameters_memory' => $parametersSize,
+            'serialization_stats' => SerializationCache::getStats()
         ];
         self::$lastDataHash = $currentDataHash;
 
