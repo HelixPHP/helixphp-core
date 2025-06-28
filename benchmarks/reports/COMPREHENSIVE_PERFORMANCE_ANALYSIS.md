@@ -1,6 +1,6 @@
 # Comprehensive Performance Analysis Report
 
-Generated: 2025-06-28 14:20:19
+Generated: 2025-06-28 14:37:40
 
 ## Executive Summary
 
@@ -16,77 +16,77 @@ This report provides a comprehensive analysis of the Express PHP framework perfo
 
 #### Low Load Scenario
 
-- **App Initialization**: 57,205 ops/sec
-- **Basic Route Registration (GET)**: 25,752 ops/sec
-- **Basic Route Registration (POST)**: 27,609 ops/sec
-- **Route with Parameters (PUT)**: 24,630 ops/sec
-- **Complex Route Registration**: 18,060 ops/sec
-- **Route Pattern Matching**: 2,557,502 ops/sec
-- **Middleware Stack Creation**: 18,245 ops/sec
-- **Middleware Function Execution**: 2,046,002 ops/sec
-- **Security Middleware Creation**: 23,833 ops/sec
-- **CORS Headers Processing**: 32,263,877 ops/sec
-- **XSS Protection Logic**: 4,369,067 ops/sec
-- **JWT Token Generation**: 253,739 ops/sec
-- **JWT Token Validation**: 228,324 ops/sec
-- **Request Object Creation**: 272,357 ops/sec
-- **Response Object Creation**: 16,777,216 ops/sec
-- **Response JSON Setup (100 items)**: 175,788 ops/sec
-- **JSON Encode (Small)**: 9,986,438 ops/sec
-- **JSON Encode (Large - 1000 items)**: 11,186 ops/sec
-- **JSON Decode (Large - 1000 items)**: 2,528 ops/sec
-- **CORS Configuration Processing**: 16,777,216 ops/sec
-- **CORS Headers Generation**: 52,428,800 ops/sec
+- **App Initialization**: 126,601 ops/sec
+- **Basic Route Registration (GET)**: 46,906 ops/sec
+- **Basic Route Registration (POST)**: 57,472 ops/sec
+- **Route with Parameters (PUT)**: 49,902 ops/sec
+- **Complex Route Registration**: 38,023 ops/sec
+- **Route Pattern Matching**: 1,388,842 ops/sec
+- **Middleware Stack Creation**: 30,095 ops/sec
+- **Middleware Function Execution**: 925,895 ops/sec
+- **Security Middleware Creation**: 34,459 ops/sec
+- **CORS Headers Processing**: 26,214,400 ops/sec
+- **XSS Protection Logic**: 2,933,080 ops/sec
+- **JWT Token Generation**: 183,799 ops/sec
+- **JWT Token Validation**: 123,909 ops/sec
+- **Request Object Creation**: 126,563 ops/sec
+- **Response Object Creation**: 9,986,438 ops/sec
+- **Response JSON Setup (100 items)**: 88,023 ops/sec
+- **JSON Encode (Small)**: 5,518,821 ops/sec
+- **JSON Encode (Large - 1000 items)**: 9,252 ops/sec
+- **JSON Decode (Large - 1000 items)**: 1,971 ops/sec
+- **CORS Configuration Processing**: 19,972,876 ops/sec
+- **CORS Headers Generation**: 34,952,533 ops/sec
 - **Memory Usage**: 0 ops/sec
 
 #### Normal Load Scenario
 
-- **App Initialization**: 23,183 ops/sec
-- **Basic Route Registration (GET)**: 20,643 ops/sec
-- **Basic Route Registration (POST)**: 19,935 ops/sec
-- **Route with Parameters (PUT)**: 10,732 ops/sec
-- **Complex Route Registration**: 21,691 ops/sec
-- **Route Pattern Matching**: 1,968,233 ops/sec
-- **Middleware Stack Creation**: 21,905 ops/sec
-- **Middleware Function Execution**: 2,004,925 ops/sec
-- **Security Middleware Creation**: 22,453 ops/sec
-- **CORS Headers Processing**: 37,117,735 ops/sec
-- **XSS Protection Logic**: 3,334,105 ops/sec
-- **JWT Token Generation**: 230,684 ops/sec
-- **JWT Token Validation**: 148,898 ops/sec
-- **Request Object Creation**: 176,335 ops/sec
-- **Response Object Creation**: 15,887,515 ops/sec
-- **Response JSON Setup (100 items)**: 153,638 ops/sec
-- **JSON Encode (Small)**: 10,645,442 ops/sec
-- **JSON Encode (Large - 1000 items)**: 11,725 ops/sec
-- **JSON Decode (Large - 1000 items)**: 2,275 ops/sec
-- **CORS Configuration Processing**: 18,157,160 ops/sec
-- **CORS Headers Generation**: 38,479,853 ops/sec
+- **App Initialization**: 90,319 ops/sec
+- **Basic Route Registration (GET)**: 45,335 ops/sec
+- **Basic Route Registration (POST)**: 58,123 ops/sec
+- **Route with Parameters (PUT)**: 54,762 ops/sec
+- **Complex Route Registration**: 55,127 ops/sec
+- **Route Pattern Matching**: 2,097,152 ops/sec
+- **Middleware Stack Creation**: 46,486 ops/sec
+- **Middleware Function Execution**: 2,097,152 ops/sec
+- **Security Middleware Creation**: 45,251 ops/sec
+- **CORS Headers Processing**: 45,100,043 ops/sec
+- **XSS Protection Logic**: 4,350,938 ops/sec
+- **JWT Token Generation**: 233,588 ops/sec
+- **JWT Token Validation**: 229,674 ops/sec
+- **Request Object Creation**: 264,208 ops/sec
+- **Response Object Creation**: 23,172,950 ops/sec
+- **Response JSON Setup (100 items)**: 165,046 ops/sec
+- **JSON Encode (Small)**: 5,262,615 ops/sec
+- **JSON Encode (Large - 1000 items)**: 11,018 ops/sec
+- **JSON Decode (Large - 1000 items)**: 2,511 ops/sec
+- **CORS Configuration Processing**: 18,477,110 ops/sec
+- **CORS Headers Generation**: 45,100,043 ops/sec
 - **Memory Usage**: 0 ops/sec
 
 #### High Load Scenario
 
-- **App Initialization**: 25,199 ops/sec
-- **Basic Route Registration (GET)**: 20,914 ops/sec
-- **Basic Route Registration (POST)**: 23,176 ops/sec
-- **Route with Parameters (PUT)**: 23,356 ops/sec
-- **Complex Route Registration**: 21,879 ops/sec
-- **Route Pattern Matching**: 2,506,906 ops/sec
-- **Middleware Stack Creation**: 20,363 ops/sec
-- **Middleware Function Execution**: 1,465,413 ops/sec
-- **Security Middleware Creation**: 19,362 ops/sec
-- **CORS Headers Processing**: 44,667,774 ops/sec
-- **XSS Protection Logic**: 4,194,723 ops/sec
-- **JWT Token Generation**: 263,483 ops/sec
-- **JWT Token Validation**: 229,211 ops/sec
-- **Request Object Creation**: 268,096 ops/sec
-- **Response Object Creation**: 23,643,202 ops/sec
-- **Response JSON Setup (100 items)**: 169,494 ops/sec
-- **JSON Encode (Small)**: 9,981,685 ops/sec
-- **JSON Encode (Large - 1000 items)**: 9,174 ops/sec
-- **JSON Decode (Large - 1000 items)**: 2,491 ops/sec
-- **CORS Configuration Processing**: 17,425,442 ops/sec
-- **CORS Headers Generation**: 47,393,266 ops/sec
+- **App Initialization**: 124,603 ops/sec
+- **Basic Route Registration (GET)**: 57,625 ops/sec
+- **Basic Route Registration (POST)**: 49,160 ops/sec
+- **Route with Parameters (PUT)**: 49,727 ops/sec
+- **Complex Route Registration**: 47,765 ops/sec
+- **Route Pattern Matching**: 2,567,994 ops/sec
+- **Middleware Stack Creation**: 44,422 ops/sec
+- **Middleware Function Execution**: 2,072,080 ops/sec
+- **Security Middleware Creation**: 37,642 ops/sec
+- **CORS Headers Processing**: 41,486,686 ops/sec
+- **XSS Protection Logic**: 4,303,174 ops/sec
+- **JWT Token Generation**: 243,849 ops/sec
+- **JWT Token Validation**: 211,752 ops/sec
+- **Request Object Creation**: 233,051 ops/sec
+- **Response Object Creation**: 21,732,145 ops/sec
+- **Response JSON Setup (100 items)**: 172,637 ops/sec
+- **JSON Encode (Small)**: 10,672,529 ops/sec
+- **JSON Encode (Large - 1000 items)**: 10,800 ops/sec
+- **JSON Decode (Large - 1000 items)**: 2,595 ops/sec
+- **CORS Configuration Processing**: 19,382,181 ops/sec
+- **CORS Headers Generation**: 47,180,022 ops/sec
 - **Memory Usage**: 0 ops/sec
 
 ## Comparative Analysis
@@ -103,8 +103,8 @@ This report provides a comprehensive analysis of the Express PHP framework perfo
 
 #### Psr implementation
 
-- **app_initialization_improvement**: -63.12%
-- **overall_assessment**: Performance impact observed
+- **app_initialization_improvement**: 85.99%
+- **overall_assessment**: Performance improved
 
 #### Advanced optimizations
 

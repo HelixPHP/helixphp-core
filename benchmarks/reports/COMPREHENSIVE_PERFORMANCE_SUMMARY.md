@@ -1,63 +1,62 @@
 # Express PHP Framework - Comprehensive Performance Report
 
-*Generated on: 2025-06-28 14:20:19*
+*Generated on: 2025-06-28 14:37:02*
 
 ## Test Configuration Overview
 
 | Category | Iterations | Generated |
 |----------|------------|-----------|
-| **Low** | 100 | 2025-06-28 14:20:03 |
-| **Normal** | 1,000 | 2025-06-28 14:20:06 |
-| **High** | 10,000 | 2025-06-28 14:20:17 |
+| **Low** | 100 | 2025-06-28 14:36:51 |
+| **Normal** | 1,000 | 2025-06-28 14:36:52 |
+| **High** | 10,000 | 2025-06-28 14:37:00 |
 
 ## Performance Comparison
 
 | Test | Low (100) | Normal (1K) | High (10K) | Performance Trend |
 |------|-----------|-------------|------------|-------------------|
-| **App Initialization** | 57,205 ops/s | 23,183 ops/s | 25,199 ops/s | 📉 Declining (55.9%) |
-| **Basic Route Registration (GET)** | 25,752 ops/s | 20,643 ops/s | 20,914 ops/s | 📉 Declining (18.8%) |
-| **Basic Route Registration (POST)** | 27,609 ops/s | 19,935 ops/s | 23,176 ops/s | 📉 Declining (16.1%) |
-| **Route with Parameters (PUT)** | 24,630 ops/s | 10,732 ops/s | 23,356 ops/s | 📉 Declining (5.2%) |
-| **Complex Route Registration** | 18,060 ops/s | 21,691 ops/s | 21,879 ops/s | 📈 Improving (21.1%) |
-| **Route Pattern Matching** | 2,557,502 ops/s | 1,968,233 ops/s | 2,506,906 ops/s | 🔄 Stable |
-| **Middleware Stack Creation** | 18,245 ops/s | 21,905 ops/s | 20,363 ops/s | 📈 Improving (11.6%) |
-| **Middleware Function Execution** | 2,046,002 ops/s | 2,004,925 ops/s | 1,465,413 ops/s | 📉 Declining (28.4%) |
-| **Security Middleware Creation** | 23,833 ops/s | 22,453 ops/s | 19,362 ops/s | 📉 Declining (18.8%) |
-| **CORS Headers Processing** | 32,263,877 ops/s | 37,117,735 ops/s | 44,667,774 ops/s | 📈 Improving (38.4%) |
-| **XSS Protection Logic** | 4,369,067 ops/s | 3,334,105 ops/s | 4,194,723 ops/s | 🔄 Stable |
-| **JWT Token Generation** | 253,739 ops/s | 230,684 ops/s | 263,483 ops/s | 🔄 Stable |
-| **JWT Token Validation** | 228,324 ops/s | 148,898 ops/s | 229,211 ops/s | 🔄 Stable |
-| **Request Object Creation** | 272,357 ops/s | 176,335 ops/s | 268,096 ops/s | 🔄 Stable |
-| **Response Object Creation** | 16,777,216 ops/s | 15,887,515 ops/s | 23,643,202 ops/s | 📈 Improving (40.9%) |
-| **Response JSON Setup (100 items)** | 175,788 ops/s | 153,638 ops/s | 169,494 ops/s | 🔄 Stable |
-| **JSON Encode (Small)** | 9,986,438 ops/s | 10,645,442 ops/s | 9,981,685 ops/s | 🔄 Stable |
-| **JSON Encode (Large - 1000 items)** | 11,186 ops/s | 11,725 ops/s | 9,174 ops/s | 📉 Declining (18.0%) |
-| **JSON Decode (Large - 1000 items)** | 2,528 ops/s | 2,275 ops/s | 2,491 ops/s | 🔄 Stable |
-| **CORS Configuration Processing** | 16,777,216 ops/s | 18,157,160 ops/s | 17,425,442 ops/s | 🔄 Stable |
-| **CORS Headers Generation** | 52,428,800 ops/s | 38,479,853 ops/s | 47,393,266 ops/s | 📉 Declining (9.6%) |
+| **App Initialization** | 126,601 ops/s | 90,319 ops/s | 124,603 ops/s | 🔄 Stable |
+| **Basic Route Registration (GET)** | 46,906 ops/s | 45,335 ops/s | 57,625 ops/s | 📈 Improving (22.9%) |
+| **Basic Route Registration (POST)** | 57,472 ops/s | 58,123 ops/s | 49,160 ops/s | 📉 Declining (14.5%) |
+| **Route with Parameters (PUT)** | 49,902 ops/s | 54,762 ops/s | 49,727 ops/s | 🔄 Stable |
+| **Complex Route Registration** | 38,023 ops/s | 55,127 ops/s | 47,765 ops/s | 📈 Improving (25.6%) |
+| **Route Pattern Matching** | 1,388,842 ops/s | 2,097,152 ops/s | 2,567,994 ops/s | 📈 Improving (84.9%) |
+| **Middleware Stack Creation** | 30,095 ops/s | 46,486 ops/s | 44,422 ops/s | 📈 Improving (47.6%) |
+| **Middleware Function Execution** | 925,895 ops/s | 2,097,152 ops/s | 2,072,080 ops/s | 📈 Improving (123.8%) |
+| **Security Middleware Creation** | 34,459 ops/s | 45,251 ops/s | 37,642 ops/s | 📈 Improving (9.2%) |
+| **CORS Headers Processing** | 26,214,400 ops/s | 45,100,043 ops/s | 41,486,686 ops/s | 📈 Improving (58.3%) |
+| **XSS Protection Logic** | 2,933,080 ops/s | 4,350,938 ops/s | 4,303,174 ops/s | 📈 Improving (46.7%) |
+| **JWT Token Generation** | 183,799 ops/s | 233,588 ops/s | 243,849 ops/s | 📈 Improving (32.7%) |
+| **JWT Token Validation** | 123,909 ops/s | 229,674 ops/s | 211,752 ops/s | 📈 Improving (70.9%) |
+| **Request Object Creation** | 126,563 ops/s | 264,208 ops/s | 233,051 ops/s | 📈 Improving (84.1%) |
+| **Response Object Creation** | 9,986,438 ops/s | 23,172,950 ops/s | 21,732,145 ops/s | 📈 Improving (117.6%) |
+| **Response JSON Setup (100 items)** | 88,023 ops/s | 165,046 ops/s | 172,637 ops/s | 📈 Improving (96.1%) |
+| **JSON Encode (Small)** | 5,518,821 ops/s | 5,262,615 ops/s | 10,672,529 ops/s | 📈 Improving (93.4%) |
+| **JSON Encode (Large - 1000 items)** | 9,252 ops/s | 11,018 ops/s | 10,800 ops/s | 📈 Improving (16.7%) |
+| **JSON Decode (Large - 1000 items)** | 1,971 ops/s | 2,511 ops/s | 2,595 ops/s | 📈 Improving (31.6%) |
+| **CORS Configuration Processing** | 19,972,876 ops/s | 18,477,110 ops/s | 19,382,181 ops/s | 🔄 Stable |
+| **CORS Headers Generation** | 34,952,533 ops/s | 45,100,043 ops/s | 47,180,022 ops/s | 📈 Improving (35.0%) |
 | **Memory Usage** | N/A | N/A | N/A | Insufficient data |
 
 ## Top Performers
 
 ### 🏆 Highest Average Performance
 
-1. **CORS Headers Generation** - 46,100,640 avg ops/s
-2. **CORS Headers Processing** - 38,016,462 avg ops/s
-3. **Response Object Creation** - 18,769,311 avg ops/s
-4. **CORS Configuration Processing** - 17,453,273 avg ops/s
-5. **JSON Encode (Small)** - 10,204,522 avg ops/s
+1. **CORS Headers Generation** - 42,410,866 avg ops/s
+2. **CORS Headers Processing** - 37,600,376 avg ops/s
+3. **CORS Configuration Processing** - 19,277,389 avg ops/s
+4. **Response Object Creation** - 18,297,178 avg ops/s
+5. **JSON Encode (Small)** - 7,151,322 avg ops/s
 
 ### Key Insights
 
 **🎯 Most Consistent Performance:**
-- JWT Token Generation
-- Response JSON Setup (100 items)
-- JSON Encode (Small)
+- Route with Parameters (PUT)
+- CORS Configuration Processing
 
 **⚠️ Variable Performance (needs optimization):**
-- App Initialization
-- Route with Parameters (PUT)
-- JWT Token Validation
+- Complex Route Registration
+- Route Pattern Matching
+- Middleware Stack Creation
 
 ## Recommendations
 
