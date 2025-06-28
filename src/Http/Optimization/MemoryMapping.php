@@ -19,7 +19,7 @@ class MemoryMapping
     private int $cacheSize = 0;
     private const MAX_CACHE_SIZE = 1024 * 1024; // 1MB cache per mapping
 
-    public function __construct(string $filePath, int $offset = 0, int $length = null)
+    public function __construct(string $filePath, int $offset = 0, ?int $length = null)
     {
         $this->filePath = $filePath;
         $this->offset = $offset;

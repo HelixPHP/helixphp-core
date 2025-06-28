@@ -284,7 +284,7 @@ class PredictiveCacheWarmer
     /**
      * Predict next cache accesses
      */
-    public static function predictNextAccesses(string $pattern, int $timeWindow = null): array
+    public static function predictNextAccesses(string $pattern, ?int $timeWindow = null): array
     {
         $timeWindow = $timeWindow ?? self::$config['prediction_window'];
 

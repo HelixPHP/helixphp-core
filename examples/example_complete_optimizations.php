@@ -393,8 +393,8 @@ function showOptimizationSummary() {
 // Aquece todos os caches
 $app->warmupCaches();
 
-// Exibe informações se executado via CLI
-if (php_sapi_name() === 'cli') {
+// Exibe informações APENAS se executado via CLI e não via servidor web
+if (php_sapi_name() === 'cli' && !isset($_SERVER['SERVER_NAME'])) {
     showOptimizationSummary();
     echo "🚀 Servidor iniciado com todas as otimizações ativas!\n";
     echo "📍 Acesse: http://localhost:8000\n\n";

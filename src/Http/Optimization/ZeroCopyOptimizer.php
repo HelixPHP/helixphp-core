@@ -101,7 +101,7 @@ class ZeroCopyOptimizer
     /**
      * Create reference instead of copying array
      */
-    public static function createArrayReference(array &$source, string $refId = null): string
+    public static function createArrayReference(array &$source, ?string $refId = null): string
     {
         $refId = $refId ?? uniqid('arr_ref_', true);
 
@@ -178,7 +178,7 @@ class ZeroCopyOptimizer
     /**
      * Create copy-on-write wrapper for large objects
      */
-    public static function createCOWWrapper(object $object, string $id = null): string
+    public static function createCOWWrapper(object $object, ?string $id = null): string
     {
         $id = $id ?? uniqid('cow_', true);
 
@@ -225,7 +225,7 @@ class ZeroCopyOptimizer
     /**
      * Create view of array slice without copying
      */
-    public static function createArrayView(array &$source, int $offset, int $length = null): ArrayView
+    public static function createArrayView(array &$source, int $offset, ?int $length = null): ArrayView
     {
         return new ArrayView($source, $offset, $length);
     }
@@ -233,7 +233,7 @@ class ZeroCopyOptimizer
     /**
      * Stream data without loading into memory
      */
-    public static function createStreamView(string $filePath, int $offset = 0, int $length = null): StreamView
+    public static function createStreamView(string $filePath, int $offset = 0, ?int $length = null): StreamView
     {
         return new StreamView($filePath, $offset, $length);
     }

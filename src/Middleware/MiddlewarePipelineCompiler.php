@@ -86,7 +86,7 @@ class MiddlewarePipelineCompiler
     /**
      * Compile middleware pipeline into optimized execution path
      */
-    public static function compilePipeline(array $middlewares, string $cacheKey = null): callable
+    public static function compilePipeline(array $middlewares, ?string $cacheKey = null): callable
     {
         // Check for memory pressure before compilation
         self::checkMemoryPressure();

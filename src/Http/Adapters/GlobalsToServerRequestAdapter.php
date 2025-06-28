@@ -19,11 +19,11 @@ class GlobalsToServerRequestAdapter
      * Create a ServerRequest from PHP global variables
      */
     public static function fromGlobals(
-        array $server = null,
-        array $query = null,
-        array $body = null,
-        array $cookies = null,
-        array $files = null
+        ?array $server = null,
+        ?array $query = null,
+        ?array $body = null,
+        ?array $cookies = null,
+        ?array $files = null
     ): ServerRequestInterface {
         $server = $server ?? $_SERVER;
         $query = $query ?? $_GET;
