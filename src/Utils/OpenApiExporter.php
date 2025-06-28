@@ -76,10 +76,13 @@ class OpenApiExporter
 
             // Mesclar respostas globais sem sobrescrever as customizadas
             foreach ($globalErrors as $code => $error) {
-                if (!isset($responses[$code])) {
-                    $responses[$code] = $error;
+                $codeStr = (string)$code;
+                if (!isset($responses[$codeStr])) {
+                    $responses[$codeStr] = $error;
                 }
             }
+            // Forçar todas as chaves para string (compatibilidade PHP 8.3/OpenAPI)
+            $responses = array_combine(array_map('strval', array_keys($responses)), array_values($responses));
 
             // Add tags to collection
             $allTags = array_merge($allTags, $tags);
