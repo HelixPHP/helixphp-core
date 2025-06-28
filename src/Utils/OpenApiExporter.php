@@ -82,7 +82,11 @@ class OpenApiExporter
                 }
             }
             // Forçar todas as chaves para string (compatibilidade PHP 8.3/OpenAPI)
-            $responses = array_combine(array_map('strval', array_keys($responses)), array_values($responses));
+            if (!empty($responses)) {
+                $responses = array_combine(array_map('strval', array_keys($responses)), array_values($responses));
+            } else {
+                $responses = [];
+            }
 
             // Add tags to collection
             $allTags = array_merge($allTags, $tags);
