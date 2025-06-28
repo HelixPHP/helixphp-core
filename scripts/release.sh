@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Script de Release Automatizado para Express-PHP
-# Versão: 2.0.0
+# Versão: 2.0.1
 # Data: 26 de junho de 2025
 
 set -e
@@ -57,7 +57,7 @@ VERSION=$1
 RELEASE_TYPE=${2:-"release"}
 CURRENT_BRANCH=$(git branch --show-current)
 
-title "Express-PHP Release Manager v2.0.0"
+title "Express-PHP Release Manager v2.0.1"
 echo ""
 
 info "Versão a ser criada: $VERSION"

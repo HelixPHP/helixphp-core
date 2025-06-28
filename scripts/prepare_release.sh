@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de preparação para publicação do Express PHP v2.0.0
+# Script de preparação para publicação do Express PHP v2.0.1
 # Este script limpa, valida e prepara o projeto para release
 
 set -e
@@ -19,7 +19,7 @@ success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-title "Express PHP v2.0.0 - Release Preparation"
+title "Express PHP v2.0.1 - Release Preparation"
 echo ""
 
 # Verificar se estamos na raiz do projeto

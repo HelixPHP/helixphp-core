@@ -268,92 +268,100 @@ class ProjectValidator
 
     private function validateDocumentation()
     {
-        echo "📚 Validando documentação...\n";
+        echo "📚 Validando documentação consolidada v2.0.1...\n";
 
-        $docs = [
-            'README.md',
-            'docs/DOCUMENTATION_INDEX.md',
-            'docs/README.md',
-            'docs/guides/QUICK_START_GUIDE.md',
-            'docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md',
-            'docs/guides/STANDARD_MIDDLEWARES.md',
-            'docs/guides/SECURITY_IMPLEMENTATION.md',
-            'docs/guides/PRECOMMIT_SETUP.md',
-            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
-            'docs/implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY_2025-06-27.md',
-            'scripts/README.md',
-            'benchmarks/README.md'
+        // Documentação principal consolidada
+        $mainDocs = [
+            'README.md' => 'README principal',
+            'FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Guia completo v2.0.1 (PRINCIPAL)',
+            'DOCUMENTATION_GUIDE.md' => 'Guia de navegação',
+            'CHANGELOG.md' => 'Changelog',
         ];
 
-        foreach ($docs as $doc) {
-            if (file_exists($doc)) {
-                $content = file_get_contents($doc);
-                if (strlen($content) > 100) {
-                    $this->passed[] = "Documentação {$doc} existe e tem conteúdo";
+        foreach ($mainDocs as $file => $description) {
+            if (file_exists($file)) {
+                $size = filesize($file);
+                if ($size > 500) {
+                    $this->passed[] = "{$description} existe e tem conteúdo adequado ({$size} bytes)";
                 } else {
-                    $this->warnings[] = "Documentação {$doc} existe mas parece incompleta";
+                    $this->warnings[] = "{$description} existe mas tem pouco conteúdo ({$size} bytes)";
                 }
             } else {
-                $this->errors[] = "Documentação {$doc} não encontrada";
+                $this->errors[] = "{$description} não encontrado: {$file}";
             }
         }
 
-        // Validações específicas da nova estrutura
-        if (file_exists('docs/guides/QUICK_START_GUIDE.md')) {
-            $quickStart = file_get_contents('docs/guides/QUICK_START_GUIDE.md');
-            if (strpos($quickStart, 'composer require') !== false) {
-                $this->passed[] = "Guia rápido inclui instruções de instalação";
+        // Verificar se arquivos redundantes foram removidos
+        $redundantFiles = [
+            'README_v2.0.1.md',
+            'PERFORMANCE_REPORT_FINAL.md',
+            'TECHNICAL_OPTIMIZATION_SUMMARY.md',
+            'CONSOLIDATION_SUMMARY_v2.0.1.md'
+        ];
+
+        foreach ($redundantFiles as $file) {
+            if (file_exists($file)) {
+                $this->warnings[] = "Arquivo redundante ainda existe: {$file} (deveria ter sido removido)";
             } else {
-                $this->warnings[] = "Guia rápido pode não ter instruções de instalação";
+                $this->passed[] = "Arquivo redundante removido corretamente: {$file}";
             }
         }
 
-        if (file_exists('docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md')) {
-            $middlewareGuide = file_get_contents('docs/guides/CUSTOM_MIDDLEWARE_GUIDE.md');
-            if (strpos($middlewareGuide, 'MiddlewareInterface') !== false) {
-                $this->passed[] = "Guia de middleware explica interface";
+        // Verificar estrutura de diretórios
+        $requiredDirs = [
+            'docs/' => 'Documentação técnica',
+            'docs/performance/' => 'Análises de performance',
+            'docs/implementation/' => 'Guias de implementação',
+            'docs/releases/' => 'Notas de release',
+            'benchmarks/' => 'Suite de benchmarks',
+            'benchmarks/reports/' => 'Relatórios de benchmark',
+            'examples/' => 'Exemplos práticos'
+        ];
+
+        foreach ($requiredDirs as $dir => $description) {
+            if (is_dir($dir)) {
+                $fileCount = count(glob($dir . '*'));
+                if ($fileCount > 0) {
+                    $this->passed[] = "{$description} existe e tem {$fileCount} arquivo(s)";
+                } else {
+                    $this->warnings[] = "{$description} existe mas está vazio";
+                }
             } else {
-                $this->warnings[] = "Guia de middleware pode não explicar interface";
+                $this->errors[] = "{$description} não encontrado: {$dir}";
             }
         }
 
-        if (file_exists('docs/guides/STANDARD_MIDDLEWARES.md')) {
-            $standardMiddlewares = file_get_contents('docs/guides/STANDARD_MIDDLEWARES.md');
-            if (strpos($standardMiddlewares, 'SecurityMiddleware') !== false &&
-                strpos($standardMiddlewares, 'CorsMiddleware') !== false) {
-                $this->passed[] = "Documentação de middlewares padrão está completa";
-            } else {
-                $this->warnings[] = "Documentação de middlewares padrão pode estar incompleta";
+        // Verificar conteúdo específico da v2.0.1
+        if (file_exists('FRAMEWORK_OVERVIEW_v2.0.1.md')) {
+            $content = file_get_contents('FRAMEWORK_OVERVIEW_v2.0.1.md');
+
+            $requiredContent = [
+                '52M ops/sec' => 'Métricas de CORS performance',
+                'ML-Powered Cache' => 'Otimizações de ML',
+                'Zero-Copy Operations' => 'Otimizações de memória',
+                '278x improvement' => 'Melhoria geral de performance'
+            ];
+
+            foreach ($requiredContent as $needle => $description) {
+                if (strpos($content, $needle) !== false) {
+                    $this->passed[] = "{$description} encontrada na documentação";
+                } else {
+                    $this->warnings[] = "{$description} não encontrada na documentação";
+                }
             }
         }
 
-        // Verificar se README principal foi atualizado
-        if (file_exists('README.md')) {
-            $readme = file_get_contents('README.md');
-            if (strpos($readme, 'QUICK_START_GUIDE.md') !== false) {
-                $this->passed[] = "README principal referencia guia rápido";
+        // Verificar versão no código
+        if (file_exists('src/Core/Application.php')) {
+            $content = file_get_contents('src/Core/Application.php');
+            if (strpos($content, "VERSION = '2.0.1'") !== false) {
+                $this->passed[] = "Versão 2.0.1 confirmada no código fonte";
             } else {
-                $this->warnings[] = "README principal pode não referenciar guia rápido";
-            }
-
-            if (strpos($readme, 'example_openapi_docs.php') !== false) {
-                $this->passed[] = "README principal referencia exemplo OpenAPI";
-            } else {
-                $this->warnings[] = "README principal pode não referenciar exemplo OpenAPI";
+                $this->errors[] = "Versão no código fonte não está em 2.0.1";
             }
         }
 
-        // Verificar estrutura de benchmarks
-        if (file_exists('benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md')) {
-            $perfSummary = file_get_contents('benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md');
-            if (strpos($perfSummary, '2025') !== false) {
-                $this->passed[] = "Relatório de performance tem dados recentes";
-            } else {
-                $this->warnings[] = "Relatório de performance pode estar desatualizado";
-            }
-        }
-
-        echo "✅ Documentação validada\n\n";
+        echo "✅ Documentação consolidada validada\n\n";
     }
 
     private function validateAuthentication()

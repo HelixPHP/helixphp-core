@@ -87,7 +87,11 @@ class Response extends Message implements ResponseInterface
         string $version = '1.1',
         ?string $reasonPhrase = null
     ) {
-        parent::__construct($body, $version, $headers);
+        if ($body === null) {
+            $body = new \Express\Http\Psr7\Stream(fopen('php://temp', 'r+'));
+        }
+
+        parent::__construct($body, $headers, $version);
 
         $this->statusCode = $statusCode;
         $this->reasonPhrase = $reasonPhrase ?? self::STATUS_PHRASES[$statusCode] ?? '';

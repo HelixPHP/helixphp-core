@@ -7,6 +7,7 @@ namespace Express\Http\Psr7\Factory;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Express\Http\Psr7\Response;
+use Express\Http\Psr7\Stream;
 
 /**
  * PSR-17 Response Factory implementation
