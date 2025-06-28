@@ -327,12 +327,10 @@ class Application
      */
     public function register(string|ServiceProvider $provider): self
     {
-        // Se já está registrado, retorna
-        if (is_string($provider)) {
-            foreach ($this->serviceProviders as $registered) {
-                if (get_class($registered) === $provider) {
-                    return $this;
-                }
+        $providerClass = is_string($provider) ? $provider : get_class($provider);
+        foreach ($this->serviceProviders as $registered) {
+            if (get_class($registered) === $providerClass) {
+                return $this;
             }
         }
 

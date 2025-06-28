@@ -74,9 +74,11 @@ class OpenApiExporter
             $hasCustomResponses = !empty($docInfo['responses']);
             $responses = $docInfo['responses'] ?? ['200' => ['description' => 'Successful response']];
 
-            // Merge global errors only if no custom responses are provided
-            if (!$hasCustomResponses) {
-                $responses = $responses + $globalErrors;
+            // Mesclar respostas globais sem sobrescrever as customizadas
+            foreach ($globalErrors as $code => $error) {
+                if (!isset($responses[$code])) {
+                    $responses[$code] = $error;
+                }
             }
 
             // Add tags to collection
