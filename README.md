@@ -8,9 +8,10 @@
 
 > 📖 **Complete v2.0.1 Guide**: See [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) for comprehensive documentation with performance metrics and advanced optimizations
 
-**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com otimizações integradas e sistema nativo de autenticação.
+**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com arquitetura moderna baseada em **Dependency Injection Container**.
 
 > ⚡ **Alta Performance**: +47M ops/sec em CORS, +20M ops/sec em Response, cache integrado e roteamento otimizado!
+> 🏗️ **Arquitetura v3.0**: DI Container, Service Providers e Event System integrados!
 
 ## 🚀 Início Rápido
 
@@ -26,10 +27,10 @@ composer require cafernandes/express-php
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 
-$app = new ApiExpress();
+$app = new Application();
 
 // Middlewares de segurança
 $app->use(new SecurityMiddleware());
@@ -51,6 +52,9 @@ $app->run();
 
 ## ✨ Principais Recursos
 
+- 🏗️ **Arquitetura Moderna**: Dependency Injection Container e Service Providers
+- 🎪 **Event System**: Sistema de eventos nativo para extensibilidade
+- 🔧 **Configuration Management**: Configuração robusta via arquivos e código
 - 🔐 **Autenticação Multi-método**: JWT, Basic Auth, Bearer Token, API Key
 - 🛡️ **Segurança Avançada**: CSRF, XSS, Rate Limiting, Headers de Segurança
 - 📡 **Streaming**: Server-Sent Events, Upload de arquivos grandes
