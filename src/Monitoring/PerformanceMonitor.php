@@ -113,7 +113,9 @@ class PerformanceMonitor
         if (class_exists(HeaderPool::class)) {
             $headerStats = HeaderPool::getDetailedMetrics();
             $status['header_pool'] = [
-                'status' => $headerStats['cache_hit_rate'] > self::$config['hit_rate_threshold'] ? 'optimal' : 'needs_attention',
+                'status' => $headerStats['cache_hit_rate'] > self::$config['hit_rate_threshold']
+                    ? 'optimal'
+                    : 'needs_attention',
                 'hit_rate' => $headerStats['cache_hit_rate'],
                 'total_items' => array_sum($headerStats['current_pool_sizes']),
                 'memory_saved' => $headerStats['memory_efficiency']['estimated_memory_saved']
@@ -124,7 +126,9 @@ class PerformanceMonitor
         if (class_exists(EnhancedStreamPool::class)) {
             $streamStats = EnhancedStreamPool::getStats();
             $status['stream_pool'] = [
-                'status' => $streamStats['hit_rate'] > self::$config['hit_rate_threshold'] ? 'optimal' : 'needs_attention',
+                'status' => $streamStats['hit_rate'] > self::$config['hit_rate_threshold']
+                    ? 'optimal'
+                    : 'needs_attention',
                 'hit_rate' => $streamStats['hit_rate'],
                 'total_items' => array_sum($streamStats['pool_sizes']),
                 'memory_usage' => $streamStats['memory_usage']
@@ -134,8 +138,10 @@ class PerformanceMonitor
         // Response Pool
         if (class_exists(ResponsePool::class)) {
             $responseStats = ResponsePool::getStats();
+            $isOptimal = isset($responseStats['hit_rate'])
+                && $responseStats['hit_rate'] > self::$config['hit_rate_threshold'];
             $status['response_pool'] = [
-                'status' => isset($responseStats['hit_rate']) && $responseStats['hit_rate'] > self::$config['hit_rate_threshold'] ? 'optimal' : 'active',
+                'status' => $isOptimal ? 'optimal' : 'active',
                 'pool_size' => $responseStats['pool_size'] ?? 0,
                 'active_objects' => $responseStats['active_objects'] ?? 0
             ];
@@ -255,7 +261,7 @@ class PerformanceMonitor
 
         // GC pressure alert
         $gcStats = gc_status();
-        if (isset($gcStats['runs']) && $gcStats['runs'] > self::$config['gc_threshold']) {
+        if ($gcStats['runs'] > self::$config['gc_threshold']) {
             $alerts[] = [
                 'type' => 'gc_pressure',
                 'severity' => 'info',
@@ -350,6 +356,16 @@ class PerformanceMonitor
     public static function recordRequest(): void
     {
         self::$metrics['request_count']++;
+    }
+
+    /**
+     * Get alert history for monitoring dashboard
+     *
+     * @return array<array>
+     */
+    public static function getAlertHistory(): array
+    {
+        return self::$alertHistory;
     }
 
     /**

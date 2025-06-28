@@ -69,8 +69,10 @@ class CorsMiddleware extends AbstractMiddleware
         return $response;
     }
 
-    private function addCorsHeadersOptimized(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
+    private function addCorsHeadersOptimized(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ): ResponseInterface {
         // Build headers array for efficient processing
         $headers = [
             'Access-Control-Allow-Origin' => $this->getAllowedOrigin($request)
@@ -105,25 +107,5 @@ class CorsMiddleware extends AbstractMiddleware
         }
 
         return $this->config['origin'];
-    }
-
-    /**
-     * Handle preflight requests (legacy method for compatibility)
-     *
-     * @deprecated Use handlePreflightOptimized for better performance
-     */
-    private function handlePreflight(ServerRequestInterface $request): ResponseInterface
-    {
-        return $this->handlePreflightOptimized($request);
-    }
-
-    /**
-     * Add CORS headers to response (legacy method for compatibility)
-     *
-     * @deprecated Use addCorsHeadersOptimized for better performance
-     */
-    private function addCorsHeaders(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        return $this->addCorsHeadersOptimized($request, $response);
     }
 }

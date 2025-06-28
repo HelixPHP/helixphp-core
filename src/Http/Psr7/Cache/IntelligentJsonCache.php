@@ -62,7 +62,7 @@ class IntelligentJsonCache
      */
     private const MAX_TEMPLATE_CACHE = 100;
     private const MAX_JSON_CACHE = 500;
-    private const MAX_FINGERPRINT_CACHE = 200;
+    // private const MAX_FINGERPRINT_CACHE = 200; // Reserved for future use
 
     /**
      * Get cached JSON with intelligent structure analysis
@@ -119,7 +119,7 @@ class IntelligentJsonCache
     /**
      * Get recursive structure fingerprint
      */
-    private static function getStructureFingerprint($data, int $depth = 0): string
+    private static function getStructureFingerprint(mixed $data, int $depth = 0): string
     {
         if ($depth > 10) { // Prevent infinite recursion
             return 'deep';
@@ -227,8 +227,12 @@ class IntelligentJsonCache
     /**
      * Replace values with placeholders recursively
      */
-    private static function replaceValuesWithPlaceholders($data, string &$template, array &$patterns, string $path): void
-    {
+    private static function replaceValuesWithPlaceholders(
+        mixed $data,
+        string &$template,
+        array &$patterns,
+        string $path
+    ): void {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $currentPath = $path ? $path . '.' . $key : (string)$key;
@@ -237,8 +241,10 @@ class IntelligentJsonCache
                     $placeholder = '{{' . $currentPath . '}}';
                     $jsonValue = json_encode($value);
 
-                    $template = str_replace($jsonValue, $placeholder, $template);
-                    $patterns[$currentPath] = $placeholder;
+                    if ($jsonValue !== false) {
+                        $template = str_replace($jsonValue, $placeholder, $template);
+                        $patterns[$currentPath] = $placeholder;
+                    }
                 } elseif (is_array($value)) {
                     self::replaceValuesWithPlaceholders($value, $template, $patterns, $currentPath);
                 }
@@ -262,7 +268,7 @@ class IntelligentJsonCache
     /**
      * Populate placeholders recursively
      */
-    private static function populatePlaceholders($data, string &$json, string $path): void
+    private static function populatePlaceholders(mixed $data, string &$json, string $path): void
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
@@ -272,7 +278,9 @@ class IntelligentJsonCache
                     $placeholder = '{{' . $currentPath . '}}';
                     $jsonValue = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-                    $json = str_replace($placeholder, $jsonValue, $json);
+                    if ($jsonValue !== false) {
+                        $json = str_replace($placeholder, $jsonValue, $json);
+                    }
                 } elseif (is_array($value)) {
                     self::populatePlaceholders($value, $json, $currentPath);
                 }

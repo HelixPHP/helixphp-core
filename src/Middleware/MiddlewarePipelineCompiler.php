@@ -35,7 +35,7 @@ class MiddlewarePipelineCompiler
     /**
      * Common middleware combinations with variants
      *
-     * @var array<string, array>
+     * @var array<string, array<string>>
      */
     private const COMMON_PATTERNS = [
         'api_auth' => ['cors', 'auth', 'json'],
@@ -165,7 +165,7 @@ class MiddlewarePipelineCompiler
             'custom' => 20
         ];
 
-        usort($middlewares, function($a, $b) use ($priorityMap) {
+        usort($middlewares, function ($a, $b) use ($priorityMap) {
             $priorityA = self::getMiddlewarePriority($a, $priorityMap);
             $priorityB = self::getMiddlewarePriority($b, $priorityMap);
 
@@ -181,6 +181,8 @@ class MiddlewarePipelineCompiler
 
     /**
      * Get middleware priority for reordering
+     *
+     * @param mixed $middleware
      */
     private static function getMiddlewarePriority($middleware, array $priorityMap): int
     {
@@ -190,20 +192,38 @@ class MiddlewarePipelineCompiler
 
     /**
      * Detect middleware type for optimization
+     *
+     * @param mixed $middleware
      */
     private static function detectMiddlewareType($middleware): string
     {
         if (is_string($middleware)) {
             $lower = strtolower($middleware);
 
-            if (strpos($lower, 'cors') !== false) return 'cors';
-            if (strpos($lower, 'auth') !== false) return 'auth';
-            if (strpos($lower, 'security') !== false) return 'security';
-            if (strpos($lower, 'rate') !== false) return 'rate_limit';
-            if (strpos($lower, 'cache') !== false) return 'cache';
-            if (strpos($lower, 'json') !== false) return 'json';
-            if (strpos($lower, 'valid') !== false) return 'validation';
-            if (strpos($lower, 'log') !== false) return 'logging';
+            if (strpos($lower, 'cors') !== false) {
+                return 'cors';
+            }
+            if (strpos($lower, 'auth') !== false) {
+                return 'auth';
+            }
+            if (strpos($lower, 'security') !== false) {
+                return 'security';
+            }
+            if (strpos($lower, 'rate') !== false) {
+                return 'rate_limit';
+            }
+            if (strpos($lower, 'cache') !== false) {
+                return 'cache';
+            }
+            if (strpos($lower, 'json') !== false) {
+                return 'json';
+            }
+            if (strpos($lower, 'valid') !== false) {
+                return 'validation';
+            }
+            if (strpos($lower, 'log') !== false) {
+                return 'logging';
+            }
         }
 
         return 'custom';
@@ -353,10 +373,10 @@ class MiddlewarePipelineCompiler
      */
     private static function compileSimplePipeline(array $middlewares): callable
     {
-        return function(Request $request, Response $response, callable $next) use ($middlewares) {
+        return function (Request $request, Response $response, callable $next) use ($middlewares) {
             $index = 0;
 
-            $runner = function($req, $res) use (&$runner, &$index, $middlewares, $next) {
+            $runner = function ($req, $res) use (&$runner, &$index, $middlewares, $next) {
                 if ($index >= count($middlewares)) {
                     return $next($req, $res);
                 }
@@ -377,7 +397,7 @@ class MiddlewarePipelineCompiler
         // Pre-calculate middleware execution order
         $executionPlan = self::createExecutionPlan($middlewares);
 
-        return function(Request $request, Response $response, callable $next) use ($executionPlan, $pattern) {
+        return function (Request $request, Response $response, callable $next) use ($executionPlan, $pattern) {
             // Fast path for common patterns
             if ($pattern && method_exists(self::class, 'execute' . ucfirst($pattern) . 'Pattern')) {
                 $method = 'execute' . ucfirst($pattern) . 'Pattern';
@@ -412,11 +432,15 @@ class MiddlewarePipelineCompiler
     /**
      * Execute optimized middleware plan
      */
-    private static function executeOptimizedPlan(Request $request, Response $response, callable $next, array $plan): mixed
-    {
+    private static function executeOptimizedPlan(
+        Request $request,
+        Response $response,
+        callable $next,
+        array $plan
+    ): mixed {
         $index = 0;
 
-        $runner = function($req, $res) use (&$runner, &$index, $plan, $next) {
+        $runner = function ($req, $res) use (&$runner, &$index, $plan, $next) {
             if ($index >= count($plan)) {
                 return $next($req, $res);
             }
@@ -437,6 +461,8 @@ class MiddlewarePipelineCompiler
 
     /**
      * Check if middleware can be cached
+     *
+     * @param mixed $middleware
      */
     private static function canCacheMiddleware($middleware): bool
     {
@@ -448,6 +474,8 @@ class MiddlewarePipelineCompiler
 
     /**
      * Check if middleware is terminal (doesn't call next)
+     *
+     * @param mixed $middleware
      */
     private static function isTerminalMiddleware($middleware): bool
     {
@@ -486,6 +514,8 @@ class MiddlewarePipelineCompiler
 
     /**
      * Get hash for middleware (for deduplication)
+     *
+     * @param mixed $middleware
      */
     private static function getMiddlewareHash($middleware): string
     {
@@ -509,13 +539,14 @@ class MiddlewarePipelineCompiler
     {
         foreach (self::COMMON_PATTERNS as $patternName => $middlewareTypes) {
             // Create dummy middlewares for pattern
-            $middlewares = array_map(function($type) {
-                return function($req, $res, $next) use ($type) {
+            $middlewares = array_map(function ($type) {
+                return function ($req, $res, $next) {
                     // Dummy middleware
                     return $next($req, $res);
                 };
             }, $middlewareTypes);
 
+            /** @var array<callable> $template */
             $template = self::compileNewPipeline($middlewares, $patternName);
             self::$pipelineTemplates[$patternName] = $template;
         }
@@ -538,11 +569,14 @@ class MiddlewarePipelineCompiler
         $totalRequests = self::$stats['cache_hits'] + self::$stats['cache_misses'];
         $hitRate = $totalRequests > 0 ? (self::$stats['cache_hits'] / $totalRequests) * 100 : 0;
 
-        // Calculate pattern efficiency
+        // Calculate pattern efficiency with defensive check
         $totalPatterns = count(self::COMMON_PATTERNS) + count(self::$dynamicPatterns);
-        $activePatterns = count(array_filter(self::$patternUsage, function($usage) {
-            return $usage['count'] > 0;
+        $activePatterns = count(array_filter(self::$patternUsage, function ($usage) {
+            return isset($usage['count']) && $usage['count'] > 0;
         }));
+
+        // Use ternary to avoid division by zero (though totalPatterns is always > 0)
+        $patternEfficiency = round((float)($activePatterns / $totalPatterns) * 100, 2);
 
         return [
             'compiled_pipelines' => count(self::$compiledPipelines),
@@ -554,7 +588,7 @@ class MiddlewarePipelineCompiler
             'intelligent_matches' => self::$stats['intelligent_matches'],
             'gc_cycles' => self::$stats['gc_cycles'],
             'memory_reclaimed' => self::formatBytes(self::$stats['memory_reclaimed']),
-            'pattern_efficiency' => $totalPatterns > 0 ? round(($activePatterns / $totalPatterns) * 100, 2) : 0,
+            'pattern_efficiency' => $patternEfficiency,
             'dynamic_patterns' => count(self::$dynamicPatterns),
             'memory_usage' => self::calculateMemoryUsage(),
             'detailed_stats' => self::$stats,

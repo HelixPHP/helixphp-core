@@ -46,11 +46,12 @@ class AuthMiddleware extends AbstractMiddleware
 
     protected function getResponse(ServerRequestInterface $request): ResponseInterface
     {
+        $jsonResponse = json_encode(['error' => 'Authentication required']);
         return new \Express\Http\Psr7\Response(
             401,
             ['Content-Type' => 'application/json'],
             \Express\Http\Psr7\Stream::createFromString(
-                json_encode(['error' => 'Authentication required'])
+                $jsonResponse !== false ? $jsonResponse : '{"error": "Authentication required"}'
             )
         );
     }
@@ -100,8 +101,12 @@ class AuthMiddleware extends AbstractMiddleware
 
             $payload = json_decode(base64_decode($parts[1]), true);
 
+            if (!is_array($payload)) {
+                return false;
+            }
+
             // Check expiration
-            if (isset($payload['exp']) && $payload['exp'] < time()) {
+            if (isset($payload['exp']) && is_int($payload['exp']) && $payload['exp'] < time()) {
                 return false;
             }
 
@@ -119,7 +124,8 @@ class AuthMiddleware extends AbstractMiddleware
     {
         try {
             $parts = explode('.', $token);
-            return json_decode(base64_decode($parts[1]), true);
+            $decoded = json_decode(base64_decode($parts[1]), true);
+            return is_array($decoded) ? $decoded : null;
         } catch (\Exception $e) {
             return null;
         }

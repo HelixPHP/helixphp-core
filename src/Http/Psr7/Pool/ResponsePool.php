@@ -21,7 +21,7 @@ class ResponsePool
     /**
      * Pool of available response objects
      *
-     * @var Response[]
+     * @var array<string, array<Response>>
      */
     private static array $pool = [];
 
@@ -54,11 +54,12 @@ class ResponsePool
     {
         $poolKey = "status_{$status}";
 
-        if (!empty(self::$pool[$poolKey])) {
+        if (isset(self::$pool[$poolKey]) && !empty(self::$pool[$poolKey])) {
             $response = array_pop(self::$pool[$poolKey]);
-            $response->reset($status);
-            // Don't track every object, just track if needed
-            return $response;
+            if ($response instanceof Response) {
+                $response->reset($status);
+                return $response;
+            }
         }
 
         // Create new response with simple stream
@@ -127,7 +128,9 @@ class ResponsePool
             $stream->truncate(0);
             self::$streamPool[] = $stream;
         }
-    }    /**
+    }
+
+    /**
      * Get optimized JSON response
      */
     public static function getJsonResponse(array $data, int $status = 200): Response
@@ -234,7 +237,6 @@ class ResponsePool
         self::$pool = [];
         self::$streamPool = [];
         self::$activeObjects = [];
-        HeaderPool::clearAll();
     }
 
     /**

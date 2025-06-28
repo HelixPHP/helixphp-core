@@ -165,7 +165,7 @@ class PoolManager
             self::garbageCollect();
 
             // If still high, clear some caches
-            if (!self::checkMemoryUsage()) {
+            if (self::checkMemoryUsage() === false) {
                 OperationsCache::clearAll();
                 HeaderPool::clearAll();
             }
@@ -209,11 +209,14 @@ class PoolManager
      */
     public static function getEfficiencyMetrics(): array
     {
-        $totalHits = self::$stats['pool_hits'] + self::$stats['cache_hits'];
-        $totalMisses = self::$stats['pool_misses'] + self::$stats['cache_misses'];
+        $totalHits = is_numeric(self::$stats['pool_hits']) ? self::$stats['pool_hits'] : 0;
+        $totalHits += is_numeric(self::$stats['cache_hits']) ? self::$stats['cache_hits'] : 0;
+
+        $totalMisses = is_numeric(self::$stats['pool_misses']) ? self::$stats['pool_misses'] : 0;
+        $totalMisses += is_numeric(self::$stats['cache_misses']) ? self::$stats['cache_misses'] : 0;
         $totalRequests = $totalHits + $totalMisses;
 
-        $hitRatio = $totalRequests > 0 ? ($totalHits / $totalRequests) * 100 : 0;
+        $hitRatio = $totalRequests > 0 ? (float)($totalHits / $totalRequests) * 100 : 0;
 
         return [
             'hit_ratio' => round($hitRatio, 2),

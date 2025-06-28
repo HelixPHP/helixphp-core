@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Express\Http\Psr7\Pool;
 
+use Express\Http\Psr7\Cache\OperationsCache;
+
 /**
  * Dynamic Pool Manager for Memory-Adaptive Pool Sizing
  *
@@ -144,7 +146,7 @@ class DynamicPoolManager
         if ($memoryLimit > 0 && ($currentMemory / $memoryLimit) > 0.8) {
             // Force cleanup
             HeaderPool::clearAll();
-            ResponsePool::cleanup();
+            ResponsePool::clearAll();
             OperationsCache::clearAll();
 
             // Force garbage collection

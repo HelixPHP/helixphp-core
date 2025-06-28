@@ -305,15 +305,16 @@ class AdaptiveLearningCache
     private static function calculateAdaptiveTTL(string $key, array $context): int
     {
         $baseTTL = self::$adaptiveConfig['default_ttl'];
+        $safeTTL = is_int($baseTTL) ? $baseTTL : 3600;
 
         if (!isset(self::$learningModels[$key])) {
-            return $baseTTL;
+            return $safeTTL;
         }
 
         $model = self::$learningModels[$key];
 
         if (empty($model['history'])) {
-            return $baseTTL;
+            return $safeTTL;
         }
 
         // Calculate TTL based on access patterns
@@ -330,7 +331,7 @@ class AdaptiveLearningCache
             return $adaptiveTTL;
         }
 
-        return $baseTTL;
+        return $safeTTL;
     }
 
     /**
@@ -490,11 +491,15 @@ class AdaptiveLearningCache
                 return self::$globalStats['total_requests'] % 1000;
             },
             'cache_pressure' => function ($key, $context) {
-                return count(self::$cache) / self::$adaptiveConfig['max_cache_size'];
+                $maxSize = self::$adaptiveConfig['max_cache_size'];
+                return is_numeric($maxSize) && $maxSize > 0 ?
+                    (float)(count(self::$cache) / $maxSize) : 0.0;
             },
             'global_hit_rate' => function ($key, $context) {
-                $total = self::$globalStats['cache_hits'] + self::$globalStats['cache_misses'];
-                return $total > 0 ? self::$globalStats['cache_hits'] / $total : 0.5;
+                $hits = is_numeric(self::$globalStats['cache_hits']) ? self::$globalStats['cache_hits'] : 0;
+                $misses = is_numeric(self::$globalStats['cache_misses']) ? self::$globalStats['cache_misses'] : 0;
+                $total = $hits + $misses;
+                return $total > 0 ? $hits / $total : 0.5;
             }
         ];
     }
@@ -596,7 +601,7 @@ class AdaptiveLearningCache
 
         $intervals = [];
         for ($i = 1; $i < count($history); $i++) {
-            $intervals[] = $history[$i]['timestamp'] - $history[$i-1]['timestamp'];
+            $intervals[] = $history[$i]['timestamp'] - $history[$i - 1]['timestamp'];
         }
 
         return array_sum($intervals) / count($intervals);

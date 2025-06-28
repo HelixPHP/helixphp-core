@@ -307,11 +307,12 @@ class Uri implements UriInterface
      */
     private function filterPath(string $path): string
     {
-        return preg_replace_callback(
+        $result = preg_replace_callback(
             '/(?:[^' . $this->getUnreservedChars() . ':@!$&\'()*+,;=%\/]++|%(?![A-Fa-f0-9]{2}))/',
             [$this, 'rawurlencodeMatchZero'],
             $path
         );
+        return $result ?? '';
     }
 
     /**
@@ -319,11 +320,12 @@ class Uri implements UriInterface
      */
     private function filterQueryAndFragment(string $str): string
     {
-        return preg_replace_callback(
+        $result = preg_replace_callback(
             '/(?:[^' . $this->getUnreservedChars() . ':@!$&\'()*+,;=%\/?]++|%(?![A-Fa-f0-9]{2}))/',
             [$this, 'rawurlencodeMatchZero'],
             $str
         );
+        return $result ?? '';
     }
 
     /**

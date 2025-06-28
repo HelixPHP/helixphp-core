@@ -210,21 +210,27 @@ class RouteMemoryManager
         }
 
         return $freedBytes;
-    }    /**
+    }
+
+    /**
      * Compress route patterns to save memory
      */
     private static function compressRoutePatterns(): int
     {
         // Placeholder implementation - would use RouteCache::getAllPatterns() if available
         return 0;
-    }    /**
+    }
+
+    /**
      * Deduplicate identical routes
      */
     private static function deduplicateRoutes(): int
     {
         // Placeholder implementation - would use RouteCache::getAllRoutes() if available
         return 0;
-    }    /**
+    }
+
+    /**
      * Optimize parameter mappings
      */
     private static function optimizeParameterMappings(): int

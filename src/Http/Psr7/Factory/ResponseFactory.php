@@ -53,7 +53,11 @@ class ResponseFactory implements ResponseFactoryInterface
      */
     public function createResponseLegacy(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
-        $stream = new Stream(fopen('php://temp', 'r+'));
+        $resource = fopen('php://temp', 'r+');
+        if ($resource === false) {
+            throw new \RuntimeException('Unable to create temporary stream');
+        }
+        $stream = new Stream($resource);
         return new Response($code, [], $stream, '1.1', $reasonPhrase);
     }
 

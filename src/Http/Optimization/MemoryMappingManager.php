@@ -112,15 +112,17 @@ class MemoryMappingManager
 
     /**
      * Stream large file efficiently using memory mapping
+     * @param resource $output
      */
-    public static function streamFile(string $filePath, $output, int $chunkSize = null): int
+    public static function streamFile(string $filePath, $output, ?int $chunkSize = null): int
     {
         $chunkSize = $chunkSize ?? self::$config['chunk_size'];
         $mapping = self::createMapping($filePath);
 
         if (!$mapping) {
             // Fallback to regular file streaming
-            return self::fallbackStreamFile($filePath, $output, $chunkSize);
+            $safeChunkSize = is_int($chunkSize) ? max(1, $chunkSize) : 8192;
+            return self::fallbackStreamFile($filePath, $output, $safeChunkSize);
         }
 
         $totalBytes = 0;
@@ -131,17 +133,17 @@ class MemoryMappingManager
             $currentChunkSize = min($chunkSize, $fileSize - $position);
             $chunk = $mapping->read($position, $currentChunkSize);
 
-            if ($chunk === false || $chunk === '') {
+            if ($chunk !== false && $chunk !== '') {
+                $bytesWritten = fwrite($output, $chunk);
+                $totalBytes += $bytesWritten;
+                $position += strlen($chunk);
+
+                // Prefetch next chunk if enabled
+                if (self::$config['enable_prefetch'] && ($position + $chunkSize) < $fileSize) {
+                    $mapping->prefetch($position, min($chunkSize, $fileSize - $position));
+                }
+            } else {
                 break;
-            }
-
-            $bytesWritten = fwrite($output, $chunk);
-            $totalBytes += $bytesWritten;
-            $position += strlen($chunk);
-
-            // Prefetch next chunk if enabled
-            if (self::$config['enable_prefetch'] && ($position + $chunkSize) < $fileSize) {
-                $mapping->prefetch($position, min($chunkSize, $fileSize - $position));
             }
         }
 
@@ -151,6 +153,8 @@ class MemoryMappingManager
 
     /**
      * Fallback streaming for files that can't be memory mapped
+     *
+     * @param resource $output Output stream
      */
     private static function fallbackStreamFile(string $filePath, $output, int $chunkSize): int
     {
@@ -162,13 +166,13 @@ class MemoryMappingManager
         }
 
         while (!feof($handle)) {
-            $chunk = fread($handle, $chunkSize);
-            if ($chunk === false || $chunk === '') {
+            $chunk = fread($handle, max(1, $chunkSize));
+            if ($chunk !== false && $chunk !== '') {
+                $bytesWritten = fwrite($output, $chunk);
+                $totalBytes += $bytesWritten;
+            } else {
                 break;
             }
-
-            $bytesWritten = fwrite($output, $chunk);
-            $totalBytes += $bytesWritten;
         }
 
         fclose($handle);
@@ -190,10 +194,10 @@ class MemoryMappingManager
             }
 
             fseek($handle, $offset);
-            $data = fread($handle, $length);
+            $data = fread($handle, max(1, $length));
             fclose($handle);
 
-            return $data !== false ? $data : null;
+            return ($data !== false && $data !== '') ? $data : null;
         }
 
         return $mapping->read(0, $length);
@@ -205,11 +209,12 @@ class MemoryMappingManager
     public static function searchInFile(string $filePath, string $needle, int $chunkSize = null): array
     {
         $chunkSize = $chunkSize ?? self::$config['chunk_size'];
+        $safeChunkSize = is_int($chunkSize) ? max(1, $chunkSize) : 8192;
         $mapping = self::createMapping($filePath);
         $matches = [];
 
         if (!$mapping) {
-            return self::fallbackSearchInFile($filePath, $needle, $chunkSize);
+            return self::fallbackSearchInFile($filePath, $needle, $safeChunkSize);
         }
 
         $fileSize = $mapping->getSize();
@@ -220,15 +225,15 @@ class MemoryMappingManager
             $currentChunkSize = min($chunkSize, $fileSize - $position);
             $chunk = $mapping->read($position, $currentChunkSize);
 
-            if ($chunk === false) {
+            if ($chunk !== false && $chunk !== '') {
+                // Find all occurrences in this chunk
+                $offset = 0;
+                while (($pos = strpos($chunk, $needle, $offset)) !== false) {
+                    $matches[] = $position + $pos;
+                    $offset = $pos + 1;
+                }
+            } else {
                 break;
-            }
-
-            // Find all occurrences in this chunk
-            $offset = 0;
-            while (($pos = strpos($chunk, $needle, $offset)) !== false) {
-                $matches[] = $position + $pos;
-                $offset = $pos + 1;
             }
 
             $position += $currentChunkSize - $overlap;
@@ -254,22 +259,22 @@ class MemoryMappingManager
         $buffer = '';
 
         while (!feof($handle)) {
-            $chunk = fread($handle, $chunkSize);
-            if ($chunk === false) {
+            $chunk = fread($handle, max(1, $chunkSize));
+            if ($chunk !== false && $chunk !== '') {
+                $searchText = $buffer . $chunk;
+                $offset = 0;
+
+                while (($pos = strpos($searchText, $needle, $offset)) !== false) {
+                    $matches[] = $position - strlen($buffer) + $pos;
+                    $offset = $pos + 1;
+                }
+
+                // Keep overlap for next iteration
+                $buffer = substr($searchText, -$overlap);
+                $position += strlen($chunk);
+            } else {
                 break;
             }
-
-            $searchText = $buffer . $chunk;
-            $offset = 0;
-
-            while (($pos = strpos($searchText, $needle, $offset)) !== false) {
-                $matches[] = $position - strlen($buffer) + $pos;
-                $offset = $pos + 1;
-            }
-
-            // Keep overlap for next iteration
-            $buffer = substr($searchText, -$overlap);
-            $position += strlen($chunk);
         }
 
         fclose($handle);
@@ -297,22 +302,22 @@ class MemoryMappingManager
             $chunkSize = min($bufferSize, $fileSize - $position);
             $chunk = $mapping->read($position, $chunkSize);
 
-            if ($chunk === false) {
+            if ($chunk !== false && $chunk !== '') {
+                $buffer .= $chunk;
+                $lines = explode("\n", $buffer);
+
+                // Process all complete lines
+                for ($i = 0; $i < count($lines) - 1; $i++) {
+                    $processor($lines[$i], $linesProcessed);
+                    $linesProcessed++;
+                }
+
+                // Keep the last incomplete line in buffer
+                $buffer = $lines[count($lines) - 1];
+                $position += $chunkSize;
+            } else {
                 break;
             }
-
-            $buffer .= $chunk;
-            $lines = explode("\n", $buffer);
-
-            // Process all complete lines
-            for ($i = 0; $i < count($lines) - 1; $i++) {
-                $processor($lines[$i], $linesProcessed);
-                $linesProcessed++;
-            }
-
-            // Keep the last incomplete line in buffer
-            $buffer = $lines[count($lines) - 1];
-            $position += $chunkSize;
         }
 
         // Process the last line if it exists
@@ -363,7 +368,7 @@ class MemoryMappingManager
 
         // If still too many mappings, remove oldest
         if (count(self::$mappings) >= self::$config['max_mapped_files']) {
-            uasort(self::$mappings, function($a, $b) {
+            uasort(self::$mappings, function ($a, $b) {
                 return $a['last_accessed'] <=> $b['last_accessed'];
             });
 
@@ -444,114 +449,5 @@ class MemoryMappingManager
             'memory_saved' => 0,
             'cache_hits' => 0
         ];
-    }
-}
-
-/**
- * Memory Mapping Implementation
- */
-class MemoryMapping
-{
-    private string $filePath;
-    private int $offset;
-    private int $length;
-    private int $fileSize;
-    private $handle = null;
-    private array $cache = [];
-    private int $cacheSize = 0;
-    private const MAX_CACHE_SIZE = 1024 * 1024; // 1MB cache per mapping
-
-    public function __construct(string $filePath, int $offset = 0, int $length = null)
-    {
-        $this->filePath = $filePath;
-        $this->offset = $offset;
-        $this->fileSize = filesize($filePath);
-        $this->length = $length ?? ($this->fileSize - $offset);
-    }
-
-    /**
-     * Read data from the mapped region
-     */
-    public function read(int $position, int $length): string
-    {
-        $cacheKey = $this->getCacheKey($position, $length);
-
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
-        }
-
-        if (!$this->handle) {
-            $this->handle = fopen($this->filePath, 'rb');
-            if (!$this->handle) {
-                return '';
-            }
-        }
-
-        fseek($this->handle, $this->offset + $position);
-        $data = fread($this->handle, $length);
-
-        if ($data !== false) {
-            $this->addToCache($cacheKey, $data);
-        }
-
-        return $data !== false ? $data : '';
-    }
-
-    /**
-     * Prefetch data for better performance
-     */
-    public function prefetch(int $position, int $length): void
-    {
-        // Simple prefetch implementation
-        $this->read($position, $length);
-    }
-
-    /**
-     * Get the size of the mapped region
-     */
-    public function getSize(): int
-    {
-        return $this->length;
-    }
-
-    /**
-     * Get cache key for position and length
-     */
-    private function getCacheKey(int $position, int $length): string
-    {
-        return "{$position}:{$length}";
-    }
-
-    /**
-     * Add data to cache
-     */
-    private function addToCache(string $key, string $data): void
-    {
-        $dataSize = strlen($data);
-
-        // Don't cache very large chunks
-        if ($dataSize > self::MAX_CACHE_SIZE / 4) {
-            return;
-        }
-
-        // Make room if cache is full
-        while ($this->cacheSize + $dataSize > self::MAX_CACHE_SIZE && !empty($this->cache)) {
-            $oldKey = array_key_first($this->cache);
-            $this->cacheSize -= strlen($this->cache[$oldKey]);
-            unset($this->cache[$oldKey]);
-        }
-
-        $this->cache[$key] = $data;
-        $this->cacheSize += $dataSize;
-    }
-
-    /**
-     * Close file handle
-     */
-    public function __destruct()
-    {
-        if ($this->handle) {
-            fclose($this->handle);
-        }
     }
 }

@@ -88,7 +88,11 @@ class Response extends Message implements ResponseInterface
         ?string $reasonPhrase = null
     ) {
         if ($body === null) {
-            $body = new \Express\Http\Psr7\Stream(fopen('php://temp', 'r+'));
+            $resource = fopen('php://temp', 'r+');
+            if ($resource === false) {
+                throw new \RuntimeException('Unable to create temporary stream');
+            }
+            $body = new \Express\Http\Psr7\Stream($resource);
         }
 
         parent::__construct($body, $headers, $version);
@@ -177,8 +181,10 @@ class Response extends Message implements ResponseInterface
 
         // Don't pool responses with streaming or special headers
         $contentType = $this->getHeaderLine('content-type');
-        if (strpos($contentType, 'text/event-stream') !== false ||
-            strpos($contentType, 'multipart/') !== false) {
+        if (
+            strpos($contentType, 'text/event-stream') !== false ||
+            strpos($contentType, 'multipart/') !== false
+        ) {
             return false;
         }
 

@@ -136,7 +136,9 @@ class OperationsCache
         }
 
         $params = self::extractParameters($pattern, $path);
-        self::$parameterCache[$key] = $params;
+        if (is_array($params)) {
+            self::$parameterCache[$key] = $params;
+        }
 
         return $params;
     }
@@ -255,16 +257,22 @@ class OperationsCache
     /**
      * Compile route pattern to regex
      */
-    private static function compileRoutePattern(string $pattern): string
+    private static function compileRoutePattern(string $routePattern): string
     {
         // Escape special regex characters except our markers
-        $pattern = preg_quote($pattern, '/');
+        $pattern = preg_quote($routePattern, '/');
 
         // Convert {param} to named capture groups
         $pattern = preg_replace('/\\\{([^}]+)\\\}/', '(?P<$1>[^/]+)', $pattern);
+        if ($pattern === null) {
+            return '/^' . preg_quote($routePattern, '/') . '$/';
+        }
 
         // Convert {*param} to greedy capture groups
         $pattern = preg_replace('/\\\{\\\*([^}]+)\\\}/', '(?P<$1>.*)', $pattern);
+        if ($pattern === null) {
+            return '/^' . preg_quote($routePattern, '/') . '$/';
+        }
 
         return '/^' . $pattern . '$/';
     }

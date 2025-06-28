@@ -52,7 +52,7 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     public function __construct(
         string $method,
-        $uri,
+        UriInterface|string $uri,
         ?StreamInterface $body = null,
         array $headers = [],
         string $version = '1.1',
@@ -133,8 +133,11 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve any parameters provided in the request body.
      */
-    public function getParsedBody()
+    public function getParsedBody(): array|object|null
     {
+        if (!is_array($this->parsedBody) && !is_object($this->parsedBody) && $this->parsedBody !== null) {
+            return null;
+        }
         return $this->parsedBody;
     }
 

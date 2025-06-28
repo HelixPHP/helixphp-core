@@ -108,9 +108,12 @@ class PredictiveCacheWarmer
         // Extract meaningful patterns from keys
         // e.g., "user:123:profile" -> "user:*:profile"
         $pattern = preg_replace('/\d+/', '*', $key);
-        $pattern = preg_replace('/[a-f0-9]{8,}/', '*hash*', $pattern);
+        if ($pattern === null) {
+            return $key;
+        }
 
-        return $pattern;
+        $pattern = preg_replace('/[a-f0-9]{8,}/', '*hash*', $pattern);
+        return $pattern ?? $key;
     }
 
     /**
@@ -118,8 +121,10 @@ class PredictiveCacheWarmer
      */
     private static function trainModel(string $pattern): void
     {
-        if (!isset(self::$accessPatterns[$pattern]) ||
-            count(self::$accessPatterns[$pattern]) < self::$config['min_training_samples']) {
+        if (
+            !isset(self::$accessPatterns[$pattern]) ||
+            count(self::$accessPatterns[$pattern]) < self::$config['min_training_samples']
+        ) {
             return;
         }
 
@@ -262,7 +267,7 @@ class PredictiveCacheWarmer
         if (!empty($features['temporal'])) {
             $hours = array_column($features['temporal'], 'hour');
             $mean = array_sum($hours) / count($hours);
-            $variance = array_sum(array_map(function($h) use ($mean) {
+            $variance = array_sum(array_map(function ($h) use ($mean) {
                 return pow($h - $mean, 2);
             }, $hours)) / count($hours);
 
@@ -383,7 +388,8 @@ class PredictiveCacheWarmer
             $predictions = self::predictNextAccesses($pattern);
 
             $batchSize = min(self::$config['warming_batch_size'], count($predictions));
-            $topPredictions = array_slice($predictions, 0, $batchSize);
+            $safeBatchSize = is_int($batchSize) ? $batchSize : 10;
+            $topPredictions = array_slice($predictions, 0, $safeBatchSize);
 
             foreach ($topPredictions as $prediction) {
                 if ($prediction['confidence'] >= self::$config['accuracy_threshold']) {

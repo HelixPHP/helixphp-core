@@ -30,7 +30,7 @@ class UploadedFile implements UploadedFileInterface
      * Constructor
      */
     public function __construct(
-        $streamOrFile,
+        StreamInterface|string $streamOrFile,
         int $size,
         int $error,
         ?string $clientFilename = null,

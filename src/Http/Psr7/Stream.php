@@ -211,7 +211,9 @@ class Stream implements StreamInterface
         }
 
         if (fseek($this->stream, $offset, $whence) === -1) {
-            throw new \RuntimeException('Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true));
+            throw new \RuntimeException(
+                'Unable to seek to stream position ' . $offset . ' with whence ' . var_export($whence, true)
+            );
         }
     }
 
@@ -410,7 +412,7 @@ class Stream implements StreamInterface
             return false;
         }
 
-        $result = ftruncate($this->stream, $length);
+        $result = ftruncate($this->stream, max(0, $length));
         if ($result) {
             $this->size = null;
             $this->sizeCalculated = false;
