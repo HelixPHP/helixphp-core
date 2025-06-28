@@ -48,6 +48,16 @@ class Stream implements StreamInterface
     private ?int $size = null;
 
     /**
+     * @var bool
+     */
+    private bool $sizeCalculated = false;
+
+    /**
+     * @var bool
+     */
+    private bool $reusable = true;
+
+    /**
      * Constructor
      *
      * @param resource|string $body
@@ -79,6 +89,10 @@ class Stream implements StreamInterface
      */
     public function __toString(): string
     {
+        if (!$this->isReadable()) {
+            return '';
+        }
+
         try {
             if ($this->isSeekable()) {
                 $this->seek(0);
@@ -128,7 +142,7 @@ class Stream implements StreamInterface
      */
     public function getSize(): ?int
     {
-        if ($this->size !== null) {
+        if ($this->sizeCalculated && $this->size !== null) {
             return $this->size;
         }
 
@@ -139,6 +153,7 @@ class Stream implements StreamInterface
         $stats = fstat($this->stream);
         if (isset($stats['size'])) {
             $this->size = $stats['size'];
+            $this->sizeCalculated = true;
             return $this->size;
         }
 
@@ -367,5 +382,40 @@ class Stream implements StreamInterface
                str_contains($mode, 'x') ||
                str_contains($mode, 'c') ||
                str_contains($mode, '+');
+    }
+
+    /**
+     * Check if stream can be reused in pool
+     */
+    public function isReusable(): bool
+    {
+        return $this->reusable && $this->stream !== null && $this->isSeekable();
+    }
+
+    /**
+     * Mark stream as non-reusable (for special streams)
+     */
+    public function markNonReusable(): self
+    {
+        $this->reusable = false;
+        return $this;
+    }
+
+    /**
+     * Truncate stream to given length (for pooling)
+     */
+    public function truncate(int $length = 0): bool
+    {
+        if (!$this->stream || !$this->isWritable()) {
+            return false;
+        }
+
+        $result = ftruncate($this->stream, $length);
+        if ($result) {
+            $this->size = null;
+            $this->sizeCalculated = false;
+        }
+
+        return $result;
     }
 }

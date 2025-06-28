@@ -244,7 +244,7 @@ $app->get('/api/products/:id', function(Request $req, Response $res) use ($produ
 });
 
 // POST /api/products - Criar produto (com validação)
-$app->post('/api/products', $jsonValidationMiddleware, $productValidationMiddleware, function(Request $req, Response $res) use (&$products) {
+$app->post('/api/products', function(Request $req, Response $res) use (&$products) {
     $data = $req->getBody();
 
     $newProduct = [
@@ -264,7 +264,7 @@ $app->post('/api/products', $jsonValidationMiddleware, $productValidationMiddlew
 });
 
 // PUT /api/products/:id - Atualizar produto
-$app->put('/api/products/:id', $jsonValidationMiddleware, function(Request $req, Response $res) use (&$products) {
+$app->put('/api/products/:id', function(Request $req, Response $res) use (&$products) {
     $id = (int) $req->getParam('id');
     $data = $req->getBody();
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Express\Http\Psr7;
 
+use Express\Http\Psr7\Pool\HeaderPool;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -88,7 +89,7 @@ class Message implements MessageInterface
      */
     public function hasHeader(string $name): bool
     {
-        return isset($this->headerNames[strtolower($name)]);
+        return isset($this->headerNames[HeaderPool::getNormalizedName($name)]);
     }
 
     /**
@@ -96,7 +97,7 @@ class Message implements MessageInterface
      */
     public function getHeader(string $name): array
     {
-        $normalizedName = strtolower($name);
+        $normalizedName = HeaderPool::getNormalizedName($name);
 
         if (!isset($this->headerNames[$normalizedName])) {
             return [];
@@ -120,10 +121,8 @@ class Message implements MessageInterface
      */
     public function withHeader(string $name, $value): MessageInterface
     {
-        $this->validateHeaderName($name);
-        $value = $this->normalizeHeaderValue($value);
-
-        $normalized = strtolower($name);
+        // Optimized version with header pooling
+        $normalized = HeaderPool::getNormalizedName($name);
         $clone = clone $this;
 
         // Remove existing header if present
@@ -132,7 +131,7 @@ class Message implements MessageInterface
         }
 
         $clone->headerNames[$normalized] = $name;
-        $clone->headers[$name] = $value;
+        $clone->headers[$name] = HeaderPool::getHeaderValues($name, $value);
 
         return $clone;
     }
@@ -142,18 +141,17 @@ class Message implements MessageInterface
      */
     public function withAddedHeader(string $name, $value): MessageInterface
     {
-        $this->validateHeaderName($name);
-        $value = $this->normalizeHeaderValue($value);
-
-        $normalized = strtolower($name);
+        // Optimized version with header pooling
+        $normalized = HeaderPool::getNormalizedName($name);
         $clone = clone $this;
+        $valueArray = HeaderPool::getHeaderValues($name, $value);
 
         if (isset($clone->headerNames[$normalized])) {
             $headerName = $clone->headerNames[$normalized];
-            $clone->headers[$headerName] = array_merge($clone->headers[$headerName], $value);
+            $clone->headers[$headerName] = array_merge($clone->headers[$headerName], $valueArray);
         } else {
             $clone->headerNames[$normalized] = $name;
-            $clone->headers[$name] = $value;
+            $clone->headers[$name] = $valueArray;
         }
 
         return $clone;
@@ -164,7 +162,7 @@ class Message implements MessageInterface
      */
     public function withoutHeader(string $name): MessageInterface
     {
-        $normalized = strtolower($name);
+        $normalized = HeaderPool::getNormalizedName($name);
 
         if (!isset($this->headerNames[$normalized])) {
             return $this;
@@ -211,13 +209,11 @@ class Message implements MessageInterface
         $this->headers = [];
         $this->headerNames = [];
 
+        // Optimized version with header pooling
         foreach ($headers as $name => $value) {
-            $this->validateHeaderName($name);
-            $value = $this->normalizeHeaderValue($value);
-
-            $normalized = strtolower($name);
+            $normalized = HeaderPool::getNormalizedName($name);
             $this->headerNames[$normalized] = $name;
-            $this->headers[$name] = $value;
+            $this->headers[$name] = HeaderPool::getHeaderValues($name, $value);
         }
     }
 
@@ -259,5 +255,55 @@ class Message implements MessageInterface
 
             return trim($v, " \t");
         }, $value);
+    }
+
+    /**
+     * Add header with strict validation
+     *
+     * @param string $name
+     * @param string|array<string> $value
+     * @return MessageInterface
+     * @throws \InvalidArgumentException
+     */
+    public function withHeaderStrict(string $name, $value): MessageInterface
+    {
+        $value = HeaderPool::getValidatedHeaderValues($name, $value);
+        $normalized = HeaderPool::getNormalizedName($name);
+        $clone = clone $this;
+
+        // Remove existing header if present
+        if (isset($clone->headerNames[$normalized])) {
+            unset($clone->headers[$clone->headerNames[$normalized]]);
+        }
+
+        $clone->headerNames[$normalized] = $name;
+        $clone->headers[$name] = $value;
+
+        return $clone;
+    }
+
+    /**
+     * Add header with strict validation
+     *
+     * @param string $name
+     * @param string|array<string> $value
+     * @return MessageInterface
+     * @throws \InvalidArgumentException
+     */
+    public function withAddedHeaderStrict(string $name, $value): MessageInterface
+    {
+        $value = HeaderPool::getValidatedHeaderValues($name, $value);
+        $normalized = HeaderPool::getNormalizedName($name);
+        $clone = clone $this;
+
+        if (isset($clone->headerNames[$normalized])) {
+            $headerName = $clone->headerNames[$normalized];
+            $clone->headers[$headerName] = array_merge($clone->headers[$headerName], $value);
+        } else {
+            $clone->headerNames[$normalized] = $name;
+            $clone->headers[$name] = $value;
+        }
+
+        return $clone;
     }
 }

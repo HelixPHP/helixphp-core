@@ -45,7 +45,7 @@ $securityMiddleware = function (Request $req, Response $resp, $next) {
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
         'message' => '🚀 Express PHP - Otimizações Implementadas',
-        'version' => '2.0.0',
+        'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => 'Cache de rotas pré-compiladas',
             'group_router' => 'Roteamento otimizado por grupos',

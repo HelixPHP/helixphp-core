@@ -161,6 +161,6 @@ $uploadedFiles = $request->getUploadedFiles();
 ---
 
 **Implementation completed on:** 2025-06-27
-**Framework version:** v2.0.0+
+**Framework version:** v2.0.1+
 **Branch:** `feature/psr-7-psr-15-compliance`
 **Status:** Ready for integration and testing

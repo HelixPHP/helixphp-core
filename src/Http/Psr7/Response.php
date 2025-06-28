@@ -128,4 +128,60 @@ class Response extends Message implements ResponseInterface
     {
         return $this->reasonPhrase;
     }
+
+    /**
+     * Reset response for pooling reuse
+     *
+     * @internal Used by ResponsePool
+     */
+    public function reset(int $statusCode = 200): self
+    {
+        $this->statusCode = $statusCode;
+        $this->reasonPhrase = self::STATUS_PHRASES[$statusCode] ?? '';
+        $this->headers = [];
+        $this->headerNames = [];
+
+        // Reset body to empty stream
+        if (isset($this->body)) {
+            $this->body = Stream::createFromString('');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Clear all headers for pooling
+     *
+     * @internal Used by ResponsePool
+     */
+    public function clearHeaders(): self
+    {
+        $this->headers = [];
+        $this->headerNames = [];
+        return $this;
+    }
+
+    /**
+     * Check if this response can be safely pooled
+     */
+    public function canBePooled(): bool
+    {
+        // Don't pool responses with large bodies or special headers
+        $body = $this->getBody();
+        $bodySize = $body->getSize();
+
+        // Don't pool large responses
+        if ($bodySize !== null && $bodySize > 8192) {
+            return false;
+        }
+
+        // Don't pool responses with streaming or special headers
+        $contentType = $this->getHeaderLine('content-type');
+        if (strpos($contentType, 'text/event-stream') !== false ||
+            strpos($contentType, 'multipart/') !== false) {
+            return false;
+        }
+
+        return true;
+    }
 }

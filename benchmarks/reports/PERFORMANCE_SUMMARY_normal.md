@@ -1,7 +1,7 @@
 # Express PHP Framework - Performance Benchmark
 
 ## Test Environment
-- **Date**: 2025-06-27 18:44:11
+- **Date**: 2025-06-27 22:27:26
 - **PHP Version**: 8.1.32
 - **Memory Limit**: -1
 - **Iterations**: 1,000
@@ -10,26 +10,26 @@
 
 | Test | Ops/Second | Avg Time (μs) | Memory Used |
 |------|------------|---------------|-------------|
-| App Initialization | 579,724 | 1.72 | 0 B |
-| Basic Route Registration (GET) | 327,348 | 3.05 | 785.56 KB |
-| Basic Route Registration (POST) | 342,924 | 2.92 | 774.19 KB |
-| Route with Parameters (PUT) | 325,518 | 3.07 | 806.19 KB |
-| Complex Route Registration | 317,871 | 3.15 | 742.19 KB |
-| Route Pattern Matching | 2,785,062 | 0.36 | 0 B |
-| Middleware Stack Creation | 207,259 | 4.82 | 902.19 KB |
-| Middleware Function Execution | 2,037,059 | 0.49 | 0 B |
-| Security Middleware Creation | 285,385 | 3.50 | 742.19 KB |
-| CORS Headers Processing | 47,662,545 | 0.02 | 0 B |
-| XSS Protection Logic | 3,998,383 | 0.25 | 0 B |
-| JWT Token Generation | 273,067 | 3.66 | 0 B |
-| JWT Token Validation | 241,663 | 4.14 | 0 B |
-| Request Object Creation | 170,472 | 5.87 | 0 B |
-| Response Object Creation | 20,360,699 | 0.05 | 0 B |
-| Response JSON Setup (100 items) | 166,951 | 5.99 | 0 B |
-| JSON Encode (Small) | 11,618,571 | 0.09 | 0 B |
-| JSON Encode (Large - 1000 items) | 12,196 | 81.99 | 0 B |
-| JSON Decode (Large - 1000 items) | 2,757 | 362.77 | 0 B |
-| CORS Configuration Processing | 21,290,883 | 0.05 | 0 B |
+| App Initialization | 617,263 | 1.62 | 0 B |
+| Basic Route Registration (GET) | 82,960 | 12.05 | 785.56 KB |
+| Basic Route Registration (POST) | 78,839 | 12.68 | 774.19 KB |
+| Route with Parameters (PUT) | 97,313 | 10.28 | 806.19 KB |
+| Complex Route Registration | 60,894 | 16.42 | 742.19 KB |
+| Route Pattern Matching | 2,674,939 | 0.37 | 0 B |
+| Middleware Stack Creation | 53,510 | 18.69 | 902.19 KB |
+| Middleware Function Execution | 2,216,863 | 0.45 | 0 B |
+| Security Middleware Creation | 62,901 | 15.90 | 742.19 KB |
+| CORS Headers Processing | 34,379,541 | 0.03 | 0 B |
+| XSS Protection Logic | 4,568,959 | 0.22 | 0 B |
+| JWT Token Generation | 250,197 | 4.00 | 0 B |
+| JWT Token Validation | 222,912 | 4.49 | 0 B |
+| Request Object Creation | 275,398 | 3.63 | 0 B |
+| Response Object Creation | 22,795,130 | 0.04 | 0 B |
+| Response JSON Setup (100 items) | 174,704 | 5.72 | 0 B |
+| JSON Encode (Small) | 10,645,442 | 0.09 | 0 B |
+| JSON Encode (Large - 1000 items) | -1,672 | -598.22 | 0 B |
+| JSON Decode (Large - 1000 items) | 2,559 | 390.82 | 0 B |
+| CORS Configuration Processing | 19,239,927 | 0.05 | 0 B |
 | CORS Headers Generation | 49,932,190 | 0.02 | 0 B |
 
 ## Memory Analysis

@@ -2,8 +2,8 @@
 /**
  * Exemplo de High Performance com Otimizações PSR-7/PSR-15
  *
- * Este exemplo demonstra como usar as versões otimizadas
- * das classes PSR-7/PSR-15 para máxima performance.
+ * Este exemplo demonstra como usar as classes padrão PSR-7/PSR-15
+ * que agora incluem todas as otimizações de performance.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -11,8 +11,8 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Express\ApiExpress;
 use Express\Http\Request;
 use Express\Http\Response;
-use Express\Http\Psr7\Factory\HighPerformanceResponseFactory;
-use Express\Http\Psr15\Middleware\HighPerformanceCorsMiddleware;
+use Express\Http\Psr7\Factory\ResponseFactory;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
 
 // Criar aplicação
 $app = new ApiExpress();
@@ -21,8 +21,8 @@ $app = new ApiExpress();
 // MIDDLEWARE DE ALTA PERFORMANCE
 // ================================
 
-// CORS otimizado para alta performance
-$app->use(new HighPerformanceCorsMiddleware([
+// CORS otimizado para alta performance (usando classe padrão otimizada)
+$app->use(new CorsMiddleware([
     'origins' => ['http://localhost:3000', 'https://myapp.com'],
     'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
     'headers' => ['Content-Type', 'Authorization'],
@@ -30,8 +30,8 @@ $app->use(new HighPerformanceCorsMiddleware([
     'max_age' => 86400 // 24 horas
 ]));
 
-// Factory otimizada para respostas
-$responseFactory = new HighPerformanceResponseFactory();
+// Factory otimizada para respostas (classe padrão com otimizações)
+$responseFactory = new ResponseFactory();
 
 // ================================
 // ROTAS DE ALTA PERFORMANCE
@@ -158,8 +158,8 @@ $app->use(function (Request $req, Response $res, $next) {
 echo "🚀 High Performance Express PHP Server\n";
 echo "=====================================\n";
 echo "Otimizações ativas:\n";
-echo "✅ High Performance Response Factory\n";
-echo "✅ Optimized CORS Middleware\n";
+echo "✅ Optimized Response Factory (padrão)\n";
+echo "✅ Optimized CORS Middleware (padrão)\n";
 echo "✅ Memory-efficient operations\n";
 echo "✅ Performance monitoring headers\n\n";
 
