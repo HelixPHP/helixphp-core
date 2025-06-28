@@ -2,16 +2,16 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%208-brightgreen.svg)](https://phpstan.org/)
+[![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
-> 📖 **Complete v2.0.1 Guide**: See [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) for comprehensive documentation with performance metrics and advanced optimizations
+> 📖 **Guia Completo v2.1.0**: Veja [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) para documentação detalhada, métricas de performance e otimizações avançadas
 
-**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com arquitetura moderna baseada em **Dependency Injection Container**.
+**Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com arquitetura baseada em **Dependency Injection Container**.
 
-> ⚡ **Alta Performance**: +47M ops/sec em CORS, +20M ops/sec em Response, cache integrado e roteamento otimizado!
-> 🏗️ **Arquitetura v3.0**: DI Container, Service Providers e Event System integrados!
+> ⚡ **Alta Performance**: +52M ops/sec em CORS, +24M ops/sec em Response, cache integrado e roteamento otimizado!
+> 🏗️ **Arquitetura Moderna**: DI Container, Service Providers, Event System e Extension System integrados!
 
 ## 🚀 Início Rápido
 
@@ -61,7 +61,7 @@ $app->run();
 - 📡 **Streaming**: Server-Sent Events, Upload de arquivos grandes
 - 📚 **OpenAPI/Swagger**: Documentação automática de APIs
 - ⚡ **Performance**: Cache integrado, pipeline otimizado de middlewares
-- 🧪 **Qualidade**: 245+ testes, PHPStan Level 8, PSR-12
+- 🧪 **Qualidade**: 270+ testes, PHPStan Level 9, PSR-12
 
 ## 🧩 Sistema de Extensões v2.1.0
 
@@ -73,9 +73,7 @@ class AnalyticsProvider extends ServiceProvider {
     public function register(): void {
         $this->app->singleton('analytics', AnalyticsService::class);
     }
-
     public function boot(): void {
-        // Hook para tracking automático
         $this->app->addAction('request.received', function($context) {
             $this->app->make('analytics')->track('page_view', $context);
         });
@@ -98,9 +96,7 @@ $app->registerExtension('analytics', AnalyticsProvider::class);
 $app->addAction('user.login', function($context) {
     // Ação executada quando usuário faz login
 });
-
 $app->addFilter('response.data', function($data, $context) {
-    // Filtro para modificar dados da resposta
     $data['_meta'] = ['framework' => 'Express-PHP'];
     return $data;
 });
@@ -118,15 +114,85 @@ $app->addFilter('response.data', function($data, $context) {
 
 ## 📊 Performance Benchmarks
 
-| Operação | Ops/segundo | Tempo médio |
-|----------|-------------|-------------|
-| CORS Headers | 47.6M+ | 0.02 μs |
-| Response Creation | 20.3M+ | 0.05 μs |
-| Route Matching | 2.8M+ | 0.36 μs |
-| Middleware Execution | 2.0M+ | 0.49 μs |
-| App Initialization | 579K+ | 1.72 μs |
+### Low Load Scenario
 
-> 📋 **[Ver relatório completo](docs/implementation/COMPREHENSIVE_PERFORMANCE_SUMMARY_2025-06-27.md)**
+| Operação                        | Ops/segundo         |
+|---------------------------------|---------------------|
+| App Initialization              | 57,205              |
+| Basic Route Registration (GET)  | 25,752              |
+| Basic Route Registration (POST) | 27,609              |
+| Route with Parameters (PUT)     | 24,630              |
+| Complex Route Registration      | 18,060              |
+| Route Pattern Matching          | 2,557,502           |
+| Middleware Stack Creation       | 18,245              |
+| Middleware Function Execution   | 2,046,002           |
+| Security Middleware Creation    | 23,833              |
+| CORS Headers Processing         | 32,263,877          |
+| XSS Protection Logic            | 4,369,067           |
+| JWT Token Generation            | 253,739             |
+| JWT Token Validation            | 228,324             |
+| Request Object Creation         | 272,357             |
+| Response Object Creation        | 16,777,216          |
+| Response JSON Setup (100 items) | 175,788             |
+| JSON Encode (Small)             | 9,986,438           |
+| JSON Encode (Large - 1000)      | 11,186              |
+| JSON Decode (Large - 1000)      | 2,528               |
+| CORS Config Processing          | 16,777,216          |
+| CORS Headers Generation         | 52,428,800          |
+
+### Normal Load Scenario
+
+| Operação                        | Ops/segundo         |
+|---------------------------------|---------------------|
+| App Initialization              | 23,183              |
+| Basic Route Registration (GET)  | 20,643              |
+| Basic Route Registration (POST) | 19,935              |
+| Route with Parameters (PUT)     | 10,732              |
+| Complex Route Registration      | 21,691              |
+| Route Pattern Matching          | 1,968,233           |
+| Middleware Stack Creation       | 21,905              |
+| Middleware Function Execution   | 2,004,925           |
+| Security Middleware Creation    | 22,453              |
+| CORS Headers Processing         | 37,117,735          |
+| XSS Protection Logic            | 3,334,105           |
+| JWT Token Generation            | 230,684             |
+| JWT Token Validation            | 148,898             |
+| Request Object Creation         | 176,335             |
+| Response Object Creation        | 15,887,515          |
+| Response JSON Setup (100 items) | 153,638             |
+| JSON Encode (Small)             | 10,645,442          |
+| JSON Encode (Large - 1000)      | 11,725              |
+| JSON Decode (Large - 1000)      | 2,275               |
+| CORS Config Processing          | 18,157,160          |
+| CORS Headers Generation         | 38,479,853          |
+
+### High Load Scenario
+
+| Operação                        | Ops/segundo         |
+|---------------------------------|---------------------|
+| App Initialization              | 25,199              |
+| Basic Route Registration (GET)  | 20,914              |
+| Basic Route Registration (POST) | 23,176              |
+| Route with Parameters (PUT)     | 23,356              |
+| Complex Route Registration      | 21,879              |
+| Route Pattern Matching          | 2,506,906           |
+| Middleware Stack Creation       | 20,363              |
+| Middleware Function Execution   | 1,465,413           |
+| Security Middleware Creation    | 19,362              |
+| CORS Headers Processing         | 44,667,774          |
+| XSS Protection Logic            | 4,194,723           |
+| JWT Token Generation            | 263,483             |
+| JWT Token Validation            | 229,211             |
+| Request Object Creation         | 268,096             |
+| Response Object Creation        | 23,643,202          |
+| Response JSON Setup (100 items) | 169,494             |
+| JSON Encode (Small)             | 9,981,685           |
+| JSON Encode (Large - 1000)      | 9,174               |
+| JSON Decode (Large - 1000)      | 2,491               |
+| CORS Config Processing          | 17,425,442          |
+| CORS Headers Generation         | 47,393,266          |
+
+> 📋 **[Ver relatório completo](benchmarks/reports/COMPREHENSIVE_PERFORMANCE_ANALYSIS.md)**
 
 ## 🛡️ Sistema de Autenticação
 
@@ -138,13 +204,13 @@ $app->use(AuthMiddleware::jwt('chave_secreta'));
 $app->use(new AuthMiddleware([
     'authMethods' => ['jwt', 'basic', 'apikey'],
     'jwtSecret' => 'chave_jwt',
-    'routes' => ['/api/*'], // proteger apenas /api/*
-    'except' => ['/api/public'] // exceto rotas públicas
+    'routes' => ['/api/*'],
+    'except' => ['/api/public']
 ]));
 
 // Acesso aos dados do usuário
 $app->get('/profile', function($req, $res) {
-    $user = $req->user; // dados do usuário autenticado
+    $user = $req->user;
     $res->json(['profile' => $user]);
 });
 ```
@@ -210,11 +276,11 @@ composer benchmark      # Executar benchmarks
 ## 📊 Status do Projeto
 
 - ✅ **Modernização Completa**: PHP 8.1+, tipagem strict, otimizações
-- ✅ **Qualidade de Código**: PHPStan Level 8, PSR-12, pre-commit hooks
+- ✅ **Qualidade de Código**: PHPStan Level 9, PSR-12, pre-commit hooks
 - ✅ **Performance**: Benchmarks otimizados, cache integrado
 - ✅ **Segurança**: Middlewares de segurança, autenticação robusta
 - ✅ **Documentação**: Guias completos, exemplos práticos
-- ✅ **Testes**: 245+ testes, cobertura completa
+- ✅ **Testes**: 270+ testes, cobertura completa
 
 ## 🤝 Contribuindo
 

@@ -180,9 +180,9 @@ Status: ✅ High Performance
 ### **⚙️ Recommended Configuration**
 ```php
 <?php
-use Express\ApiExpress;
+use Express\Core\Application;
 
-$app = new ApiExpress([
+$app = new Application([
     'cache_enabled' => true,
     'zero_copy' => true,
     'memory_mapping' => true,

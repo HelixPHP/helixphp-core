@@ -3,12 +3,12 @@
 
 require_once '../vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Middleware\Security\AuthMiddleware;
 use Express\Authentication\JWTHelper;
 
 // Cria a aplicação
-$app = new ApiExpress();
+$app = new Application();
 
 // ========================================
 // CONFIGURAÇÕES DE EXEMPLO

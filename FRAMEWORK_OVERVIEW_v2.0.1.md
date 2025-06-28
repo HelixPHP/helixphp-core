@@ -1,17 +1,17 @@
-# 🚀 Express PHP v2.0.1 - Performance Framework
+# 🚀 Express PHP v2.1.0 - Performance Framework
 
 > **Ultra-High Performance PHP Framework com Otimizações Avançadas**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.0.1-brightgreen.svg)](https://github.com/CAFernandes/express-php/releases/tag/v2.0.1)
+[![Version](https://img.shields.io/badge/Version-2.1.0-brightgreen.svg)](https://github.com/CAFernandes/express-php/releases/tag/v2.1.0)
 [![Performance](https://img.shields.io/badge/Performance-278%25%20Improvement-red.svg)](#performance)
 
 ---
 
 ## 📊 **PERFORMANCE OVERVIEW**
 
-### **🏆 Performance Highlights v2.0.1**
+### **🏆 Performance Highlights v2.1.0**
 - **52M ops/sec** - CORS Headers Generation
 - **24M ops/sec** - Response Creation
 - **11M ops/sec** - JSON Encoding
@@ -28,20 +28,20 @@
 
 ## 🛠️ **QUICK START**
 
-### Installation
+### Instalação
 ```bash
-composer require express-php/microframework:^2.0.1
+composer require cafernandes/express-php
 ```
 
-### Basic Usage
+### Exemplo Básico
 ```php
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 
-// Create app with advanced optimizations
-$app = new ApiExpress([
+// Criação da aplicação com otimizações avançadas
+$app = new Application([
     'optimizations' => [
         'middleware_compiler' => true,
         'zero_copy' => true,
@@ -49,23 +49,23 @@ $app = new ApiExpress([
     ]
 ]);
 
-// Ultra-fast API
+// Rota ultra-rápida
 $app->get('/api/users', function($req, $res) {
     $res->json(['users' => $userService->getAll()]);
 });
 
-$app->run(); // 🚀 617K ops/sec initialization
+$app->run(); // 🚀 617K ops/sec de inicialização
 ```
 
-### Advanced Configuration
+### Configuração Avançada
 ```php
-$app = new ApiExpress([
+$app = new Application([
     'optimizations' => [
-        'middleware_compiler' => true,      // Intelligent compilation
-        'zero_copy' => true,               // Memory optimization
-        'memory_mapping' => true,          // Large dataset handling
-        'predictive_cache' => true,        // ML-based caching
-        'route_memory_manager' => true     // Route optimization
+        'middleware_compiler' => true,      // Compilação inteligente
+        'zero_copy' => true,               // Otimização de memória
+        'memory_mapping' => true,          // Manipulação de grandes conjuntos de dados
+        'predictive_cache' => true,        // Cache baseado em ML
+        'route_memory_manager' => true     // Otimização de rotas
     ],
     'performance' => [
         'max_memory' => '128M',
@@ -80,7 +80,7 @@ $app = new ApiExpress([
 
 ### **Production Metrics (Real Data)**
 
-| **Operation** | **v1.x** | **v2.0.1** | **Improvement** |
+| **Operation** | **v1.x** | **v2.1.0** | **Improvement** |
 |---------------|-----------|-------------|-----------------|
 | CORS Headers | 1M/sec | 52M/sec | **+5,200%** |
 | Response Creation | 800K/sec | 24M/sec | **+3,000%** |
@@ -158,7 +158,7 @@ $app = new ApiExpress([
 └──
 💡 Examples
 └── examples/                    # Usage examples
-    ├── example_v2.0.1_showcase.php
+    ├── example_v2.1.0_showcase.php
     └── example_complete_optimizations.php
 ```
 
@@ -216,7 +216,7 @@ Load:            Isolated
 
 ## 🔄 **MIGRATION GUIDE**
 
-### **From v2.0.0 to v2.0.1**
+### **From v2.0.0 to v2.1.0**
 - ✅ **100% Compatible** - No breaking changes
 - ✅ **Drop-in replacement** - Just update version
 - ✅ **Automatic optimizations** - Enable in config
@@ -227,7 +227,7 @@ Load:            Isolated
 composer update express-php/microframework
 
 # Verify version
-php -r "echo Express\Core\Application::VERSION;" # 2.0.1
+php -r "echo Express\Core\Application::VERSION;" # 2.1.0
 
 # Enable optimizations (optional)
 $app = new ApiExpress(['optimizations' => ['all' => true]]);
@@ -262,13 +262,13 @@ cd benchmarks && ./run_benchmark.sh
 
 ## 📄 **LICENSE**
 
-Express PHP Framework v2.0.1 is licensed under the [MIT License](LICENSE).
+Express PHP Framework v2.1.0 is licensed under the [MIT License](LICENSE).
 
 ---
 
 ## 🎉 **CONCLUSION**
 
-**Express PHP v2.0.1** delivers:
+**Express PHP v2.1.0** delivers:
 
 - ✅ **World-class performance** (278x improvement)
 - ✅ **Advanced optimizations** validated in production
@@ -282,7 +282,7 @@ Express PHP Framework v2.0.1 is licensed under the [MIT License](LICENSE).
 ### 🚀 **Get Started Now**
 
 ```bash
-composer require express-php/microframework:^2.0.1
+composer require cafernandes/express-php
 ```
 
-**Express PHP v2.0.1 - Where Performance Meets Excellence** 🎯
+**Express PHP v2.1.0 - Where Performance Meets Excellence** 🎯

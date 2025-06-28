@@ -69,10 +69,10 @@ projeto/
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use ExpressPhp\ApiExpress;
+use Express\Core\Application;
 
 // Criar aplicação
-$app = new ApiExpress();
+$app = new Application();
 
 // Configurações básicas
 $app->config([

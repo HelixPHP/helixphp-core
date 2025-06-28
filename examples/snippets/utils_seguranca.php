@@ -1,11 +1,12 @@
 <?php
 // Exemplo de configuração e uso dos middlewares de segurança
-use Express\ApiExpress;
+// use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Middlewares\Security\SecurityMiddleware;
 use Express\Middlewares\Security\CsrfMiddleware;
 use Express\Middlewares\Security\XssMiddleware;
 
-$app = new ApiExpress();
+$app = new Application();
 
 echo "=== CONFIGURAÇÕES DE SEGURANÇA ===\n\n";
 

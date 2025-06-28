@@ -6,13 +6,13 @@ O Express PHP Framework é organizado em uma arquitetura modular com classes bem
 
 ## 📋 Classes Principais
 
-### 🚀 ApiExpress
+### 🚀 Application
 Classe principal do framework que gerencia toda a aplicação.
 
 ```php
-namespace Express;
+namespace Express\Core;
 
-class ApiExpress
+class Application
 {
     // Propriedades principais
     private Router $router;

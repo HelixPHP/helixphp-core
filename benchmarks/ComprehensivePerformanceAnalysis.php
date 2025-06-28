@@ -118,15 +118,15 @@ class ComprehensivePerformanceAnalysis
     {
         echo "   📈 Testing Express core performance...\n";
 
-        require_once __DIR__ . '/../src/ApiExpress.php';
-
+        // require_once __DIR__ . '/../src/ApiExpress.php';
+        // Usar Application diretamente
         $iterations = 1000;
         $results = [];
 
         // App initialization
         $start = microtime(true);
         for ($i = 0; $i < $iterations; $i++) {
-            $app = new \Express\ApiExpress();
+            $app = new \Express\Core\Application();
         }
         $end = microtime(true);
         $results['app_initialization'] = [
@@ -135,7 +135,7 @@ class ComprehensivePerformanceAnalysis
         ];
 
         // Route registration
-        $app = new \Express\ApiExpress();
+        $app = new \Express\Core\Application();
         $start = microtime(true);
         for ($i = 0; $i < $iterations; $i++) {
             $app->get("/test{$i}", function($req, $res) {

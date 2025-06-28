@@ -2,12 +2,12 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Routing\Router;
 
-$app = new ApiExpress();
+$app = new Application();
 
 // Middleware de autenticação para demonstração
 $authMiddleware = function (Request $req, Response $resp, $next) {
