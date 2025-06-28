@@ -34,6 +34,12 @@ class HookManager
     protected array $listeners = [];
 
     /**
+     * Referências dos listeners PSR-14 registrados por hook
+     * @var array<string, callable|null>
+     */
+    protected array $psrListeners = [];
+
+    /**
      * Create hook manager
      */
     public function __construct(Application $app)
@@ -170,37 +176,39 @@ class HookManager
         /** @var \Express\Providers\ListenerProvider $listenerProvider */
         $listenerProvider = $this->app->make('listeners');
 
-        // Create a single listener that executes all hook callbacks
-        $listenerProvider->addListener(Hook::class, function (Hook $event) use ($hook) {
+        // Remove listener antigo, se existir
+        if (isset($this->psrListeners[$hook]) && $this->psrListeners[$hook] !== null) {
+            $listenerProvider->removeListener(Hook::class, $this->psrListeners[$hook]);
+        }
+
+        // Cria e registra novo listener
+        $closure = function (Hook $event) use ($hook) {
             if ($event->getName() !== $hook) {
                 return;
             }
-
             if (!isset($this->listeners[$hook])) {
                 return;
-            }            foreach ($this->listeners[$hook] as $listenerData) {
+            }
+            foreach ($this->listeners[$hook] as $listenerData) {
                 if ($event->isPropagationStopped()) {
                     break;
                 }
-
                 if (!is_array($listenerData)) {
                     continue;
                 }
-
                 $callback = $listenerData['callback'];
-
-                // For filters, pass data as first parameter
                 if ($event->getData() !== null) {
                     $result = $callback($event->getData(), $event->getContext());
                     if ($result !== null) {
                         $event->setData($result);
                     }
                 } else {
-                    // For actions, just pass context
                     $callback($event->getContext());
                 }
             }
-        });
+        };
+        $listenerProvider->addListener(Hook::class, $closure);
+        $this->psrListeners[$hook] = $closure;
     }
 
     /**
@@ -208,8 +216,6 @@ class HookManager
      */
     protected function reRegisterListeners(string $hook): void
     {
-        // This is a simplified implementation
-        // In a full implementation, you'd need to properly manage PSR-14 listeners
         $this->registerWithEventSystem($hook);
     }
 

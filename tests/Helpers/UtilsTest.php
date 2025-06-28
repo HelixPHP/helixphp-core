@@ -185,13 +185,9 @@ class UtilsTest extends TestCase
 
     public function testLog(): void
     {
-        // Suprimir saída temporariamente
-        ob_start();
-        Utils::log('Test message', 'info');
-        Utils::log('Error message', 'error');
-        ob_end_clean();
-
-        // Se não lançar exceção, o método funciona corretamente
+        // Não deve vazar saída ao usar destination 'null'
+        Utils::log('Test message', 'info', 'null');
+        Utils::log('Error message', 'error', 'null');
         $this->assertTrue(true);
     }
 

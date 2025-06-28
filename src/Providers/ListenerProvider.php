@@ -65,6 +65,34 @@ class ListenerProvider implements ListenerProviderInterface
     }
 
     /**
+     * Remove um listener específico de um tipo de evento
+     */
+    public function removeListener(string $eventType, callable $listener): void
+    {
+        if (!isset($this->listeners[$eventType])) {
+            return;
+        }
+        foreach ($this->listeners[$eventType] as $i => $registered) {
+            // Comparação de closures/callables
+            if (
+                $registered === $listener || (
+                    is_object($registered)
+                    && is_object($listener)
+                    && $registered == $listener
+                )
+            ) {
+                unset($this->listeners[$eventType][$i]);
+            }
+        }
+        // Reindexa o array para evitar buracos
+        $this->listeners[$eventType] = array_values($this->listeners[$eventType]);
+        // Remove o tipo se não houver mais listeners
+        if (empty($this->listeners[$eventType])) {
+            unset($this->listeners[$eventType]);
+        }
+    }
+
+    /**
      * Check if there are listeners for an event type
      */
     public function hasListeners(string $eventType): bool

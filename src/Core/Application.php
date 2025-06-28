@@ -84,8 +84,8 @@ class Application
         ContainerServiceProvider::class,
         EventServiceProvider::class,
         LoggingServiceProvider::class,
-        \Express\Providers\HookServiceProvider::class,
-        \Express\Providers\ExtensionServiceProvider::class,
+        HookServiceProvider::class,
+        ExtensionServiceProvider::class,
     ];
 
     /**

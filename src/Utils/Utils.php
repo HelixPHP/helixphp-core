@@ -169,12 +169,26 @@ class Utils
      *
      * @param  string $msg
      * @param  string $level
+     * @param  string|null $destination Pode ser 'null' para suprimir, 'stdout', 'stderr' ou caminho de arquivo
      * @return void
      */
-    public static function log(string $msg, string $level = 'info'): void
+    public static function log(string $msg, string $level = 'info', ?string $destination = null): void
     {
+        if ($destination === 'null') {
+            // Não faz nada, suprime saída
+            return;
+        }
         $date = date('Y-m-d H:i:s');
-        error_log("[$date][$level] $msg");
+        $formatted = "[$date][$level] $msg";
+        if ($destination === null) {
+            error_log($formatted);
+        } elseif ($destination === 'stdout') {
+            file_put_contents('php://stdout', $formatted . "\n");
+        } elseif ($destination === 'stderr') {
+            file_put_contents('php://stderr', $formatted . "\n");
+        } else {
+            file_put_contents($destination, $formatted . "\n", FILE_APPEND);
+        }
     }
 
     /**
