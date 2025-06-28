@@ -12,6 +12,7 @@ Bem-vindo ao índice completo da documentação do Express PHP Framework. Esta p
 - **[🔧 Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Crie middleware sob medida
 - **[🛡️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Documentação completa dos middlewares inclusos
 - **[🔒 Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Boas práticas de segurança
+- **[📦 Implementação de Providers](guides/PROVIDER_IMPLEMENTATION_GUIDE.md)** - Como criar e registrar providers
 
 ## 📖 **Documentação por Categoria**
 

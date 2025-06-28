@@ -215,15 +215,14 @@ $app->get('/profile', function($req, $res) {
 });
 ```
 
-## 📖 Documentação
+## 📚 Documentação e Guias
 
-- **[🚀 Guia de Início Rápido](docs/guides/QUICK_START_GUIDE.md)** - Setup em 5 minutos
-- **[📚 Documentação Completa](docs/DOCUMENTATION_INDEX.md)** - Índice completo
-- **[🧩 Sistema de Extensões](docs/EXTENSION_SYSTEM.md)** - Plugins, hooks e auto-discovery
-- **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia detalhado
-- **[🛡️ Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Implementação segura
-- **[📡 Streaming](docs/pt-br/STREAMING.md)** - Server-Sent Events
-- **[🔧 Pre-commit Hooks](docs/guides/PRECOMMIT_SETUP.md)** - Validação de qualidade
+- [Índice da Documentação](docs/DOCUMENTATION_INDEX.md)
+- [Guia de Implementação Rápida](docs/guides/QUICK_START_GUIDE.md)
+- [Guia de Providers](docs/guides/PROVIDER_IMPLEMENTATION_GUIDE.md)
+- [Sistema de Extensões](docs/EXTENSION_SYSTEM.md)
+- [Benchmarks e Performance](benchmarks/README.md)
+- [Exemplos de Uso](examples/README.md)
 
 ## 🎯 Exemplos Práticos
 
