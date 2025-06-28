@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Middleware\Security\CsrfMiddleware;
@@ -62,7 +62,7 @@ class ExpressPhpBenchmark
     private function benchmarkAppInitialization(): void
     {
         $this->benchmark('App Initialization', function() {
-            $app = new ApiExpress();
+            $app = new Application();
             return $app;
         });
     }
@@ -72,7 +72,7 @@ class ExpressPhpBenchmark
      */
     private function benchmarkBasicRouting(): void
     {
-        $app = new ApiExpress();
+        $app = new Application();
 
         // Setup routes
         $app->get('/test', function($req, $res) {
@@ -88,7 +88,7 @@ class ExpressPhpBenchmark
         });
 
         $this->benchmark('Basic Route Registration (GET)', function() {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->get('/test', function($req, $res) {
                 return ['message' => 'test'];
             });
@@ -96,7 +96,7 @@ class ExpressPhpBenchmark
         });
 
         $this->benchmark('Basic Route Registration (POST)', function() {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->post('/api/users', function($req, $res) {
                 return ['id' => 1, 'name' => 'Test User'];
             });
@@ -104,7 +104,7 @@ class ExpressPhpBenchmark
         });
 
         $this->benchmark('Route with Parameters (PUT)', function() {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->put('/api/users/:id', function($req, $res) {
                 return ['id' => 123, 'updated' => true];
             });
@@ -118,7 +118,7 @@ class ExpressPhpBenchmark
     private function benchmarkParameterizedRouting(): void
     {
         $this->benchmark('Complex Route Registration', function() {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->get('/api/users/:id/posts/:postId/comments/:commentId', function($req, $res) {
                 return [
                     'userId' => $req->params['id'],
@@ -146,7 +146,7 @@ class ExpressPhpBenchmark
     private function benchmarkMiddlewareStack(): void
     {
         $this->benchmark('Middleware Stack Creation', function() {
-            $app = new ApiExpress();
+            $app = new Application();
 
             // Add multiple middlewares
             $app->use(function($req, $res, $next) {
@@ -197,7 +197,7 @@ class ExpressPhpBenchmark
     private function benchmarkSecurityMiddlewares(): void
     {
         $this->benchmark('Security Middleware Creation', function() {
-            $app = new ApiExpress();
+            $app = new Application();
 
             // Test middleware creation (without instantiation which might require parameters)
             $app->get('/secure', function($req, $res) {
@@ -331,7 +331,7 @@ class ExpressPhpBenchmark
         // Create multiple app instances
         $apps = [];
         for ($i = 0; $i < 100; $i++) {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->get('/test', function($req, $res) {
                 $res->json(['test' => true]);
             });

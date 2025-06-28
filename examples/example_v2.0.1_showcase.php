@@ -8,14 +8,14 @@
 
 require_once 'vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 use Express\Middleware\Performance\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas
-$app = new ApiExpress([
+$app = new Application([
     // Otimizações de Performance v2.0.1
     'optimizations' => [
         'middleware_compiler' => true,     // Compilação inteligente de pipeline

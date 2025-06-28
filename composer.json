@@ -1,5 +1,5 @@
 {
-    "name": "express-php/microframework",
+    "name": "cafernandes/express-php",
     "description": "Express PHP - A lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs",
     "type": "library",
     "keywords": [
@@ -39,7 +39,10 @@
         "psr/http-message": "^1.1|^2.0",
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
-        "psr/http-factory": "^1.0"
+        "psr/http-factory": "^1.0",
+        "psr/container": "^2.0",
+        "psr/event-dispatcher": "^1.0",
+        "psr/log": "^3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0|^10.0",

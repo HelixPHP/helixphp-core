@@ -311,7 +311,7 @@ class SecurityHeadersMiddleware extends BaseMiddleware
 
 ### Stack de Segurança Completo
 ```php
-$app = new ApiExpress();
+$app = new Application();
 
 // 1. Security Headers
 $app->use(SecurityHeadersMiddleware::create());

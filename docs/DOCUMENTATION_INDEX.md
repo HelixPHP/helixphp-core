@@ -10,16 +10,17 @@ Bem-vindo ao índice completo da documentação do Express PHP Framework. Esta p
 
 ### Para Desenvolvedores
 - **[🔧 Middleware Personalizado](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Crie middleware sob medida
-- **[�️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Documentação completa dos middlewares inclusos
-- **[�🔒 Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Boas práticas de segurança
+- **[🛡️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Documentação completa dos middlewares inclusos
+- **[🔒 Implementação de Segurança](guides/SECURITY_IMPLEMENTATION.md)** - Boas práticas de segurança
+- **[📦 Implementação de Providers](guides/PROVIDER_IMPLEMENTATION_GUIDE.md)** - Como criar e registrar providers
 
 ## 📖 **Documentação por Categoria**
 
 ### 🏗️ **Arquitetura e Conceitos**
 - **[📚 Documentação Principal](README.md)** - Conceitos principais do framework
 - **[🎯 Middleware System](guides/CUSTOM_MIDDLEWARE_GUIDE.md)** - Sistema de middlewares
-- **[�️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Referência completa dos middlewares inclusos
-- **[�📡 Streaming e SSE](pt-br/STREAMING.md)** - Streaming de dados em tempo real
+- **[🛡️ Middlewares Padrão](guides/STANDARD_MIDDLEWARES.md)** - Referência completa dos middlewares inclusos
+- **[📡 Streaming e SSE](pt-br/STREAMING.md)** - Streaming de dados em tempo real
 
 ### 🔐 **Autenticação e Segurança**
 - **[🔑 Sistema de Autenticação](pt-br/AUTH_MIDDLEWARE.md)** - Guia completo de autenticação
@@ -58,7 +59,6 @@ Bem-vindo ao índice completo da documentação do Express PHP Framework. Esta p
 - **[🎉 Modernização Completa](implementation/MODERNIZATION_COMPLETE.md)** - Status da modernização
 - **[🔍 Validação Pre-commit](implementation/PRECOMMIT_VALIDATION_COMPLETE.md)** - Sistema de qualidade
 - **[📋 Setup Pre-commit](guides/PRECOMMIT_SETUP.md)** - Configuração de hooks
-
 - **[📈 Relatório Abrangente](../benchmarks/reports/COMPREHENSIVE_PERFORMANCE_SUMMARY.md)** - Performance detalhada
 - **[🔧 Como Executar Benchmarks](../benchmarks/README.md)** - Testes de performance
 - **[📊 Resultados Históricos](../benchmarks/reports/)** - Histórico de performance

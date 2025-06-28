@@ -30,7 +30,7 @@ chmod +x .git/hooks/pre-commit
 ```
 express-php-framework/
 ├── src/                     # Código fonte principal
-│   ├── ApiExpress.php      # Classe principal
+│   ├── Core/Application.php      # Classe principal
 │   ├── Core/               # Componentes fundamentais
 │   ├── Routing/            # Sistema de roteamento
 │   ├── Middleware/         # Middlewares de segurança
@@ -94,7 +94,7 @@ php -d xdebug.mode=profile examples/benchmark_app.php
 ### Monitoramento de Performance
 ```php
 // Ativar profiling em desenvolvimento
-$app = new ApiExpress([
+$app = new Application([
     'debug' => true,
     'profiling' => true
 ]);
@@ -305,7 +305,7 @@ public function benchmarkNewFeature(): array
 
 ### Debug Mode
 ```php
-$app = new ApiExpress(['debug' => true]);
+$app = new Application(['debug' => true]);
 
 // Logs detalhados
 $app->use(function($req, $res, $next) {

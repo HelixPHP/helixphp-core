@@ -302,11 +302,11 @@ $app->use($stack);
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 use Express\Middleware\Core\RateLimitMiddleware;
 
-$app = new ApiExpress();
+$app = new Application();
 
 // Aplicar middlewares globalmente
 $app->use(new SecurityMiddleware());
@@ -380,11 +380,11 @@ $app->group('/public', [
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware, CsrfMiddleware};
 use Express\Middleware\Core\RateLimitMiddleware;
 
-$app = new ApiExpress();
+$app = new Application();
 
 // Configuração de segurança para produção
 $app->use(new SecurityMiddleware([
@@ -451,7 +451,7 @@ $app->run();
 
 ```php
 <?php
-$app = new ApiExpress();
+$app = new Application();
 
 // CORS permissivo para API pública
 $app->use(new CorsMiddleware(['origins' => ['*']]));

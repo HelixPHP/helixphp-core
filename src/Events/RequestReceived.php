@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Express\Events;
+
+/**
+ * Request Received Event
+ */
+class RequestReceived
+{
+    public function __construct(
+        public readonly mixed $request,
+        public readonly \DateTime $receivedAt
+    ) {
+    }
+}

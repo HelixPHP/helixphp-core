@@ -9,7 +9,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Authentication\JWTHelper;
@@ -47,13 +47,13 @@ class SimpleBenchmark
     private function benchmarkAppInitialization(): void
     {
         $this->benchmark('App Initialization', function() {
-            return new ApiExpress();
+            return new Application();
         });
     }
 
     private function benchmarkBasicRouting(): void
     {
-        $app = new ApiExpress();
+        $app = new Application();
 
         $app->get('/test', function($req, $res) {
             $res->json(['message' => 'test']);
@@ -120,7 +120,7 @@ class SimpleBenchmark
         // Create multiple app instances
         $apps = [];
         for ($i = 0; $i < 50; $i++) {
-            $app = new ApiExpress();
+            $app = new Application();
             $app->get('/test', function($req, $res) {
                 $res->json(['test' => true]);
             });

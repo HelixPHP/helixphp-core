@@ -9,7 +9,7 @@ return [
     // Informações da aplicação
     'app' => [
         'name' => $_ENV['APP_NAME'] ?? 'Express PHP Application',
-        'version' => '1.0.0',
+        'version' => '2.1.0',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
         'debug' => filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN),
         'timezone' => $_ENV['APP_TIMEZONE'] ?? 'UTC',
@@ -272,6 +272,38 @@ return [
         // 'Express\\Providers\\MailServiceProvider',
         // 'Express\\Providers\\SecurityServiceProvider',
         // 'Express\\Providers\\ValidationServiceProvider'
+    ],
+
+    // Extensions and Plugins Configuration
+    'extensions' => [
+        // Auto-discovery of service providers from composer packages
+        'auto_discover_providers' => filter_var($_ENV['AUTO_DISCOVER_PROVIDERS'] ?? true, FILTER_VALIDATE_BOOLEAN),
+
+        // Manual extension registration
+        // 'my_extension' => [
+        //     'provider' => 'Vendor\\Package\\ExpressServiceProvider',
+        //     'config' => [
+        //         'option1' => 'value1',
+        //         'option2' => true
+        //     ]
+        // ]
+    ],
+
+    // Hook System Configuration
+    'hooks' => [
+        'enabled' => filter_var($_ENV['HOOKS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN),
+
+        // Core hooks that are always available
+        'core_hooks' => [
+            'app.booting',
+            'app.booted',
+            'request.received',
+            'response.sending',
+            'middleware.before',
+            'middleware.after',
+            'route.matched',
+            'route.executed'
+        ]
     ],
 
     // Aliases

@@ -714,7 +714,7 @@ use App\Middleware\{
     JWTAuthMiddleware
 };
 
-$app = new ExpressPhp\ApiExpress();
+$app = new Application();
 
 // Middleware globais
 $app->use(new CorsMiddleware());

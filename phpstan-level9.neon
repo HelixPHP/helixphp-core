@@ -1,0 +1,8 @@
+includes:
+    - phpstan.neon
+
+parameters:
+    level: 9
+    treatPhpDocTypesAsCertain: false
+    ignoreErrors:
+        - '#Cannot cast mixed to string#'

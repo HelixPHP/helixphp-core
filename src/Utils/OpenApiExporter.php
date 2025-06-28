@@ -74,9 +74,19 @@ class OpenApiExporter
             $hasCustomResponses = !empty($docInfo['responses']);
             $responses = $docInfo['responses'] ?? ['200' => ['description' => 'Successful response']];
 
-            // Merge global errors only if no custom responses are provided
-            if (!$hasCustomResponses) {
-                $responses = $responses + $globalErrors;
+            // Mesclar respostas globais sem sobrescrever as customizadas, já convertendo as chaves para string
+            foreach ($globalErrors as $code => $error) {
+                $codeStr = (string)$code;
+                if (!isset($responses[$codeStr])) {
+                    $responses[$codeStr] = $error;
+                }
+            }
+            // Forçar todas as chaves para string já no merge acima, evitando loop extra
+            if (array_keys($responses) !== array_map('strval', array_keys($responses))) {
+                $responses = array_combine(
+                    array_map('strval', array_keys($responses)),
+                    array_values($responses)
+                );
             }
 
             // Add tags to collection
@@ -256,20 +266,16 @@ class OpenApiExporter
     private static function normalizeResponses(array $responses): array
     {
         $normalized = [];
-
         foreach ($responses as $code => $response) {
+            $codeStr = (string)$code;
             if (is_string($response)) {
-                // Simple string description
-                $normalized[$code] = ['description' => $response];
+                $normalized[$codeStr] = ['description' => $response];
             } elseif (is_array($response) && isset($response['description'])) {
-                // Already in proper format
-                $normalized[$code] = $response;
+                $normalized[$codeStr] = $response;
             } else {
-                // Fallback
-                $normalized[$code] = ['description' => 'Response'];
+                $normalized[$codeStr] = ['description' => 'Response'];
             }
         }
-
         return $normalized;
     }
 

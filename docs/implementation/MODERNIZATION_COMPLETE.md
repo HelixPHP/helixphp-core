@@ -18,7 +18,7 @@ A modernização completa do Express PHP Framework foi concluída com sucesso! O
 - ✅ README.md atualizado com melhores práticas
 
 #### 🚀 **Performance Otimizada**
-- ✅ **Lazy Initialization**: Implementada inicialização preguiçosa para `ApiExpress`
+- ✅ **Lazy Initialization**: Implementada inicialização preguiçosa para `Application`
 - ✅ **Cache de Serialização**: Novo sistema `SerializationCache` integrado
 - ✅ **Otimizações de Middleware**: Cache de compilação para middleware stack
 - ✅ **Otimizações de Roteamento**: Cache avançado para rotas e parâmetros
