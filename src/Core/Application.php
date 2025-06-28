@@ -24,7 +24,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '2.0.1';
+    public const VERSION = '2.1.0';
 
     /**
      * Container de dependências.
