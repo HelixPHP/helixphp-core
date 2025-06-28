@@ -710,6 +710,21 @@ class Application
     }
 
     /**
+     * Remove todos os listeners PSR-14 e registra novamente os fornecidos.
+     * @param array<string, callable[]> $listeners
+     * @return void
+     */
+    public function reRegisterEventListeners(array $listeners): void
+    {
+        $this->clearEventListeners();
+        foreach ($listeners as $eventType => $callbacks) {
+            foreach ($callbacks as $callback) {
+                $this->addEventListener($eventType, $callback);
+            }
+        }
+    }
+
+    /**
      * Dispara um evento usando PSR-14.
      *
      * @param  object $event Evento a ser disparado
