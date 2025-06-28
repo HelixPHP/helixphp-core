@@ -354,10 +354,10 @@ class ProjectValidator
         // Verificar versão no código
         if (file_exists('src/Core/Application.php')) {
             $content = file_get_contents('src/Core/Application.php');
-            if (strpos($content, "VERSION = '2.0.1'") !== false) {
-                $this->passed[] = "Versão 2.0.1 confirmada no código fonte";
+            if (strpos($content, "VERSION = '2.1.0'") !== false) {
+                $this->passed[] = "Versão 2.1.0 confirmada no código fonte";
             } else {
-                $this->errors[] = "Versão no código fonte não está em 2.0.1";
+                $this->errors[] = "Versão no código fonte não está em 2.1.0";
             }
         }
 

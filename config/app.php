@@ -9,7 +9,7 @@ return [
     // Informações da aplicação
     'app' => [
         'name' => $_ENV['APP_NAME'] ?? 'Express PHP Application',
-        'version' => '1.0.0',
+        'version' => '2.1.0',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
         'debug' => filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN),
         'timezone' => $_ENV['APP_TIMEZONE'] ?? 'UTC',
