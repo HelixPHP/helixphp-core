@@ -36,6 +36,12 @@ class MiddlewareStack
     private static array $groupMiddlewares = [];
 
     /**
+     * Pipeline compiler instance
+     * @var MiddlewarePipelineCompiler|null
+     */
+    private static ?MiddlewarePipelineCompiler $compiler = null;
+
+    /**
      * Adiciona um middleware à stack.
      *
      * @param  callable $middleware
@@ -62,14 +68,28 @@ class MiddlewareStack
             return $finalHandler($request, $response);
         }
 
-        // Usa pipeline compilado se disponível
+        // Try to use advanced pre-compiled pipeline first
+        $compiler = self::getCompiler();
+        if ($cacheKey) {
+            $compiled = $compiler->getCompiledPipeline($cacheKey);
+            if ($compiled !== null) {
+                return $compiled($request, $response, $finalHandler);
+            }
+        }
+
+        // Use legacy compiled pipelines as fallback
         if ($cacheKey && isset(self::$compiledPipelines[$cacheKey])) {
             $pipeline = self::$compiledPipelines[$cacheKey];
             return $pipeline($request, $response, $finalHandler);
         }
 
-        // Criar pipeline otimizado
+        // Create and compile new optimized pipeline
         $pipeline = $this->compileOptimizedPipeline($this->middlewares, $cacheKey);
+
+        // Also compile with advanced compiler for future use
+        if ($cacheKey) {
+            $compiler->compilePipeline($cacheKey, $this->middlewares);
+        }
 
         return $pipeline($request, $response, $finalHandler);
     }
@@ -421,5 +441,16 @@ class MiddlewareStack
         }
 
         return $optimized;
+    }
+
+    /**
+     * Get or create pipeline compiler instance
+     */
+    private static function getCompiler(): MiddlewarePipelineCompiler
+    {
+        if (self::$compiler === null) {
+            self::$compiler = new MiddlewarePipelineCompiler();
+        }
+        return self::$compiler;
     }
 }

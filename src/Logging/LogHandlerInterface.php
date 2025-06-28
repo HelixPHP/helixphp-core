@@ -7,5 +7,6 @@ namespace Express\Logging;
  */
 interface LogHandlerInterface
 {
+    /** @param array<string, mixed> $record */
     public function handle(array $record): void;
 }

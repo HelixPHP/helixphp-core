@@ -19,6 +19,24 @@ class Utils
     }
 
     /**
+     * Formata bytes em formato legível para humanos.
+     *
+     * @param  int|float $bytes
+     * @param  int $precision
+     * @return string
+     */
+    public static function formatBytes($bytes, int $precision = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+
+        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+            $bytes /= 1024;
+        }
+
+        return round($bytes, $precision) . ' ' . $units[$i];
+    }
+
+    /**
      * Sanitização de email.
      *
      * @param  mixed $value
@@ -247,24 +265,6 @@ class Utils
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
         $data[8] = chr(ord($data[8]) & 0x3f | 0x80);
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-    }
-
-    /**
-     * Formata bytes em formato legível.
-     *
-     * @param  int $bytes
-     * @param  int $precision
-     * @return string
-     */
-    public static function formatBytes(int $bytes, int $precision = 2): string
-    {
-        $units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-
-        for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
-            $bytes /= 1024;
-        }
-
-        return round($bytes, $precision) . ' ' . $units[$i];
     }
 
     /**

@@ -31,7 +31,7 @@ $logMiddleware = function (Request $req, Response $resp, $next) {
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
         'message' => 'Express PHP - Rotas Otimizadas',
-        'version' => '2.0.0',
+        'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => true,
             'group_router' => true,

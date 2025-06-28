@@ -45,7 +45,7 @@ $securityMiddleware = function (Request $req, Response $resp, $next) {
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
         'message' => '🚀 Express PHP - Otimizações Implementadas',
-        'version' => '2.0.0',
+        'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => 'Cache de rotas pré-compiladas',
             'group_router' => 'Roteamento otimizado por grupos',
@@ -393,8 +393,8 @@ function showOptimizationSummary() {
 // Aquece todos os caches
 $app->warmupCaches();
 
-// Exibe informações se executado via CLI
-if (php_sapi_name() === 'cli') {
+// Exibe informações APENAS se executado via CLI e não via servidor web
+if (php_sapi_name() === 'cli' && !isset($_SERVER['SERVER_NAME'])) {
     showOptimizationSummary();
     echo "🚀 Servidor iniciado com todas as otimizações ativas!\n";
     echo "📍 Acesse: http://localhost:8000\n\n";

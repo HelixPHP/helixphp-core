@@ -19,16 +19,9 @@ class Router
     private static string $current_group_prefix = '';
 
     /**
-     * Lista de rota    private static function normalizePrefix(?string $prefix): string
-    {
-        if (empty($prefix) || $prefix === '/') {
-            return '/';
-        }
-
-        $prefix = '/' . trim($prefix, '/');
-        $normalized = preg_replace('/\/+/', '/', $prefix);
-        return $normalized !== null ? $normalized : '/';
-    }adas (compatibilidade).
+     * Lista de definições de rotas HTTP.
+     * Cada rota é representada como um array associativo contendo informações como método, caminho e controlador.
+     * Utilizado para compatibilidade com versões anteriores e para registro de novas rotas.
      * @var array<int, array<string, mixed>>
      */
     private static array $routes = [];
@@ -98,6 +91,12 @@ class Router
      * @var array<string, array>
      */
     private static array $groupStats = [];
+
+    /**
+     * Route memory manager instance
+     * @var RouteMemoryManager|null
+     */
+    private static ?RouteMemoryManager $memoryManager = null;
 
     /**
      * Permite adicionar métodos HTTP customizados.
@@ -250,6 +249,11 @@ class Router
 
         // Cache no RouteCache
         RouteCache::set($key, $optimizedRoute);
+
+        // Memory management integration
+        $memoryManager = self::getMemoryManager();
+        $memoryManager->trackRouteUsage($key);
+        $memoryManager->checkMemoryUsage();
     }
 
     /**
@@ -264,6 +268,11 @@ class Router
         }
 
         $startTime = microtime(true);
+
+        // Memory management: track route access
+        $routeKey = self::createRouteKey($method, $path);
+        $memoryManager = self::getMemoryManager();
+        $memoryManager->recordRouteAccess($routeKey);
 
         // 1. Tenta primeiro por grupos otimizados
         $route = self::identifyByGroup($method, $path);
@@ -954,5 +963,16 @@ class Router
         }
 
         return $groupMiddlewares;
+    }
+
+    /**
+     * Get or create route memory manager instance
+     */
+    private static function getMemoryManager(): RouteMemoryManager
+    {
+        if (self::$memoryManager === null) {
+            self::$memoryManager = new RouteMemoryManager();
+        }
+        return self::$memoryManager;
     }
 }

@@ -6,6 +6,8 @@
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
+> 📖 **Complete v2.0.1 Guide**: See [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) for comprehensive documentation with performance metrics and advanced optimizations
+
 **Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com otimizações integradas e sistema nativo de autenticação.
 
 > ⚡ **Alta Performance**: +47M ops/sec em CORS, +20M ops/sec em Response, cache integrado e roteamento otimizado!

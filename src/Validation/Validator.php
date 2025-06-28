@@ -7,10 +7,17 @@ namespace Express\Validation;
  */
 class Validator
 {
+    /** @var array<string, mixed> */
     private array $rules = [];
+    /** @var array<string, mixed> */
     private array $messages = [];
+    /** @var array<string, string[]> */
     private array $errors = [];
 
+    /**
+     * @param array<string, mixed> $rules
+     * @param array<string, mixed> $messages
+     */
     public function __construct(array $rules = [], array $messages = [])
     {
         $this->rules = $rules;
@@ -19,6 +26,7 @@ class Validator
 
     /**
      * Define regras de validação
+     * @param array<string, mixed> $rules
      */
     public function setRules(array $rules): self
     {
@@ -28,6 +36,7 @@ class Validator
 
     /**
      * Define mensagens customizadas
+     * @param array<string, mixed> $messages
      */
     public function setMessages(array $messages): self
     {
@@ -37,18 +46,25 @@ class Validator
 
     /**
      * Executa a validação
+     * @param array<string, mixed> $data
      */
     public function validate(array $data): bool
     {
         $this->errors = [];
 
+        if (!is_array($this->rules)) {
+            return true;
+        }
+
         foreach ($this->rules as $field => $rules) {
             $value = $data[$field] ?? null;
             $fieldRules = is_string($rules) ? explode('|', $rules) : $rules;
 
-            foreach ($fieldRules as $rule) {
-                if (!$this->validateRule($field, $value, $rule)) {
-                    break; // Para no primeiro erro
+            if (is_array($fieldRules)) {
+                foreach ($fieldRules as $rule) {
+                    if (!$this->validateRule($field, $value, $rule)) {
+                        break; // Para no primeiro erro
+                    }
                 }
             }
         }

@@ -2,6 +2,47 @@
 
 Este diretório contém scripts para garantir a qualidade do código no Express PHP.
 
+## Scripts de Validação de Documentação
+
+### validate-docs.sh (Padrão)
+Script principal para validação da documentação consolidada v2.0.1:
+
+```bash
+./scripts/validate-docs.sh
+```
+
+**Características:**
+- Valida estrutura de documentação consolidada
+- Verifica remoção de arquivos redundantes
+- Confirma consistência de versão
+- Relatório detalhado de status
+
+### validate-docs-v2.sh (Original)
+Versão original do script de validação:
+
+```bash
+./scripts/validate-docs-v2.sh
+```
+
+### validate-docs-legacy.sh (Legado)
+Versão anterior mantida para referência histórica.
+
+### validate_project.php
+Validação completa do projeto PHP:
+
+```bash
+php scripts/validate_project.php
+```
+
+**Validações incluídas:**
+- Estrutura do projeto
+- Dependências (Composer)
+- Middlewares e segurança
+- Recursos OpenAPI
+- Exemplos e testes
+- Documentação consolidada
+- Sistema de autenticação
+
 ## Pre-commit Hooks
 
 ### Configuração Automática

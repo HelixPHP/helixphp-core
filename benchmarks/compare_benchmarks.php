@@ -1,10 +1,15 @@
 <?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use Express\Utils\Utils;
+
 /**
  * Benchmark Comparison Tool
  * Compares two benchmark reports and shows performance differences
  */
-
-declare(strict_types=1);
 
 if ($argc < 3) {
     echo "Usage: php compare_benchmarks.php <baseline.json> <current.json>\n";
@@ -98,14 +103,6 @@ if (isset($baseline['results']['Memory Usage']) && isset($current['results']['Me
     $memoryChange = (($currentMemory - $baselineMemory) / $baselineMemory) * 100;
 
     echo "\n💾 Memory Usage Change: " . sprintf("%+.1f%%", $memoryChange) . "\n";
-    echo "   Baseline: " . formatBytes($baselineMemory) . " per app\n";
-    echo "   Current:  " . formatBytes($currentMemory) . " per app\n";
-}
-
-function formatBytes(float $bytes): string
-{
-    if ($bytes < 1024) return round($bytes) . ' B';
-    if ($bytes < 1048576) return round($bytes / 1024, 2) . ' KB';
-    if ($bytes < 1073741824) return round($bytes / 1048576, 2) . ' MB';
-    return round($bytes / 1073741824, 2) . ' GB';
+    echo "   Baseline: " . Utils::formatBytes($baselineMemory) . " per app\n";
+    echo "   Current:  " . Utils::formatBytes($currentMemory) . " per app\n";
 }
