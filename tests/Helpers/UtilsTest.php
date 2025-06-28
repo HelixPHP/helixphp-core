@@ -185,9 +185,9 @@ class UtilsTest extends TestCase
 
     public function testLog(): void
     {
-        // Não deve vazar saída ao usar destination 'null'
-        Utils::log('Test message', 'info', 'null');
-        Utils::log('Error message', 'error', 'null');
+        // Não deve vazar saída ao usar destination Utils::DEST_SUPPRESS
+        Utils::log('Test message', 'info', Utils::DEST_SUPPRESS);
+        Utils::log('Error message', 'error', Utils::DEST_SUPPRESS);
         $this->assertTrue(true);
     }
 

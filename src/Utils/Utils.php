@@ -8,6 +8,11 @@ namespace Express\Utils;
 class Utils
 {
     /**
+     * Constante para suprimir saída de log.
+     */
+    public const DEST_SUPPRESS = '__SUPPRESS__';
+
+    /**
      * Sanitização universal de string.
      *
      * @param  mixed $value
@@ -174,7 +179,7 @@ class Utils
      */
     public static function log(string $msg, string $level = 'info', ?string $destination = null): void
     {
-        if ($destination === 'null') {
+        if ($destination === self::DEST_SUPPRESS) {
             // Não faz nada, suprime saída
             return;
         }
