@@ -58,6 +58,8 @@ class ResponsePool
             $response = array_pop(self::$pool[$poolKey]);
             if ($response instanceof Response) {
                 $response->reset($status);
+                // Track the reused response object for GC
+                self::$activeObjects[spl_object_id($response)] = $response;
                 return $response;
             }
         }
@@ -69,6 +71,9 @@ class ResponsePool
         }
         $streamObj = new Stream($stream);
         $response = new Response($status, [], $streamObj);
+
+        // Track the new response object for GC
+        self::$activeObjects[spl_object_id($response)] = $response;
 
         return $response;
     }
@@ -152,6 +157,9 @@ class ResponsePool
             'Content-Type' => 'application/json'
         ], new Stream($stream));
 
+        // Track the new response object for GC
+        self::$activeObjects[spl_object_id($response)] = $response;
+
         return $response;
     }
 
@@ -164,7 +172,14 @@ class ResponsePool
         $response = $response->withHeader('Content-Type', 'text/plain; charset=utf-8');
 
         $stream = self::getStream($text);
-        return $response->withBody($stream);
+        $finalResponse = $response->withBody($stream);
+
+        // Update tracking for the final response object
+        if ($finalResponse !== $response) {
+            self::$activeObjects[spl_object_id($finalResponse)] = $finalResponse;
+        }
+
+        return $finalResponse;
     }
 
     /**
@@ -176,7 +191,14 @@ class ResponsePool
         $response = $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 
         $stream = self::getStream($html);
-        return $response->withBody($stream);
+        $finalResponse = $response->withBody($stream);
+
+        // Update tracking for the final response object
+        if ($finalResponse !== $response) {
+            self::$activeObjects[spl_object_id($finalResponse)] = $finalResponse;
+        }
+
+        return $finalResponse;
     }
 
     /**
@@ -196,6 +218,8 @@ class ResponsePool
                 }
 
                 self::$pool[$poolKey][] = $response;
+                // Note: We don't track warmup responses in activeObjects as they're pre-pooled
+                // and not actively used until retrieved via getResponse()
             }
         }
 

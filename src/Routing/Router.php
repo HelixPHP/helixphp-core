@@ -19,7 +19,9 @@ class Router
     private static string $current_group_prefix = '';
 
     /**
-     * Lista de rotas (compatibilidade).
+     * Lista de definições de rotas HTTP.
+     * Cada rota é representada como um array associativo contendo informações como método, caminho e controlador.
+     * Utilizado para compatibilidade com versões anteriores e para registro de novas rotas.
      * @var array<int, array<string, mixed>>
      */
     private static array $routes = [];

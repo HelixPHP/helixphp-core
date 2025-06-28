@@ -206,7 +206,7 @@ class HeaderPool
         }
 
         // Keep only half of the entries to make room
-        self::$headerPool = array_slice($toKeep, 0, self::MAX_POOL_SIZE / 2, true);
+        self::$headerPool = array_slice($toKeep, 0, (int) (self::MAX_POOL_SIZE / 2), true);
 
         // Same for normalized names
         $commonNames = [];
@@ -215,7 +215,7 @@ class HeaderPool
                 $commonNames[$original] = $normalized;
             }
         }
-        self::$normalizedNames = array_slice($commonNames, 0, self::MAX_POOL_SIZE / 2, true);
+        self::$normalizedNames = array_slice($commonNames, 0, (int) (self::MAX_POOL_SIZE / 2), true);
     }
 
     /**
@@ -226,7 +226,7 @@ class HeaderPool
         self::$validatedValues = array_slice(
             self::$validatedValues,
             0,
-            self::MAX_POOL_SIZE / 2,
+            (int) (self::MAX_POOL_SIZE / 2),
             true
         );
     }

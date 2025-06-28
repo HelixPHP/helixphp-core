@@ -131,9 +131,16 @@ class RouteMemoryManager
     {
         $freedMemory = 0;
 
+        // Count routes before clearing for statistics
+        $routesCleared = count(self::$routeUsage);
+
         // Clear all non-essential caches
         RouteCache::clear(); // Use existing clear method
+        self::$routeUsage = []; // Clear usage tracking
         $freedMemory += 5 * 1024 * 1024; // Estimate
+
+        // Update statistics for emergency cleanup
+        self::$stats['routes_evicted'] += $routesCleared;
 
         // Remove dynamic routes
         $freedMemory += self::cleanupDynamicRoutes();
@@ -205,6 +212,7 @@ class RouteMemoryManager
 
                     $freedBytes += $routeSize;
                     self::$stats['dynamic_routes_cleaned']++;
+                    self::$stats['routes_evicted']++;
                 }
             }
         }
