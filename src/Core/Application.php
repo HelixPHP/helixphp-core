@@ -106,6 +106,12 @@ class Application
     protected \DateTime $startTime;
 
     /**
+     * Lista de listeners PSR-14 registrados.
+     * @var array<string, array<int, callable>>
+     */
+    protected array $registeredListeners = [];
+
+    /**
      * Construtor da aplicação.
      *
      * @param string|null $basePath Caminho base da aplicação
@@ -155,6 +161,9 @@ class Application
         $this->middlewares = new MiddlewareStack();
         $this->container->instance(MiddlewareStack::class, $this->middlewares);
         $this->container->alias('middleware', MiddlewareStack::class);
+
+        // Padronizar alias para hooks
+        $this->alias('hooks', HookManager::class);
     }
 
     /**
@@ -673,10 +682,31 @@ class Application
             $listenerProvider = $this->container->get('listeners');
             if ($listenerProvider instanceof \Express\Providers\ListenerProvider) {
                 $listenerProvider->addListener($eventType, $listener);
+                // Rastrear listener
+                $this->registeredListeners[$eventType][] = $listener;
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Remove todos os listeners PSR-14 previamente registrados.
+     * @return void
+     */
+    public function clearEventListeners(): void
+    {
+        if ($this->container->has('listeners')) {
+            $listenerProvider = $this->container->get('listeners');
+            if ($listenerProvider instanceof \Express\Providers\ListenerProvider) {
+                foreach ($this->registeredListeners as $eventType => $listeners) {
+                    foreach ($listeners as $listener) {
+                        $listenerProvider->removeListener($eventType, $listener);
+                    }
+                }
+            }
+        }
+        $this->registeredListeners = [];
     }
 
     /**
