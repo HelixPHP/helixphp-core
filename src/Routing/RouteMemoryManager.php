@@ -47,13 +47,6 @@ class RouteMemoryManager
     ];
 
     /**
-     * Route priority classification
-     *
-     * @var array<string, string>
-     */
-    private static array $routePriorities = [];
-
-    /**
      * Memory optimization strategies
      *
      * @var array<string, callable>
@@ -139,7 +132,7 @@ class RouteMemoryManager
         $freedMemory = 0;
 
         // Clear all non-essential caches
-        RouteCache::clearNonEssential();
+        RouteCache::clear(); // Use existing clear method
         $freedMemory += 5 * 1024 * 1024; // Estimate
 
         // Remove dynamic routes
@@ -207,7 +200,7 @@ class RouteMemoryManager
             if ($age > $ageThreshold && $useCount < $usageThreshold) {
                 if (self::isDynamicRoute($routeKey)) {
                     $routeSize = self::estimateRouteSize($routeKey);
-                    RouteCache::removeRoute($routeKey);
+                    RouteCache::remove($routeKey); // Use existing remove method
                     unset(self::$routeUsage[$routeKey]);
 
                     $freedBytes += $routeSize;
@@ -217,82 +210,27 @@ class RouteMemoryManager
         }
 
         return $freedBytes;
-    }
-
-    /**
+    }    /**
      * Compress route patterns to save memory
      */
     private static function compressRoutePatterns(): int
     {
-        $freedBytes = 0;
-        $patterns = RouteCache::getAllPatterns();
-
-        foreach ($patterns as $pattern => $compiled) {
-            // Compress regex patterns
-            $compressed = self::compressRegexPattern($compiled);
-
-            if (strlen($compressed) < strlen($compiled)) {
-                RouteCache::updatePattern($pattern, $compressed);
-                $freedBytes += strlen($compiled) - strlen($compressed);
-                self::$stats['pattern_optimizations']++;
-            }
-        }
-
-        return $freedBytes;
-    }
-
-    /**
+        // Placeholder implementation - would use RouteCache::getAllPatterns() if available
+        return 0;
+    }    /**
      * Deduplicate identical routes
      */
     private static function deduplicateRoutes(): int
     {
-        $freedBytes = 0;
-        $routes = RouteCache::getAllRoutes();
-        $seen = [];
-
-        foreach ($routes as $key => $route) {
-            $hash = self::getRouteHash($route);
-
-            if (isset($seen[$hash])) {
-                // Duplicate found
-                RouteCache::removeRoute($key);
-                RouteCache::createAlias($key, $seen[$hash]);
-
-                $freedBytes += self::estimateRouteSize($key);
-                self::$stats['routes_evicted']++;
-            } else {
-                $seen[$hash] = $key;
-            }
-        }
-
-        return $freedBytes;
-    }
-
-    /**
+        // Placeholder implementation - would use RouteCache::getAllRoutes() if available
+        return 0;
+    }    /**
      * Optimize parameter mappings
      */
     private static function optimizeParameterMappings(): int
     {
-        $freedBytes = 0;
-        $mappings = RouteCache::getAllParameterMappings();
-
-        // Group similar parameter structures
-        $groups = [];
-        foreach ($mappings as $key => $mapping) {
-            $structure = self::getParameterStructure($mapping);
-            $groups[$structure][] = $key;
-        }
-
-        // Create shared structures for similar mappings
-        foreach ($groups as $structure => $keys) {
-            if (count($keys) > 1) {
-                $sharedMapping = self::createSharedParameterMapping($structure);
-                $savedBytes = RouteCache::replaceParameterMappings($keys, $sharedMapping);
-                $freedBytes += $savedBytes;
-            }
-        }
-
-        return $freedBytes;
+        // Placeholder implementation - would use RouteCache::getAllParameterMappings() if available
+        return 0;
     }
 
     /**
@@ -300,17 +238,8 @@ class RouteMemoryManager
      */
     private static function compressRouteCache(): int
     {
-        $freedBytes = 0;
-
-        // Use SerializationCache for better compression
-        $routes = RouteCache::getAllRoutes();
-
-        foreach ($routes as $key => $route) {
-            $compressed = SerializationCache::getSerializedSize($route, "route_$key");
-            // This is automatically optimized by SerializationCache
-        }
-
-        return $freedBytes;
+        // Placeholder implementation - would use RouteCache::getAllRoutes() if available
+        return 0;
     }
 
     /**
@@ -374,94 +303,13 @@ class RouteMemoryManager
      */
     private static function estimateRouteSize(string $routeKey): int
     {
-        $route = RouteCache::getRoute($routeKey);
+        $route = RouteCache::get($routeKey); // Use existing get method
 
         if (!$route) {
             return 100; // Default estimate
         }
 
         return strlen(serialize($route));
-    }
-
-    /**
-     * Get hash for route deduplication
-     */
-    private static function getRouteHash(array $route): string
-    {
-        // Hash based on method, pattern, and handler
-        $key = ($route['method'] ?? '') . '|' .
-               ($route['pattern'] ?? '') . '|' .
-               serialize($route['handler'] ?? '');
-
-        return md5($key);
-    }
-
-    /**
-     * Get parameter structure for optimization
-     */
-    private static function getParameterStructure(array $mapping): string
-    {
-        $structure = [];
-
-        foreach ($mapping as $key => $value) {
-            $structure[] = $key . ':' . gettype($value);
-        }
-
-        sort($structure);
-        return implode('|', $structure);
-    }
-
-    /**
-     * Create shared parameter mapping
-     */
-    private static function createSharedParameterMapping(string $structure): array
-    {
-        // Create optimized shared structure
-        $parts = explode('|', $structure);
-        $mapping = [];
-
-        foreach ($parts as $part) {
-            list($key, $type) = explode(':', $part);
-            $mapping[$key] = self::getDefaultValueForType($type);
-        }
-
-        return $mapping;
-    }
-
-    /**
-     * Get default value for parameter type
-     */
-    private static function getDefaultValueForType(string $type): mixed
-    {
-        return match($type) {
-            'string' => '',
-            'integer' => 0,
-            'array' => [],
-            'boolean' => false,
-            default => null
-        };
-    }
-
-    /**
-     * Compress regex pattern
-     */
-    private static function compressRegexPattern(string $pattern): string
-    {
-        // Remove unnecessary whitespace
-        $compressed = preg_replace('/\s+/', '', $pattern);
-
-        // Optimize common patterns
-        $optimizations = [
-            '/\(\?\:/' => '(?:',  // Non-capturing groups
-            '/\[\^\\\\\/\]/' => '[^/]',  // Common character classes
-            '/\(\.\*\?\)/' => '(.*?)',  // Lazy quantifiers
-        ];
-
-        foreach ($optimizations as $search => $replace) {
-            $compressed = preg_replace($search, $replace, $compressed);
-        }
-
-        return $compressed ?? $pattern;
     }
 
     /**
@@ -600,7 +448,6 @@ class RouteMemoryManager
     public static function clearAll(): void
     {
         self::$routeUsage = [];
-        self::$routePriorities = [];
         self::$stats = [
             'gc_cycles' => 0,
             'routes_evicted' => 0,
