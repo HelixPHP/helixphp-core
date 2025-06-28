@@ -380,7 +380,7 @@ class ExtensionManager
         }
 
         // Auto-discovery if enabled
-        if ($config->get('app.auto_discover_providers', true)) {
+        if ($config->get('app.extensions.auto_discover_providers', true)) {
             $this->discoverProviders();
             $this->registerDiscoveredProviders();
         }

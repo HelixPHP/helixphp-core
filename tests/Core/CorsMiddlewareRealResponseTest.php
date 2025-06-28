@@ -12,21 +12,24 @@ use Express\Http\Response;
  */
 class CorsMiddlewareRealResponseTest extends TestCase
 {
+    /**
+     * Nível inicial do output buffer antes do teste.
+     * @var int
+     */
+    private int $obLevel = 0;
+
     protected function setUp(): void
     {
         // Reset global state
         $_SERVER = [];
-
-        // Limpar qualquer output buffer existente
-        while (ob_get_level() > 0) {
-            @ob_end_clean();
-        }
+        // Salvar nível inicial do output buffer
+        $this->obLevel = ob_get_level();
     }
 
     protected function tearDown(): void
     {
-        // Limpar qualquer output buffer restante
-        while (ob_get_level() > 0) {
+        // Fechar apenas buffers abertos durante o teste
+        while (ob_get_level() > $this->obLevel) {
             @ob_end_clean();
         }
     }

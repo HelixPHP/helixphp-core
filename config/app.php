@@ -306,9 +306,6 @@ return [
         ]
     ],
 
-    // Auto-discovery settings
-    'auto_discover_providers' => filter_var($_ENV['AUTO_DISCOVER_PROVIDERS'] ?? true, FILTER_VALIDATE_BOOLEAN),
-
     // Aliases
     'aliases' => [
         'Auth' => 'Express\\Facades\\Auth',
