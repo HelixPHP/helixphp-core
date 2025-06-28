@@ -32,7 +32,9 @@ class Logger extends AbstractLogger
             LogLevel::INFO      => 6,
             LogLevel::DEBUG     => 7,
         ];
-    }    /**
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @param string|\Stringable $level

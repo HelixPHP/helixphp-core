@@ -54,6 +54,7 @@ $app->run();
 
 - 🏗️ **Arquitetura Moderna**: Dependency Injection Container e Service Providers
 - 🎪 **Event System**: Sistema de eventos nativo para extensibilidade
+- 🧩 **Sistema de Extensões**: Plugin system com auto-discovery, hooks e PSR-14
 - 🔧 **Configuration Management**: Configuração robusta via arquivos e código
 - 🔐 **Autenticação Multi-método**: JWT, Basic Auth, Bearer Token, API Key
 - 🛡️ **Segurança Avançada**: CSRF, XSS, Rate Limiting, Headers de Segurança
@@ -61,6 +62,59 @@ $app->run();
 - 📚 **OpenAPI/Swagger**: Documentação automática de APIs
 - ⚡ **Performance**: Cache integrado, pipeline otimizado de middlewares
 - 🧪 **Qualidade**: 245+ testes, PHPStan Level 8, PSR-12
+
+## 🧩 Sistema de Extensões v2.1.0
+
+O Express-PHP v2.1.0 possui um sistema robusto de extensões/plugins com auto-discovery, hooks e integração PSR-14:
+
+```php
+// Extensão personalizada
+class AnalyticsProvider extends ServiceProvider {
+    public function register(): void {
+        $this->app->singleton('analytics', AnalyticsService::class);
+    }
+
+    public function boot(): void {
+        // Hook para tracking automático
+        $this->app->addAction('request.received', function($context) {
+            $this->app->make('analytics')->track('page_view', $context);
+        });
+    }
+}
+
+// Registro manual
+$app->registerExtension('analytics', AnalyticsProvider::class);
+
+// Auto-discovery via composer.json
+{
+    "extra": {
+        "express-php": {
+            "providers": ["Vendor\\Analytics\\AnalyticsProvider"]
+        }
+    }
+}
+
+// Sistema de hooks (actions e filters)
+$app->addAction('user.login', function($context) {
+    // Ação executada quando usuário faz login
+});
+
+$app->addFilter('response.data', function($data, $context) {
+    // Filtro para modificar dados da resposta
+    $data['_meta'] = ['framework' => 'Express-PHP'];
+    return $data;
+});
+```
+
+**Recursos do Sistema de Extensões:**
+- 🔍 **Auto-Discovery**: Detecta extensões automaticamente via Composer
+- 🎣 **Hook System**: Actions e filters WordPress-style para extensibilidade
+- 🏗️ **Service Providers**: Integração nativa com container PSR-11
+- 📡 **PSR-14 Events**: Sistema de eventos padronizado
+- ⚙️ **Configuration**: Configuração flexível por extensão
+- 📊 **Management**: Enable/disable, stats e debugging
+
+> 📚 **[Documentação Completa](docs/EXTENSION_SYSTEM.md)** | **[Exemplo Prático](examples/example_extension_system.php)** | **[Exemplo Avançado](examples/example_advanced_extension.php)**
 
 ## 📊 Performance Benchmarks
 
@@ -99,6 +153,7 @@ $app->get('/profile', function($req, $res) {
 
 - **[🚀 Guia de Início Rápido](docs/guides/QUICK_START_GUIDE.md)** - Setup em 5 minutos
 - **[📚 Documentação Completa](docs/DOCUMENTATION_INDEX.md)** - Índice completo
+- **[🧩 Sistema de Extensões](docs/EXTENSION_SYSTEM.md)** - Plugins, hooks e auto-discovery
 - **[🔐 Sistema de Autenticação](docs/pt-br/AUTH_MIDDLEWARE.md)** - Guia detalhado
 - **[🛡️ Segurança](docs/guides/SECURITY_IMPLEMENTATION.md)** - Implementação segura
 - **[📡 Streaming](docs/pt-br/STREAMING.md)** - Server-Sent Events
@@ -113,6 +168,8 @@ $app->get('/profile', function($req, $res) {
 | **[🔑 Auth Simples](examples/example_auth_simple.php)** | JWT básico e controle de acesso |
 | **[🛡️ Middlewares](examples/example_middleware.php)** | CORS, rate limiting, validação |
 | **[📚 OpenAPI](examples/example_openapi_docs.php)** | Swagger UI automático |
+| **[🧩 Extensões](examples/example_extension_system.php)** | Sistema de plugins e hooks |
+| **[🔧 Extensões Avançadas](examples/example_advanced_extension.php)** | Rate limiting, cache e auto-discovery |
 | **[🚀 App Completo](examples/example_complete_optimizations.php)** | Aplicação com todos os recursos |
 
 ## 🔧 Desenvolvimento e Qualidade

@@ -12,6 +12,9 @@ use Express\Providers\ServiceProvider;
 use Express\Providers\ContainerServiceProvider;
 use Express\Providers\EventServiceProvider;
 use Express\Providers\LoggingServiceProvider;
+use Express\Providers\HookServiceProvider;
+use Express\Providers\ExtensionServiceProvider;
+use Express\Support\HookManager;
 use Express\Events\ApplicationStarted;
 use Express\Events\RequestReceived;
 use Express\Events\ResponseSent;
@@ -81,6 +84,8 @@ class Application
         ContainerServiceProvider::class,
         EventServiceProvider::class,
         LoggingServiceProvider::class,
+        \Express\Providers\HookServiceProvider::class,
+        \Express\Providers\ExtensionServiceProvider::class,
     ];
 
     /**
@@ -925,5 +930,88 @@ class Application
     public function getBaseUrl(): ?string
     {
         return $this->baseUrl;
+    }
+
+    // ==========================================
+    // EXTENSION & HOOK MANAGEMENT METHODS
+    // ==========================================
+
+    /**
+     * Get extension manager instance
+     */
+    public function extensions(): \Express\Providers\ExtensionManager
+    {
+        /** @var \Express\Providers\ExtensionManager */
+        return $this->make(\Express\Providers\ExtensionManager::class);
+    }
+
+    /**
+     * Get hook manager instance
+     */
+    public function hooks(): HookManager
+    {
+        /** @var HookManager */
+        return $this->make(HookManager::class);
+    }
+
+    /**
+     * Register an extension manually
+     */
+    public function registerExtension(string $name, string $provider, array $config = []): self
+    {
+        $this->extensions()->registerExtension($name, $provider, $config);
+        return $this;
+    }
+
+    /**
+     * Add an action hook
+     */
+    public function addAction(string $hook, callable $callback, int $priority = 10): self
+    {
+        $this->hooks()->addAction($hook, $callback, $priority);
+        return $this;
+    }
+
+    /**
+     * Add a filter hook
+     */
+    public function addFilter(string $hook, callable $callback, int $priority = 10): self
+    {
+        $this->hooks()->addFilter($hook, $callback, $priority);
+        return $this;
+    }
+
+    /**
+     * Execute an action hook
+     */
+    public function doAction(string $hook, array $context = []): self
+    {
+        $this->hooks()->doAction($hook, $context);
+        return $this;
+    }
+
+    /**
+     * Apply a filter hook
+     *
+     * @param mixed $data
+     * @param array<string, mixed> $context
+     * @return mixed
+     */
+    public function applyFilter(string $hook, mixed $data, array $context = []): mixed
+    {
+        return $this->hooks()->applyFilter($hook, $data, $context);
+    }
+
+    /**
+     * Get extension statistics
+     *
+     * @return array{extensions: array, hooks: array}
+     */
+    public function getExtensionStats(): array
+    {
+        return [
+            'extensions' => $this->extensions()->getStats(),
+            'hooks' => $this->hooks()->getStats()
+        ];
     }
 }

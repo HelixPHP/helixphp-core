@@ -274,6 +274,41 @@ return [
         // 'Express\\Providers\\ValidationServiceProvider'
     ],
 
+    // Extensions and Plugins Configuration
+    'extensions' => [
+        // Auto-discovery of service providers from composer packages
+        'auto_discover_providers' => filter_var($_ENV['AUTO_DISCOVER_PROVIDERS'] ?? true, FILTER_VALIDATE_BOOLEAN),
+
+        // Manual extension registration
+        // 'my_extension' => [
+        //     'provider' => 'Vendor\\Package\\ExpressServiceProvider',
+        //     'config' => [
+        //         'option1' => 'value1',
+        //         'option2' => true
+        //     ]
+        // ]
+    ],
+
+    // Hook System Configuration
+    'hooks' => [
+        'enabled' => filter_var($_ENV['HOOKS_ENABLED'] ?? true, FILTER_VALIDATE_BOOLEAN),
+
+        // Core hooks that are always available
+        'core_hooks' => [
+            'app.booting',
+            'app.booted',
+            'request.received',
+            'response.sending',
+            'middleware.before',
+            'middleware.after',
+            'route.matched',
+            'route.executed'
+        ]
+    ],
+
+    // Auto-discovery settings
+    'auto_discover_providers' => filter_var($_ENV['AUTO_DISCOVER_PROVIDERS'] ?? true, FILTER_VALIDATE_BOOLEAN),
+
     // Aliases
     'aliases' => [
         'Auth' => 'Express\\Facades\\Auth',
