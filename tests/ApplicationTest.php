@@ -3,16 +3,16 @@
 namespace Express\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Express\ApiExpress;
+use Express\Core\Application;
 use Express\Routing\Router;
 
-class ApiExpressTest extends TestCase
+class ApplicationTest extends TestCase
 {
     private $app;
 
     protected function setUp(): void
     {
-        $this->app = new ApiExpress();
+        $this->app = new Application();
 
         // Reset global state
         $_SERVER = [];
@@ -36,16 +36,19 @@ class ApiExpressTest extends TestCase
 
     public function testAppInitialization(): void
     {
-        $this->assertInstanceOf(ApiExpress::class, $this->app);
+        $this->assertInstanceOf(Application::class, $this->app);
     }
 
     public function testRouterMethodsExist(): void
     {
-        // These methods are handled by __call magic method
-        $this->assertTrue(method_exists($this->app, '__call'));
+        // Test that essential methods exist in Application
         $this->assertTrue(method_exists($this->app, 'use'));
         $this->assertTrue(method_exists($this->app, 'setBaseUrl'));
         $this->assertTrue(method_exists($this->app, 'getBaseUrl'));
+        $this->assertTrue(method_exists($this->app, 'get'));
+        $this->assertTrue(method_exists($this->app, 'post'));
+        $this->assertTrue(method_exists($this->app, 'put'));
+        $this->assertTrue(method_exists($this->app, 'delete'));
     }
 
     public function testUseMethod(): void
@@ -56,7 +59,7 @@ class ApiExpressTest extends TestCase
 
         // use() method returns void, not the app instance
         $this->app->use($middleware);
-        $this->assertInstanceOf(ApiExpress::class, $this->app);
+        $this->assertInstanceOf(Application::class, $this->app);
     }
 
     public function testSetBaseUrl(): void
@@ -111,14 +114,19 @@ class ApiExpressTest extends TestCase
         $this->assertEquals('https://api.example.com', $this->app->getBaseUrl());
 
         // Test with null
-        $app2 = new ApiExpress();
+        $app2 = new Application();
         $this->assertNull($app2->getBaseUrl());
     }
 
     public function testConstructorWithBaseUrl(): void
     {
+        $basePath = '/path/to/app';
+        $app = new Application($basePath);
+
+        // O construtor recebe basePath, não baseUrl
+        // Para testar baseUrl, precisamos usar setBaseUrl
         $baseUrl = 'https://test.example.com';
-        $app = new ApiExpress($baseUrl);
+        $app->setBaseUrl($baseUrl);
         $this->assertEquals($baseUrl, $app->getBaseUrl());
     }
 }

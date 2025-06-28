@@ -76,6 +76,11 @@ class Application
     protected array $listeners = [];
 
     /**
+     * URL base da aplicação.
+     */
+    protected ?string $baseUrl = null;
+
+    /**
      * Construtor da aplicação.
      *
      * @param string|null $basePath Caminho base da aplicação
@@ -622,5 +627,64 @@ class Application
     public function version(): string
     {
         return self::VERSION;
+    }
+
+    /**
+     * Factory method para criar instância da aplicação (compatibilidade com ApiExpress).
+     *
+     * @param string|null $basePath Caminho base da aplicação
+     * @return self
+     */
+    public static function create(?string $basePath = null): self
+    {
+        return new self($basePath);
+    }
+
+    /**
+     * Factory method estilo Express.js para criar aplicação.
+     *
+     * @param string|null $basePath Caminho base da aplicação
+     * @return self
+     */
+    public static function express(?string $basePath = null): self
+    {
+        return new self($basePath);
+    }
+
+    /**
+     * Configura múltiplas opções da aplicação de uma vez.
+     *
+     * @param array<string, mixed> $config Configurações
+     * @return $this
+     */
+    public function configure(array $config): self
+    {
+        foreach ($config as $key => $value) {
+            $this->config->set($key, $value);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Define a URL base da aplicação.
+     *
+     * @param string $baseUrl URL base
+     * @return $this
+     */
+    public function setBaseUrl(string $baseUrl): self
+    {
+        $this->baseUrl = rtrim($baseUrl, '/');
+        return $this;
+    }
+
+    /**
+     * Obtém a URL base da aplicação.
+     *
+     * @return string|null
+     */
+    public function getBaseUrl(): ?string
+    {
+        return $this->baseUrl;
     }
 }
