@@ -185,11 +185,13 @@ class UtilsTest extends TestCase
 
     public function testLog(): void
     {
-        // Test with a simple approach - just verify the method exists and can be called
+        // Suprimir saída temporariamente
+        ob_start();
         Utils::log('Test message', 'info');
         Utils::log('Error message', 'error');
+        ob_end_clean();
 
-        // If no exception is thrown, the method works correctly
+        // Se não lançar exceção, o método funciona corretamente
         $this->assertTrue(true);
     }
 

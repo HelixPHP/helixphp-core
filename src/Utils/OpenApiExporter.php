@@ -82,11 +82,12 @@ class OpenApiExporter
                 }
             }
             // Forçar todas as chaves para string (compatibilidade PHP 8.3/OpenAPI)
-            if (!empty($responses)) {
-                $responses = array_combine(array_map('strval', array_keys($responses)), array_values($responses));
-            } else {
-                $responses = [];
+            // e garantir que não haja duplicidade de códigos de resposta
+            $responsesAssoc = [];
+            foreach ($responses as $code => $resp) {
+                $responsesAssoc[(string)$code] = $resp;
             }
+            $responses = $responsesAssoc;
 
             // Add tags to collection
             $allTags = array_merge($allTags, $tags);
