@@ -13,6 +13,7 @@ use Express\ApiExpress;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Authentication\JWTHelper;
+use Express\Utils\Utils;
 
 class SimpleBenchmark
 {
@@ -136,8 +137,8 @@ class SimpleBenchmark
         ];
 
         echo "💾 Memory Usage Analysis:\n";
-        echo "   Memory per app instance: " . $this->formatBytes($memoryDiff / 50) . "\n";
-        echo "   Total memory for 50 apps: " . $this->formatBytes($memoryDiff) . "\n\n";
+        echo "   Memory per app instance: " . Utils::formatBytes($memoryDiff / 50) . "\n";
+        echo "   Total memory for 50 apps: " . Utils::formatBytes($memoryDiff) . "\n\n";
     }
 
     private function benchmark(string $name, callable $callback): void
@@ -185,7 +186,7 @@ class SimpleBenchmark
             echo "📈 {$test}:\n";
             echo "   Operations/second: " . number_format($result['ops_per_second'], 0) . "\n";
             echo "   Average time: " . number_format($result['avg_time_microseconds'], 2) . " μs\n";
-            echo "   Memory used: " . $this->formatBytes($result['memory_used']) . "\n\n";
+            echo "   Memory used: " . Utils::formatBytes($result['memory_used']) . "\n\n";
         }
     }
 
@@ -234,15 +235,15 @@ class SimpleBenchmark
                 $test,
                 number_format($result['ops_per_second'], 0),
                 number_format($result['avg_time_microseconds'], 2),
-                $this->formatBytes($result['memory_used'])
+                Utils::formatBytes($result['memory_used'])
             );
         }
 
         if (isset($this->results['Memory Usage'])) {
             $memory = $this->results['Memory Usage'];
             $markdown .= "\n## Memory Efficiency\n";
-            $markdown .= "- **Memory per app instance**: " . $this->formatBytes($memory['memory_per_app']) . "\n";
-            $markdown .= "- **Total memory for {$memory['apps_created']} apps**: " . $this->formatBytes($memory['total_memory']) . "\n";
+            $markdown .= "- **Memory per app instance**: " . Utils::formatBytes($memory['memory_per_app']) . "\n";
+            $markdown .= "- **Total memory for {$memory['apps_created']} apps**: " . Utils::formatBytes($memory['total_memory']) . "\n";
         }
 
         $markdown .= "\n## Performance Summary\n";
@@ -267,14 +268,6 @@ class SimpleBenchmark
         file_put_contents($summaryPath, $markdown);
 
         echo "📄 Performance summary saved to: {$summaryPath}\n\n";
-    }
-
-    private function formatBytes(float $bytes): string
-    {
-        if ($bytes < 1024) return round($bytes) . ' B';
-        if ($bytes < 1048576) return round($bytes / 1024, 2) . ' KB';
-        if ($bytes < 1073741824) return round($bytes / 1048576, 2) . ' MB';
-        return round($bytes / 1073741824, 2) . ' GB';
     }
 }
 

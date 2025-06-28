@@ -9,8 +9,10 @@ use Express\Middleware\Core\BaseMiddleware;
  */
 class CsrfMiddleware extends BaseMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
+    /** @param array<string, mixed> $options */
     public function __construct(array $options = [])
     {
         $this->options = array_merge(
@@ -39,7 +41,8 @@ class CsrfMiddleware extends BaseMiddleware
         }
 
         // Skip validation for safe methods
-        if (in_array($method, $this->options['excludeMethods'])) {
+        $excludeMethods = $this->options['excludeMethods'] ?? [];
+        if (is_array($excludeMethods) && in_array($method, $excludeMethods)) {
             return $next();
         }
 
@@ -72,9 +75,11 @@ class CsrfMiddleware extends BaseMiddleware
     private function getTokenFromRequest($request): ?string
     {
         // Check header
-        $headerName = 'HTTP_' . str_replace('-', '_', strtoupper($this->options['headerName']));
-        if (isset($_SERVER[$headerName])) {
-            return $_SERVER[$headerName];
+        $headerName = $this->options['headerName'] ?? 'X-CSRF-Token';
+        $headerName = is_string($headerName) ? $headerName : 'X-CSRF-Token';
+        $headerKey = 'HTTP_' . str_replace('-', '_', strtoupper($headerName));
+        if (isset($_SERVER[$headerKey])) {
+            return $_SERVER[$headerKey];
         }
 
         // Check POST data

@@ -6,6 +6,7 @@ use Express\Http\Psr7\Pool\DynamicPoolManager;
 use Express\Http\Psr7\Pool\EnhancedStreamPool;
 use Express\Http\Psr7\Pool\HeaderPool;
 use Express\Http\Psr7\Cache\IntelligentJsonCache;
+use Express\Utils\Utils;
 
 /**
  * Benchmark for New Optimization Features
@@ -232,8 +233,8 @@ class OptimizationsBenchmark
         echo "🎯 Overall Performance Impact:\n";
         echo sprintf("   - Average improvement: %+.1f%%\n", $avgImprovement);
         echo sprintf("   - Test iterations: %d\n", $this->iterations);
-        echo sprintf("   - Memory usage: %s\n", $this->formatBytes(memory_get_usage()));
-        echo sprintf("   - Peak memory: %s\n", $this->formatBytes(memory_get_peak_usage()));
+        echo sprintf("   - Memory usage: %s\n", Utils::formatBytes(memory_get_usage()));
+        echo sprintf("   - Peak memory: %s\n", Utils::formatBytes(memory_get_peak_usage()));
         echo "\n";
 
         // Detailed results
@@ -271,17 +272,6 @@ class OptimizationsBenchmark
         echo "\n";
 
         echo "✅ Benchmark completed successfully!\n";
-    }
-
-    private function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } else {
-            return round($bytes / 1048576, 2) . ' MB';
-        }
     }
 }
 

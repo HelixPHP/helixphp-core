@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Express\Utils\Utils;
+
 class ComprehensivePerformanceAnalysis
 {
     private array $results = [];
@@ -380,8 +382,8 @@ class ComprehensivePerformanceAnalysis
         $peakMemory = memory_get_peak_usage(true);
 
         return [
-            'current_usage' => $this->formatBytes($currentMemory),
-            'peak_usage' => $this->formatBytes($peakMemory),
+            'current_usage' => Utils::formatBytes($currentMemory),
+            'peak_usage' => Utils::formatBytes($peakMemory),
             'optimization_impact' => 'Zero-copy optimizations and object pooling reduce memory overhead',
             'recommendations' => [
                 'Continue monitoring memory usage patterns',
@@ -389,16 +391,6 @@ class ComprehensivePerformanceAnalysis
                 'Consider additional memory mapping for large datasets'
             ]
         ];
-    }
-
-    private function formatBytes(int $bytes): string
-    {
-        if ($bytes >= 1024 * 1024) {
-            return number_format($bytes / (1024 * 1024), 2) . ' MB';
-        } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
-        }
-        return $bytes . ' B';
     }
 
     private function generateFinalReport(): void

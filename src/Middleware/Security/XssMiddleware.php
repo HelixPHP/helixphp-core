@@ -9,8 +9,10 @@ use Express\Middleware\Core\BaseMiddleware;
  */
 class XssMiddleware extends BaseMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
+    /** @param array<string, mixed> $options */
     public function __construct(array $options = [])
     {
         $this->options = array_merge(
@@ -149,7 +151,9 @@ class XssMiddleware extends BaseMiddleware
         if (!empty($_GET)) {
             foreach ($_GET as $key => $value) {
                 if (is_string($value)) {
-                    $_GET[$key] = self::sanitize($value, $this->options['allowedTags']);
+                    $allowedTags = $this->options['allowedTags'] ?? '';
+                    $allowedTags = is_string($allowedTags) ? $allowedTags : '';
+                    $_GET[$key] = self::sanitize($value, $allowedTags);
                 }
             }
         }
@@ -158,7 +162,9 @@ class XssMiddleware extends BaseMiddleware
         if (!empty($_POST)) {
             foreach ($_POST as $key => $value) {
                 if (is_string($value)) {
-                    $_POST[$key] = self::sanitize($value, $this->options['allowedTags']);
+                    $allowedTags = $this->options['allowedTags'] ?? '';
+                    $allowedTags = is_string($allowedTags) ? $allowedTags : '';
+                    $_POST[$key] = self::sanitize($value, $allowedTags);
                 }
             }
         }

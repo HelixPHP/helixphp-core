@@ -340,7 +340,7 @@ class IntelligentJsonCache
                 'json_strings' => count(self::$jsonStringCache),
                 'fingerprints' => count(self::$structureFingerprints)
             ],
-            'memory_saved' => self::formatBytes(self::$stats['memory_saved_bytes']),
+            'memory_saved' => \Express\Utils\Utils::formatBytes(self::$stats['memory_saved_bytes']),
             'detailed_stats' => self::$stats
         ];
     }
@@ -376,19 +376,5 @@ class IntelligentJsonCache
             'sample_patterns' => array_slice(self::$templatePatterns, 0, 3, true),
             'json_cache_sample' => array_slice(self::$jsonStringCache, 0, 3, true)
         ];
-    }
-
-    /**
-     * Format bytes to human readable format
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } else {
-            return round($bytes / 1048576, 2) . ' MB';
-        }
     }
 }

@@ -16,6 +16,9 @@ class Logger
     public const INFO = 6;
     public const DEBUG = 7;
 
+    /**
+     * @var array<int, string>
+     */
     private static array $levels = [
         self::EMERGENCY => 'EMERGENCY',
         self::ALERT => 'ALERT',
@@ -27,6 +30,9 @@ class Logger
         self::DEBUG => 'DEBUG'
     ];
 
+    /**
+     * @var array<LogHandlerInterface>
+     */
     private array $handlers = [];
     private int $level = self::DEBUG;
 
@@ -53,6 +59,7 @@ class Logger
 
     /**
      * Registra uma mensagem de log
+     * @param array<string, mixed> $context
      */
     public function log(int $level, string $message, array $context = []): void
     {
@@ -76,42 +83,50 @@ class Logger
 
     /**
      * Métodos de conveniência
+     * @param array<string, mixed> $context
      */
     public function emergency(string $message, array $context = []): void
     {
         $this->log(self::EMERGENCY, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function alert(string $message, array $context = []): void
     {
         $this->log(self::ALERT, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function critical(string $message, array $context = []): void
     {
         $this->log(self::CRITICAL, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function error(string $message, array $context = []): void
     {
         $this->log(self::ERROR, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function warning(string $message, array $context = []): void
     {
         $this->log(self::WARNING, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function notice(string $message, array $context = []): void
     {
         $this->log(self::NOTICE, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function info(string $message, array $context = []): void
     {
         $this->log(self::INFO, $message, $context);
     }
 
+    /** @param array<string, mixed> $context */
     public function debug(string $message, array $context = []): void
     {
         $this->log(self::DEBUG, $message, $context);

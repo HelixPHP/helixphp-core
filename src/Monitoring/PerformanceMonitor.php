@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Express\Monitoring;
 
+use Express\Utils\Utils;
 use Express\Http\Psr7\Pool\HeaderPool;
 use Express\Http\Psr7\Pool\ResponsePool;
 use Express\Http\Psr7\Pool\DynamicPoolManager;
@@ -25,6 +26,7 @@ class PerformanceMonitor
 {
     /**
      * Monitoring configuration
+     * @var array<string, mixed>
      */
     private static array $config = [
         'enable_alerts' => true,
@@ -36,16 +38,19 @@ class PerformanceMonitor
 
     /**
      * Alert history to prevent spam
+     * @var array<string, mixed>
      */
     private static array $alertHistory = [];
 
     /**
      * Performance baseline for comparison
+     * @var array<string, mixed>
      */
     private static array $baseline = [];
 
     /**
      * Monitoring metrics collection
+     * @var array<string, mixed>
      */
     private static array $metrics = [
         'start_time' => 0,
@@ -56,6 +61,7 @@ class PerformanceMonitor
 
     /**
      * Initialize monitoring
+     * @param array<string, mixed> $config
      */
     public static function initialize(array $config = []): void
     {
@@ -68,6 +74,7 @@ class PerformanceMonitor
 
     /**
      * Get comprehensive performance dashboard
+     * @return array<string, mixed>
      */
     public static function getDashboard(): array
     {
@@ -86,6 +93,7 @@ class PerformanceMonitor
 
     /**
      * Get system information
+     * @return array<string, mixed>
      */
     private static function getSystemInfo(float $uptime): array
     {
@@ -96,14 +104,15 @@ class PerformanceMonitor
             'requests_per_second' => self::$metrics['request_count'] / max($uptime, 1),
             'php_version' => PHP_VERSION,
             'memory_limit' => ini_get('memory_limit'),
-            'current_memory' => self::formatBytes(memory_get_usage(true)),
-            'peak_memory' => self::formatBytes(memory_get_peak_usage(true)),
+            'current_memory' => Utils::formatBytes(memory_get_usage(true)),
+            'peak_memory' => Utils::formatBytes(memory_get_peak_usage(true)),
             'opcache_enabled' => function_exists('opcache_get_status') && opcache_get_status() !== false
         ];
     }
 
     /**
      * Get pool status for all components
+     * @return array<string, mixed>
      */
     private static function getPoolStatus(): array
     {
@@ -152,6 +161,7 @@ class PerformanceMonitor
 
     /**
      * Get cache status for all caching components
+     * @return array<string, mixed>
      */
     private static function getCacheStatus(): array
     {
@@ -195,6 +205,7 @@ class PerformanceMonitor
 
     /**
      * Analyze memory usage patterns
+     * @return array<string, mixed>
      */
     private static function getMemoryAnalysis(): array
     {
@@ -211,10 +222,10 @@ class PerformanceMonitor
         }
 
         return [
-            'current_usage' => self::formatBytes($currentMemory),
-            'peak_usage' => self::formatBytes($peakMemory),
+            'current_usage' => Utils::formatBytes($currentMemory),
+            'peak_usage' => Utils::formatBytes($peakMemory),
             'usage_percentage' => round($usagePercent, 2),
-            'memory_limit' => $memoryLimit > 0 ? self::formatBytes($memoryLimit) : 'unlimited',
+            'memory_limit' => $memoryLimit > 0 ? Utils::formatBytes($memoryLimit) : 'unlimited',
             'status' => self::getMemoryStatus($usagePercent),
             'pool_manager' => $poolManagerStats,
             'gc_stats' => gc_status()
@@ -223,6 +234,7 @@ class PerformanceMonitor
 
     /**
      * Check for performance alerts
+     * @return array<array<string, mixed>>
      */
     private static function checkPerformanceAlerts(): array
     {
@@ -275,6 +287,7 @@ class PerformanceMonitor
 
     /**
      * Get performance recommendations
+     * @return array<array<string, mixed>>
      */
     private static function getRecommendations(): array
     {
@@ -284,11 +297,17 @@ class PerformanceMonitor
         $poolStatus = self::getPoolStatus();
 
         foreach ($poolStatus as $poolName => $status) {
-            if (isset($status['hit_rate']) && $status['hit_rate'] < 80) {
+            if (
+                is_array($status) &&
+                isset($status['hit_rate']) &&
+                is_numeric($status['hit_rate']) &&
+                $status['hit_rate'] < 80
+            ) {
+                $hitRate = (float) $status['hit_rate'];
                 $recommendations[] = [
                     'category' => 'pool_optimization',
                     'priority' => 'medium',
-                    'message' => "Optimize {$poolName} - hit rate {$status['hit_rate']}%",
+                    'message' => "Optimize {$poolName} - hit rate {$hitRate}%",
                     'action' => 'Consider warming up cache or adjusting pool sizes'
                 ];
             }
@@ -325,6 +344,7 @@ class PerformanceMonitor
 
     /**
      * Get performance trends
+     * @return array<string, mixed>
      */
     private static function getTrends(): array
     {
@@ -361,7 +381,7 @@ class PerformanceMonitor
     /**
      * Get alert history for monitoring dashboard
      *
-     * @return array<array>
+     * @return array<string, mixed>
      */
     public static function getAlertHistory(): array
     {
@@ -414,22 +434,6 @@ class PerformanceMonitor
     }
 
     /**
-     * Format bytes to human readable format
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MB';
-        } else {
-            return round($bytes / 1073741824, 2) . ' GB';
-        }
-    }
-
-    /**
      * Format uptime to human readable format
      */
     private static function formatUptime(float $seconds): string
@@ -447,6 +451,7 @@ class PerformanceMonitor
 
     /**
      * Export monitoring data for external analysis
+     * @return array<string, mixed>
      */
     public static function exportMetrics(): array
     {

@@ -388,7 +388,7 @@ class ZeroCopyOptimizer
     {
         return [
             'copies_avoided' => self::$stats['copies_avoided'],
-            'memory_saved' => self::formatBytes(self::$stats['memory_saved']),
+            'memory_saved' => \Express\Utils\Utils::formatBytes(self::$stats['memory_saved']),
             'references_active' => count(self::$references),
             'interned_strings' => count(self::$internedStrings),
             'buffer_pools' => array_map('count', self::$bufferPools),
@@ -405,20 +405,6 @@ class ZeroCopyOptimizer
     {
         $totalRequests = self::$stats['pool_hits'] + self::$stats['pool_misses'];
         return $totalRequests > 0 ? (self::$stats['pool_hits'] / $totalRequests) * 100 : 0;
-    }
-
-    /**
-     * Format bytes for human readability
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } else {
-            return round($bytes / 1048576, 2) . ' MB';
-        }
     }
 
     /**

@@ -237,7 +237,7 @@ class EnhancedStreamPool
             $totalMemory += $categoryMemory;
         }
 
-        return self::formatBytes($totalMemory);
+        return \Express\Utils\Utils::formatBytes($totalMemory);
     }
 
     /**
@@ -256,20 +256,6 @@ class EnhancedStreamPool
                 return 524288; // ~512KB estimated for large streams
             default:
                 return 2048;
-        }
-    }
-
-    /**
-     * Format bytes to human readable format
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } else {
-            return round($bytes / 1048576, 2) . ' MB';
         }
     }
 

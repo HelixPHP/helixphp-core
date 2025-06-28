@@ -10,8 +10,10 @@ use Express\Http\Request;
  */
 class RateLimitMiddleware extends BaseMiddleware
 {
+    /** @var array<string, mixed> */
     private array $options;
 
+    /** @param array<string, mixed> $options */
     public function __construct(array $options = [])
     {
         $this->options = array_merge(

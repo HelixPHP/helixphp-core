@@ -18,6 +18,7 @@ use Express\Middleware\Security\XssMiddleware;
 use Express\Middleware\Security\CorsMiddleware;
 use Express\Middleware\Core\RateLimitMiddleware;
 use Express\Authentication\JWTHelper;
+use Express\Utils\Utils;
 
 class ExpressPhpBenchmark
 {
@@ -348,8 +349,8 @@ class ExpressPhpBenchmark
         ];
 
         echo "💾 Memory Usage Analysis:\n";
-        echo "   Memory per app instance: " . $this->formatBytes($memoryDiff / 100) . "\n";
-        echo "   Total memory for 100 apps: " . $this->formatBytes($memoryDiff) . "\n\n";
+        echo "   Memory per app instance: " . Utils::formatBytes($memoryDiff / 100) . "\n";
+        echo "   Total memory for 100 apps: " . Utils::formatBytes($memoryDiff) . "\n\n";
     }
 
     /**
@@ -402,7 +403,7 @@ class ExpressPhpBenchmark
             echo "📈 {$test}:\n";
             echo "   Operations/second: " . number_format($result['ops_per_second'], 0) . "\n";
             echo "   Average time: " . number_format($result['avg_time_microseconds'], 2) . " μs\n";
-            echo "   Memory used: " . $this->formatBytes($result['memory_used']) . "\n\n";
+            echo "   Memory used: " . Utils::formatBytes($result['memory_used']) . "\n\n";
         }
     }
 
@@ -452,15 +453,15 @@ class ExpressPhpBenchmark
                 $test,
                 number_format($result['ops_per_second'], 0),
                 number_format($result['avg_time_microseconds'], 2),
-                $this->formatBytes($result['memory_used'])
+                Utils::formatBytes($result['memory_used'])
             );
         }
 
         $markdown .= "\n## Memory Analysis\n";
         if (isset($this->results['Memory Usage'])) {
             $memory = $this->results['Memory Usage'];
-            $markdown .= "- **Memory per app instance**: " . $this->formatBytes($memory['memory_per_app']) . "\n";
-            $markdown .= "- **Total memory for 100 apps**: " . $this->formatBytes($memory['total_memory']) . "\n";
+            $markdown .= "- **Memory per app instance**: " . Utils::formatBytes($memory['memory_per_app']) . "\n";
+            $markdown .= "- **Total memory for 100 apps**: " . Utils::formatBytes($memory['total_memory']) . "\n";
         }
 
         $markdown .= "\n## Performance Summary\n";
@@ -487,16 +488,6 @@ class ExpressPhpBenchmark
         echo "📄 Performance summary saved to: {$summaryPath}\n\n";
     }
 
-    /**
-     * Format bytes to human readable format
-     */
-    private function formatBytes(float $bytes): string
-    {
-        if ($bytes < 1024) return round($bytes, 2) . ' B';
-        if ($bytes < 1048576) return round($bytes / 1024, 2) . ' KB';
-        if ($bytes < 1073741824) return round($bytes / 1048576, 2) . ' MB';
-        return round($bytes / 1073741824, 2) . ' GB';
-    }
 }
 
 // Run benchmarks if called directly

@@ -13,10 +13,7 @@ use Express\Http\Response;
 use Express\Http\Psr7\Factory\ServerRequestFactory;
 use Express\Http\Psr7\Factory\ResponseFactory;
 use Express\Http\Psr7\ServerRequest;
-use Express\Http\Psr15\RequestHandler;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Http\Adapters\GlobalsToServerRequestAdapter;
-use Express\Http\Adapters\ResponseEmitter;
+use Express\Utils\Utils;
 
 class PSRPerformanceBenchmark
 {
@@ -290,21 +287,11 @@ class PSRPerformanceBenchmark
         // Memory Usage
         echo "💾 Memory Usage Analysis:\n";
         $memory = $this->results['memory_usage'];
-        echo sprintf("   Traditional (100 objects): %s\n", $this->formatBytes($memory['traditional']));
-        echo sprintf("   PSR-7 (100 objects):       %s\n", $this->formatBytes($memory['psr7']));
+        echo sprintf("   Traditional (100 objects): %s\n", Utils::formatBytes($memory['traditional']));
+        echo sprintf("   PSR-7 (100 objects):       %s\n", Utils::formatBytes($memory['psr7']));
         echo sprintf("   Difference:                 %s (%.1f%%)\n\n",
-            $this->formatBytes($memory['difference']),
+            Utils::formatBytes($memory['difference']),
             $memory['difference_percent']);
-    }
-
-    private function formatBytes(int $bytes): string
-    {
-        if ($bytes >= 1024 * 1024) {
-            return number_format($bytes / (1024 * 1024), 2) . ' MB';
-        } elseif ($bytes >= 1024) {
-            return number_format($bytes / 1024, 2) . ' KB';
-        }
-        return $bytes . ' B';
     }
 
     private function saveResults(): void

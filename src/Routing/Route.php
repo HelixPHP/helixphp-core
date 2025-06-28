@@ -12,12 +12,17 @@ class Route
     private string $method;
     private string $path;
     private string $pattern;
+    /** @var array<string, mixed> */
     private array $parameters = [];
+    /** @var array<int, string> */
+    private array $parameterNames = [];
+    /** @var array<callable> */
     private array $middlewares = [];
     /**
      * @var callable
      */
     private $handler;
+    /** @var array<string, mixed> */
     private array $metadata = [];
     private ?string $name = null;
 
@@ -54,7 +59,7 @@ class Route
 
         // Encontra parâmetros na rota (:param)
         preg_match_all('/\/:([^\/]+)/', $pattern, $matches);
-        $this->parameters = $matches[1];
+        $this->parameterNames = $matches[1];
 
         // Converte parâmetros para regex
         $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
@@ -99,12 +104,13 @@ class Route
         array_shift($matches); // Remove o match completo
 
         $parameters = [];
-        for ($i = 0; $i < count($this->parameters) && $i < count($matches); $i++) {
+        for ($i = 0; $i < count($this->parameterNames) && $i < count($matches); $i++) {
             $value = $matches[$i];
             if (is_numeric($value)) {
                 $value = (int)$value;
             }
-            $parameters[$this->parameters[$i]] = $value;
+            $parameterName = $this->parameterNames[$i] ?? "param{$i}";
+            $parameters[$parameterName] = $value;
         }
 
         return $parameters;

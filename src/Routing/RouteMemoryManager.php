@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Express\Routing;
 
 use Express\Utils\SerializationCache;
+use Express\Utils\Utils;
 
 /**
  * Advanced Route Memory Manager
@@ -113,13 +114,13 @@ class RouteMemoryManager
         $totalBytes = $routeCacheSize + $compiledPatternsSize + $parameterMappingsSize + $usageTrackingSize;
 
         return [
-            'total' => self::formatBytes($totalBytes),
+            'total' => Utils::formatBytes($totalBytes),
             'bytes' => $totalBytes,
             'breakdown' => [
-                'route_cache' => self::formatBytes($routeCacheSize),
-                'compiled_patterns' => self::formatBytes($compiledPatternsSize),
-                'parameter_mappings' => self::formatBytes($parameterMappingsSize),
-                'usage_tracking' => self::formatBytes($usageTrackingSize)
+                'route_cache' => Utils::formatBytes($routeCacheSize),
+                'compiled_patterns' => Utils::formatBytes($compiledPatternsSize),
+                'parameter_mappings' => Utils::formatBytes($parameterMappingsSize),
+                'usage_tracking' => Utils::formatBytes($usageTrackingSize)
             ]
         ];
     }
@@ -151,7 +152,7 @@ class RouteMemoryManager
 
         self::$stats['memory_freed'] += $freedMemory;
 
-        return "Emergency cleanup performed. Freed: " . self::formatBytes($freedMemory);
+        return "Emergency cleanup performed. Freed: " . Utils::formatBytes($freedMemory);
     }
 
     /**
@@ -165,7 +166,7 @@ class RouteMemoryManager
         foreach (self::$optimizationStrategies as $name => $strategy) {
             $result = call_user_func($strategy);
             if ($result > 0) {
-                $optimizations[] = "$name: " . self::formatBytes($result);
+                $optimizations[] = "$name: " . Utils::formatBytes($result);
                 self::$stats['memory_freed'] += $result;
             }
         }
@@ -186,7 +187,7 @@ class RouteMemoryManager
 
         self::$stats['memory_freed'] += $freed;
 
-        return "Routine optimization completed. Freed: " . self::formatBytes($freed);
+        return "Routine optimization completed. Freed: " . Utils::formatBytes($freed);
     }
 
     /**
@@ -438,22 +439,6 @@ class RouteMemoryManager
         }
 
         return $recommendations;
-    }
-
-    /**
-     * Format bytes to human readable format
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MB';
-        } else {
-            return round($bytes / 1073741824, 2) . ' GB';
-        }
     }
 
     /**

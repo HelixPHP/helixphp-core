@@ -394,10 +394,10 @@ class MemoryMappingManager
 
         return [
             'active_mappings' => count(self::$mappings),
-            'total_mapped_size' => self::formatBytes($totalMappedSize),
+            'total_mapped_size' => \Express\Utils\Utils::formatBytes($totalMappedSize),
             'mappings_created' => self::$stats['mappings_created'],
             'cache_hit_rate' => self::calculateCacheHitRate(),
-            'memory_saved_estimate' => self::formatBytes(self::$stats['memory_saved']),
+            'memory_saved_estimate' => \Express\Utils\Utils::formatBytes(self::$stats['memory_saved']),
             'config' => self::$config,
             'detailed_stats' => self::$stats
         ];
@@ -410,22 +410,6 @@ class MemoryMappingManager
     {
         $totalAccess = self::$stats['cache_hits'] + self::$stats['mappings_created'];
         return $totalAccess > 0 ? (self::$stats['cache_hits'] / $totalAccess) * 100 : 0;
-    }
-
-    /**
-     * Format bytes for human readability
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MB';
-        } else {
-            return round($bytes / 1073741824, 2) . ' GB';
-        }
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Express\Middleware;
 
 use Express\Http\Request;
 use Express\Http\Response;
+use Express\Utils\Utils;
 
 /**
  * Advanced Middleware Pipeline Compiler
@@ -587,27 +588,13 @@ class MiddlewarePipelineCompiler
             'patterns_learned' => self::$stats['patterns_learned'],
             'intelligent_matches' => self::$stats['intelligent_matches'],
             'gc_cycles' => self::$stats['gc_cycles'],
-            'memory_reclaimed' => self::formatBytes(self::$stats['memory_reclaimed']),
+            'memory_reclaimed' => Utils::formatBytes(self::$stats['memory_reclaimed']),
             'pattern_efficiency' => $patternEfficiency,
             'dynamic_patterns' => count(self::$dynamicPatterns),
             'memory_usage' => self::calculateMemoryUsage(),
             'detailed_stats' => self::$stats,
             'pattern_usage' => self::$patternUsage
         ];
-    }
-
-    /**
-     * Format bytes for human readability
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } else {
-            return round($bytes / 1048576, 2) . ' MB';
-        }
     }
 
     /**
@@ -630,13 +617,7 @@ class MiddlewarePipelineCompiler
 
         $baseSize += strlen(serialize($safeData));
 
-        if ($baseSize < 1024) {
-            return $baseSize . ' B';
-        } elseif ($baseSize < 1048576) {
-            return round($baseSize / 1024, 2) . ' KB';
-        } else {
-            return round($baseSize / 1048576, 2) . ' MB';
-        }
+        return Utils::formatBytes($baseSize);
     }
 
     /**

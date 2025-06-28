@@ -169,9 +169,9 @@ class DynamicPoolManager
         $memoryLimit = self::getMemoryLimit();
 
         return [
-            'current_memory' => self::formatBytes($currentMemory),
-            'peak_memory' => self::formatBytes($peakMemory),
-            'memory_limit' => $memoryLimit > 0 ? self::formatBytes($memoryLimit) : 'unlimited',
+            'current_memory' => \Express\Utils\Utils::formatBytes($currentMemory),
+            'peak_memory' => \Express\Utils\Utils::formatBytes($peakMemory),
+            'memory_limit' => $memoryLimit > 0 ? \Express\Utils\Utils::formatBytes($memoryLimit) : 'unlimited',
             'usage_percentage' => $memoryLimit > 0 ? round(($currentMemory / $memoryLimit) * 100, 2) : 0,
             'current_tier' => self::$currentTier,
             'tier_changes' => self::$memoryStats['tier_changes'],
@@ -208,22 +208,6 @@ class DynamicPoolManager
         }
 
         return $value;
-    }
-
-    /**
-     * Format bytes to human readable format
-     */
-    private static function formatBytes(int $bytes): string
-    {
-        if ($bytes < 1024) {
-            return $bytes . ' B';
-        } elseif ($bytes < 1048576) {
-            return round($bytes / 1024, 2) . ' KB';
-        } elseif ($bytes < 1073741824) {
-            return round($bytes / 1048576, 2) . ' MB';
-        } else {
-            return round($bytes / 1073741824, 2) . ' GB';
-        }
     }
 
     /**
