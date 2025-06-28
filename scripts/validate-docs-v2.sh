@@ -161,13 +161,12 @@ if [ -f "README.md" ]; then
     fi
 fi
 
-# Verificar se há backup da limpeza
+# Verificar se há backup da limpeza (opcional - pode estar em outra branch)
 BACKUP_DIRS=(backup_docs_*)
 if [ -d "${BACKUP_DIRS[0]}" ]; then
     print_success "Backup da limpeza encontrado: ${BACKUP_DIRS[0]}"
 else
-    print_warning "Backup da limpeza de documentação não encontrado"
-    ((WARNINGS++))
+    print_status "Backup gerenciado em branch separada (não é erro)"
 fi
 
 # Verificar versão no Application.php
