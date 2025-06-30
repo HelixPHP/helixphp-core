@@ -1,6 +1,6 @@
 # Implementação de Providers PSR
 
-Este documento descreve a implementação completa do sistema de providers seguindo as PSRs 11, 14 e 3 no Express-PHP v2.1.0.
+Este documento descreve a implementação completa do sistema de providers seguindo as PSRs 11, 14 e 3 no Express-PHP v2.1.1.
 
 ## Resumo da Implementação
 
@@ -145,4 +145,4 @@ $service = $app->resolve('service.name');
 
 ## Conclusão
 
-A implementação dos providers PSR no Express-PHP v2.1.0 estabelece uma base sólida e moderna para o framework, seguindo padrões industriais reconhecidos e mantendo total compatibilidade com código existente.
+A implementação dos providers PSR no Express-PHP v2.1.1 estabelece uma base sólida e moderna para o framework, seguindo padrões industriais reconhecidos e mantendo total compatibilidade com código existente.

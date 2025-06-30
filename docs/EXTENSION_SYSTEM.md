@@ -1,6 +1,6 @@
-# Sistema de Extensões e Plugins - Express-PHP v2.1.0
+# Sistema de Extensões e Plugins - Express-PHP v2.1.1
 
-O Express-PHP v2.1.0 possui um sistema robusto de extensões e plugins que permite adicionar funcionalidades de forma modular e desacoplada. Este documento descreve como criar, registrar e usar extensões.
+O Express-PHP v2.1.1 possui um sistema robusto de extensões e plugins que permite adicionar funcionalidades de forma modular e desacoplada. Este documento descreve como criar, registrar e usar extensões.
 
 ## 📋 Índice
 
@@ -657,6 +657,6 @@ class AnalyticsProvider extends ServiceProvider
 
 ## Conclusão
 
-O sistema de extensões do Express-PHP v2.1.0 fornece uma base sólida e flexível para criar aplicações modulares e extensíveis. Com suporte para auto-discovery, hooks, events e service providers, é possível criar extensões robustas que se integram perfeitamente com o framework.
+O sistema de extensões do Express-PHP v2.1.1 fornece uma base sólida e flexível para criar aplicações modulares e extensíveis. Com suporte para auto-discovery, hooks, events e service providers, é possível criar extensões robustas que se integram perfeitamente com o framework.
 
 As extensões podem ser distribuídas via Composer/Packagist e descobertas automaticamente, facilitando a criação de um ecossistema de plugins robusto para o Express-PHP.

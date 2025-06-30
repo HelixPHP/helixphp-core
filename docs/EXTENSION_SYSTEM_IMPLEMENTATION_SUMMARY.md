@@ -1,4 +1,4 @@
-# Sistema de Extensões Express-PHP v2.1.0 - Resumo de Implementação
+# Sistema de Extensões Express-PHP v2.1.1 - Resumo de Implementação
 
 ## ✅ Funcionalidades Implementadas
 
@@ -139,7 +139,7 @@ $app->addFilter('response.data', function($data, $context) {
 ✅ **Integração**: Totalmente integrado à Application
 ✅ **Performance**: Otimizado para produção
 
-O Express-PHP v2.1.0 agora possui um sistema de extensões robusto, maduro e pronto para produção, comparável aos melhores frameworks PHP modernos como Laravel, Symfony e outros.
+O Express-PHP v2.1.1 agora possui um sistema de extensões robusto, maduro e pronto para produção, comparável aos melhores frameworks PHP modernos como Laravel, Symfony e outros.
 
 ---
 
@@ -153,4 +153,4 @@ O Express-PHP v2.1.0 agora possui um sistema de extensões robusto, maduro e pro
 
 *Implementado por: GitHub Copilot*
 *Data: 28 de junho de 2025*
-*Framework: Express-PHP v2.1.0*
+*Framework: Express-PHP v2.1.1*

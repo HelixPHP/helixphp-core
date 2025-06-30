@@ -5,7 +5,9 @@ Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.1.0] - 2025-06-28
+## [2.1.1] - 2025-06-30
+
+> 📖 **Veja o novo overview completo da versão:** [FRAMEWORK_OVERVIEW_v2.1.1.md](FRAMEWORK_OVERVIEW_v2.1.1.md)
 
 ### 🚀 Performance & Modernization Release
 - **Advanced Optimizations**: ML-powered cache (5 models), Zero-copy operations (1.7GB saved), Memory mapping

@@ -40,7 +40,6 @@ require_once 'vendor/autoload.php';
 
 use Express\Core\Application;
 
-// Criação da aplicação com otimizações avançadas
 $app = new Application([
     'optimizations' => [
         'middleware_compiler' => true,
@@ -49,7 +48,6 @@ $app = new Application([
     ]
 ]);
 
-// Rota ultra-rápida
 $app->get('/api/users', function($req, $res) {
     $res->json(['users' => $userService->getAll()]);
 });
@@ -61,11 +59,11 @@ $app->run(); // 🚀 617K ops/sec de inicialização
 ```php
 $app = new Application([
     'optimizations' => [
-        'middleware_compiler' => true,      // Compilação inteligente
-        'zero_copy' => true,               // Otimização de memória
-        'memory_mapping' => true,          // Manipulação de grandes conjuntos de dados
-        'predictive_cache' => true,        // Cache baseado em ML
-        'route_memory_manager' => true     // Otimização de rotas
+        'middleware_compiler' => true,
+        'zero_copy' => true,
+        'memory_mapping' => true,
+        'predictive_cache' => true,
+        'route_memory_manager' => true
     ],
     'performance' => [
         'max_memory' => '128M',
@@ -229,8 +227,8 @@ composer update express-php/microframework
 # Verify version
 php -r "echo Express\Core\Application::VERSION;" # 2.1.1
 
-# Enable optimizations (optional)
-$app = new ApiExpress(['optimizations' => ['all' => true]]);
+# Enable optimizations (opcional)
+$app = new Application(['optimizations' => ['all' => true]]);
 ```
 
 ---

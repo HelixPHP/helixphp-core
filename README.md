@@ -6,7 +6,7 @@
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
-> 📖 **Guia Completo v2.1.0**: Veja [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) para documentação detalhada, métricas de performance e otimizações avançadas
+> 📖 **Guia Completo v2.1.1**: Veja [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) para documentação detalhada, métricas de performance e otimizações avançadas
 
 **Express PHP** é um microframework leve, rápido e seguro inspirado no Express.js para construir aplicações web modernas e APIs em PHP com arquitetura baseada em **Dependency Injection Container**.
 
@@ -63,9 +63,9 @@ $app->run();
 - ⚡ **Performance**: Cache integrado, pipeline otimizado de middlewares
 - 🧪 **Qualidade**: 270+ testes, PHPStan Level 9, PSR-12
 
-## 🧩 Sistema de Extensões v2.1.0
+## 🧩 Sistema de Extensões v2.1.1
 
-O Express-PHP v2.1.0 possui um sistema robusto de extensões/plugins com auto-discovery, hooks e integração PSR-14:
+O Express-PHP v2.1.1 possui um sistema robusto de extensões/plugins com auto-discovery, hooks e integração PSR-14:
 
 ```php
 // Extensão personalizada

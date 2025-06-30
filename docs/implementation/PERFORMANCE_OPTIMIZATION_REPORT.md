@@ -187,5 +187,5 @@ O framework agora oferece tanto conformidade total com PSR-7/PSR-15 quanto perfo
 ---
 
 **Documentação gerada em**: 27 de junho de 2025
-**Versão do Framework**: 2.1.0
+**Versão do Framework**: 2.1.1
 **Status**: Implementação Completa ✅
