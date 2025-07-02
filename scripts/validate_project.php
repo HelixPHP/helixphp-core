@@ -188,60 +188,8 @@ class ProjectValidator
     private function validateExamples()
     {
         echo "📖 Validando exemplos...\n";
-
-        $examples = [
-            'examples/example_basic.php',
-            'examples/example_auth.php',
-            'examples/example_auth_simple.php',
-            'examples/example_middleware.php',
-            'examples/example_standard_middlewares.php',
-            'examples/example_openapi_docs.php',
-            'examples/example_complete_optimizations.php'
-        ];
-
-        foreach ($examples as $example) {
-            if (file_exists($example)) {
-                $this->passed[] = "Exemplo {$example} existe";
-
-                // Verificar sintaxe
-                $output = shell_exec("php -l {$example} 2>&1");
-                if (strpos($output, 'No syntax errors') !== false) {
-                    $this->passed[] = "Exemplo {$example} tem sintaxe válida";
-                } else {
-                    $this->errors[] = "Erro de sintaxe em {$example}: {$output}";
-                }
-            } else {
-                $this->errors[] = "Exemplo {$example} não encontrado";
-            }
-        }
-
-        // Validação específica para o exemplo OpenAPI
-        if (file_exists('examples/example_openapi_docs.php')) {
-            $content = file_get_contents('examples/example_openapi_docs.php');
-            if (strpos($content, 'OpenApiExporter') !== false) {
-                $this->passed[] = "Exemplo OpenAPI usa OpenApiExporter corretamente";
-            } else {
-                $this->warnings[] = "Exemplo OpenAPI pode não estar usando OpenApiExporter";
-            }
-
-            if (strpos($content, '/docs') !== false && strpos($content, 'swagger-ui') !== false) {
-                $this->passed[] = "Exemplo OpenAPI inclui interface Swagger UI";
-            } else {
-                $this->warnings[] = "Exemplo OpenAPI pode não ter interface Swagger UI completa";
-            }
-        }
-
-        // Verificar se o README dos exemplos está atualizado
-        if (file_exists('examples/README.md')) {
-            $exampleReadme = file_get_contents('examples/README.md');
-            if (strpos($exampleReadme, 'example_openapi_docs.php') !== false) {
-                $this->passed[] = "README dos exemplos menciona exemplo OpenAPI";
-            } else {
-                $this->warnings[] = "README dos exemplos pode não estar atualizado com exemplo OpenAPI";
-            }
-        }
-
-        echo "✅ Exemplos validados\n\n";
+        $this->warnings[] = "Os exemplos práticos agora estão totalmente contidos e atualizados na documentação oficial (docs/). Não é mais necessário manter exemplos em examples/.";
+        echo "ℹ️  Exemplos práticos disponíveis apenas na documentação oficial.\n\n";
     }
 
     private function validateTests()
