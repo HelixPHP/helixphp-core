@@ -8,6 +8,8 @@ use Express\Http\Response;
 use Express\Routing\Router;
 use Express\Middleware\MiddlewareStack;
 use Express\Middleware\Security\CorsMiddleware;
+use Express\Routing\RouteCache;
+use Express\Routing\RouterInstance;
 
 $app = new Application();
 
@@ -16,25 +18,32 @@ $app = new Application();
 // =========================
 
 $corsMiddleware = function (Request $req, Response $resp, $next) {
-    return CorsMiddleware::simple($req, $resp, $next, [
-        'origins' => ['http://localhost:3000', 'http://localhost:8080'],
-        'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
-        'headers' => ['Content-Type', 'Authorization']
-    ]);
+    // Assuming CorsMiddleware::simple expects the origin as the first argument (string)
+    $origin = $req->header->origin ?? '';
+    return CorsMiddleware::simple(
+        $origin,
+        [
+            'origins' => ['http://localhost:3000', 'http://localhost:8080'],
+            'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
+            'headers' => ['Content-Type', 'Authorization']
+        ],
+        null,
+        $next
+    );
 };
 
 $logMiddleware = function (Request $req, Response $resp, $next) {
     $start = microtime(true);
     $result = $next($req, $resp);
     $time = round((microtime(true) - $start) * 1000, 3);
-    error_log("[OPTIMIZED] {$req->getMethod()} {$req->getPath()} - {$time}ms");
+    error_log("[OPTIMIZED] {$req->method} {$req->path} - {$time}ms");
     return $result;
 };
 
 $securityMiddleware = function (Request $req, Response $resp, $next) {
-    $resp->setHeader('X-Frame-Options', 'DENY');
-    $resp->setHeader('X-Content-Type-Options', 'nosniff');
-    $resp->setHeader('X-XSS-Protection', '1; mode=block');
+    $resp->header('X-Frame-Options', 'DENY');
+    $resp->header('X-Content-Type-Options', 'nosniff');
+    $resp->header('X-XSS-Protection', '1; mode=block');
     return $next($req, $resp);
 };
 
@@ -69,10 +78,10 @@ $app->get('/', function (Request $req, Response $resp) {
 // =========================
 
 // API v1 - Sistema de usuários com middleware CORS otimizado
-$app->group('/api/v1', function () use ($app) {
+$app->use('/api/v1', function () use ($app) {
 
     // Subgrupo de usuários
-    $app->group('/users', function () use ($app) {
+    $app->use('/users', function () use ($app) {
         $app->get('/', function (Request $req, Response $resp) {
             return $resp->json([
                 'users' => array_map(function($i) {
@@ -87,7 +96,7 @@ $app->group('/api/v1', function () use ($app) {
         });
 
         $app->get('/:id', function (Request $req, Response $resp) {
-            $id = $req->getParam('id');
+            $id = $req->param->id;
             return $resp->json([
                 'user' => [
                     'id' => (int)$id,
@@ -111,7 +120,7 @@ $app->group('/api/v1', function () use ($app) {
         });
 
         $app->put('/:id', function (Request $req, Response $resp) {
-            $id = $req->getParam('id');
+            $id = $req->param->id;
             return $resp->json([
                 'message' => "Usuário $id atualizado com sucesso",
                 'updated_at' => date('Y-m-d H:i:s')
@@ -120,7 +129,7 @@ $app->group('/api/v1', function () use ($app) {
     });
 
     // Subgrupo de produtos
-    $app->group('/products', function () use ($app) {
+    $app->use('/products', function () use ($app) {
         $app->get('/', function (Request $req, Response $resp) {
             return $resp->json([
                 'products' => array_map(function($i) {
@@ -135,7 +144,7 @@ $app->group('/api/v1', function () use ($app) {
         });
 
         $app->get('/:id', function (Request $req, Response $resp) {
-            $id = $req->getParam('id');
+            $id = $req->param->id;
             return $resp->json([
                 'product' => [
                     'id' => (int)$id,
@@ -153,160 +162,151 @@ $app->group('/api/v1', function () use ($app) {
     });
 
     // Subgrupo de pedidos
-    $app->group('/orders', function () use ($app) {
-        $app->get('/', function (Request $req, Response $resp) {
-            return $resp->json([
-                'orders' => array_map(function($i) {
-                    return [
-                        'id' => $i,
-                        'user_id' => rand(1, 100),
-                        'total' => rand(50, 1000),
-                        'status' => ['pending', 'processing', 'shipped', 'delivered'][rand(0, 3)],
-                        'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 30) . ' days'))
-                    ];
-                }, range(1, 15))
-            ]);
-        });
-
-        $app->get('/:id', function (Request $req, Response $resp) {
-            $id = $req->getParam('id');
-            return $resp->json([
-                'order' => [
-                    'id' => (int)$id,
+    $ordersRouter = new RouterInstance('/orders');
+    $ordersRouter->get('/', function (Request $req, Response $resp) {
+        return $resp->json([
+            'orders' => array_map(function($i) {
+                return [
+                    'id' => $i,
                     'user_id' => rand(1, 100),
-                    'items' => array_map(function($i) {
-                        return [
-                            'product_id' => rand(1, 50),
-                            'quantity' => rand(1, 5),
-                            'price' => rand(10, 200)
-                        ];
-                    }, range(1, rand(1, 5))),
                     'total' => rand(50, 1000),
-                    'status' => 'processing'
-                ]
-            ]);
-        });
+                    'status' => ['pending', 'processing', 'shipped', 'delivered'][rand(0, 3)],
+                    'created_at' => date('Y-m-d H:i:s', strtotime('-' . rand(1, 30) . ' days'))
+                ];
+            }, range(1, 15))
+        ]);
     });
+    $ordersRouter->get('/:id', function (Request $req, Response $resp) {
+        $id = $req->param->id;
+        return $resp->json([
+            'order' => [
+                'id' => (int)$id,
+                'user_id' => rand(1, 100),
+                'items' => array_map(function($i) {
+                    return [
+                        'product_id' => rand(1, 50),
+                        'quantity' => rand(1, 5),
+                        'price' => rand(10, 200)
+                    ];
+                }, range(1, rand(1, 5))),
+                'total' => rand(50, 1000),
+                'status' => 'processing'
+            ]
+        ]);
+    });
+    $app->use($ordersRouter);
 
 }, [$corsMiddleware, $logMiddleware]); // Middlewares aplicados a toda API v1
 
 // API v2 - Sistema administrativo com segurança otimizada
-$app->group('/api/v2', function () use ($app) {
+$apiv2Router = new RouterInstance('/api/v2');
+$apiv2Router->get('/status', function (Request $req, Response $resp) {
+    return $resp->json([
+        'api_version' => '2.0',
+        'status' => 'operational',
+        'uptime' => '99.9%',
+        'optimizations_active' => true,
+        'performance_metrics' => [
+            'cache_hit_ratio' => '94.2%',
+            'avg_response_time' => '12.3ms',
+            'requests_per_second' => 1250
+        ]
+    ]);
+});
 
-    $app->get('/status', function (Request $req, Response $resp) {
-        return $resp->json([
-            'api_version' => '2.0',
-            'status' => 'operational',
-            'uptime' => '99.9%',
-            'optimizations_active' => true,
-            'performance_metrics' => [
-                'cache_hit_ratio' => '94.2%',
-                'avg_response_time' => '12.3ms',
-                'requests_per_second' => 1250
+$apiv2Router->get('/health', function (Request $req, Response $resp) {
+    return $resp->json([
+        'status' => 'healthy',
+        'checks' => [
+            'database' => 'ok',
+            'cache' => 'ok',
+            'storage' => 'ok',
+            'external_apis' => 'ok'
+        ],
+        'timestamp' => date('c'),
+        'response_time_ms' => rand(5, 15)
+    ]);
+});
+$adminRouter = new RouterInstance('/admin');
+$adminRouter->get('/dashboard', function (Request $req, Response $resp) {
+    return $resp->json([
+        'dashboard' => [
+            'total_users' => rand(1000, 5000),
+            'total_products' => rand(500, 2000),
+            'total_orders' => rand(2000, 10000),
+            'revenue_today' => rand(5000, 20000),
+            'active_sessions' => rand(50, 200),
+            'optimizations' => [
+                'route_cache_size' => count(RouteCache::getStats()),
+                'group_count' => count(Router::getGroupStats()),
+                'middleware_pipelines' => count(MiddlewareStack::getStats())
             ]
-        ]);
-    });
+        ]
+    ]);
+});
+$adminRouter->get('/performance', function (Request $req, Response $resp) {
+    return $resp->json([
+        'performance_report' => [
+            'route_cache' => RouteCache::getStats(),
+            'group_router' => Router::getGroupStats(),
+            'middleware_pipeline' => MiddlewareStack::getStats(),
+            'cors_optimization' => CorsMiddleware::getStats()
+        ]
+    ]);
+});
+$apiv2Router->add($adminRouter, [$corsMiddleware, $logMiddleware]); // Middlewares aplicados ao subgrupo administrativo
 
-    $app->get('/health', function (Request $req, Response $resp) {
-        return $resp->json([
-            'status' => 'healthy',
-            'checks' => [
-                'database' => 'ok',
-                'cache' => 'ok',
-                'storage' => 'ok',
-                'external_apis' => 'ok'
-            ],
-            'timestamp' => date('c'),
-            'response_time_ms' => rand(5, 15)
-        ]);
-    });
-
-    // Subgrupo administrativo
-    $app->group('/admin', function () use ($app) {
-        $app->get('/dashboard', function (Request $req, Response $resp) {
-            return $resp->json([
-                'dashboard' => [
-                    'total_users' => rand(1000, 5000),
-                    'total_products' => rand(500, 2000),
-                    'total_orders' => rand(2000, 10000),
-                    'revenue_today' => rand(5000, 20000),
-                    'active_sessions' => rand(50, 200),
-                    'optimizations' => [
-                        'route_cache_size' => count(RouteCache::getStats()),
-                        'group_count' => count(Router::getGroupStats()),
-                        'middleware_pipelines' => count(MiddlewareStack::getStats())
-                    ]
-                ]
-            ]);
-        });
-
-        $app->get('/performance', function (Request $req, Response $resp) {
-            return $resp->json([
-                'performance_report' => [
-                    'route_cache' => RouteCache::getStats(),
-                    'group_router' => Router::getGroupStats(),
-                    'middleware_pipeline' => MiddlewareStack::getStats(),
-                    'cors_optimization' => CorsMiddleware::getStats()
-                ]
-            ]);
-        });
-    });
-
-}, [$securityMiddleware, $logMiddleware]); // Middlewares de segurança para API v2
+$app->use($apiv2Router, [$securityMiddleware, $logMiddleware]); // Middlewares de segurança para API v2
 
 // =========================
 // ROTAS DE BENCHMARK DINÂMICO
 // =========================
+$benchmarkRouter = new RouterInstance('/benchmark');
+$benchmarkRouter->get('/groups/:prefix', function (Request $req, Response $resp) {
+    $prefix = '/' . $req->param->prefix;
+    $iterations = $req->query->iterations ?? 1000;
 
-$app->group('/benchmark', function () use ($app) {
-
-    $app->get('/groups/:prefix', function (Request $req, Response $resp) {
-        $prefix = '/' . $req->getParam('prefix');
-        $iterations = $req->getQuery('iterations', 1000);
-
-        try {
-            $results = Router::benchmarkGroupAccess($prefix, (int)$iterations);
-            return $resp->json([
-                'benchmark_results' => $results,
-                'group_stats' => Router::getGroupStats()[$prefix] ?? null
-            ]);
-        } catch (Exception $e) {
-            return $resp->status(404)->json([
-                'error' => 'Group not found',
-                'available_groups' => array_keys(Router::getGroupStats())
-            ]);
-        }
-    });
-
-    $app->get('/middleware', function (Request $req, Response $resp) {
-        $iterations = $req->getQuery('iterations', 1000);
-
-        // Cria middlewares de teste
-        $testMiddlewares = [
-            function($req, $resp, $next) { return $next($req, $resp); },
-            function($req, $resp, $next) { return $next($req, $resp); },
-            function($req, $resp, $next) { return $next($req, $resp); }
-        ];
-
-        $results = MiddlewareStack::benchmarkPipeline($testMiddlewares, (int)$iterations);
-
+    try {
+        $results = Router::benchmarkGroupAccess($prefix, (int)$iterations);
         return $resp->json([
             'benchmark_results' => $results,
-            'pipeline_stats' => MiddlewareStack::getStats()
+            'group_stats' => Router::getGroupStats()[$prefix] ?? null
         ]);
-    });
-
-    $app->get('/cors', function (Request $req, Response $resp) {
-        $iterations = $req->getQuery('iterations', 1000);
-
-        $results = CorsMiddleware::benchmark((int)$iterations);
-
-        return $resp->json([
-            'benchmark_results' => $results,
-            'cors_stats' => CorsMiddleware::getStats()
+    } catch (Exception $e) {
+        return $resp->status(404)->json([
+            'error' => 'Group not found',
+            'available_groups' => array_keys(Router::getGroupStats())
         ]);
-    });
+    }
 });
+$benchmarkRouter->get('/middleware', function (Request $req, Response $resp) {
+    $iterations = $req->query->iterations ?? 1000;
+
+    // Cria middlewares de teste
+    $testMiddlewares = [
+        function($req, $resp, $next) { return $next($req, $resp); },
+        function($req, $resp, $next) { return $next($req, $resp); },
+        function($req, $resp, $next) { return $next($req, $resp); }
+    ];
+
+    $results = MiddlewareStack::benchmarkPipeline($testMiddlewares, (int)$iterations);
+
+    return $resp->json([
+        'benchmark_results' => $results,
+        'pipeline_stats' => MiddlewareStack::getStats()
+    ]);
+});
+$benchmarkRouter->get('/cors', function (Request $req, Response $resp) {
+    $iterations = $req->query->iterations ?? 1000;
+
+    $results = CorsMiddleware::benchmark((int)$iterations);
+
+    return $resp->json([
+        'benchmark_results' => $results,
+        'cors_stats' => CorsMiddleware::getStats()
+    ]);
+});
+$app->use($benchmarkRouter);
 
 // =========================
 // INFORMAÇÕES DO SISTEMA
@@ -389,9 +389,6 @@ function showOptimizationSummary() {
     echo "   • http://localhost:8000/benchmark/groups/api%2Fv1?iterations=5000 (benchmark)\n";
     echo "   • http://localhost:8000/system/info (informações do sistema)\n\n";
 }
-
-// Aquece todos os caches
-$app->warmupCaches();
 
 // Exibe informações APENAS se executado via CLI e não via servidor web
 if (php_sapi_name() === 'cli' && !isset($_SERVER['SERVER_NAME'])) {

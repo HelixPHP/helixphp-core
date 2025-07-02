@@ -86,8 +86,8 @@ $app->get('/public/info', [
         $res->json([
             'info' => 'Esta é uma rota pública',
             'rate_limit' => '100 requisições por 5 minutos',
-            'client_ip' => $req->getClientIP(),
-            'user_agent' => $req->getHeader('User-Agent')
+            'client_ip' => $req->ip(),
+            'user_agent' => $req->header('User-Agent')
         ]);
     }
 ]);
@@ -161,8 +161,8 @@ $app->post('/api/users', [
 
 // Endpoint para obter token CSRF
 $app->get('/api/csrf-token', function(Request $req, Response $res) {
-    $csrf = new CsrfMiddleware();
-    $token = $csrf->generateToken();
+    // Gerar token CSRF usando método estático
+    $token = (new CsrfMiddleware())->generateToken();
 
     // Set cookie com token
     setcookie('csrf_token', $token, time() + 3600, '/', '', false, true);
@@ -177,7 +177,7 @@ $app->get('/api/csrf-token', function(Request $req, Response $res) {
 // ÁREA ADMINISTRATIVA COM RATE LIMITING RESTRITO
 // ================================
 
-$app->group('/api/admin', [
+$app->use('/api/admin', [
     'middleware' => [
         new AuthMiddleware([
             'authMethods' => ['jwt'],

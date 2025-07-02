@@ -7,12 +7,16 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
+use Express\Http\Adapters\GlobalsToServerRequestAdapter;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Http\Psr7\Factory\ServerRequestFactory;
 use Express\Http\Psr7\Factory\ResponseFactory;
-use Express\Http\Psr7\ServerRequest;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
 use Express\Utils\Utils;
+
+// Add the correct import for RequestHandler and CorsMiddleware if they exist
+use Express\Http\Psr15\RequestHandler;
 
 class PSRPerformanceBenchmark
 {

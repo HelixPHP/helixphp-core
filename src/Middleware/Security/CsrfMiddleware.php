@@ -60,7 +60,7 @@ class CsrfMiddleware extends BaseMiddleware
         return $next();
     }
 
-    private function generateToken(): string
+    public function generateToken(): string
     {
         $length = (int) ($this->options['tokenLength'] / 2);
         if ($length < 1) {

@@ -803,7 +803,7 @@ class Application
             }
         }
 
-        echo $response->getContent();
+        echo $response->getBody();
     }
 
     /**

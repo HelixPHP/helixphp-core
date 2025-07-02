@@ -15,28 +15,7 @@ use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddlew
 use Express\Middleware\Performance\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas
-$app = new Application([
-    // Otimizações de Performance v2.0.1
-    'optimizations' => [
-        'middleware_compiler' => true,     // Compilação inteligente de pipeline
-        'zero_copy' => true,              // Operações zero-copy
-        'memory_mapping' => true,         // Memory mapping para grandes datasets
-        'predictive_cache' => true,       // Cache preditivo com ML
-        'route_memory_manager' => true    // Gerenciamento de memória de rotas
-    ],
-
-    // Configurações de Produção
-    'environment' => 'production',
-    'debug' => false,
-    'cache_ttl' => 3600,
-
-    // Configurações de Performance
-    'performance' => [
-        'max_memory' => '128M',
-        'gc_optimization' => true,
-        'memory_limit_buffer' => '32M'
-    ]
-]);
+$app = new Application(__DIR__ . '/config.example_v2.0.1.php');
 
 // Middlewares de Segurança (Performance: 47M+ ops/sec)
 $app->use(new SecurityMiddleware([

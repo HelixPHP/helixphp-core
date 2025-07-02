@@ -6,8 +6,8 @@ namespace Express\Providers;
 
 use Express\Core\Application;
 use Express\Providers\ServiceProvider;
-use Composer\Autoload\ClassLoader;
 use Psr\Container\ContainerInterface;
+use Composer\Autoload\ClassLoader;
 
 /**
  * Extension Manager for auto-discovery and management of plugins/extensions

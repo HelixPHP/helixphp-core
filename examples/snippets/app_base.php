@@ -9,9 +9,8 @@ $path = implode(DIRECTORY_SEPARATOR, $path);
 require_once $path . '/vendor/autoload.php';
 
 use Express\Core\Application;
-use Express\Services\CorsMiddleware;
-use Express\Services\OpenApiDocsMiddleware;
-use Express\Services\ErrorHandlerMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\ErrorHandlerMiddleware;
 
 $baseUrl = "https://{$_SERVER['SSL_TLS_SNI']}{$_SERVER['SCRIPT_NAME']}";
 substr($baseUrl, -1) === '/' && $baseUrl = substr($baseUrl, 0, -1);

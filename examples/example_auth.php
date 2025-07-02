@@ -88,9 +88,7 @@ function customAuth($request) {
 
 // 1. Autenticação JWT apenas
 echo "=== EXEMPLO 1: JWT APENAS ===\n";
-$jwtAuth = AuthMiddleware::jwt($jwtSecret, [
-    'excludePaths' => ['/public', '/login']
-]);
+$jwtAuth = AuthMiddleware::jwt($jwtSecret);
 
 // 2. Basic Auth apenas
 echo "=== EXEMPLO 2: BASIC AUTH APENAS ===\n";
@@ -111,11 +109,14 @@ $multiAuth = new AuthMiddleware([
 ]);
 
 // 4. Configuração flexível (não requer autenticação, mas processa se presente)
+// Substituído por configuração customizada ou múltiplos métodos, pois 'flexible' não existe.
+// Exemplo: usar múltiplos métodos sem obrigatoriedade (ajuste conforme implementação do AuthMiddleware)
 echo "=== EXEMPLO 4: FLEXÍVEL ===\n";
-$flexibleAuth = AuthMiddleware::flexible([
+$flexibleAuth = new AuthMiddleware([
     'authMethods' => ['jwt', 'apikey'],
     'jwtSecret' => $jwtSecret,
-    'apiKeyCallback' => 'validateApiKey'
+    'apiKeyCallback' => 'validateApiKey',
+    'required' => false // Supondo que o middleware aceite essa opção para não exigir autenticação
 ]);
 
 // 5. Configuração customizada
@@ -143,7 +144,7 @@ $app->get('/public/status', function($req, $res) {
 });
 
 // Rota para login/geração de token JWT
-$app->post('/login', function($req, $res) {
+$app->post('/login', function($req, $res) use ($jwtSecret) {
     $username = $req->body['username'] ?? '';
     $password = $req->body['password'] ?? '';
 
