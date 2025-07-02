@@ -1,8 +1,10 @@
 # Middleware de Autenticação - Express PHP
 
+> **Atenção:** Todos os exemplos e recomendações de uso de autenticação neste projeto seguem o padrão PSR-15. Utilize apenas o middleware `Express\Http\Psr15\Middleware\AuthMiddleware`. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados.
+
 ## 🔐 Visão Geral
 
-O sistema de autenticação do Express PHP oferece múltiplos métodos de autenticação integrados com middleware robusto e configurável.
+O sistema de autenticação do Express PHP oferece múltiplos métodos de autenticação integrados com middleware robusto e configurável, seguindo PSR-15.
 
 ## 🛡️ Tipos de Autenticação Suportados
 
@@ -10,27 +12,23 @@ O sistema de autenticação do Express PHP oferece múltiplos métodos de autent
 Autenticação baseada em tokens JWT com suporte completo a claims customizados.
 
 ```php
-use Express\Middleware\Security\AuthMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
 
 // Configuração básica JWT
-$app->use(AuthMiddleware::jwt([
-    'secret' => 'seu-secret-super-seguro',
-    'algorithm' => 'HS256',
-    'leeway' => 60, // tolerância em segundos
-    'exclude' => ['/login', '/register', '/public']
-]));
+$app->use(AuthMiddleware::jwt('seu-secret-super-seguro'));
 ```
 
 ### 2. Bearer Token
 Autenticação simples com tokens de acesso.
 
 ```php
-$app->use(AuthMiddleware::bearer([
-    'tokens' => [
+$app->use(new AuthMiddleware([
+    'authMethods' => ['bearer'],
+    'bearerTokens' => [
         'abc123' => ['user_id' => 1, 'role' => 'admin'],
         'def456' => ['user_id' => 2, 'role' => 'user']
     ],
-    'exclude' => ['/public']
+    'excludePaths' => ['/public']
 ]));
 ```
 
@@ -38,11 +36,11 @@ $app->use(AuthMiddleware::bearer([
 Autenticação HTTP Basic para casos simples.
 
 ```php
-$app->use(AuthMiddleware::basic([
-    'users' => [
-        'admin' => 'password123',
-        'user' => 'userpass'
-    ],
+$app->use(new AuthMiddleware([
+    'authMethods' => ['basic'],
+    'basicAuthCallback' => function($username, $password) {
+        return $username === 'admin' && $password === 'password123';
+    },
     'realm' => 'Express PHP API'
 ]));
 ```
@@ -51,23 +49,19 @@ $app->use(AuthMiddleware::basic([
 Sistema flexível para implementar sua própria lógica de autenticação.
 
 ```php
-$app->use(AuthMiddleware::custom(function($request) {
-    $token = $request->header('X-API-Key');
-
-    if (!$token) {
+$app->use(new AuthMiddleware([
+    'authMethods' => ['custom'],
+    'customAuthCallback' => function($request) {
+        $token = $request->header('X-API-Key');
+        if (!$token) return false;
+        $user = validateApiKey($token);
+        if ($user) {
+            $request->user = $user;
+            return true;
+        }
         return false;
     }
-
-    // Sua lógica de validação aqui
-    $user = validateApiKey($token);
-
-    if ($user) {
-        $request->user = $user;
-        return true;
-    }
-
-    return false;
-}));
+]));
 ```
 
 ## 🔧 Configuração Avançada
@@ -79,23 +73,19 @@ use Express\Authentication\JWTHelper;
 $app->post('/login', function($req, $res) {
     // Validar credenciais
     $user = validateUser($req->body['username'], $req->body['password']);
-
     if ($user) {
         $accessToken = JWTHelper::encode([
             'user_id' => $user['id'],
             'role' => $user['role'],
             'exp' => time() + 3600 // 1 hora
         ], 'seu-secret');
-
         $refreshToken = JWTHelper::createRefreshToken($user['id']);
-
         return $res->json([
             'access_token' => $accessToken,
             'refresh_token' => $refreshToken,
             'expires_in' => 3600
         ]);
     }
-
     return $res->status(401)->json(['error' => 'Credenciais inválidas']);
 });
 ```
@@ -104,11 +94,11 @@ $app->post('/login', function($req, $res) {
 ```php
 // Proteger apenas rotas administrativas
 $app->group('/admin', function() use ($app) {
-    $app->use(AuthMiddleware::jwt([
-        'secret' => 'admin-secret',
-        'required_claims' => ['role' => 'admin']
+    $app->use(new AuthMiddleware([
+        'authMethods' => ['jwt'],
+        'jwtSecret' => 'admin-secret',
+        'requiredClaims' => ['role' => 'admin']
     ]));
-
     $app->get('/users', function($req, $res) {
         return ['admin_users' => getUsersList()];
     });
@@ -119,10 +109,10 @@ $app->group('/admin', function() use ($app) {
 
 ### 1. Validação de Claims
 ```php
-$app->use(AuthMiddleware::jwt([
-    'secret' => 'secret',
-    'validate_claims' => function($payload) {
-        // Validar se o usuário ainda está ativo
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt'],
+    'jwtSecret' => 'secret',
+    'validateClaims' => function($payload) {
         if (isset($payload['user_id'])) {
             $user = getUserById($payload['user_id']);
             return $user && $user['active'];
@@ -134,13 +124,13 @@ $app->use(AuthMiddleware::jwt([
 
 ### 2. Rate Limiting por Usuário
 ```php
-use Express\Middleware\Security\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
 
-$app->use(AuthMiddleware::jwt(['secret' => 'secret']));
-$app->use(RateLimitMiddleware::create([
-    'max_requests' => 100,
-    'window' => 3600,
-    'key_generator' => function($req) {
+$app->use(new AuthMiddleware(['jwtSecret' => 'secret', 'authMethods' => ['jwt']]));
+$app->use(new RateLimitMiddleware([
+    'maxRequests' => 100,
+    'timeWindow' => 3600,
+    'keyGenerator' => function($req) {
         return 'user_' . ($req->user['id'] ?? 'anonymous');
     }
 ]));
@@ -148,12 +138,13 @@ $app->use(RateLimitMiddleware::create([
 
 ### 3. Logs de Autenticação
 ```php
-$app->use(AuthMiddleware::jwt([
-    'secret' => 'secret',
-    'on_success' => function($req, $payload) {
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt'],
+    'jwtSecret' => 'secret',
+    'onSuccess' => function($req, $payload) {
         logAuthSuccess($payload['user_id'], $req->ip());
     },
-    'on_failure' => function($req, $error) {
+    'onFailure' => function($req, $error) {
         logAuthFailure($error, $req->ip());
     }
 ]));
@@ -163,9 +154,10 @@ $app->use(AuthMiddleware::jwt([
 
 ### Respostas de Erro Customizadas
 ```php
-$app->use(AuthMiddleware::jwt([
-    'secret' => 'secret',
-    'error_handler' => function($error, $req, $res) {
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt'],
+    'jwtSecret' => 'secret',
+    'errorHandler' => function($error, $req, $res) {
         return $res->status(401)->json([
             'error' => 'Não autorizado',
             'code' => $error['code'],
@@ -197,13 +189,14 @@ O sistema de autenticação foi otimizado para performance:
 
 ### Exemplo de Configuração Segura
 ```php
-$app->use(AuthMiddleware::jwt([
-    'secret' => hash('sha256', $_ENV['JWT_SECRET']),
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt'],
+    'jwtSecret' => hash('sha256', $_ENV['JWT_SECRET']),
     'algorithm' => 'HS256',
     'leeway' => 30,
-    'max_age' => 3600,
-    'required_claims' => ['iss', 'aud', 'exp'],
-    'validate_claims' => function($payload) {
+    'maxAge' => 3600,
+    'requiredClaims' => ['iss', 'aud', 'exp'],
+    'validateClaims' => function($payload) {
         return $payload['iss'] === 'sua-aplicacao' &&
                $payload['aud'] === 'api-v1';
     }

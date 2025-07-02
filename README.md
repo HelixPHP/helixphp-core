@@ -3,6 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
+[![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
 [![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
 
@@ -12,6 +13,12 @@
 
 > ⚡ **Alta Performance**: +52M ops/sec em CORS, +24M ops/sec em Response, cache integrado e roteamento otimizado!
 > 🏗️ **Arquitetura Moderna**: DI Container, Service Providers, Event System e Extension System integrados!
+
+---
+
+> **Atenção:** Todo o código legado (middlewares não-PSR-15) foi movido para a pasta `legacy/` e não é mais suportado nem executado nos testes. Utilize apenas os middlewares do namespace `Express\Http\Psr15\Middleware\*`.
+
+---
 
 ## 🚀 Início Rápido
 
@@ -28,11 +35,11 @@ composer require cafernandes/express-php
 require_once 'vendor/autoload.php';
 
 use Express\Core\Application;
-use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
+use Express\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 
 $app = new Application();
 
-// Middlewares de segurança
+// Middlewares de segurança (PSR-15)
 $app->use(new SecurityMiddleware());
 $app->use(new CorsMiddleware());
 $app->use(AuthMiddleware::jwt('sua_chave_secreta'));
@@ -271,6 +278,8 @@ composer benchmark      # Executar benchmarks
 | **AuthMiddleware** | Autenticação multi-método |
 | **RateLimitMiddleware** | Controle de taxa de requisições |
 | **ValidationMiddleware** | Validação de dados de entrada |
+
+> Todos os middlewares acima seguem o padrão PSR-15. Middlewares legados foram movidos para a pasta `legacy/` e não são mais suportados.
 
 ## 📊 Status do Projeto
 

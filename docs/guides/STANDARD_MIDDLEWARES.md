@@ -1,37 +1,42 @@
 # 🛡️ Documentação dos Middlewares Padrão - Express PHP
 
+> **Atenção:** Todos os middlewares ativos do Express PHP seguem o padrão PSR-15 e estão no namespace `Express\Http\Psr15\Middleware\*`. Middlewares legados existem apenas em `legacy/` e não devem ser usados em novos projetos.
+
 Esta documentação apresenta todos os middlewares padrão disponíveis no Express PHP Framework, suas funcionalidades, configurações e exemplos práticos de uso.
 
-## 🆕 Novos Middlewares PSR-15 (v2.1+)
+## 🆕 Middlewares PSR-15 (v2.1+)
 
-A partir da versão 2.1, o Express PHP adota middlewares compatíveis com PSR-15 para máxima interoperabilidade e performance. Recomenda-se migrar para os middlewares abaixo:
+A partir da versão 2.1, o Express PHP adota middlewares compatíveis com PSR-15 para máxima interoperabilidade e performance. Utilize sempre os middlewares abaixo:
 
 - `ErrorMiddleware` — Tratamento global de erros/exceções
 - `CsrfMiddleware` — Proteção automática contra CSRF
 - `XssMiddleware` — Sanitização automática de dados de entrada
-- `SecurityHeadersMiddleware` — Cabeçalhos de segurança HTTP
+- `SecurityMiddleware` — Cabeçalhos de segurança HTTP
 - `CacheMiddleware` — Cache de resposta HTTP
+- `CorsMiddleware` — CORS otimizado
+- `AuthMiddleware` — Autenticação multi-método
+- `RateLimitMiddleware` — Controle de taxa de requisições
 
 ### Exemplo de uso correto (PSR-15):
 ```php
 use Express\Http\Psr15\Middleware\ErrorMiddleware;
 use Express\Http\Psr15\Middleware\CsrfMiddleware;
 use Express\Http\Psr15\Middleware\XssMiddleware;
-use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
 use Express\Http\Psr15\Middleware\CacheMiddleware;
 use Express\Http\Psr15\Middleware\CorsMiddleware;
 use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
 
 $app->use(new ErrorMiddleware());
 $app->use(new CsrfMiddleware());
-$app->use(new XssMiddleware('<strong><em><p>'));
-$app->use(new SecurityHeadersMiddleware());
+$app->use(new XssMiddleware(['allowedTags' => '<strong><em><p>']));
+$app->use(new SecurityMiddleware());
 $app->use(new CacheMiddleware(300));
 $app->use(new CorsMiddleware());
 $app->use(new AuthMiddleware(['jwtSecret' => 'sua_chave', 'authMethods' => ['jwt']]));
+$app->use(new RateLimitMiddleware(['maxRequests' => 1000, 'timeWindow' => 3600]));
 ```
-
-> **Nota:** Os middlewares antigos (ex: `SecurityMiddleware`, `CorsMiddleware`, `AuthMiddleware`, `CsrfMiddleware`, `XssMiddleware`) continuam disponíveis para retrocompatibilidade, mas recomenda-se o uso dos middlewares PSR-15, conforme exemplos acima.
 
 ---
 
@@ -81,7 +86,7 @@ interface MiddlewareInterface
 
 #### Configuração Padrão
 ```php
-use Express\Middleware\Security\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
 
 $app->use(new SecurityMiddleware([
     'contentSecurityPolicy' => true,           // CSP básico
@@ -121,7 +126,7 @@ $app->use(new SecurityMiddleware([
 
 #### Configuração Básica
 ```php
-use Express\Middleware\Security\CorsMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
 
 $app->use(new CorsMiddleware([
     'origins' => ['*'],                       // Origens permitidas
@@ -166,7 +171,7 @@ $app->use(new CorsMiddleware([
 
 #### Configuração JWT
 ```php
-use Express\Middleware\Security\AuthMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
 
 $app->use(AuthMiddleware::jwt('sua_chave_secreta_super_forte'));
 ```
@@ -210,7 +215,7 @@ $app->get('/profile', function($req, $res) {
 **Propósito:** Proteção contra ataques Cross-Site Request Forgery.
 
 ```php
-use Express\Middleware\Security\CsrfMiddleware;
+use Express\Http\Psr15\Middleware\CsrfMiddleware;
 
 $app->use(new CsrfMiddleware([
     'tokenName' => '_token',                 // Nome do campo do token
@@ -249,7 +254,7 @@ fetch('/api/users', {
 **Propósito:** Proteção contra ataques Cross-Site Scripting (XSS).
 
 ```php
-use Express\Middleware\Security\XssMiddleware;
+use Express\Http\Psr15\Middleware\XssMiddleware;
 
 $app->use(new XssMiddleware([
     'sanitizeInput' => true,                 // Sanitizar entrada
@@ -270,7 +275,7 @@ $app->use(new XssMiddleware([
 
 #### Configuração Básica
 ```php
-use Express\Middleware\Core\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
 
 $app->use(new RateLimitMiddleware([
     'maxRequests' => 100,                    // Máximo de requisições
@@ -315,14 +320,22 @@ $app->post('/api/upload', [
 **Propósito:** Gerencia a pipeline de execução de middlewares.
 
 ```php
-use Express\Middleware\MiddlewareStack;
+// Exemplo de uso avançado (apenas para casos customizados)
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
 
-$stack = new MiddlewareStack();
-$stack->push(new SecurityMiddleware());
-$stack->push(new CorsMiddleware());
-$stack->push(new AuthMiddleware(['optional' => true]));
+$stack = [
+    new SecurityMiddleware(),
+    new CorsMiddleware(),
+    new AuthMiddleware(['optional' => true]),
+    new RateLimitMiddleware(['maxRequests' => 100, 'timeWindow' => 3600])
+];
 
-$app->use($stack);
+foreach ($stack as $middleware) {
+    $app->use($middleware);
+}
 ```
 
 ---
@@ -336,8 +349,7 @@ $app->use($stack);
 require_once 'vendor/autoload.php';
 
 use Express\Core\Application;
-use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
-use Express\Middleware\Core\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware, CsrfMiddleware, XssMiddleware, RateLimitMiddleware};
 
 $app = new Application();
 
@@ -345,6 +357,8 @@ $app = new Application();
 $app->use(new SecurityMiddleware());
 $app->use(new CorsMiddleware());
 $app->use(new RateLimitMiddleware(['maxRequests' => 1000, 'timeWindow' => 3600]));
+$app->use(new XssMiddleware());
+$app->use(new CsrfMiddleware());
 
 // Auth opcional globalmente, obrigatório em rotas específicas
 $app->use(new AuthMiddleware(['optional' => true]));
@@ -414,8 +428,7 @@ $app->group('/public', [
 require_once 'vendor/autoload.php';
 
 use Express\Core\Application;
-use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware, CsrfMiddleware};
-use Express\Middleware\Core\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware, CsrfMiddleware, XssMiddleware, RateLimitMiddleware};
 
 $app = new Application();
 
@@ -429,6 +442,7 @@ $app->use(new SecurityMiddleware([
 $app->use(new CorsMiddleware([
     'origins' => ['https://meuapp.com', 'https://app.meuapp.com'],
     'methods' => ['GET', 'POST', 'PUT', 'DELETE'],
+    'headers' => ['Content-Type', 'Authorization'],
     'credentials' => true
 ]));
 

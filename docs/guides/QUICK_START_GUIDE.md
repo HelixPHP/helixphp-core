@@ -86,10 +86,18 @@ $app->config([
 ]);
 
 // Middleware globais
-$app->use(function($req, $res, $next) {
-    $res->setHeader('X-Powered-By', 'Express-PHP');
-    $next();
-});
+use Express\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware, RateLimitMiddleware, XssMiddleware, CsrfMiddleware};
+
+$app->use(new SecurityMiddleware());
+$app->use(new CorsMiddleware([
+    'origins' => ['*'],
+    'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'headers' => ['Content-Type', 'Authorization']
+]));
+$app->use(new RateLimitMiddleware(['maxRequests' => 1000, 'timeWindow' => 3600]));
+$app->use(new XssMiddleware());
+$app->use(new CsrfMiddleware());
+$app->use(new AuthMiddleware(['jwtSecret' => $_ENV['JWT_SECRET'] ?? 'your-secret-key', 'authMethods' => ['jwt']]));
 
 // Rotas básicas
 $app->get('/', function($req, $res) {
@@ -288,7 +296,7 @@ class UserController
 
 ## 🔐 Middleware Essencial
 
-> ⚠️ **Nota:** Todos os exemplos e recomendações de uso de middleware neste projeto seguem o padrão PSR-15. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados. Consulte `docs/DEPRECATED_MIDDLEWARES.md` para detalhes.
+> ⚠️ **Nota:** Todos os exemplos e recomendações de uso de middleware neste projeto seguem o padrão PSR-15. Utilize apenas middlewares do namespace `Express\Http\Psr15\Middleware\*`. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados. Consulte `docs/DEPRECATED_MIDDLEWARES.md` para detalhes.
 
 ### 1. CORS Middleware (Já incluído)
 
