@@ -1,6 +1,6 @@
 <?php
 // Snippets para configuração rápida de autenticação
-use Express\Middlewares\Security\AuthMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
 use Express\Helpers\JWTHelper;
 
 echo "=== SNIPPETS DE AUTENTICAÇÃO EXPRESS PHP ===\n\n";
@@ -11,8 +11,7 @@ echo "=== SNIPPETS DE AUTENTICAÇÃO EXPRESS PHP ===\n\n";
 echo "1. JWT Simples:\n";
 echo "```php\n";
 echo "// Configuração básica JWT\n";
-echo "\$app->use(AuthMiddleware::jwt('sua_chave_secreta'));\n\n";
-
+echo "\$app->use(new AuthMiddleware([\n    'authMethods' => ['jwt'],\n    'jwtSecret' => 'sua_chave_secreta'\n]));\n\n";
 echo "// Rota de login\n";
 echo "\$app->post('/login', function(\$req, \$res) {\n";
 echo "    // Valida credenciais...\n";
@@ -36,9 +35,8 @@ echo "    \$users = ['admin' => 'password123'];\n";
 echo "    return isset(\$users[\$username]) && \$users[\$username] === \$password\n";
 echo "        ? ['id' => 1, 'username' => \$username] : false;\n";
 echo "}\n\n";
-
 echo "// Aplicar middleware\n";
-echo "\$app->use(AuthMiddleware::basic('validateUser'));\n";
+echo "\$app->use(new AuthMiddleware([\n    'authMethods' => ['basic'],\n    'basicAuthCallback' => 'validateUser'\n]));\n";
 echo "```\n\n";
 
 // ========================================
@@ -51,10 +49,9 @@ echo "function validateApiKey(\$key) {\n";
 echo "    \$validKeys = ['key123' => ['name' => 'App Mobile']];\n";
 echo "    return \$validKeys[\$key] ?? false;\n";
 echo "}\n\n";
-
 echo "// Aplicar middleware\n";
-echo "\$app->use(AuthMiddleware::apiKey('validateApiKey'));\n";
-echo "// Usar: Header X-API-Key: key123 OU ?api_key=key123\n";
+echo "\$app->use(new AuthMiddleware([\n    'authMethods' => ['bearer'],\n    'bearerAuthCallback' => 'validateApiKey'\n]));\n";
+echo "// Usar: Header Authorization: Bearer key123\n";
 echo "```\n\n";
 
 // ========================================
@@ -62,64 +59,22 @@ echo "```\n\n";
 // ========================================
 echo "4. Múltiplos Métodos de Auth:\n";
 echo "```php\n";
-echo "\$app->use(new AuthMiddleware([\n";
-echo "    'authMethods' => ['jwt', 'basic', 'apikey'],\n";
-echo "    'jwtSecret' => 'sua_chave_jwt',\n";
-echo "    'basicAuthCallback' => 'validateUser',\n";
-echo "    'apiKeyCallback' => 'validateApiKey',\n";
-echo "    'allowMultiple' => true,\n";
-echo "    'excludePaths' => ['/public', '/login']\n";
-echo "]));\n";
+echo "\$app->use(new AuthMiddleware([\n    'authMethods' => ['jwt', 'basic', 'bearer'],\n    'jwtSecret' => 'sua_chave_jwt',\n    'basicAuthCallback' => 'validateUser',\n    'bearerAuthCallback' => 'validateApiKey',\n    'allowMultiple' => true,\n    'excludePaths' => ['/public', '/login']\n]));\n";
 echo "```\n\n";
 
 // ========================================
-// 5. MIDDLEWARE FLEXÍVEL (OPCIONAL)
+// 5. AUTENTICAÇÃO POR ROTA
 // ========================================
-echo "5. Autenticação Flexível (Opcional):\n";
-echo "```php\n";
-echo "// Não requer auth, mas processa se presente\n";
-echo "\$app->use(AuthMiddleware::flexible([\n";
-echo "    'authMethods' => ['jwt', 'apikey'],\n";
-echo "    'jwtSecret' => 'chave_secreta'\n";
-echo "]));\n\n";
-
-echo "// Na rota, verificar se está autenticado\n";
-echo "\$app->get('/mixed', function(\$req, \$res) {\n";
-echo "    if (isset(\$req->auth) && \$req->auth['authenticated']) {\n";
-echo "        // Usuário autenticado\n";
-echo "        \$message = 'Olá, ' . \$req->user['username'];\n";
-echo "    } else {\n";
-echo "        // Usuário anônimo\n";
-echo "        \$message = 'Olá, visitante';\n";
-echo "    }\n";
-echo "    \$res->json(['message' => \$message]);\n";
-echo "});\n";
-echo "```\n\n";
-
-// ========================================
-// 6. AUTENTICAÇÃO POR ROTA
-// ========================================
-echo "6. Autenticação Específica por Rota:\n";
+echo "5. Autenticação Específica por Rota:\n";
 echo "```php\n";
 echo "// Rota apenas com JWT\n";
-echo "\$app->get('/jwt-only', \n";
-echo "    AuthMiddleware::jwt('chave_secreta'),\n";
-echo "    function(\$req, \$res) {\n";
-echo "        \$res->json(['user' => \$req->user]);\n";
-echo "    }\n";
-echo ");\n\n";
-
+echo "\$app->get('/jwt-only', new AuthMiddleware([\n    'authMethods' => ['jwt'],\n    'jwtSecret' => 'chave_secreta'\n]), function(\$req, \$res) {\n    \$res->json(['user' => \$req->user]);\n});\n\n";
 echo "// Rota apenas com API Key\n";
-echo "\$app->get('/api-only',\n";
-echo "    AuthMiddleware::apiKey('validateApiKey'),\n";
-echo "    function(\$req, \$res) {\n";
-echo "        \$res->json(['api_user' => \$req->user]);\n";
-echo "    }\n";
-echo ");\n";
+echo "\$app->get('/api-only', new AuthMiddleware([\n    'authMethods' => ['bearer'],\n    'bearerAuthCallback' => 'validateApiKey'\n]), function(\$req, \$res) {\n    \$res->json(['api_user' => \$req->user]);\n});\n";
 echo "```\n\n";
 
 // ========================================
-// 7. VALIDAÇÃO DE ROLES
+// 6. VALIDAÇÃO DE ROLES
 // ========================================
 echo "7. Validação de Roles/Permissões:\n";
 echo "```php\n";
@@ -143,7 +98,7 @@ echo ");\n";
 echo "```\n\n";
 
 // ========================================
-// 8. REFRESH TOKEN
+// 7. REFRESH TOKEN
 // ========================================
 echo "8. Sistema de Refresh Token:\n";
 echo "```php\n";
@@ -183,7 +138,7 @@ echo "});\n";
 echo "```\n\n";
 
 // ========================================
-// 9. CONFIGURAÇÕES AVANÇADAS
+// 8. CONFIGURAÇÕES AVANÇADAS
 // ========================================
 echo "9. Configurações Avançadas:\n";
 echo "```php\n";
@@ -208,7 +163,7 @@ echo "]));\n";
 echo "```\n\n";
 
 // ========================================
-// 10. EXEMPLOS DE TESTE
+// 9. EXEMPLOS DE TESTE
 // ========================================
 echo "10. Como Testar (cURL):\n";
 echo "```bash\n";

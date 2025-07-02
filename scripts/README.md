@@ -24,9 +24,6 @@ Versão original do script de validação:
 ./scripts/validate-docs-v2.sh
 ```
 
-### validate-docs-legacy.sh (Legado)
-Versão anterior mantida para referência histórica.
-
 ### validate_project.php
 Validação completa do projeto PHP:
 

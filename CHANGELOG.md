@@ -26,9 +26,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Mudanças de compatibilidade e organização de testes
 - Todos os middlewares legados (não-PSR-15) foram oficialmente depreciados e removidos dos exemplos e recomendações.
-- Testes legados de middleware foram movidos para `tests/Core/legacy/` para referência histórica. Apenas testes PSR-15 permanecem ativos.
 - Documentação reforçada sobre a obrigatoriedade do padrão PSR-15 para middlewares.
-- Veja `docs/DEPRECATED_MIDDLEWARES.md` para detalhes sobre a depreciação.
 
 ---
 

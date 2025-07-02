@@ -6,8 +6,9 @@ use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Routing\Router;
-use Express\Middleware\MiddlewareStack;
-use Express\Middleware\Security\CorsMiddleware;
+use Express\Http\Psr15\Middleware\MiddlewareStack;
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
 use Express\Routing\RouteCache;
 use Express\Routing\RouterInstance;
 

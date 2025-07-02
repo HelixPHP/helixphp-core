@@ -11,7 +11,9 @@ require_once 'vendor/autoload.php';
 use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
-use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
 use Express\Http\Psr15\Middleware\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas

@@ -16,10 +16,6 @@
 
 ---
 
-> **Atenção:** Todo o código legado (middlewares não-PSR-15) foi movido para a pasta `legacy/` e não é mais suportado nem executado nos testes. Utilize apenas os middlewares do namespace `Express\Http\Psr15\Middleware\*`.
-
----
-
 ## 🚀 Início Rápido
 
 ### Instalação
@@ -279,7 +275,7 @@ composer benchmark      # Executar benchmarks
 | **RateLimitMiddleware** | Controle de taxa de requisições |
 | **ValidationMiddleware** | Validação de dados de entrada |
 
-> Todos os middlewares acima seguem o padrão PSR-15. Middlewares legados foram movidos para a pasta `legacy/` e não são mais suportados.
+> Todos os middlewares acima seguem o padrão PSR-15.
 
 ## 📊 Status do Projeto
 

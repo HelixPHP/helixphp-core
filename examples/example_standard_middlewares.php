@@ -1,4 +1,9 @@
 <?php
+// =============================================================
+// EXEMPLO 100% PSR-15: Use apenas middlewares PSR-15 no Express PHP Framework
+// Não utilize middlewares legados. Consulte a documentação oficial para detalhes.
+// =============================================================
+
 /**
  * Exemplo Prático - Middlewares Padrão do Express PHP
  *
@@ -13,11 +18,11 @@ use Express\Http\Request;
 use Express\Http\Response;
 
 // Importar middlewares padrão
-use Express\Middleware\Security\SecurityMiddleware;
-use Express\Middleware\Security\CorsMiddleware;
-use Express\Middleware\Security\AuthMiddleware;
-use Express\Middleware\Security\CsrfMiddleware;
-use Express\Middleware\Core\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Express\Http\Psr15\Middleware\CsrfMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
 
 // Criar aplicação
 $app = new Application();

@@ -124,12 +124,6 @@ cd benchmarks && ./run_benchmark.sh
 - `docs/implementation/` - Technical guides
 - `examples/` - Practical examples
 
-### **Deprecated/Redundant** ❌
-- `README_v2.0.1.md` → Use `FRAMEWORK_OVERVIEW_v2.0.1.md`
-- `PERFORMANCE_REPORT_FINAL.md` → Use `FRAMEWORK_OVERVIEW_v2.0.1.md`
-- `TECHNICAL_OPTIMIZATION_SUMMARY.md` → Use `FRAMEWORK_OVERVIEW_v2.0.1.md`
-- Multiple duplicate performance reports → Use `benchmarks/reports/`
-
 ---
 
 ## 📁 **RECOMMENDED STRUCTURE**
