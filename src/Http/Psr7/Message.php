@@ -246,15 +246,18 @@ class Message implements MessageInterface
             throw new \InvalidArgumentException('Header value cannot be empty');
         }
 
-        return array_map(function ($v) {
-            $v = (string) $v;
+        return array_map(
+            function ($v) {
+                $v = (string) $v;
 
-            if (preg_match('/[^\x09\x0A\x0D\x20-\x7E\x80-\xFE]/', $v) > 0) {
-                throw new \InvalidArgumentException('Header value contains invalid characters');
-            }
+                if (preg_match('/[^\x09\x0A\x0D\x20-\x7E\x80-\xFE]/', $v) > 0) {
+                    throw new \InvalidArgumentException('Header value contains invalid characters');
+                }
 
-            return trim($v, " \t");
-        }, $value);
+                return trim($v, " \t");
+            },
+            $value
+        );
     }
 
     /**

@@ -23,25 +23,25 @@ class AuthMiddleware extends BaseMiddleware
     {
         $this->options = array_merge(
             [
-            'jwtSecret' => null,
-            'jwtAlgorithm' => 'HS256',
-            'basicAuthCallback' => null,
-            'apiKeyCallback' => null,
-            'bearerTokenCallback' => null,
-            'customAuthCallback' => null,
-            'authMethods' => ['jwt', 'basic', 'bearer', 'apikey'],
-            'excludePaths' => [],
-            'requireAuth' => true,
-            'userProperty' => 'user',
-            'headerName' => 'X-API-Key',
-            'queryParam' => 'api_key',
-            'allowMultiple' => false,
-            'errorMessages' => [
-                'missing' => 'Authorization is required',
-                'invalid' => 'Invalid authentication credentials',
-                'expired' => 'Authentication token expired',
-                'malformed' => 'Malformed authorization header'
-            ]
+                'jwtSecret' => null,
+                'jwtAlgorithm' => 'HS256',
+                'basicAuthCallback' => null,
+                'apiKeyCallback' => null,
+                'bearerTokenCallback' => null,
+                'customAuthCallback' => null,
+                'authMethods' => ['jwt', 'basic', 'bearer', 'apikey'],
+                'excludePaths' => [],
+                'requireAuth' => true,
+                'userProperty' => 'user',
+                'headerName' => 'X-API-Key',
+                'queryParam' => 'api_key',
+                'allowMultiple' => false,
+                'errorMessages' => [
+                    'missing' => 'Authorization is required',
+                    'invalid' => 'Invalid authentication credentials',
+                    'expired' => 'Authentication token expired',
+                    'malformed' => 'Malformed authorization header'
+                ]
             ],
             $options
         );
@@ -69,9 +69,9 @@ class AuthMiddleware extends BaseMiddleware
             if ($this->options['requireAuth']) {
                 return $response->status($authResult['status'])->json(
                     [
-                    'error' => true,
-                    'message' => $authResult['message'],
-                    'type' => 'AuthenticationError'
+                        'error' => true,
+                        'message' => $authResult['message'],
+                        'type' => 'AuthenticationError'
                     ]
                 );
             }
@@ -184,7 +184,7 @@ class AuthMiddleware extends BaseMiddleware
                 $token,
                 $this->options['jwtSecret'],
                 [
-                'algorithm' => $this->options['jwtAlgorithm']
+                    'algorithm' => $this->options['jwtAlgorithm']
                 ]
             );
             return ['success' => true, 'user' => $payload];
@@ -330,9 +330,9 @@ class AuthMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'authMethods' => ['jwt'],
-            'jwtSecret' => $secret,
-            'jwtAlgorithm' => $algorithm
+                'authMethods' => ['jwt'],
+                'jwtSecret' => $secret,
+                'jwtAlgorithm' => $algorithm
             ]
         );
     }
@@ -344,8 +344,8 @@ class AuthMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'authMethods' => ['basic'],
-            'basicAuthCallback' => $callback
+                'authMethods' => ['basic'],
+                'basicAuthCallback' => $callback
             ]
         );
     }
@@ -357,8 +357,8 @@ class AuthMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'authMethods' => ['bearer'],
-            'bearerTokenCallback' => $callback
+                'authMethods' => ['bearer'],
+                'bearerTokenCallback' => $callback
             ]
         );
     }
@@ -370,8 +370,8 @@ class AuthMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'authMethods' => ['custom'],
-            'customAuthCallback' => $callback
+                'authMethods' => ['custom'],
+                'customAuthCallback' => $callback
             ]
         );
     }
@@ -386,11 +386,33 @@ class AuthMiddleware extends BaseMiddleware
     ): self {
         return new self(
             [
-            'authMethods' => ['apikey'],
-            'apiKeyCallback' => $callback,
-            'headerName' => $headerName,
-            'queryParam' => $queryParam
+                'authMethods' => ['apikey'],
+                'apiKeyCallback' => $callback,
+                'headerName' => $headerName,
+                'queryParam' => $queryParam
             ]
         );
+    }
+
+    /**
+     * Compatibilidade PSR-15: permite uso como middleware PSR-15
+     * @param ServerRequestInterface $request
+     * @param RequestHandlerInterface $handler
+     * @return ResponseInterface
+     */
+    public function process(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
+    {
+        // Adapta para o formato do Express
+        $response = $this->handle($request, new \Express\Http\Psr7\Response(), function (
+            $req = null,
+            $res = null
+        ) use ($handler, $request) {
+            // Compatível com next() sem argumentos (caso customAuth)
+            if ($req === null) {
+                $req = $request;
+            }
+            return $handler->handle($req);
+        });
+        return $response;
     }
 }

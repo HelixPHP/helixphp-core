@@ -171,9 +171,13 @@ class EnhancedStreamPool
         }
 
         // Find oldest access time for this category
-        $categoryAccessTimes = array_filter(self::$accessTimes, function ($key) use ($category) {
-            return strpos($key, $category . '_') === 0;
-        }, ARRAY_FILTER_USE_KEY);
+        $categoryAccessTimes = array_filter(
+            self::$accessTimes,
+            function ($key) use ($category) {
+                return strpos($key, $category . '_') === 0;
+            },
+            ARRAY_FILTER_USE_KEY
+        );
 
         if (!empty($categoryAccessTimes)) {
             asort($categoryAccessTimes);

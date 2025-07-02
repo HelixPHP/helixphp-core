@@ -17,10 +17,13 @@ class LoggingServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(LoggerInterface::class, function () {
-            $logPath = $this->getLogPath();
-            return new Logger($logPath);
-        });
+        $this->app->singleton(
+            LoggerInterface::class,
+            function () {
+                $logPath = $this->getLogPath();
+                return new Logger($logPath);
+            }
+        );
 
         // Aliases
         $this->app->alias('log', LoggerInterface::class);

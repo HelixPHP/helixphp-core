@@ -4,6 +4,7 @@ namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use Express\Middleware\Security\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 class SecurityMiddlewareTest extends TestCase
 {

@@ -154,3 +154,6 @@ O Express-PHP v2.1.1 agora possui um sistema de extensões robusto, maduro e pro
 *Implementado por: GitHub Copilot*
 *Data: 28 de junho de 2025*
 *Framework: Express-PHP v2.1.1*
+
+> ⚠️ **Nota:** Todos os exemplos e recomendações de uso de middleware neste projeto seguem o padrão PSR-15. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados. Consulte `docs/DEPRECATED_MIDDLEWARES.md` para detalhes.
+> ⚠️ Os testes de middlewares legados foram movidos para `tests/Core/legacy/` e não são mais mantidos. Todos os novos testes e implementações devem seguir o padrão PSR-15.

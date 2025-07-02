@@ -288,6 +288,8 @@ class UserController
 
 ## 🔐 Middleware Essencial
 
+> ⚠️ **Nota:** Todos os exemplos e recomendações de uso de middleware neste projeto seguem o padrão PSR-15. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados. Consulte `docs/DEPRECATED_MIDDLEWARES.md` para detalhes.
+
 ### 1. CORS Middleware (Já incluído)
 
 ```php

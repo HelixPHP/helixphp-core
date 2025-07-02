@@ -61,7 +61,7 @@ $authMiddleware = function(Request $req, Response $res, callable $next) use ($JW
     $token = null;
 
     // Verificar header Authorization
-    $authHeader = $req->getHeader('Authorization');
+    $authHeader = $req->header('Authorization');
     if ($authHeader && preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
         $token = $matches[1];
     }
@@ -205,7 +205,7 @@ $app->get('/admin/dashboard', $authMiddleware, function(Request $req, Response $
 $app->use(function(Request $req, Response $res, callable $next) {
     $method = $req->getMethod();
     $path = $req->getPath();
-    $ip = $req->getClientIp() ?? 'unknown';
+    $ip = $req->ip() ?? 'unknown';
     $timestamp = date('Y-m-d H:i:s');
 
     error_log("[{$timestamp}] {$method} {$path} - IP: {$ip}");

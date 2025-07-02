@@ -298,7 +298,7 @@ $mockResponse = new class {
 };
 
 // Processar rota
-$handler = $app->router::getRoutes()['GET']['/'] ?? null;
+$handler = $app->get('/', $mockRequest) ?? null;
 if ($handler && is_callable($handler)) {
     $handler($mockRequest, $mockResponse);
 }

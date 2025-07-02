@@ -43,7 +43,7 @@ class ExtensionSystemTest extends TestCase
 
     public function testExtensionRegistration(): void
     {
-        $testProvider = new class($this->app) extends ServiceProvider {
+        $testProvider = new class ($this->app) extends ServiceProvider {
             public function register(): void
             {
                 $this->app->getContainer()->instance('test_service', 'test_value');
@@ -62,7 +62,7 @@ class ExtensionSystemTest extends TestCase
 
     public function testExtensionEnableDisable(): void
     {
-        $testProvider = new class($this->app) extends ServiceProvider {
+        $testProvider = new class ($this->app) extends ServiceProvider {
             public function register(): void
             {
                 // Empty test provider
@@ -83,12 +83,16 @@ class ExtensionSystemTest extends TestCase
 
     public function testExtensionStats(): void
     {
-        $testProvider1 = new class($this->app) extends ServiceProvider {
-            public function register(): void {}
+        $testProvider1 = new class ($this->app) extends ServiceProvider {
+            public function register(): void
+            {
+            }
         };
 
-        $testProvider2 = new class($this->app) extends ServiceProvider {
-            public function register(): void {}
+        $testProvider2 = new class ($this->app) extends ServiceProvider {
+            public function register(): void
+            {
+            }
         };
 
         $extensionManager = $this->app->extensions();
@@ -108,9 +112,12 @@ class ExtensionSystemTest extends TestCase
         $hookManager = $this->app->hooks();
         $executed = false;
 
-        $hookManager->addAction('test_action', function ($context) use (&$executed) {
-            $executed = true;
-        });
+        $hookManager->addAction(
+            'test_action',
+            function ($context) use (&$executed) {
+                $executed = true;
+            }
+        );
 
         $this->assertTrue($hookManager->hasListeners('test_action'));
         $this->assertEquals(1, $hookManager->getListenerCount('test_action'));
@@ -123,9 +130,12 @@ class ExtensionSystemTest extends TestCase
     {
         $hookManager = $this->app->hooks();
 
-        $hookManager->addFilter('test_filter', function ($data, $context) {
-            return $data . '_modified';
-        });
+        $hookManager->addFilter(
+            'test_filter',
+            function ($data, $context) {
+                return $data . '_modified';
+            }
+        );
 
         $result = $hookManager->applyFilter('test_filter', 'original');
         $this->assertEquals('original_modified', $result);
@@ -141,9 +151,21 @@ class ExtensionSystemTest extends TestCase
     {
         $hookManager = $this->app->hooks();
 
-        $hookManager->addAction('action1', function () {});
-        $hookManager->addAction('action1', function () {});
-        $hookManager->addAction('action2', function () {});
+        $hookManager->addAction(
+            'action1',
+            function () {
+            }
+        );
+        $hookManager->addAction(
+            'action1',
+            function () {
+            }
+        );
+        $hookManager->addAction(
+            'action2',
+            function () {
+            }
+        );
 
         $stats = $hookManager->getStats();
 
@@ -163,8 +185,10 @@ class ExtensionSystemTest extends TestCase
         $this->assertInstanceOf(HookManager::class, $hookManager);
 
         // Test extension registration helper
-        $testProvider = new class($this->app) extends ServiceProvider {
-            public function register(): void {}
+        $testProvider = new class ($this->app) extends ServiceProvider {
+            public function register(): void
+            {
+            }
         };
 
         $result = $this->app->registerExtension('test', get_class($testProvider));
@@ -177,18 +201,24 @@ class ExtensionSystemTest extends TestCase
         $executed = false;
 
         // Test addAction helper
-        $this->app->addAction('test_action', function () use (&$executed) {
-            $executed = true;
-        });
+        $this->app->addAction(
+            'test_action',
+            function () use (&$executed) {
+                $executed = true;
+            }
+        );
 
         // Test doAction helper
         $this->app->doAction('test_action');
         $this->assertTrue($executed);
 
         // Test addFilter helper
-        $this->app->addFilter('test_filter', function ($data) {
-            return $data . '_filtered';
-        });
+        $this->app->addFilter(
+            'test_filter',
+            function ($data) {
+                return $data . '_filtered';
+            }
+        );
 
         // Test applyFilter helper
         $result = $this->app->applyFilter('test_filter', 'original');
@@ -197,12 +227,18 @@ class ExtensionSystemTest extends TestCase
 
     public function testApplicationExtensionStats(): void
     {
-        $testProvider = new class($this->app) extends ServiceProvider {
-            public function register(): void {}
+        $testProvider = new class ($this->app) extends ServiceProvider {
+            public function register(): void
+            {
+            }
         };
 
         $this->app->registerExtension('test1', get_class($testProvider));
-        $this->app->addAction('test_action', function () {});
+        $this->app->addAction(
+            'test_action',
+            function () {
+            }
+        );
 
         $stats = $this->app->getExtensionStats();
 

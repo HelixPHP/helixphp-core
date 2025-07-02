@@ -210,6 +210,12 @@ $app->use(AuthMiddleware::jwt([
 ]));
 ```
 
+> **Nota:** Para novas aplicações, utilize:
+> ```php
+> use Express\Http\Psr15\Middleware\AuthMiddleware;
+> $app->use(new AuthMiddleware(['jwtSecret' => 'sua_chave', 'authMethods' => ['jwt']]));
+> ```
+
 ## 📚 Exemplos Práticos
 
 Veja mais exemplos em:

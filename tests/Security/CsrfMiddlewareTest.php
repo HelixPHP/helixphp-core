@@ -3,7 +3,7 @@
 namespace Express\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middleware\Security\CsrfMiddleware;
+use Express\Http\Psr15\Middleware\CsrfMiddleware;
 
 class CsrfMiddlewareTest extends TestCase
 {
@@ -22,7 +22,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->assertNotEmpty($token1);
         $this->assertNotEmpty($token2);
         $this->assertEquals($token1, $token2, 'Tokens should be the same within session');
-        $this->assertEquals(32, strlen($token1), 'Token should be 32 characters long');
+        $this->assertEquals(64, strlen($token1), 'Token should be 64 characters long');
     }
 
     public function testHiddenField(): void
@@ -31,7 +31,7 @@ class CsrfMiddlewareTest extends TestCase
 
         $this->assertStringContainsString('<input', $hiddenField);
         $this->assertStringContainsString('type="hidden"', $hiddenField);
-        $this->assertStringContainsString('name="csrf_token"', $hiddenField);
+        $this->assertStringContainsString('name="_csrf_token"', $hiddenField);
         $this->assertStringContainsString('value="', $hiddenField);
     }
 

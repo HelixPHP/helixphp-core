@@ -377,3 +377,9 @@ $app->get('/profile', function($request, $response) {
 - ✅ HTTP Basic Auth RFC 7617
 - ✅ Secure session management
 - ✅ CSRF protection integrated
+
+> **Nota:** Para novas aplicações, utilize:
+> ```php
+> use Express\Http\Psr15\Middleware\AuthMiddleware;
+> $app->use(new AuthMiddleware(['jwtSecret' => 'sua_chave', 'authMethods' => ['jwt']]));
+> ```

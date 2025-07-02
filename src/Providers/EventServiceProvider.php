@@ -19,16 +19,22 @@ class EventServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register listener provider
-        $this->app->singleton(ListenerProviderInterface::class, function () {
-            return new ListenerProvider();
-        });
+        $this->app->singleton(
+            ListenerProviderInterface::class,
+            function () {
+                return new ListenerProvider();
+            }
+        );
 
         // Register event dispatcher
-        $this->app->singleton(EventDispatcherInterface::class, function () {
+        $this->app->singleton(
+            EventDispatcherInterface::class,
+            function () {
             /** @var ListenerProviderInterface $listenerProvider */
-            $listenerProvider = $this->app->resolve(ListenerProviderInterface::class);
-            return new EventDispatcher($listenerProvider);
-        });
+                $listenerProvider = $this->app->resolve(ListenerProviderInterface::class);
+                return new EventDispatcher($listenerProvider);
+            }
+        );
 
         // Aliases
         $this->app->alias('events', EventDispatcherInterface::class);

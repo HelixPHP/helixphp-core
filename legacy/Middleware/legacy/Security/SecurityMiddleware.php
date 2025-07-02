@@ -17,11 +17,11 @@ class SecurityMiddleware extends BaseMiddleware
     {
         $this->options = array_merge(
             [
-            'contentSecurityPolicy' => true,
-            'xFrameOptions' => 'DENY',
-            'xContentTypeOptions' => true,
-            'referrerPolicy' => 'strict-origin-when-cross-origin',
-            'permissionsPolicy' => true
+                'contentSecurityPolicy' => true,
+                'xFrameOptions' => 'DENY',
+                'xContentTypeOptions' => true,
+                'referrerPolicy' => 'strict-origin-when-cross-origin',
+                'permissionsPolicy' => true
             ],
             $options
         );

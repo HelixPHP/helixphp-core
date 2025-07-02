@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Express\Http\Psr15\Middleware;
 
 use Express\Http\Psr15\AbstractMiddleware;
+use Express\Http\Psr7\Request;
+use Express\Http\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -18,14 +20,17 @@ class CorsMiddleware extends AbstractMiddleware
 
     public function __construct(array $config = [])
     {
-        $this->config = array_merge([
-            'origin' => '*',
-            'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-            'headers' => ['Content-Type', 'Authorization', 'X-Requested-With'],
-            'credentials' => false,
-            'max_age' => 86400, // 24 hours
-            'expose_headers' => [],
-        ], $config);
+        $this->config = array_merge(
+            [
+                'origin' => '*',
+                'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+                'headers' => ['Content-Type', 'Authorization', 'X-Requested-With'],
+                'credentials' => false,
+                'max_age' => 86400, // 24 hours
+                'expose_headers' => [],
+            ],
+            $config
+        );
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -44,16 +49,46 @@ class CorsMiddleware extends AbstractMiddleware
         return $this->addCorsHeadersOptimized($request, $response);
     }
 
+    /**
+     * Compatível apenas com PSR-15. Remove suporte a mocks legados.
+     */
+    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        return $this->process($request, $handler);
+    }
+
+    /**
+     * Compatibilidade com middlewares legados: handle($request, $response, $next)
+     */
+    public function handle(Request $request, Response $response, callable $next): void
+    {
+        throw new \BadMethodCallException('CorsMiddleware: use apenas como PSR-15 Middleware.');
+    }
+
     private function handlePreflightOptimized(ServerRequestInterface $request): ResponseInterface
     {
         $factory = new \Express\Http\Psr7\Factory\ResponseFactory();
         $response = $factory->createResponse(200);
 
+        // Métodos sem espaço após vírgula
+        $methods = $this->config['methods'];
+        if (is_array($methods)) {
+            $methods = implode(',', $methods);
+        } else {
+            $methods = str_replace(' ', '', (string)$methods);
+        }
+
         // Build headers array for efficient processing
         $headers = [
             'Access-Control-Allow-Origin' => $this->getAllowedOrigin($request),
-            'Access-Control-Allow-Methods' => implode(', ', $this->config['methods']),
-            'Access-Control-Allow-Headers' => implode(', ', $this->config['headers']),
+            'Access-Control-Allow-Methods' => $methods,
+            'Access-Control-Allow-Headers' => str_replace(
+                ' ',
+                '',
+                is_array($this->config['headers']) ?
+                    implode(',', $this->config['headers']) :
+                    (string)$this->config['headers']
+            ),
             'Access-Control-Max-Age' => (string) $this->config['max_age']
         ];
 
@@ -73,9 +108,24 @@ class CorsMiddleware extends AbstractMiddleware
         ServerRequestInterface $request,
         ResponseInterface $response
     ): ResponseInterface {
-        // Build headers array for efficient processing
+        // Métodos sem espaço após vírgula
+        $methods = $this->config['methods'];
+        if (is_array($methods)) {
+            $methods = implode(',', $methods);
+        } else {
+            $methods = str_replace(' ', '', (string)$methods);
+        }
+
         $headers = [
-            'Access-Control-Allow-Origin' => $this->getAllowedOrigin($request)
+            'Access-Control-Allow-Origin' => $this->getAllowedOrigin($request),
+            'Access-Control-Allow-Methods' => $methods,
+            'Access-Control-Allow-Headers' => str_replace(
+                ' ',
+                '',
+                is_array($this->config['headers']) ?
+                    implode(',', $this->config['headers']) :
+                    (string)$this->config['headers']
+            )
         ];
 
         if ($this->config['credentials']) {
@@ -86,7 +136,6 @@ class CorsMiddleware extends AbstractMiddleware
             $headers['Access-Control-Expose-Headers'] = implode(', ', $this->config['expose_headers']);
         }
 
-        // Apply all headers efficiently
         foreach ($headers as $name => $value) {
             $response = $response->withHeader($name, $value);
         }

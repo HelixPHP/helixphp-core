@@ -361,10 +361,13 @@ class RouteCache
             // Compila pattern antecipadamente
             $compiled = self::compilePattern($route['path']);
 
-            $cachedRoute = array_merge($route, [
-                'compiled_pattern' => $compiled['pattern'],
-                'parameters' => $compiled['parameters']
-            ]);
+            $cachedRoute = array_merge(
+                $route,
+                [
+                    'compiled_pattern' => $compiled['pattern'],
+                    'parameters' => $compiled['parameters']
+                ]
+            );
 
             self::set($key, $cachedRoute);
         }

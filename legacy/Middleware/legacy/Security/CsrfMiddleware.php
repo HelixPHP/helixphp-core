@@ -17,11 +17,11 @@ class CsrfMiddleware extends BaseMiddleware
     {
         $this->options = array_merge(
             [
-            'tokenLength' => 32,
-            'sessionKey' => '_csrf_token',
-            'headerName' => 'X-CSRF-Token',
-            'fieldName' => '_token',
-            'excludeMethods' => ['GET', 'HEAD', 'OPTIONS']
+                'tokenLength' => 32,
+                'sessionKey' => '_csrf_token',
+                'headerName' => 'X-CSRF-Token',
+                'fieldName' => '_token',
+                'excludeMethods' => ['GET', 'HEAD', 'OPTIONS']
             ],
             $options
         );
@@ -51,8 +51,8 @@ class CsrfMiddleware extends BaseMiddleware
         if (!$this->validateToken($token)) {
             return $response->status(403)->json(
                 [
-                'error' => true,
-                'message' => 'CSRF token mismatch'
+                    'error' => true,
+                    'message' => 'CSRF token mismatch'
                 ]
             );
         }

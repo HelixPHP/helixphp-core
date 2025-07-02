@@ -41,10 +41,10 @@ abstract class BaseMiddleware implements MiddlewareInterface
      * @param  mixed  $default
      * @return mixed
      */
-    protected function getHeader($request, string $header, $default = null)
+    protected static function getHeader($request, string $header, $default = null)
     {
         if ($request instanceof Request) {
-            return $request->headers->getHeader($header) ?? $default;
+            return $request->header($header) ?? $default;
         }
 
         // Handle generic objects for testing - check if headers is an object

@@ -53,8 +53,8 @@ $loggingMiddleware = function(Request $req, Response $res, callable $next) {
     $start = microtime(true);
     $method = $req->getMethod();
     $path = $req->getPath();
-    $ip = $req->getClientIp() ?? 'unknown';
-    $userAgent = $req->getHeader('User-Agent') ?? 'unknown';
+    $ip = $req->ip() ?? 'unknown';
+    $userAgent = $req->header('User-Agent') ?? 'unknown';
 
     // Log da requisição
     error_log("[REQUEST] {$method} {$path} - IP: {$ip} - UA: " . substr($userAgent, 0, 50));
@@ -69,7 +69,7 @@ $loggingMiddleware = function(Request $req, Response $res, callable $next) {
 
 // Middleware de rate limiting simples
 $rateLimitMiddleware = function(Request $req, Response $res, callable $next) use (&$rateLimitStore) {
-    $ip = $req->getClientIp() ?? 'unknown';
+    $ip = $req->ip() ?? 'unknown';
     $now = time();
     $window = 60; // 1 minuto
     $maxRequests = 30; // máximo 30 requests por minuto
@@ -102,7 +102,7 @@ $rateLimitMiddleware = function(Request $req, Response $res, callable $next) use
 // Middleware de validação JSON
 $jsonValidationMiddleware = function(Request $req, Response $res, callable $next) {
     if (in_array($req->getMethod(), ['POST', 'PUT', 'PATCH'])) {
-        $contentType = $req->getHeader('Content-Type');
+        $contentType = $req->header('Content-Type');
 
         if ($contentType && strpos($contentType, 'application/json') !== false) {
             $body = $req->getBody();

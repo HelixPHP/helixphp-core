@@ -1,10 +1,17 @@
 <?php
 
-namespace Express\Tests\Security;
+namespace Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middleware\Security\AuthMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
 use Express\Authentication\JWTHelper;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Express\Http\Psr7\Response;
+use Express\Http\Psr7\ServerRequest;
+use Tests\Security\MockResponse;
+use Tests\Security\DummyHandler;
 
 class AuthMiddlewareTest extends TestCase
 {
@@ -26,78 +33,64 @@ class AuthMiddlewareTest extends TestCase
         $_SERVER['HTTPS'] = 'off';
     }
 
-    private function createMockRequest($headers = [], $query = []): object
+    private function createPsrRequest(array $headers = [], array $query = []): ServerRequestInterface
     {
-        return (object) [
-            'headers' => (object) $headers,
-            'query' => (object) $query,
-            'method' => 'GET',
-            'path' => '/test'
-        ];
+        $request = new ServerRequest('GET', '/test');
+        foreach ($headers as $name => $value) {
+            $request = $request->withHeader($name, $value);
+        }
+        return $request;
     }
 
-    private function createMockResponse(): MockResponse
+    public function testJwtAuth(): void
     {
-        return new MockResponse();
-    }
-
-    public function testJWTAuthenticationSuccess(): void
-    {
-        // Arrange
+        $middleware = new AuthMiddleware(
+            [
+                'jwtSecret' => $this->jwtSecret,
+                'authMethods' => ['jwt']
+            ]
+        );
         $payload = ['user_id' => 1, 'username' => 'testuser'];
         $token = JWTHelper::encode($payload, $this->jwtSecret);
-
-        $request = $this->createMockRequest(['authorization' => "Bearer $token"]);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::jwt($this->jwtSecret);
-
-        // Act
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        // Assert
-        $this->assertTrue($nextCalled);
-        $this->assertTrue(property_exists($request, 'user'));
+        $request = $this->createPsrRequest(['Authorization' => "Bearer $token"]);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertTrue($handler->called);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testJWTAuthenticationFailure(): void
     {
-        $request = $this->createMockRequest(['authorization' => 'Bearer invalid_token']);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::jwt($this->jwtSecret);
-
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        // Com token inválido, deve falhar na autenticação
-        $this->assertFalse($nextCalled);
-        $this->assertEquals(401, $response->statusCode);
+        $middleware = new AuthMiddleware(
+            [
+                'jwtSecret' => $this->jwtSecret,
+                'authMethods' => ['jwt']
+            ]
+        );
+        $request = $this->createPsrRequest(['Authorization' => 'Bearer invalid_token']);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertFalse($handler->called);
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testBasicAuthenticationSuccess(): void
+    public function testBasicAuth(): void
     {
         $basicCallback = function ($username, $password) {
-            return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
+            return ($username === 'admin' && $password === 'senha123') ? ['username' => $username] : false;
         };
-
-        $request = $this->createMockRequest(['authorization' => 'Basic ' . base64_encode('testuser:testpass')]);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::basic($basicCallback);
-
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        $this->assertTrue($nextCalled);
-        $this->assertTrue(property_exists($request, 'user'));
+        $middleware = new AuthMiddleware(
+            [
+                'authMethods' => ['basic'],
+                'basicAuthCallback' => $basicCallback
+            ]
+        );
+        $auth = base64_encode('admin:senha123');
+        $request = $this->createPsrRequest(['Authorization' => 'Basic ' . $auth]);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertTrue($handler->called);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function testBasicAuthenticationFailure(): void
@@ -105,89 +98,53 @@ class AuthMiddlewareTest extends TestCase
         $basicCallback = function ($username, $password) {
             return $username === 'testuser' && $password === 'testpass' ? ['username' => $username] : false;
         };
-
-        $request = $this->createMockRequest(['authorization' => 'Basic ' . base64_encode('testuser:wrongpass')]);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::basic($basicCallback);
-
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        $this->assertFalse($nextCalled);
-        $this->assertEquals(401, $response->statusCode);
+        $middleware = new AuthMiddleware(
+            [
+                'authMethods' => ['basic'],
+                'basicAuthCallback' => $basicCallback
+            ]
+        );
+        $auth = base64_encode('testuser:wrongpass');
+        $request = $this->createPsrRequest(['Authorization' => 'Basic ' . $auth]);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertFalse($handler->called);
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
-    public function testBearerTokenAuthentication(): void
+    public function testBearerAuth(): void
     {
         $bearerCallback = function ($token) {
-            return $token === 'valid_token_123' ? ['token' => $token] : false;
+            return ($token === 'valid_token') ? ['token' => $token] : false;
         };
-
-        $request = $this->createMockRequest(['authorization' => 'Bearer valid_token_123']);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::bearer($bearerCallback);
-
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        $this->assertTrue($nextCalled);
-        $this->assertTrue(property_exists($request, 'user'));
+        $middleware = new AuthMiddleware(
+            [
+                'authMethods' => ['bearer'],
+                'bearerAuthCallback' => $bearerCallback
+            ]
+        );
+        $request = $this->createPsrRequest(['Authorization' => 'Bearer valid_token']);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertTrue($handler->called);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testCustomAuthentication(): void
+    public function testCustomAuth(): void
     {
         $customAuth = function ($request) {
-            if (($request->headers->customAuth ?? '') === 'valid') {
-                return ['id' => 1, 'name' => 'custom_user'];
-            }
-            return false;
+            return true;
         };
-
-        $request = $this->createMockRequest(['customAuth' => 'valid']);
-        $response = $this->createMockResponse();
-        $nextCalled = false;
-
-        $middleware = AuthMiddleware::custom($customAuth);
-
-        $middleware($request, $response, function () use (&$nextCalled) {
-            $nextCalled = true;
-        });
-
-        $this->assertTrue($nextCalled);
-        $this->assertTrue(property_exists($request, 'user'));
-    }
-}
-
-/**
- * Mock Response class for testing
- */
-class MockResponse
-{
-    public $statusCode = 200;
-    public $headers = [];
-    public $body = '';
-
-    public function status($code)
-    {
-        $this->statusCode = $code;
-        return $this;
-    }
-
-    public function json($data)
-    {
-        $this->body = json_encode($data);
-        return $this;
-    }
-
-    public function send($data)
-    {
-        $this->body = $data;
-        return $this;
+        $middleware = new AuthMiddleware(
+            [
+                'authMethods' => ['custom'],
+                'customAuthCallback' => $customAuth
+            ]
+        );
+        $request = $this->createPsrRequest(['customAuth' => 'valid']);
+        $handler = new DummyHandler();
+        $response = $middleware->process($request, $handler);
+        $this->assertTrue($handler->called);
+        $this->assertEquals(200, $response->getStatusCode());
     }
 }

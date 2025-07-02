@@ -319,11 +319,11 @@ class OpenApiExporter
                         // Parse parameter documentation
                         if (preg_match('/(\w+)\s+\$(\w+)\s*(.*)/', $content, $matches)) {
                             $docInfo['parameters'][] = [
-                            'name' => $matches[2],
-                            'in' => 'path',
-                            'required' => true,
-                            'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
-                            'description' => $matches[3]
+                                'name' => $matches[2],
+                                'in' => 'path',
+                                'required' => true,
+                                'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
+                                'description' => $matches[3]
                             ];
                         }
                         break;

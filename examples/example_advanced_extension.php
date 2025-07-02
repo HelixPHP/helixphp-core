@@ -17,10 +17,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 use Express\Core\Application;
 use Express\Providers\ServiceProvider;
-use Express\Http\Request;
-use Express\Http\Response;
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Psr\Log\LoggerInterface;
 
 // ============================================
 // EXTENSÃO: RATE LIMITING AVANÇADO
@@ -267,7 +264,7 @@ class CacheManager
         }
     }
 
-    public function store(string $name = null): CacheStoreInterface
+    public function store(?string $name): CacheStoreInterface
     {
         $name = $name ?? $this->defaultStore;
 
@@ -278,7 +275,7 @@ class CacheManager
         return $this->stores[$name];
     }
 
-    public function remember(string $key, $value, int $ttl = 3600, string $store = null)
+    public function remember(string $key, $value, int $ttl = 3600, ?string $store)
     {
         $cache = $this->store($store);
 
@@ -548,7 +545,7 @@ echo "=======================================\n\n";
 $app = new Application(__DIR__);
 
 // Configuração avançada
-$app->config([
+$app->configure([
     'rate_limiting' => [
         'max_requests' => 10,
         'window_seconds' => 60,

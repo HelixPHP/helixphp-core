@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
+namespace Tests;
+
 use Express\Core\Application;
 use Express\Providers\Container;
 use Express\Providers\ServiceProvider;
@@ -10,6 +11,7 @@ use Express\Events\ApplicationStarted;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 
 class PSRProvidersTest extends TestCase
 {
@@ -78,10 +80,13 @@ class PSRProvidersTest extends TestCase
         $receivedEvent = null;
 
         // Registrar listener
-        $this->app->addEventListener(ApplicationStarted::class, function ($event) use (&$eventFired, &$receivedEvent) {
-            $eventFired = true;
-            $receivedEvent = $event;
-        });
+        $this->app->addEventListener(
+            ApplicationStarted::class,
+            function ($event) use (&$eventFired, &$receivedEvent) {
+                $eventFired = true;
+                $receivedEvent = $event;
+            }
+        );
 
         // Disparar evento
         $startTime = new \DateTime();
@@ -96,12 +101,15 @@ class PSRProvidersTest extends TestCase
     public function testCustomServiceProvider(): void
     {
         // Criar provider customizado
-        $customProvider = new class($this->app) extends ServiceProvider {
+        $customProvider = new class ($this->app) extends ServiceProvider {
             public function register(): void
             {
-                $this->app->singleton('custom.service', function () {
-                    return new \stdClass();
-                });
+                $this->app->singleton(
+                    'custom.service',
+                    function () {
+                        return new \stdClass();
+                    }
+                );
             }
         };
 
@@ -133,7 +141,9 @@ class PSRProvidersTest extends TestCase
 
         $dispatcher = $this->app->getEventDispatcher();
         $this->assertInstanceOf(EventDispatcherInterface::class, $dispatcher);
-    }    public function testApplicationStartedEventIsDispatchedOnBoot(): void
+    }
+
+    public function testApplicationStartedEventIsDispatchedOnBoot(): void
     {
         $eventFired = false;
 
@@ -141,9 +151,12 @@ class PSRProvidersTest extends TestCase
         $this->app->boot();
 
         // Agora registrar listener
-        $this->app->addEventListener(ApplicationStarted::class, function () use (&$eventFired) {
-            $eventFired = true;
-        });
+        $this->app->addEventListener(
+            ApplicationStarted::class,
+            function () use (&$eventFired) {
+                $eventFired = true;
+            }
+        );
 
         // Disparar evento manualmente para testar
         $event = new ApplicationStarted(new \DateTime(), []);

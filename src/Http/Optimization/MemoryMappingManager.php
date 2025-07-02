@@ -368,9 +368,12 @@ class MemoryMappingManager
 
         // If still too many mappings, remove oldest
         if (count(self::$mappings) >= self::$config['max_mapped_files']) {
-            uasort(self::$mappings, function ($a, $b) {
-                return $a['last_accessed'] <=> $b['last_accessed'];
-            });
+            uasort(
+                self::$mappings,
+                function ($a, $b) {
+                    return $a['last_accessed'] <=> $b['last_accessed'];
+                }
+            );
 
             $toRemove = count(self::$mappings) - self::$config['max_mapped_files'] + 10;
             $removed = 0;

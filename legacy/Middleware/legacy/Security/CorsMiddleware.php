@@ -98,21 +98,31 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Cria middleware CORS otimizado (método estático para compatibilidade)
+     *
+     * @param array $config
+     * @return callable
      */
     public static function create(array $config = []): callable
     {
         $finalConfig = array_merge(self::DEFAULT_CONFIG, $config);
-        $configHash = self::getConfigHashStatic($finalConfig);
+        $configHash = self::_getConfigHashStatic($finalConfig);
 
         // Pre-compila headers se não existir no cache
         if (!isset(self::$preCompiledHeaders[$configHash])) {
-            self::$preCompiledHeaders[$configHash] = self::buildOptimizedHeadersStatic($finalConfig);
-            self::$compiledHeaderStrings[$configHash] = self::buildHeaderStringStatic($finalConfig);
-            self::invalidateMemoryCache();
+            self::$preCompiledHeaders[$configHash] = self::_buildOptimizedHeadersStatic($finalConfig);
+            self::$compiledHeaderStrings[$configHash] = self::_buildHeaderStringStatic($finalConfig);
+            self::_invalidateMemoryCache();
         }
 
-        return function ($request, $response, $next) use ($configHash, $finalConfig) {
-            self::applyOptimizedHeaders($response, $configHash, $finalConfig, $request);
+        return function (
+            $request,
+            $response,
+            $next
+        ) use (
+            $configHash,
+            $finalConfig
+) {
+            self::_applyOptimizedHeaders($response, $configHash, $finalConfig, $request);
 
             // Handle preflight requests
             if ($request->method === 'OPTIONS') {
@@ -135,16 +145,11 @@ class CorsMiddleware extends BaseMiddleware
         $this->addCorsHeaders($response, $origin);
 
         // Para requisições OPTIONS (preflight), retorna imediatamente
-        $method = is_object($request) && isset($request->method)
-            ? $request->method
-            : ($_SERVER['REQUEST_METHOD'] ?? 'GET');
-        if ($method === 'OPTIONS') {
-            $response->status(204);
-            if (method_exists($response, 'text')) {
-                $response->text('');
+        if ($request instanceof \Express\Http\Request && $request->getMethod() === 'OPTIONS') {
+            if ($response instanceof Response) {
+                $response->status(200)->send();
             }
-            // Return response directly for OPTIONS without calling next()
-            return $response;
+            return;
         }
 
         return $next($request, $response);
@@ -154,27 +159,37 @@ class CorsMiddleware extends BaseMiddleware
      * Verifica se a origem é permitida.
      *
      * @phpstan-ignore-next-line
+     * @param string|null $origin
+     * @return bool
      */
     private function isOriginAllowed(?string $origin): bool
     {
         $allowedOrigins = $this->options['origins'];
 
+        // DEBUG: Log origem recebida e permitidas
+        error_log('[CorsMiddleware][isOriginAllowed] Origin recebida: ' . var_export($origin, true));
+        error_log('[CorsMiddleware][isOriginAllowed] Origens permitidas: ' . var_export($allowedOrigins, true));
+
         // Se permite todas as origens
         if (in_array('*', $allowedOrigins)) {
+            error_log('[CorsMiddleware][isOriginAllowed] Permite todas as origens (*)');
             return true;
         }
 
         // Se há uma origem específica na request, verifica se é permitida
         if (!empty($origin)) {
-            return in_array($origin, $allowedOrigins);
+            $allowed = in_array($origin, $allowedOrigins);
+            error_log('[CorsMiddleware][isOriginAllowed] Origin específica encontrada. Permitida? ' . ($allowed ? 'SIM' : 'NÃO'));
+            return $allowed;
         }
 
         // Se não há origem na request mas há origens específicas configuradas, permite
-        // (para casos de testes onde a origin header não é enviada)
         if (!empty($allowedOrigins) && !in_array('*', $allowedOrigins)) {
+            error_log('[CorsMiddleware][isOriginAllowed] Não há origin na request, mas há origens específicas configuradas. Permitindo.');
             return true;
         }
 
+        error_log('[CorsMiddleware][isOriginAllowed] Origin não permitida.');
         return false;
     }
 
@@ -182,9 +197,15 @@ class CorsMiddleware extends BaseMiddleware
      * Adiciona os cabeçalhos CORS à resposta.
      *
      * @param mixed $response
+     * @param string|null $origin
+     * @return void
      */
     private function addCorsHeaders($response, ?string $origin): void
     {
+        // DEBUG: Log origem recebida e opções
+        error_log('[CorsMiddleware][addCorsHeaders] Origin recebida: ' . var_export($origin, true));
+        error_log('[CorsMiddleware][addCorsHeaders] Opções: ' . var_export($this->options, true));
+
         // Origin
         if (in_array('*', $this->options['origins'])) {
             $this->setHeader($response, 'Access-Control-Allow-Origin', '*');
@@ -236,16 +257,16 @@ class CorsMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'origins' => ['*'],
-            'credentials' => true,
-            'headers' => [
-                'Content-Type',
-                'Authorization',
-                'X-Requested-With',
-                'Accept',
-                'Origin',
-                'X-CSRF-Token'
-            ]
+                'origins' => ['*'],
+                'credentials' => true,
+                'headers' => [
+                    'Content-Type',
+                    'Authorization',
+                    'X-Requested-With',
+                    'Accept',
+                    'Origin',
+                    'X-CSRF-Token'
+                ]
             ]
         );
     }
@@ -259,15 +280,15 @@ class CorsMiddleware extends BaseMiddleware
     {
         return new self(
             [
-            'origins' => $allowedOrigins,
-            'credentials' => true,
-            'headers' => [
-                'Content-Type',
-                'Authorization',
-                'X-Requested-With',
-                'Accept',
-                'Origin'
-            ]
+                'origins' => $allowedOrigins,
+                'credentials' => true,
+                'headers' => [
+                    'Content-Type',
+                    'Authorization',
+                    'X-Requested-With',
+                    'Accept',
+                    'Origin'
+                ]
             ]
         );
     }
@@ -276,6 +297,9 @@ class CorsMiddleware extends BaseMiddleware
      * Set a header on response (supports both Response objects and test objects)
      *
      * @param mixed $response
+     * @param string $name
+     * @param string $value
+     * @return void
      */
     private function setHeader($response, string $name, string $value): void
     {
@@ -292,6 +316,12 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Aplica headers CORS de forma otimizada
+     *
+     * @param Response $response
+     * @param string $configHash
+     * @param array $config
+     * @param Request $request
+     * @return void
      */
     private static function applyOptimizedHeaders(
         Response $response,
@@ -315,6 +345,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Constrói headers CORS otimizados
+     * @return array
      */
     private function buildOptimizedHeaders(): array
     {
@@ -357,8 +388,10 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Constrói headers CORS otimizados (método estático para configuração externa)
+     * @param array $config
+     * @return array
      */
-    private static function buildOptimizedHeadersStatic(array $config): array
+    private static function _buildOptimizedHeadersStatic(array $config): array
     {
         $headers = [];
 
@@ -400,6 +433,7 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Constrói string única de headers para performance máxima
+     * @return string
      */
     private function buildHeaderString(): string
     {
@@ -436,8 +470,10 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Constrói string única de headers para performance máxima (método estático para configuração externa)
+     * @param array $config
+     * @return string
      */
-    private static function buildHeaderStringStatic(array $config): string
+    private static function _buildHeaderStringStatic(array $config): string
     {
         $parts = [];
 
@@ -468,6 +504,9 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Calcula origin dinâmica (para casos complexos)
+     * @param Request $request
+     * @param array $config
+     * @return string
      */
     private static function calculateDynamicOrigin(Request $request, array $config): string
     {
@@ -475,7 +514,8 @@ class CorsMiddleware extends BaseMiddleware
             return (string) $config['origins'];
         }
 
-        $requestOrigin = $request->getHeader('Origin', '');
+        $originHeader = self::getHeader($request, 'Origin', '');
+        $requestOrigin = is_string($originHeader) ? $originHeader : '';
 
         // Verifica se origin está na lista permitida
         if (in_array($requestOrigin, $config['origins'], true)) {
@@ -484,6 +524,9 @@ class CorsMiddleware extends BaseMiddleware
 
         // Verifica wildcard patterns
         foreach ($config['origins'] as $allowedOrigin) {
+            if (!is_string($allowedOrigin)) {
+                continue;
+            }
             if (strpos($allowedOrigin, '*') !== false) {
                 $pattern = str_replace('*', '.*', preg_quote($allowedOrigin, '/'));
                 if (preg_match('/^' . $pattern . '$/', $requestOrigin)) {
@@ -491,12 +534,12 @@ class CorsMiddleware extends BaseMiddleware
                 }
             }
         }
-
-        return $config['origins'][0] ?? '*';
+        return '';
     }
 
     /**
      * Gera hash da configuração para cache
+     * @return string
      */
     private function getConfigHash(): string
     {
@@ -510,8 +553,10 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Gera hash da configuração para cache (método estático para configuração externa)
+     * @param array $config
+     * @return string
      */
-    private static function getConfigHashStatic(array $config): string
+    private static function _getConfigHashStatic(array $config): string
     {
         // Remove dynamic_origin do hash pois não afeta cache de headers estáticos
         $cacheConfig = $config;
@@ -522,6 +567,11 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Middleware CORS ultra-otimizado para casos simples
+     *
+     * @param string $origin
+     * @param array|null $methods
+     * @param array|null $headers
+     * @return callable
      */
     public static function simple(string $origin = '*', ?array $methods = null, ?array $headers = null): callable
     {
@@ -532,7 +582,15 @@ class CorsMiddleware extends BaseMiddleware
         $methodsString = implode(', ', $methods);
         $headersString = implode(', ', $headers);
 
-        return function ($request, $response, $next) use ($origin, $methodsString, $headersString) {
+        return function (
+            Request $request,
+            Response $response,
+            callable $next
+        ) use (
+            $origin,
+            $methodsString,
+            $headersString
+        ) {
             // Aplica headers diretamente sem array intermediário
             if ($response instanceof Response) {
                 $response->header('Access-Control-Allow-Origin', $origin);
@@ -541,7 +599,10 @@ class CorsMiddleware extends BaseMiddleware
                 $response->header('Access-Control-Max-Age', '86400');
             }
 
-            if (isset($request->method) && $request->method === 'OPTIONS') {
+            if (
+                method_exists($request, 'getMethod') &&
+                $request->getMethod() === 'OPTIONS'
+            ) {
                 if ($response instanceof Response) {
                     $response->status(200)->send();
                 }
@@ -554,28 +615,29 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Obtém estatísticas do cache CORS
+     *
+     * @return array
      */
     public static function getStats(): array
     {
         return [
             'cached_configs' => count(self::$preCompiledHeaders),
             'header_strings' => count(self::$compiledHeaderStrings),
-            'memory_usage' => self::getMemoryUsage()
+            'memory_usage' => self::_getMemoryUsage()
         ];
     }
 
     /**
      * Calcula o uso de memória com cache para melhor performance
-     *
      * @return array<string, int>
      */
-    private static function getMemoryUsage(): array
+    private static function _getMemoryUsage(): array
     {
         // Gera hash dos dados atuais de forma mais eficiente
         $currentDataHash = md5(
             count(self::$preCompiledHeaders) . '|' .
-            count(self::$compiledHeaderStrings) . '|' .
-            serialize(array_keys(self::$preCompiledHeaders))
+                count(self::$compiledHeaderStrings) . '|' .
+                serialize(array_keys(self::$preCompiledHeaders))
         );
 
         // Se o cache é válido, retorna os dados em cache
@@ -591,7 +653,8 @@ class CorsMiddleware extends BaseMiddleware
         $stringsMemory = SerializationCache::getSerializedSize(
             self::$compiledHeaderStrings,
             'cors_compiled_strings'
-        );        self::$memoryUsageCache = [
+        );
+        self::$memoryUsageCache = [
             'headers' => $headersMemory,
             'strings' => $stringsMemory,
             'total' => $headersMemory + $stringsMemory
@@ -617,8 +680,9 @@ class CorsMiddleware extends BaseMiddleware
 
     /**
      * Invalida o cache de uso de memória
+     * @return void
      */
-    private static function invalidateMemoryCache(): void
+    private static function _invalidateMemoryCache(): void
     {
         self::$memoryUsageCache = null;
         self::$lastDataHash = null;
@@ -669,8 +733,12 @@ class CorsMiddleware extends BaseMiddleware
             $start = microtime(true);
 
             for ($i = 0; $i < $iterations; $i++) {
-                $middleware($request, $response, function () {
-                });
+                $middleware(
+                    $request,
+                    $response,
+                    function () {
+                    }
+                );
             }
 
             $end = microtime(true);

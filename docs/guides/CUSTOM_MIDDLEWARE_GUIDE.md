@@ -62,6 +62,8 @@ interface MiddlewareInterface
 }
 ```
 
+> **Nota:** Para middlewares customizados, recomenda-se implementar `Psr\Http\Server\MiddlewareInterface` para compatibilidade PSR-15.
+
 ---
 
 ## 🏗️ Estrutura Básica

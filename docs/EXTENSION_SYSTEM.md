@@ -164,6 +164,8 @@ class SecurityMiddleware extends BaseMiddleware
 }
 ```
 
+> **Nota:** Para middlewares de extensão, utilize sempre a interface PSR-15 para máxima compatibilidade.
+
 ## Sistema de Hooks
 
 ### Hooks de Ação (Actions)

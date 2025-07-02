@@ -17,11 +17,11 @@ class XssMiddleware extends BaseMiddleware
     {
         $this->options = array_merge(
             [
-            'mode' => 'block',
-            'reportUri' => null,
-            'sanitizeInput' => false,
-            'allowedTags' => '',
-            'checkUrls' => false
+                'mode' => 'block',
+                'reportUri' => null,
+                'sanitizeInput' => false,
+                'allowedTags' => '',
+                'checkUrls' => false
             ],
             $options
         );

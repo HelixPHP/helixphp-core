@@ -160,9 +160,12 @@ class HookManager
         ];
 
         // Sort by priority
-        usort($this->listeners[$hook], function ($a, $b) {
-            return $a['priority'] <=> $b['priority'];
-        });
+        usort(
+            $this->listeners[$hook],
+            function ($a, $b) {
+                return $a['priority'] <=> $b['priority'];
+            }
+        );
 
         // Register with PSR-14 event system
         $this->registerWithEventSystem($hook);

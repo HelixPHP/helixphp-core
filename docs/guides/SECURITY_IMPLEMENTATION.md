@@ -16,6 +16,49 @@ O Express PHP Framework implementa múltiplas camadas de segurança para protege
 6. **Rate Limiting & DDoS Protection**
 7. **Security Headers**
 
+## 🛡️ Middlewares de Segurança PSR-15
+
+A partir da versão 2.1, utilize os middlewares PSR-15 para máxima segurança e compatibilidade:
+
+- `CsrfMiddleware` — Proteção automática contra CSRF
+- `XssMiddleware` — Sanitização automática de dados
+- `SecurityHeadersMiddleware` — Cabeçalhos de segurança HTTP
+- `ErrorMiddleware` — Tratamento global de erros
+- `CacheMiddleware` — Cache de resposta HTTP
+- `CorsMiddleware` — Compartilhamento de recursos entre origens
+- `AuthMiddleware` — Autenticação e autorização
+
+> **Importante:** Sempre utilize os middlewares PSR-15 para máxima segurança e compatibilidade:
+>
+> - `use Express\Http\Psr15\Middleware\CsrfMiddleware;`
+> - `use Express\Http\Psr15\Middleware\XssMiddleware;`
+> - `use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;`
+> - `use Express\Http\Psr15\Middleware\ErrorMiddleware;`
+> - `use Express\Http\Psr15\Middleware\CacheMiddleware;`
+> - `use Express\Http\Psr15\Middleware\CorsMiddleware;`
+> - `use Express\Http\Psr15\Middleware\AuthMiddleware;`
+
+> **Exemplo recomendado:**
+> ```php
+> $app->use(new ErrorMiddleware());
+> $app->use(new CsrfMiddleware());
+> $app->use(new XssMiddleware('<strong><em><p>'));
+> $app->use(new SecurityHeadersMiddleware());
+> $app->use(new CacheMiddleware(300));
+> $app->use(new CorsMiddleware());
+> $app->use(new AuthMiddleware(['jwtSecret' => 'sua_chave', 'authMethods' => ['jwt']]));
+> ```
+
+> ⚠️ **Atenção:** Todos os middlewares antigos (não-PSR-15) estão depreciados a partir da versão 2.1. Utilize apenas middlewares compatíveis com PSR-15 para máxima segurança, performance e compatibilidade.
+>
+> ⚠️ **Nota:** Todos os exemplos e recomendações de uso de middleware neste projeto seguem o padrão PSR-15. Middlewares antigos (não-PSR-15) estão **depreciados** e não são mais suportados. Consulte `docs/DEPRECATED_MIDDLEWARES.md` para detalhes.
+
+### Utilitários
+- Gere campos CSRF: `CsrfMiddleware::hiddenField()`
+- Sanitização manual: `XssMiddleware::sanitize($input, $tags)`
+
+> **Nota:** Middlewares antigos continuam disponíveis, mas recomenda-se o uso dos PSR-15.
+
 ## 🛠️ Implementações Detalhadas
 
 ### 1. CORS (Cross-Origin Resource Sharing)
@@ -441,3 +484,5 @@ class SecurityMonitor
 - ✅ **GDPR** privacy ready
 - ✅ **SOC 2** security controls
 - ✅ **ISO 27001** aligned
+
+> ⚠️ Os testes de middlewares legados foram movidos para `tests/Core/legacy/` e não são mais mantidos. Todos os novos testes e implementações devem seguir o padrão PSR-15.

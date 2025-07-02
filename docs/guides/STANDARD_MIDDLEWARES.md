@@ -2,6 +2,39 @@
 
 Esta documentação apresenta todos os middlewares padrão disponíveis no Express PHP Framework, suas funcionalidades, configurações e exemplos práticos de uso.
 
+## 🆕 Novos Middlewares PSR-15 (v2.1+)
+
+A partir da versão 2.1, o Express PHP adota middlewares compatíveis com PSR-15 para máxima interoperabilidade e performance. Recomenda-se migrar para os middlewares abaixo:
+
+- `ErrorMiddleware` — Tratamento global de erros/exceções
+- `CsrfMiddleware` — Proteção automática contra CSRF
+- `XssMiddleware` — Sanitização automática de dados de entrada
+- `SecurityHeadersMiddleware` — Cabeçalhos de segurança HTTP
+- `CacheMiddleware` — Cache de resposta HTTP
+
+### Exemplo de uso correto (PSR-15):
+```php
+use Express\Http\Psr15\Middleware\ErrorMiddleware;
+use Express\Http\Psr15\Middleware\CsrfMiddleware;
+use Express\Http\Psr15\Middleware\XssMiddleware;
+use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use Express\Http\Psr15\Middleware\CacheMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
+
+$app->use(new ErrorMiddleware());
+$app->use(new CsrfMiddleware());
+$app->use(new XssMiddleware('<strong><em><p>'));
+$app->use(new SecurityHeadersMiddleware());
+$app->use(new CacheMiddleware(300));
+$app->use(new CorsMiddleware());
+$app->use(new AuthMiddleware(['jwtSecret' => 'sua_chave', 'authMethods' => ['jwt']]));
+```
+
+> **Nota:** Os middlewares antigos (ex: `SecurityMiddleware`, `CorsMiddleware`, `AuthMiddleware`, `CsrfMiddleware`, `XssMiddleware`) continuam disponíveis para retrocompatibilidade, mas recomenda-se o uso dos middlewares PSR-15, conforme exemplos acima.
+
+---
+
 ## 📋 Índice
 
 1. [Introdução aos Middlewares](#introdução-aos-middlewares)

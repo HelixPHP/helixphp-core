@@ -2,9 +2,8 @@
 // Exemplo de configuração e uso dos middlewares de segurança
 // use Express\ApiExpress;
 use Express\Core\Application;
-use Express\Middlewares\Security\SecurityMiddleware;
-use Express\Middlewares\Security\CsrfMiddleware;
-use Express\Middlewares\Security\XssMiddleware;
+use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+
 
 $app = new Application();
 
@@ -12,14 +11,14 @@ echo "=== CONFIGURAÇÕES DE SEGURANÇA ===\n\n";
 
 // 1. Segurança básica (recomendado para a maioria dos casos)
 echo "1. Configuração Básica:\n";
-$basicSecurity = SecurityMiddleware::create();
+$basicSecurity = SecurityHeadersMiddleware::create();
 echo "- Proteção CSRF ativada\n";
 echo "- Proteção XSS ativada\n";
 echo "- Cabeçalhos de segurança incluídos\n\n";
 
 // 2. Segurança estrita (máxima proteção)
 echo "2. Configuração Estrita:\n";
-$strictSecurity = SecurityMiddleware::strict();
+$strictSecurity = SecurityHeadersMiddleware::strict();
 echo "- Proteção CSRF ativada\n";
 echo "- Proteção XSS ativada\n";
 echo "- Rate limiting ativado\n";
@@ -28,7 +27,7 @@ echo "- Content Security Policy rigorosa\n\n";
 
 // 3. Configuração personalizada
 echo "3. Configuração Personalizada:\n";
-$customSecurity = new SecurityMiddleware([
+$customSecurity = new SecurityHeadersMiddleware([
     'enableCsrf' => true,
     'enableXss' => true,
     'rateLimiting' => false,
@@ -49,7 +48,7 @@ echo "- Tags HTML específicas permitidas\n\n";
 echo "4. Middlewares Individuais:\n";
 
 // Apenas CSRF
-$csrfOnly = SecurityMiddleware::csrfOnly([
+$csrfOnly = SecurityHeadersMiddleware::csrfOnly([
     'csrf' => [
         'headerName' => 'X-CSRF-Token',
         'fieldName' => 'csrf_token',
@@ -59,7 +58,7 @@ $csrfOnly = SecurityMiddleware::csrfOnly([
 echo "- Apenas proteção CSRF\n";
 
 // Apenas XSS
-$xssOnly = SecurityMiddleware::xssOnly([
+$xssOnly = SecurityHeadersMiddleware::xssOnly([
     'xss' => [
         'sanitizeInput' => true,
         'securityHeaders' => true
@@ -71,20 +70,20 @@ echo "- Apenas proteção XSS\n\n";
 echo "5. Como Aplicar:\n";
 echo "
 // No início da aplicação (antes das rotas)
-\$app->use(SecurityMiddleware::create());
+\$app->use(SecurityHeadersMiddleware::create());
 
 // Ou configuração específica
-\$app->use(new SecurityMiddleware([
+\$app->use(new SecurityHeadersMiddleware([
     'enableCsrf' => true,
     'enableXss' => true,
     'rateLimiting' => true
 ]));
 
 // Para APIs públicas (apenas XSS)
-\$app->use('/api/public', SecurityMiddleware::xssOnly());
+\$app->use('/api/public', SecurityHeadersMiddleware::xssOnly());
 
 // Para formulários web (CSRF + XSS)
-\$app->use('/forms', SecurityMiddleware::create());
+\$app->use('/forms', SecurityHeadersMiddleware::create());
 ";
 
 echo "\n=== CABEÇALHOS DE SEGURANÇA INCLUÍDOS ===\n";

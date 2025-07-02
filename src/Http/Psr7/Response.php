@@ -190,4 +190,42 @@ class Response extends Message implements ResponseInterface
 
         return true;
     }
+
+    /**
+     * Compatibilidade Express: permite uso de status() como atalho para withStatus()
+     *
+     * @param int $code
+     * @return $this
+     */
+    public function status(int $code)
+    {
+        $new = $this->withStatus($code);
+        // Copia propriedades para manter compatibilidade com Express
+        foreach (get_object_vars($new) as $k => $v) {
+            $this->$k = $v;
+        }
+        return $this;
+    }
+
+    /**
+     * Retorna uma nova resposta com corpo JSON e header apropriado
+     *
+     * @param array $data
+     * @return $this
+     */
+    public function json(array $data)
+    {
+        $new = $this->withHeader('Content-Type', 'application/json');
+        $body = json_encode($data);
+        if ($body === false) {
+            $body = '';
+        }
+        $stream = \Express\Http\Psr7\Stream::createFromString($body);
+        $new = $new->withBody($stream);
+        // Copia propriedades para manter compatibilidade
+        foreach (get_object_vars($new) as $k => $v) {
+            $this->$k = $v;
+        }
+        return $this;
+    }
 }

@@ -8,16 +8,11 @@ use stdClass;
 use RuntimeException;
 
 /**
- * Classe Request representa a requisição HTTP recebida.
- * Facilita o acesso a parâmetros de rota, query string, corpo e cabeçalhos.
+ * Classe Request representa a requisição HTTP.
  *
- * @property string $method Método HTTP.
- * @property string $path Padrão da rota.
- * @property string $pathCallable Caminho real da requisição.
- * @property stdClass $params Parâmetros extraídos da URL.
- * @property stdClass $query Parâmetros da query string.
- * @property stdClass $body Corpo da requisição.
- * @property HeaderRequest $headers Cabeçalhos da requisição.
+ * Permite inclusão de atributos dinâmicos, como $req->user.
+ *
+ * @property mixed $user Usuário autenticado ou qualquer outro atributo dinâmico.
  */
 class Request
 {
@@ -363,7 +358,7 @@ class Request
      * Obtém o caminho da rota.
      * @return string
      * @throws RuntimeException Se o caminho não estiver definido.
-    */
+     */
     public function getPath(): string
     {
         if (empty($this->path)) {

@@ -21,9 +21,12 @@ class ExtensionServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register ExtensionManager as singleton
-        $this->app->singleton(ExtensionManager::class, function () {
-            return new ExtensionManager($this->app);
-        });
+        $this->app->singleton(
+            ExtensionManager::class,
+            function () {
+                return new ExtensionManager($this->app);
+            }
+        );
 
         // Create alias for easier access
         $this->app->getContainer()->alias('extensions', ExtensionManager::class);

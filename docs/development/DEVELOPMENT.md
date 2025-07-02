@@ -342,6 +342,8 @@ php -d memory_limit=128M examples/memory_test.php
 2. **Auth failures:** Verifique secrets e tokens
 3. **CSRF issues:** Certifique-se de incluir tokens
 
+> ⚠️ Arquivos de middlewares e testes legados agora estão em `legacy/` na raiz do projeto. Não utilize esses arquivos em novos desenvolvimentos.
+
 ## 📚 Convenções de Código
 
 ### Naming Conventions
@@ -451,3 +453,5 @@ footer
 - **Discussões:** GitHub Discussions
 - **Email:** dev@express-php.com
 - **Documentation:** docs/
+
+> **Nota:** Para middlewares internos, siga o padrão PSR-15 sempre que possível.

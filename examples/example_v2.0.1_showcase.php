@@ -12,7 +12,7 @@ use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
-use Express\Middleware\Performance\CacheMiddleware;
+use Express\Http\Psr15\Middleware\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas
 $app = new Application(__DIR__ . '/config.example_v2.0.1.php');
@@ -33,11 +33,7 @@ $app->use(new CorsMiddleware([
 ]));
 
 // Cache Middleware com Predição ML
-$app->use(new CacheMiddleware([
-    'ttl' => 3600,
-    'predictive_warming' => true,  // Nova funcionalidade v2.0.1
-    'ml_learning' => true
-]));
+$app->use(new CacheMiddleware(3600));
 
 // Autenticação JWT
 $app->use(AuthMiddleware::jwt('sua_chave_secreta_super_segura'));

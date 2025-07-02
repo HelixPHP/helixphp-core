@@ -458,7 +458,7 @@ class Application
 
         try {
             // Encontrar rota
-            $route = $this->router::identify($request->method, $request->pathCallable);
+            $route = $this->router::identify($request->getMethod(), $request->getPathCallable);
 
             if (!$route) {
                 throw new HttpException(404, 'Route not found');
@@ -616,18 +616,18 @@ class Application
         if ($debug) {
             return $response->json(
                 [
-                'error' => true,
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                    'error' => true,
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
                 ]
             );
         } else {
             return $response->json(
                 [
-                'error' => true,
-                'message' => $statusCode === 404 ? 'Not Found' : 'Internal Server Error'
+                    'error' => true,
+                    'message' => $statusCode === 404 ? 'Not Found' : 'Internal Server Error'
                 ]
             );
         }
@@ -645,12 +645,15 @@ class Application
             if ($this->container->has('logger')) {
                 $logger = $this->container->get('logger');
                 if ($logger instanceof LoggerInterface) {
-                    $logger->error('Exception: {message}', [
-                        'message' => $e->getMessage(),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine(),
-                        'trace' => $e->getTraceAsString()
-                    ]);
+                    $logger->error(
+                        'Exception: {message}',
+                        [
+                            'message' => $e->getMessage(),
+                            'file' => $e->getFile(),
+                            'line' => $e->getLine(),
+                            'trace' => $e->getTraceAsString()
+                        ]
+                    );
                     return;
                 }
             }

@@ -1,6 +1,6 @@
 <?php
 
-use Express\Controller\RouterInstance;
+use Express\Routing\RouterInstance;
 
 // Sub-router especializado para rotas de produto
 $produtoRouter = new RouterInstance('/produto');
