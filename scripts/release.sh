@@ -82,21 +82,31 @@ fi
 echo ""
 title "Executando verificações pré-release..."
 
-# 1. Executar testes
-info "Executando testes..."
-if ./vendor/bin/phpunit --exclude-group streaming --stop-on-failure > /dev/null 2>&1; then
-    success "Todos os testes passaram"
-else
-    error "Alguns testes falharam. Corrija os problemas antes de continuar."
-fi
-
-# 2. Verificar PHPStan
-if [ -f "vendor/bin/phpstan" ]; then
-    info "Executando PHPStan..."
-    if ./vendor/bin/phpstan analyse --no-progress > /dev/null 2>&1; then
-        success "PHPStan passou"
+# 1. Executar validação completa usando validate_all.sh
+info "Executando validação completa do projeto..."
+if [ -f "scripts/validate_all.sh" ]; then
+    if scripts/validate_all.sh; then
+        success "Todas as validações passaram"
     else
-        error "PHPStan encontrou problemas. Corrija antes de continuar."
+        error "Algumas validações falharam. Corrija os problemas antes de continuar."
+    fi
+else
+    # Fallback para validações individuais se validate_all.sh não existir
+    info "Executando testes..."
+    if ./vendor/bin/phpunit --exclude-group streaming --stop-on-failure > /dev/null 2>&1; then
+        success "Todos os testes passaram"
+    else
+        error "Alguns testes falharam. Corrija os problemas antes de continuar."
+    fi
+
+    # 2. Verificar PHPStan
+    if [ -f "vendor/bin/phpstan" ]; then
+        info "Executando PHPStan..."
+        if ./vendor/bin/phpstan analyse --no-progress > /dev/null 2>&1; then
+            success "PHPStan passou"
+        else
+            error "PHPStan encontrou problemas. Corrija antes de continuar."
+        fi
     fi
 fi
 

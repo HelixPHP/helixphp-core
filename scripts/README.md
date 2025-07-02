@@ -1,28 +1,76 @@
-# Scripts de Qualidade de Código - Express PHP
+# Scripts de Qualidade de Código - Express PHP v2.1.2
 
-Este diretório contém scripts para garantir a qualidade do código no Express PHP.
+Este diretório contém scripts para garantir a qualidade do código no Express PHP v2.1.2.
 
-## Scripts de Validação de Documentação
+## 🚀 Script Principal de Validação
 
-### validate-docs.sh (Padrão)
-Script principal para validação da documentação consolidada v2.0.1:
+### validate_all.sh (Recomendado)
+Script principal que executa todas as validações em sequência:
+
+```bash
+./scripts/validate_all.sh           # Validação completa
+./scripts/validate_all.sh --pre-commit  # Validação rápida para pre-commit
+```
+
+**Características:**
+- Executa todas as validações do projeto
+- Modo pre-commit para validações essenciais
+- Relatório consolidado de resultados
+- Taxa de sucesso e recomendações
+- Integração com Git hooks
+
+## 🔄 Git Hooks Integrados
+
+### pre-commit
+Hook executado antes de cada commit:
+
+```bash
+./scripts/pre-commit
+```
+
+**Validações incluídas:**
+- Conformidade PSR-12
+- Sintaxe PHP
+- Estrutura básica do projeto
+- Arquivos staged específicos
+
+### pre-push
+Hook executado antes de cada push:
+
+```bash
+./scripts/pre-push
+```
+
+**Validações incluídas:**
+- Validação completa via validate_all.sh
+- Documentação
+- Benchmarks
+- Testes unitários
+- Qualidade geral do código
+
+### setup-precommit.sh
+Instala automaticamente os Git hooks:
+
+```bash
+./scripts/setup-precommit.sh
+```
+
+## 📚 Scripts de Validação Específicos
+
+### validate-docs.sh
+Validação da estrutura de documentação v2.1.2:
 
 ```bash
 ./scripts/validate-docs.sh
 ```
 
-**Características:**
-- Valida estrutura de documentação consolidada
-- Verifica remoção de arquivos redundantes
-- Confirma consistência de versão
-- Relatório detalhado de status
-
-### validate-docs-v2.sh (Original)
-Versão original do script de validação:
-
-```bash
-./scripts/validate-docs-v2.sh
-```
+**Validações incluídas:**
+- Nova estrutura de releases (docs/releases/)
+- Documentação técnica organizada (docs/techinical/)
+- Guias de implementação (docs/implementions/)
+- Documentação de performance e benchmarks
+- Arquivos movidos e redundantes removidos
+- Consistência de versão v2.1.2
 
 ### validate_project.php
 Validação completa do projeto PHP:
@@ -32,13 +80,27 @@ php scripts/validate_project.php
 ```
 
 **Validações incluídas:**
-- Estrutura do projeto
+- Estrutura do projeto v2.1.2
 - Dependências (Composer)
 - Middlewares e segurança
 - Recursos OpenAPI
 - Exemplos e testes
-- Documentação consolidada
 - Sistema de autenticação
+- Estrutura de releases
+- Benchmarks atualizados
+
+### validate_benchmarks.sh
+Validação específica dos benchmarks:
+
+```bash
+./scripts/validate_benchmarks.sh
+```
+
+**Características:**
+- Valida scripts de benchmark
+- Verifica relatórios gerados
+- Confirma dados v2.1.2
+- Estrutura de performance
 
 ## Pre-commit Hooks
 
@@ -223,3 +285,37 @@ composer install
 - ✅ **Automação**: Reduz revisões manuais
 - ✅ **Educação**: Ensina boas práticas aos desenvolvedores
 - ✅ **CI/CD friendly**: Preparado para integração contínua
+
+## 📁 Pasta Legacy
+
+### scripts/legacy/
+Contém scripts obsoletos migrados durante a reestruturação v2.1.2:
+
+```bash
+scripts/legacy/
+├── cleanup_docs.sh         # Script de limpeza da documentação antiga
+├── fix-psr12-lines.sh      # Correções PSR-12 específicas hardcoded
+├── publish_v2.0.1.sh       # Script de publicação v2.0.1
+├── validate-docs-legacy.sh # Validação de docs estrutura antiga
+└── validate-docs-v2.sh     # Validação de docs v2.0
+```
+
+**Motivo da migração:**
+- Scripts específicos para versões antigas
+- Funcionalidades integradas em scripts atuais
+- Referências a estruturas obsoletas
+- Correções hardcoded específicas
+
+**Uso:**
+Os scripts legacy são mantidos para referência histórica, mas não são mais executados automaticamente.
+
+## 🔄 Estrutura de Scripts Atual vs Legacy
+
+| Funcionalidade | Script Atual | Script Legacy | Status |
+|---|---|---|---|
+| Validação completa | `validate_all.sh` | - | ✅ Ativo |
+| Validação de docs | `validate-docs.sh` | `validate-docs-legacy.sh` | ♻️ Migrado |
+| Pre-commit hooks | `pre-commit` (integrado) | Manual individual | ♻️ Migrado |
+| Correções PSR-12 | `validate-psr12.php` | `fix-psr12-lines.sh` | ♻️ Migrado |
+| Limpeza de docs | Não necessário | `cleanup_docs.sh` | 🗂️ Arquivado |
+| Publicação | `release.sh` | `publish_v2.0.1.sh` | ♻️ Migrado |

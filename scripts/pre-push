@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Express PHP - Pre-commit Hook
-# Executa todas as validações usando o script centralizado validate_all.sh
+# Express PHP - Pre-push Hook
+# Executa validação completa antes de fazer push para o repositório remoto
 
 set -e
 
-echo "🔍 Executando validações pre-commit..."
+echo "🚀 Executando validações pre-push..."
 
 # Cores para output
 RED='\033[0;31m'
@@ -38,20 +38,27 @@ if [ ! -f "scripts/validate_all.sh" ]; then
     exit 1
 fi
 
-print_status "Executando todas as validações via validate_all.sh..."
+print_status "Executando validação completa via validate_all.sh..."
 
-# Executa o script centralizado de validação
-if scripts/validate_all.sh --pre-commit; then
+# Executa o script centralizado de validação (modo completo)
+if scripts/validate_all.sh; then
     print_success "Todas as validações passaram! 🎉"
     echo ""
-    echo "Commit autorizado ✅"
+    echo "Push autorizado ✅"
     exit 0
 else
     print_error "Uma ou mais validações falharam!"
     echo ""
-    print_error "Commit rejeitado ❌"
+    print_error "Push rejeitado ❌"
     echo ""
     echo "Corrija os problemas reportados acima e tente novamente."
-    echo "Para detalhes específicos, execute: scripts/validate_all.sh"
+    echo ""
+    echo "💡 Dicas:"
+    echo "• Execute 'scripts/validate_all.sh' para validação detalhada"
+    echo "• Execute 'scripts/validate_project.php' para validação específica do projeto"
+    echo "• Execute 'scripts/validate-docs.sh' para validação da documentação"
+    echo "• Execute 'scripts/validate_benchmarks.sh' para validação dos benchmarks"
+    echo ""
+    echo "Para forçar o push (não recomendado), use: git push --no-verify"
     exit 1
 fi

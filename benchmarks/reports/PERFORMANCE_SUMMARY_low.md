@@ -1,8 +1,8 @@
 # Express PHP Framework - Performance Benchmark
 
 ## Test Environment
-- **Date**: 2025-06-28 14:36:51
-- **PHP Version**: 8.1.32
+- **Date**: 2025-07-02 18:18:13
+- **PHP Version**: 8.4.8
 - **Memory Limit**: -1
 - **Iterations**: 100
 
@@ -10,36 +10,36 @@
 
 | Test | Ops/Second | Avg Time (μs) | Memory Used |
 |------|------------|---------------|-------------|
-| App Initialization | 126,601 | 7.90 | 227.34 KB |
-| Basic Route Registration (GET) | 46,906 | 21.32 | 316.94 KB |
-| Basic Route Registration (POST) | 57,472 | 17.40 | 321.56 KB |
-| Route with Parameters (PUT) | 49,902 | 20.04 | 309.56 KB |
-| Complex Route Registration | 38,023 | 26.30 | 301.56 KB |
-| Route Pattern Matching | 1,388,842 | 0.72 | 0 B |
-| Middleware Stack Creation | 30,095 | 33.23 | 498.78 KB |
-| Middleware Function Execution | 925,895 | 1.08 | 0 B |
-| Security Middleware Creation | 34,459 | 29.02 | 301.56 KB |
-| CORS Headers Processing | 26,214,400 | 0.04 | 0 B |
-| XSS Protection Logic | 2,933,080 | 0.34 | 0 B |
-| JWT Token Generation | 183,799 | 5.44 | 0 B |
-| JWT Token Validation | 123,909 | 8.07 | 0 B |
-| Request Object Creation | 126,563 | 7.90 | 0 B |
-| Response Object Creation | 9,986,438 | 0.10 | 0 B |
-| Response JSON Setup (100 items) | 88,023 | 11.36 | 0 B |
-| JSON Encode (Small) | 5,518,821 | 0.18 | 0 B |
-| JSON Encode (Large - 1000 items) | 9,252 | 108.08 | 0 B |
-| JSON Decode (Large - 1000 items) | 1,971 | 507.27 | 0 B |
-| CORS Configuration Processing | 19,972,876 | 0.05 | 0 B |
-| CORS Headers Generation | 34,952,533 | 0.03 | 0 B |
+| App Initialization | 151,474 | 6.60 | 231.25 KB |
+| Basic Route Registration (GET) | 32,522 | 30.75 | 315.66 KB |
+| Basic Route Registration (POST) | 34,131 | 29.30 | 326.97 KB |
+| Route with Parameters (PUT) | 33,490 | 29.86 | 309.47 KB |
+| Complex Route Registration | 29,692 | 33.68 | 305.47 KB |
+| Route Pattern Matching | 812,850 | 1.23 | 0 B |
+| Middleware Stack Creation | 27,700 | 36.10 | 479.06 KB |
+| Middleware Function Execution | 306,601 | 3.26 | 0 B |
+| Security Middleware Creation | 30,394 | 32.90 | 305.47 KB |
+| CORS Headers Processing | 2,706,003 | 0.37 | 0 B |
+| XSS Protection Logic | 1,219,274 | 0.82 | 0 B |
+| JWT Token Generation | 131,031 | 7.63 | 0 B |
+| JWT Token Validation | 112,237 | 8.91 | 0 B |
+| Request Object Creation | 43,555 | 22.96 | 0 B |
+| Response Object Creation | 2,621,440 | 0.38 | 0 B |
+| Response JSON Setup (100 items) | 134,778 | 7.42 | 0 B |
+| JSON Encode (Small) | 1,754,939 | 0.57 | 0 B |
+| JSON Encode (Large - 1000 items) | 9,413 | 106.24 | 0 B |
+| JSON Decode (Large - 1000 items) | 3,017 | 331.44 | 0 B |
+| CORS Configuration Processing | 1,565,039 | 0.64 | 0 B |
+| CORS Headers Generation | 2,706,003 | 0.37 | 0 B |
 
 ## Memory Analysis
-- **Memory per app instance**: 3.1 KB
-- **Total memory for 100 apps**: 309.62 KB
+- **Memory per app instance**: 3.08 KB
+- **Total memory for 100 apps**: 308.02 KB
 
 ## Performance Summary
 Express PHP demonstrates excellent performance characteristics:
 
-- **Best Performance**: CORS Headers Generation with 34,952,533 operations/second
+- **Best Performance**: CORS Headers Processing with 2,706,003 operations/second
 - **Framework Overhead**: Minimal memory usage per application instance
 - **Middleware Performance**: Efficient middleware stack execution
 - **JWT Performance**: Fast token generation and validation
