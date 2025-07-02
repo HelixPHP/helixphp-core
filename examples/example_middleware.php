@@ -1,10 +1,9 @@
 <?php
 /**
- * Exemplo de API com Middlewares - Express PHP
+ * Exemplo de API com Middlewares PSR-15 - Express PHP
  *
- * Este exemplo demonstra como usar middlewares para
- * implementar funcionalidades como CORS, rate limiting,
- * logging e validação.
+ * Demonstra o uso dos middlewares oficiais PSR-15 do framework
+ * e como criar um middleware customizado seguindo o padrão PSR-15.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -12,9 +11,80 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\RateLimitMiddleware;
+use Express\Http\Psr15\Middleware\XssMiddleware;
+use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 // Criar aplicação
 $app = new Application();
+
+// ================================
+// MIDDLEWARES PSR-15 OFICIAIS
+// ================================
+
+// CORS Middleware (PSR-15)
+$app->use(new CorsMiddleware([
+    'origins' => ['*'],
+    'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'headers' => ['Content-Type', 'Authorization', 'X-Requested-With']
+]));
+
+// Rate Limiting Middleware (PSR-15)
+$app->use(new RateLimitMiddleware([
+    'maxRequests' => 30,
+    'timeWindow' => 60, // 1 minuto
+    'keyGenerator' => function($req) { return $req->ip() ?? 'unknown'; }
+]));
+
+// XSS Protection Middleware (PSR-15)
+$app->use(new XssMiddleware());
+
+// Security Headers Middleware (PSR-15)
+$app->use(new SecurityHeadersMiddleware());
+
+// ================================
+// MIDDLEWARE CUSTOMIZADO PSR-15
+// ================================
+
+/**
+ * Como criar um middleware customizado PSR-15:
+ *
+ * 1. Implemente a interface Psr\Http\Server\MiddlewareInterface.
+ * 2. Implemente o método process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+ * 3. Faça qualquer lógica antes/depois de $handler->handle($request).
+ * 4. Sempre retorne um ResponseInterface.
+ *
+ * Exemplo abaixo:
+ */
+
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
+
+class LoggingMiddleware implements MiddlewareInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+        // Lógica antes do próximo middleware/handler
+        $start = microtime(true);
+        $method = $request->getMethod();
+        $path = $request->getUri()->getPath();
+        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? 'unknown';
+        $userAgent = $request->getHeaderLine('User-Agent') ?? 'unknown';
+        error_log("[REQUEST] {$method} {$path} - IP: {$ip} - UA: " . substr($userAgent, 0, 50));
+
+        // Chama o próximo middleware ou a rota
+        $response = $handler->handle($request);
+
+        // Lógica após o próximo middleware/handler
+        $duration = round((microtime(true) - $start) * 1000, 2);
+        error_log("[RESPONSE] {$method} {$path} - {$duration}ms");
+        return $response;
+    }
+}
+
+// Adicionar o middleware customizado PSR-15
+$app->use(new LoggingMiddleware());
 
 // ================================
 // DADOS SIMULADOS
@@ -26,135 +96,6 @@ $products = [
     ['id' => 3, 'name' => 'Teclado Mecânico', 'price' => 150.00, 'category' => 'electronics'],
     ['id' => 4, 'name' => 'Cadeira Gamer', 'price' => 800.00, 'category' => 'furniture']
 ];
-
-// Simulação de rate limiting (em produção, use Redis ou banco)
-$rateLimitStore = [];
-
-// ================================
-// MIDDLEWARES CUSTOMIZADOS
-// ================================
-
-// Middleware de CORS
-$corsMiddleware = function(Request $req, Response $res, callable $next) {
-    $res->header('Access-Control-Allow-Origin', '*');
-    $res->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    $res->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-
-    if ($req->getMethod() === 'OPTIONS') {
-        $res->status(200)->send();
-        return;
-    }
-
-    return $next($req, $res);
-};
-
-// Middleware de logging detalhado
-$loggingMiddleware = function(Request $req, Response $res, callable $next) {
-    $start = microtime(true);
-    $method = $req->getMethod();
-    $path = $req->getPath();
-    $ip = $req->getClientIp() ?? 'unknown';
-    $userAgent = $req->getHeader('User-Agent') ?? 'unknown';
-
-    // Log da requisição
-    error_log("[REQUEST] {$method} {$path} - IP: {$ip} - UA: " . substr($userAgent, 0, 50));
-
-    $result = $next($req, $res);
-
-    $duration = round((microtime(true) - $start) * 1000, 2);
-    error_log("[RESPONSE] {$method} {$path} - {$duration}ms");
-
-    return $result;
-};
-
-// Middleware de rate limiting simples
-$rateLimitMiddleware = function(Request $req, Response $res, callable $next) use (&$rateLimitStore) {
-    $ip = $req->getClientIp() ?? 'unknown';
-    $now = time();
-    $window = 60; // 1 minuto
-    $maxRequests = 30; // máximo 30 requests por minuto
-
-    // Limpar registros antigos
-    $rateLimitStore = array_filter($rateLimitStore, function($timestamp) use ($now, $window) {
-        return ($now - $timestamp) < $window;
-    });
-
-    // Contar requests do IP
-    $ipRequests = array_filter($rateLimitStore, function($data) use ($ip) {
-        return isset($data['ip']) && $data['ip'] === $ip;
-    });
-
-    if (count($ipRequests) >= $maxRequests) {
-        $res->status(429)->json([
-            'success' => false,
-            'message' => 'Rate limit excedido. Tente novamente em 1 minuto.',
-            'retry_after' => 60
-        ]);
-        return;
-    }
-
-    // Registrar request atual
-    $rateLimitStore[] = ['ip' => $ip, 'timestamp' => $now];
-
-    return $next($req, $res);
-};
-
-// Middleware de validação JSON
-$jsonValidationMiddleware = function(Request $req, Response $res, callable $next) {
-    if (in_array($req->getMethod(), ['POST', 'PUT', 'PATCH'])) {
-        $contentType = $req->getHeader('Content-Type');
-
-        if ($contentType && strpos($contentType, 'application/json') !== false) {
-            $body = $req->getBody();
-            if (empty($body)) {
-                $res->status(400)->json([
-                    'success' => false,
-                    'message' => 'Body JSON é obrigatório para este endpoint'
-                ]);
-                return;
-            }
-        }
-    }
-
-    return $next($req, $res);
-};
-
-// Middleware de validação de produto
-$productValidationMiddleware = function(Request $req, Response $res, callable $next) {
-    $data = $req->getBody();
-    $errors = [];
-
-    if (!isset($data['name']) || empty(trim($data['name']))) {
-        $errors[] = 'Nome do produto é obrigatório';
-    }
-
-    if (!isset($data['price']) || !is_numeric($data['price']) || $data['price'] <= 0) {
-        $errors[] = 'Preço deve ser um número positivo';
-    }
-
-    if (!isset($data['category']) || empty(trim($data['category']))) {
-        $errors[] = 'Categoria é obrigatória';
-    }
-
-    if (!empty($errors)) {
-        $res->status(400)->json([
-            'success' => false,
-            'message' => 'Dados inválidos',
-            'errors' => $errors
-        ]);
-        return;
-    }
-
-    return $next($req, $res);
-};
-
-// ================================
-// APLICAR MIDDLEWARES GLOBAIS
-// ================================
-
-$app->use($corsMiddleware);
-$app->use($loggingMiddleware);
-$app->use($rateLimitMiddleware);
 
 // ================================
 // ROTAS DA API

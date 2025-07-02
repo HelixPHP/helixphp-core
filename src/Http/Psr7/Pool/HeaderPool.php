@@ -166,15 +166,18 @@ class HeaderPool
                 throw new \InvalidArgumentException('Header value cannot be empty');
             }
 
-            $validated = array_map(function ($v) {
-                $v = (string) $v;
+            $validated = array_map(
+                function ($v) {
+                    $v = (string) $v;
 
-                if (preg_match('/[^\x09\x0A\x0D\x20-\x7E\x80-\xFE]/', $v) > 0) {
-                    throw new \InvalidArgumentException('Header value contains invalid characters');
-                }
+                    if (preg_match('/[^\x09\x0A\x0D\x20-\x7E\x80-\xFE]/', $v) > 0) {
+                        throw new \InvalidArgumentException('Header value contains invalid characters');
+                    }
 
-                return trim($v, " \t");
-            }, $valueArray);
+                    return trim($v, " \t");
+                },
+                $valueArray
+            );
 
             self::$validatedValues[$key] = $validated;
         }

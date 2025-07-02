@@ -1,17 +1,17 @@
 <?php
 // Exemplo de uso do helper de sanitização em middleware e rota
-use Express\Helpers\Utils;
+use Express\Utils\Utils;
 
 $router->use(function($req, $res, $next) {
     // Sanitiza todos os parâmetros de query
     foreach ($req->query() as $k => $v) {
-        $req->query[$k] = Utils::sanitize($v, 'string');
+        $req->query[$k] = Utils::sanitizeString($v);
     }
     $next();
 });
 
 $router->post('/comentario', function($req, $res) {
-    $comentario = Utils::sanitize($req->body['comentario'] ?? '', 'string');
+    $comentario = Utils::sanitizeString($req->body['comentario'] ?? '');
     // ... salvar comentário ...
     return $res->json(['comentario' => $comentario]);
 });

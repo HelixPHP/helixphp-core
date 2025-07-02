@@ -547,9 +547,12 @@ class Router
     {
         self::$sortedPrefixes = array_keys(self::$groupIndex);
 
-        usort(self::$sortedPrefixes, function ($a, $b) {
-            return strlen($b) - strlen($a);
-        });
+        usort(
+            self::$sortedPrefixes,
+            function ($a, $b) {
+                return strlen($b) - strlen($a);
+            }
+        );
     }
 
     private static function getRoutesByPrefix(string $prefix): array

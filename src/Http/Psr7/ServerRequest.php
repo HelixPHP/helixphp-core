@@ -287,13 +287,15 @@ class ServerRequest extends Request implements ServerRequestInterface
         $normalized = [];
 
         foreach (array_keys($file['name']) as $key) {
-            $normalized[$key] = self::createUploadedFile([
-                'name' => $file['name'][$key],
-                'type' => $file['type'][$key],
-                'tmp_name' => $file['tmp_name'][$key],
-                'error' => $file['error'][$key],
-                'size' => $file['size'][$key],
-            ]);
+            $normalized[$key] = self::createUploadedFile(
+                [
+                    'name' => $file['name'][$key],
+                    'type' => $file['type'][$key],
+                    'tmp_name' => $file['tmp_name'][$key],
+                    'error' => $file['error'][$key],
+                    'size' => $file['size'][$key],
+                ]
+            );
         }
 
         return $normalized;

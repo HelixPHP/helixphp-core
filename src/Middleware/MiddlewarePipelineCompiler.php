@@ -166,12 +166,15 @@ class MiddlewarePipelineCompiler
             'custom' => 20
         ];
 
-        usort($middlewares, function ($a, $b) use ($priorityMap) {
-            $priorityA = self::getMiddlewarePriority($a, $priorityMap);
-            $priorityB = self::getMiddlewarePriority($b, $priorityMap);
+        usort(
+            $middlewares,
+            function ($a, $b) use ($priorityMap) {
+                $priorityA = self::getMiddlewarePriority($a, $priorityMap);
+                $priorityB = self::getMiddlewarePriority($b, $priorityMap);
 
-            return $priorityB <=> $priorityA; // Higher priority first
-        });
+                return $priorityB <=> $priorityA; // Higher priority first
+            }
+        );
 
         if (count($middlewares) !== count(array_unique(array_map([self::class, 'getMiddlewareHash'], $middlewares)))) {
             self::$stats['optimizations_applied']++;
@@ -540,12 +543,15 @@ class MiddlewarePipelineCompiler
     {
         foreach (self::COMMON_PATTERNS as $patternName => $middlewareTypes) {
             // Create dummy middlewares for pattern
-            $middlewares = array_map(function ($type) {
-                return function ($req, $res, $next) {
-                    // Dummy middleware
-                    return $next($req, $res);
-                };
-            }, $middlewareTypes);
+            $middlewares = array_map(
+                function ($type) {
+                    return function ($req, $res, $next) {
+                        // Dummy middleware
+                        return $next($req, $res);
+                    };
+                },
+                $middlewareTypes
+            );
 
             /** @var array<callable> $template */
             $template = self::compileNewPipeline($middlewares, $patternName);
@@ -572,9 +578,14 @@ class MiddlewarePipelineCompiler
 
         // Calculate pattern efficiency with defensive check
         $totalPatterns = count(self::COMMON_PATTERNS) + count(self::$dynamicPatterns);
-        $activePatterns = count(array_filter(self::$patternUsage, function ($usage) {
-            return isset($usage['count']) && $usage['count'] > 0;
-        }));
+        $activePatterns = count(
+            array_filter(
+                self::$patternUsage,
+                function ($usage) {
+                    return isset($usage['count']) && $usage['count'] > 0;
+                }
+            )
+        );
 
         // Use ternary to avoid division by zero (though totalPatterns is always > 0)
         $patternEfficiency = round((float)($activePatterns / $totalPatterns) * 100, 2);

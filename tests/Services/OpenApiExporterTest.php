@@ -17,12 +17,16 @@ class OpenApiExporterTest extends TestCase
     public function testBasicExport(): void
     {
         // Create a route using the Router API
-        Router::get('/users', function () {
-            return ['users' => []];
-        }, [
-            'summary' => 'Get all users',
-            'description' => 'Retrieve a list of all users'
-        ]);
+        Router::get(
+            '/users',
+            function () {
+                return ['users' => []];
+            },
+            [
+                'summary' => 'Get all users',
+                'description' => 'Retrieve a list of all users'
+            ]
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -38,16 +42,18 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/test',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => []
+                [
+                    'method' => 'GET',
+                    'path' => '/test',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => []
+                ]
             ]
-        ]);
+        );
 
         $baseUrl = 'https://api.myapp.com';
         $result = OpenApiExporter::export('Express\Routing\Router', $baseUrl);
@@ -59,17 +65,21 @@ class OpenApiExporterTest extends TestCase
 
     public function testRouteWithParameters(): void
     {
-        Router::get('/users/:id', function ($id) {
-            return ['user' => ['id' => $id]];
-        }, [
-            'summary' => 'Get user by ID',
-            'parameters' => [
-                'id' => [
-                    'type' => 'integer',
-                    'description' => 'User ID'
+        Router::get(
+            '/users/:id',
+            function ($id) {
+                return ['user' => ['id' => $id]];
+            },
+            [
+                'summary' => 'Get user by ID',
+                'parameters' => [
+                    'id' => [
+                        'type' => 'integer',
+                        'description' => 'User ID'
+                    ]
                 ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -90,32 +100,34 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/users',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => [
-                    'summary' => 'List users',
-                    'parameters' => [
-                        'page' => [
-                            'in' => 'query',
-                            'type' => 'integer',
-                            'required' => false,
-                            'description' => 'Page number'
-                        ],
-                        'limit' => [
-                            'in' => 'query',
-                            'type' => 'integer',
-                            'required' => false,
-                            'description' => 'Items per page'
+                [
+                    'method' => 'GET',
+                    'path' => '/users',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => [
+                        'summary' => 'List users',
+                        'parameters' => [
+                            'page' => [
+                                'in' => 'query',
+                                'type' => 'integer',
+                                'required' => false,
+                                'description' => 'Page number'
+                            ],
+                            'limit' => [
+                                'in' => 'query',
+                                'type' => 'integer',
+                                'required' => false,
+                                'description' => 'Items per page'
+                            ]
                         ]
                     ]
                 ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -127,9 +139,12 @@ class OpenApiExporterTest extends TestCase
         $this->assertCount(2, $parameters);
 
         // Check query parameters
-        $queryParams = array_filter($parameters, function ($p) {
-            return $p['in'] === 'query';
-        });
+        $queryParams = array_filter(
+            $parameters,
+            function ($p) {
+                return $p['in'] === 'query';
+            }
+        );
         $this->assertCount(2, $queryParams);
     }
 
@@ -138,35 +153,37 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'POST',
-                'path' => '/users',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => [
-                    'summary' => 'Create user',
-                    'responses' => [
-                        '201' => [
-                            'description' => 'User created successfully',
-                            'content' => [
-                                'application/json' => [
-                                    'schema' => [
-                                        'type' => 'object',
-                                        'properties' => [
-                                            'id' => ['type' => 'integer'],
-                                            'name' => ['type' => 'string']
+                [
+                    'method' => 'POST',
+                    'path' => '/users',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => [
+                        'summary' => 'Create user',
+                        'responses' => [
+                            '201' => [
+                                'description' => 'User created successfully',
+                                'content' => [
+                                    'application/json' => [
+                                        'schema' => [
+                                            'type' => 'object',
+                                            'properties' => [
+                                                'id' => ['type' => 'integer'],
+                                                'name' => ['type' => 'string']
+                                            ]
                                         ]
                                     ]
                                 ]
-                            ]
-                        ],
-                        '422' => 'Validation error'
+                            ],
+                            '422' => 'Validation error'
+                        ]
                     ]
                 ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -182,19 +199,21 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/users',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => [
-                    'summary' => 'List users',
-                    'tags' => ['Users', 'Management']
+                [
+                    'method' => 'GET',
+                    'path' => '/users',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => [
+                        'summary' => 'List users',
+                        'tags' => ['Users', 'Management']
+                    ]
                 ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -213,32 +232,34 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/users/:id',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => ['summary' => 'Get user']
-            ],
-            [
-                'method' => 'PUT',
-                'path' => '/users/:id',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => ['summary' => 'Update user']
-            ],
-            [
-                'method' => 'DELETE',
-                'path' => '/users/:id',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => ['summary' => 'Delete user']
+                [
+                    'method' => 'GET',
+                    'path' => '/users/:id',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => ['summary' => 'Get user']
+                ],
+                [
+                    'method' => 'PUT',
+                    'path' => '/users/:id',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => ['summary' => 'Update user']
+                ],
+                [
+                    'method' => 'DELETE',
+                    'path' => '/users/:id',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => ['summary' => 'Delete user']
+                ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -268,16 +289,18 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/test',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => []
+                [
+                    'method' => 'GET',
+                    'path' => '/test',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => []
+                ]
             ]
-        ]);
+        );
         $result = OpenApiExporter::export('Express\Routing\Router');
 
         $responses = $result['paths']['/test']['get']['responses'];
@@ -299,22 +322,24 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/api/v1/users/:userId/posts/:postId',
-                'handler' => function () {
-                },
-                'middlewares' => [],
-                'metadata' => [
-                    'summary' => 'Get user post',
-                    'parameters' => [
-                        'userId' => ['type' => 'integer'],
-                        'postId' => ['type' => 'integer']
+                [
+                    'method' => 'GET',
+                    'path' => '/api/v1/users/:userId/posts/:postId',
+                    'handler' => function () {
+                    },
+                    'middlewares' => [],
+                    'metadata' => [
+                        'summary' => 'Get user post',
+                        'parameters' => [
+                            'userId' => ['type' => 'integer'],
+                            'postId' => ['type' => 'integer']
+                        ]
                     ]
                 ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 
@@ -333,16 +358,18 @@ class OpenApiExporterTest extends TestCase
         $reflection = new \ReflectionClass(Router::class);
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
-        $routesProperty->setValue([
+        $routesProperty->setValue(
             [
-                'method' => 'GET',
-                'path' => '/test',
-                'handler' => function () {
-                },
-                'middlewares' => []
+                [
+                    'method' => 'GET',
+                    'path' => '/test',
+                    'handler' => function () {
+                    },
+                    'middlewares' => []
                 // No metadata provided
+                ]
             ]
-        ]);
+        );
 
         $result = OpenApiExporter::export('Express\Routing\Router');
 

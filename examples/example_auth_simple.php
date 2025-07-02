@@ -1,10 +1,12 @@
 <?php
-/**
- * Exemplo de Autenticação Simples - Express PHP
- *
- * Este exemplo demonstra como implementar autenticação básica
- * usando JWT de forma simples e prática.
- */
+// =============================================================
+// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no Express PHP Framework
+// Este exemplo NÃO é compatível com middlewares legados. Utilize apenas middlewares PSR-15.
+// =============================================================
+//
+// Consulte a documentação oficial para detalhes sobre PSR-15:
+// https://www.php-fig.org/psr/psr-15/
+// =============================================================
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -12,6 +14,7 @@ use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
 use Express\Authentication\JWTHelper;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -38,56 +41,48 @@ $users = [
 ];
 
 // ================================
+// MIDDLEWARES PSR-15
+// ================================
+
+// Middleware de autenticação JWT (PSR-15)
+use Express\Http\Psr15\Middleware\AuthMiddleware;
+$app->use(AuthMiddleware::jwt($JWT_SECRET));
+
+// Middleware de CORS (PSR-15)
+$app->use(new CorsMiddleware([
+    'origins' => ['*'],
+    'methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    'headers' => ['Content-Type', 'Authorization']
+]));
+
+// Middleware de logging customizado (PSR-15)
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Http\Message\ResponseInterface;
+
+class LoggingMiddleware implements MiddlewareInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+        $start = microtime(true);
+        $method = $request->getMethod();
+        $path = $request->getUri()->getPath();
+        $ip = $request->getServerParams()['REMOTE_ADDR'] ?? 'unknown';
+        error_log("[REQUEST] {$method} {$path} - IP: {$ip}");
+        $response = $handler->handle($request);
+        $duration = round((microtime(true) - $start) * 1000, 2);
+        error_log("[RESPONSE] {$method} {$path} - {$duration}ms");
+        return $response;
+    }
+}
+$app->use(new LoggingMiddleware());
+
+// ================================
 // FUNÇÕES AUXILIARES
 // ================================
 
 function findUserByEmail($email, $users) {
     return isset($users[$email]) ? $users[$email] : null;
 }
-
-function verifyToken($token, $secret) {
-    try {
-        return JWTHelper::decode($token, $secret);
-    } catch (Exception $e) {
-        return null;
-    }
-}
-
-// ================================
-// MIDDLEWARE DE AUTENTICAÇÃO
-// ================================
-
-$authMiddleware = function(Request $req, Response $res, callable $next) use ($JWT_SECRET) {
-    $token = null;
-
-    // Verificar header Authorization
-    $authHeader = $req->getHeader('Authorization');
-    if ($authHeader && preg_match('/Bearer\s+(.*)$/i', $authHeader, $matches)) {
-        $token = $matches[1];
-    }
-
-    if (!$token) {
-        $res->status(401)->json([
-            'success' => false,
-            'message' => 'Token de acesso requerido'
-        ]);
-        return;
-    }
-
-    $payload = verifyToken($token, $JWT_SECRET);
-    if (!$payload) {
-        $res->status(401)->json([
-            'success' => false,
-            'message' => 'Token inválido ou expirado'
-        ]);
-        return;
-    }
-
-    // Adicionar dados do usuário ao request
-    $req->user = $payload;
-
-    return $next($req, $res);
-};
 
 // ================================
 // ROTAS PÚBLICAS
@@ -159,7 +154,7 @@ $app->post('/auth/login', function(Request $req, Response $res) use ($users, $JW
 // ================================
 
 // Dados do usuário logado
-$app->get('/auth/me', $authMiddleware, function(Request $req, Response $res) {
+$app->get('/auth/me', function(Request $req, Response $res) {
     $res->json([
         'success' => true,
         'data' => $req->user
@@ -167,7 +162,7 @@ $app->get('/auth/me', $authMiddleware, function(Request $req, Response $res) {
 });
 
 // Rota protegida exemplo
-$app->get('/protected', $authMiddleware, function(Request $req, Response $res) {
+$app->get('/protected', function(Request $req, Response $res) {
     $res->json([
         'success' => true,
         'message' => 'Você acessou uma rota protegida!',
@@ -177,7 +172,7 @@ $app->get('/protected', $authMiddleware, function(Request $req, Response $res) {
 });
 
 // Rota apenas para admins
-$app->get('/admin/dashboard', $authMiddleware, function(Request $req, Response $res) {
+$app->get('/admin/dashboard', function(Request $req, Response $res) {
     if ($req->user->role !== 'admin') {
         $res->status(403)->json([
             'success' => false,
@@ -195,36 +190,6 @@ $app->get('/admin/dashboard', $authMiddleware, function(Request $req, Response $
             'server_status' => 'online'
         ]
     ]);
-});
-
-// ================================
-// MIDDLEWARE GLOBAL
-// ================================
-
-// Log de requisições
-$app->use(function(Request $req, Response $res, callable $next) {
-    $method = $req->getMethod();
-    $path = $req->getPath();
-    $ip = $req->getClientIp() ?? 'unknown';
-    $timestamp = date('Y-m-d H:i:s');
-
-    error_log("[{$timestamp}] {$method} {$path} - IP: {$ip}");
-
-    return $next($req, $res);
-});
-
-// CORS básico
-$app->use(function(Request $req, Response $res, callable $next) {
-    $res->header('Access-Control-Allow-Origin', '*');
-    $res->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    $res->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-    if ($req->getMethod() === 'OPTIONS') {
-        $res->status(200)->send();
-        return;
-    }
-
-    return $next($req, $res);
 });
 
 // ================================

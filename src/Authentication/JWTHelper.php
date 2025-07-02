@@ -26,10 +26,10 @@ class JWTHelper
     {
         $options = array_merge(
             [
-            'algorithm' => 'HS256',
-            'expiresIn' => 3600, // 1 hora
-            'issuer' => null,
-            'audience' => null
+                'algorithm' => 'HS256',
+                'expiresIn' => 3600, // 1 hora
+                'issuer' => null,
+                'audience' => null
             ],
             $options
         );
@@ -75,8 +75,8 @@ class JWTHelper
     {
         $options = array_merge(
             [
-            'algorithm' => 'HS256',
-            'leeway' => 0
+                'algorithm' => 'HS256',
+                'leeway' => 0
             ],
             $options
         );
@@ -275,12 +275,12 @@ class JWTHelper
     {
         return self::encode(
             [
-            'user_id' => $userId,
-            'type' => 'refresh'
+                'user_id' => $userId,
+                'type' => 'refresh'
             ],
             $secret,
             [
-            'expiresIn' => $expiresIn
+                'expiresIn' => $expiresIn
             ]
         );
     }
@@ -327,8 +327,8 @@ class JWTHelper
         $payload = array_merge(
             $claims,
             [
-            'user_id' => $userId,
-            'type' => 'access'
+                'user_id' => $userId,
+                'type' => 'access'
             ]
         );
 
@@ -336,7 +336,7 @@ class JWTHelper
             $payload,
             $secret,
             [
-            'expiresIn' => $expiresIn
+                'expiresIn' => $expiresIn
             ]
         );
     }

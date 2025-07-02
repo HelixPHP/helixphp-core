@@ -16,7 +16,7 @@ class ProjectValidator
 
     public function validate()
     {
-        echo "🔍 Validando projeto Express PHP...\n\n";
+        echo "🔍 Validando projeto Express PHP v2.1.2...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -26,6 +26,8 @@ class ProjectValidator
         $this->validateExamples();
         $this->validateTests();
         $this->validateDocumentation();
+        $this->validateReleases();
+        $this->validateBenchmarks();
 
         // Testes funcionais
         $this->validateAuthentication();
@@ -45,7 +47,15 @@ class ProjectValidator
             'src/Authentication/',
             'examples/',
             'tests/',
-            'docs/'
+            'docs/',
+            'docs/releases/',
+            'docs/techinical/',
+            'docs/performance/',
+            'docs/implementions/',
+            'docs/testing/',
+            'docs/contributing/',
+            'benchmarks/',
+            'benchmarks/reports/'
         ];
 
         foreach ($requiredDirs as $dir) {
@@ -57,16 +67,28 @@ class ProjectValidator
         }
 
         $requiredFiles = [
-            'src/ApiExpress.php',
-            'src/Middleware/Security/SecurityMiddleware.php',
+            'src/Http/Psr15/Middleware/SecurityHeadersMiddleware.php',
             'src/Authentication/JWTHelper.php',
             'composer.json',
             'README.md',
-            'docs/DOCUMENTATION_INDEX.md',
-            'docs/guides/QUICK_START_GUIDE.md',
-            'docs/guides/PRECOMMIT_SETUP.md',
-            'docs/implementation/PRECOMMIT_VALIDATION_COMPLETE.md',
-            'scripts/README.md'
+            'docs/index.md',
+            'docs/releases/README.md',
+            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md',
+            'docs/implementions/usage_basic.md',
+            'docs/techinical/application.md',
+            'docs/techinical/http/request.md',
+            'docs/techinical/http/response.md',
+            'docs/techinical/routing/router.md',
+            'docs/techinical/middleware/README.md',
+            'docs/techinical/authentication/usage_native.md',
+            'docs/performance/PerformanceMonitor.md',
+            'docs/performance/benchmarks/README.md',
+            'docs/testing/api_testing.md',
+            'docs/contributing/README.md',
+            'scripts/validate-docs.sh',
+            'scripts/validate_project.php',
+            'scripts/validate_benchmarks.sh',
+            'benchmarks/run_benchmark.sh'
         ];
 
         foreach ($requiredFiles as $file) {
@@ -127,19 +149,18 @@ class ProjectValidator
     {
         echo "🛡️ Validando middlewares...\n";
 
-        // Verificar SecurityMiddleware
-        if (class_exists('Express\\Middleware\\Security\\SecurityMiddleware')) {
-            $this->passed[] = "SecurityMiddleware carregado";
+        // Verificar SecurityHeaderMiddleware (PSR-15)
+        if (class_exists('Express\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
+            $this->passed[] = "SecurityHeaderMiddleware carregado";
 
-            // Testar instanciação
             try {
-                $security = new Express\Middleware\Security\SecurityMiddleware();
-                $this->passed[] = "SecurityMiddleware pode ser instanciado";
+                $security = new \Express\Http\Psr15\Middleware\SecurityHeadersMiddleware();
+                $this->passed[] = "SecurityHeaderMiddleware pode ser instanciado";
             } catch (Exception $e) {
-                $this->errors[] = "Erro ao instanciar SecurityMiddleware: " . $e->getMessage();
+                $this->errors[] = "Erro ao instanciar SecurityHeaderMiddleware: " . $e->getMessage();
             }
         } else {
-            $this->warnings[] = "SecurityMiddleware não encontrado";
+            $this->warnings[] = "SecurityHeaderMiddleware não encontrado";
         }
 
         // Verificar JWTHelper
@@ -268,14 +289,13 @@ class ProjectValidator
 
     private function validateDocumentation()
     {
-        echo "📚 Validando documentação consolidada v2.0.1...\n";
+        echo "📚 Validando documentação v2.1.2...\n";
 
-        // Documentação principal consolidada
+        // Documentação principal
         $mainDocs = [
             'README.md' => 'README principal',
-            'FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Guia completo v2.0.1 (PRINCIPAL)',
-            'DOCUMENTATION_GUIDE.md' => 'Guia de navegação',
             'CHANGELOG.md' => 'Changelog',
+            'CONTRIBUTING.md' => 'Guia de contribuição',
         ];
 
         foreach ($mainDocs as $file => $description) {
@@ -291,77 +311,57 @@ class ProjectValidator
             }
         }
 
-        // Verificar se arquivos redundantes foram removidos
-        $redundantFiles = [
-            'README_v2.0.1.md',
-            'PERFORMANCE_REPORT_FINAL.md',
-            'TECHNICAL_OPTIMIZATION_SUMMARY.md',
-            'CONSOLIDATION_SUMMARY_v2.0.1.md'
+        // Documentação de releases
+        $releaseDocs = [
+            'docs/releases/README.md' => 'Índice de releases',
+            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md' => 'Overview v2.1.2 (ATUAL)',
+            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md' => 'Overview v2.1.1',
+            'docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Overview v2.0.1',
         ];
 
-        foreach ($redundantFiles as $file) {
+        foreach ($releaseDocs as $file => $description) {
             if (file_exists($file)) {
-                $this->warnings[] = "Arquivo redundante ainda existe: {$file} (deveria ter sido removido)";
+                $size = filesize($file);
+                if ($size > 1000) {
+                    $this->passed[] = "{$description} existe e tem conteúdo adequado ({$size} bytes)";
+                } else {
+                    $this->warnings[] = "{$description} existe mas tem pouco conteúdo ({$size} bytes)";
+                }
             } else {
-                $this->passed[] = "Arquivo redundante removido corretamente: {$file}";
+                $this->errors[] = "{$description} não encontrado: {$file}";
             }
         }
 
-        // Verificar estrutura de diretórios
-        $requiredDirs = [
-            'docs/' => 'Documentação técnica',
-            'docs/performance/' => 'Análises de performance',
-            'docs/implementation/' => 'Guias de implementação',
-            'docs/releases/' => 'Notas de release',
-            'benchmarks/' => 'Suite de benchmarks',
-            'benchmarks/reports/' => 'Relatórios de benchmark',
-            'examples/' => 'Exemplos práticos'
+        // Documentação técnica principal
+        $technicalDocs = [
+            'docs/index.md' => 'Índice principal da documentação',
+            'docs/implementions/usage_basic.md' => 'Guia básico de uso',
+            'docs/techinical/application.md' => 'Documentação da Application',
+            'docs/techinical/http/request.md' => 'Documentação de Request',
+            'docs/techinical/http/response.md' => 'Documentação de Response',
+            'docs/techinical/routing/router.md' => 'Documentação do Router',
+            'docs/techinical/middleware/README.md' => 'Índice de middlewares',
+            'docs/techinical/authentication/usage_native.md' => 'Autenticação nativa',
+            'docs/performance/PerformanceMonitor.md' => 'Monitor de performance',
+            'docs/performance/benchmarks/README.md' => 'Documentação de benchmarks',
+            'docs/testing/api_testing.md' => 'Testes de API',
+            'docs/contributing/README.md' => 'Guia de contribuição',
         ];
 
-        foreach ($requiredDirs as $dir => $description) {
-            if (is_dir($dir)) {
-                $fileCount = count(glob($dir . '*'));
-                if ($fileCount > 0) {
-                    $this->passed[] = "{$description} existe e tem {$fileCount} arquivo(s)";
+        foreach ($technicalDocs as $file => $description) {
+            if (file_exists($file)) {
+                $size = filesize($file);
+                if ($size > 500) {
+                    $this->passed[] = "{$description} existe e tem conteúdo adequado ({$size} bytes)";
                 } else {
-                    $this->warnings[] = "{$description} existe mas está vazio";
+                    $this->warnings[] = "{$description} existe mas tem pouco conteúdo ({$size} bytes)";
                 }
             } else {
-                $this->errors[] = "{$description} não encontrado: {$dir}";
+                $this->warnings[] = "{$description} não encontrado: {$file}";
             }
         }
 
-        // Verificar conteúdo específico da v2.0.1
-        if (file_exists('FRAMEWORK_OVERVIEW_v2.0.1.md')) {
-            $content = file_get_contents('FRAMEWORK_OVERVIEW_v2.0.1.md');
-
-            $requiredContent = [
-                '52M ops/sec' => 'Métricas de CORS performance',
-                'ML-Powered Cache' => 'Otimizações de ML',
-                'Zero-Copy Operations' => 'Otimizações de memória',
-                '278x improvement' => 'Melhoria geral de performance'
-            ];
-
-            foreach ($requiredContent as $needle => $description) {
-                if (strpos($content, $needle) !== false) {
-                    $this->passed[] = "{$description} encontrada na documentação";
-                } else {
-                    $this->warnings[] = "{$description} não encontrada na documentação";
-                }
-            }
-        }
-
-        // Verificar versão no código
-        if (file_exists('src/Core/Application.php')) {
-            $content = file_get_contents('src/Core/Application.php');
-            if (strpos($content, "VERSION = '2.1.0'") !== false) {
-                $this->passed[] = "Versão 2.1.0 confirmada no código fonte";
-            } else {
-                $this->errors[] = "Versão no código fonte não está em 2.1.0";
-            }
-        }
-
-        echo "✅ Documentação consolidada validada\n\n";
+        echo "✅ Documentação validada\n\n";
     }
 
     private function validateAuthentication()
@@ -400,8 +400,7 @@ class ProjectValidator
         // Verificar se arquivos sensíveis não estão sendo commitados
         $sensitiveFiles = [
             '.env' => 'Arquivo de environment',
-            'config/database.php' => 'Configuração de banco local',
-            'composer.lock' => 'Lock file do composer (se deve ser commitado depende do projeto)'
+            'config/database.php' => 'Configuração de banco local'
         ];
 
         foreach ($sensitiveFiles as $file => $description) {
@@ -413,7 +412,7 @@ class ProjectValidator
         // Verificar se .gitignore está configurado corretamente
         if (file_exists('.gitignore')) {
             $gitignore = file_get_contents('.gitignore');
-            $requiredEntries = ['/vendor/', '.env', '*.log'];
+            $requiredEntries = ['/vendor/', '.env', '*.log', 'composer.lock'];
 
             foreach ($requiredEntries as $entry) {
                 if (strpos($gitignore, $entry) !== false) {
@@ -496,6 +495,146 @@ class ProjectValidator
         echo "✅ Recursos OpenAPI validados\n\n";
     }
 
+    private function validateReleases()
+    {
+        echo "📋 Validando estrutura de releases...\n";
+
+        // Verificar diretório de releases
+        if (is_dir('docs/releases')) {
+            $this->passed[] = "Diretório docs/releases/ existe";
+
+            // Verificar arquivos de release
+            $releaseFiles = [
+                'docs/releases/README.md' => 'Índice de releases',
+                'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md' => 'Overview v2.1.2 (ATUAL)',
+                'docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md' => 'Overview v2.1.1',
+                'docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Overview v2.0.1'
+            ];
+
+            foreach ($releaseFiles as $file => $description) {
+                if (file_exists($file)) {
+                    $size = filesize($file);
+                    if ($size > 1000) {
+                        $this->passed[] = "{$description} existe e tem conteúdo adequado ({$size} bytes)";
+                    } else {
+                        $this->warnings[] = "{$description} existe mas tem pouco conteúdo ({$size} bytes)";
+                    }
+                } else {
+                    if (strpos($file, 'v2.1.2') !== false) {
+                        $this->errors[] = "{$description} não encontrado: {$file}";
+                    } else {
+                        $this->warnings[] = "{$description} não encontrado: {$file}";
+                    }
+                }
+            }
+
+            // Verificar se v2.1.2 tem conteúdo específico
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md')) {
+                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md');
+
+                if (strpos($content, '2.69M ops/sec') !== false &&
+                    strpos($content, 'PHP 8.4.8') !== false &&
+                    strpos($content, 'JIT') !== false) {
+                    $this->passed[] = "FRAMEWORK_OVERVIEW_v2.1.2.md contém métricas de performance esperadas";
+                } else {
+                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v2.1.2.md pode estar incompleto (faltam métricas v2.1.2)";
+                }
+            }
+
+        } else {
+            $this->errors[] = "Diretório docs/releases/ não encontrado";
+        }
+
+        // Verificar se arquivos foram movidos da raiz
+        $movedFiles = [
+            'FRAMEWORK_OVERVIEW_v2.0.1.md',
+            'FRAMEWORK_OVERVIEW_v2.1.1.md',
+            'FRAMEWORK_OVERVIEW_v2.1.2.md'
+        ];
+
+        foreach ($movedFiles as $file) {
+            if (file_exists($file)) {
+                $this->warnings[] = "Arquivo deveria ter sido movido para docs/releases/: {$file}";
+            } else {
+                $this->passed[] = "Arquivo movido corretamente da raiz: {$file}";
+            }
+        }
+
+        echo "✅ Releases validadas\n\n";
+    }
+
+    private function validateBenchmarks()
+    {
+        echo "🏃‍♂️ Validando estrutura de benchmarks...\n";
+
+        // Verificar diretórios de benchmark
+        if (is_dir('benchmarks')) {
+            $this->passed[] = "Diretório benchmarks/ existe";
+
+            if (is_dir('benchmarks/reports')) {
+                $this->passed[] = "Diretório benchmarks/reports/ existe";
+
+                // Contar arquivos de relatório
+                $reportCount = count(glob('benchmarks/reports/*.json')) + count(glob('benchmarks/reports/*.md'));
+                if ($reportCount > 0) {
+                    $this->passed[] = "Encontrados {$reportCount} relatórios de benchmark";
+                } else {
+                    $this->warnings[] = "Nenhum relatório de benchmark encontrado";
+                }
+            } else {
+                $this->errors[] = "Diretório benchmarks/reports/ não encontrado";
+            }
+        } else {
+            $this->errors[] = "Diretório benchmarks/ não encontrado";
+        }
+
+        // Verificar scripts de benchmark
+        $benchmarkScripts = [
+            'benchmarks/run_benchmark.sh' => 'Script de execução de benchmarks',
+            'benchmarks/ExpressPhpBenchmark.php' => 'Benchmark principal',
+            'benchmarks/ComprehensivePerformanceAnalysis.php' => 'Análise de performance',
+            'benchmarks/EnhancedAdvancedOptimizationsBenchmark.php' => 'Benchmark de otimizações',
+            'benchmarks/generate_comprehensive_report.php' => 'Gerador de relatórios'
+        ];
+
+        foreach ($benchmarkScripts as $script => $description) {
+            if (file_exists($script)) {
+                $this->passed[] = "{$description} existe";
+
+                // Verificar se é executável (para .sh)
+                if (pathinfo($script, PATHINFO_EXTENSION) === 'sh' && !is_executable($script)) {
+                    $this->warnings[] = "{$description} não é executável";
+                }
+            } else {
+                $this->errors[] = "{$description} não encontrado: {$script}";
+            }
+        }
+
+        // Verificar documentação de benchmarks
+        if (file_exists('docs/performance/benchmarks/README.md')) {
+            $size = filesize('docs/performance/benchmarks/README.md');
+            if ($size > 2000) {
+                $this->passed[] = "Documentação de benchmarks existe e tem conteúdo adequado ({$size} bytes)";
+
+                // Verificar se contém dados v2.1.2
+                $content = file_get_contents('docs/performance/benchmarks/README.md');
+                if (strpos($content, '02/07/2025') !== false &&
+                    strpos($content, '2.69M') !== false &&
+                    strpos($content, 'PHP 8.4.8') !== false) {
+                    $this->passed[] = "Documentação de benchmarks atualizada com dados v2.1.2";
+                } else {
+                    $this->warnings[] = "Documentação de benchmarks pode não estar atualizada para v2.1.2";
+                }
+            } else {
+                $this->warnings[] = "Documentação de benchmarks tem pouco conteúdo ({$size} bytes)";
+            }
+        } else {
+            $this->warnings[] = "Documentação de benchmarks não encontrada: docs/performance/benchmarks/README.md";
+        }
+
+        echo "✅ Benchmarks validados\n\n";
+    }
+
     private function generateReport()
     {
         echo "📊 RELATÓRIO DE VALIDAÇÃO\n";
@@ -525,26 +664,29 @@ class ProjectValidator
 
         // Status final
         if (empty($this->errors)) {
-            echo "🎉 PROJETO VALIDADO COM SUCESSO!\n";
-            echo "   O projeto está pronto para publicação.\n";
+            echo "🎉 PROJETO EXPRESS PHP v2.1.2 VALIDADO COM SUCESSO!\n";
+            echo "   O projeto está pronto para uso e publicação.\n";
 
             if (!empty($this->warnings)) {
                 echo "   Considere resolver os avisos antes da publicação.\n";
             }
 
             echo "\n📋 PRÓXIMOS PASSOS:\n";
-            echo "   1. Execute os testes: composer test\n";
-            echo "   2. Verifique a documentação\n";
-            echo "   3. Faça commit das alterações\n";
-            echo "   4. Crie uma tag de versão: git tag -a v1.0.0 -m 'Release v1.0.0'\n";
-            echo "   5. Push para o repositório: git push origin main --tags\n";
-            echo "   6. Publique no Packagist: https://packagist.org\n";
-            echo "   7. Repositório: https://github.com/CAFernandes/express-php\n";
+            echo "   1. Execute os benchmarks: ./benchmarks/run_benchmark.sh\n";
+            echo "   2. Execute os testes: composer test\n";
+            echo "   3. Valide a documentação: ./scripts/validate-docs.sh\n";
+            echo "   4. Valide os benchmarks: ./scripts/validate_benchmarks.sh\n";
+            echo "   5. Faça commit das alterações\n";
+            echo "   6. Crie uma tag de versão: git tag -a v2.1.2 -m 'Release v2.1.2'\n";
+            echo "   7. Push para o repositório: git push origin main --tags\n";
+            echo "   8. Publique no Packagist: https://packagist.org\n";
+            echo "   9. Repositório: https://github.com/CAFernandes/express-php\n";
 
             return true;
         } else {
             echo "❌ VALIDAÇÃO FALHOU!\n";
             echo "   Corrija os erros antes de publicar o projeto.\n";
+            echo "   Execute ./scripts/validate-docs.sh para mais detalhes.\n";
             return false;
         }
     }

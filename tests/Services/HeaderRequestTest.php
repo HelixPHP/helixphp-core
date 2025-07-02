@@ -36,12 +36,14 @@ class HeaderRequestTest extends TestCase
     public function testHeaderConversionToCamelCase(): void
     {
         // Mock headers for testing
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer token123',
-            'X-API-Key' => 'api-key-value',
-            'User-Agent' => 'Mozilla/5.0'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer token123',
+                'X-API-Key' => 'api-key-value',
+                'User-Agent' => 'Mozilla/5.0'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -54,10 +56,12 @@ class HeaderRequestTest extends TestCase
 
     public function testGetHeaderMethod(): void
     {
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer token123'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer token123'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -84,10 +88,12 @@ class HeaderRequestTest extends TestCase
 
     public function testHasHeaderMethod(): void
     {
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer token123'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer token123'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -99,9 +105,11 @@ class HeaderRequestTest extends TestCase
 
     public function testMagicGetWithNonExistentHeader(): void
     {
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -126,10 +134,12 @@ class HeaderRequestTest extends TestCase
 
     public function testHeadersWithColonPrefix(): void
     {
-        $this->setMockHeaders([
-            ':Content-Type' => 'application/json',
-            ':Authorization' => 'Bearer token123'
-        ]);
+        $this->setMockHeaders(
+            [
+                ':Content-Type' => 'application/json',
+                ':Authorization' => 'Bearer token123'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -140,12 +150,14 @@ class HeaderRequestTest extends TestCase
 
     public function testComplexHeaderNames(): void
     {
-        $this->setMockHeaders([
-            'X-Forwarded-For' => '192.168.1.1',
-            'X-Real-IP' => '10.0.0.1',
-            'Accept-Encoding' => 'gzip, deflate',
-            'Cache-Control' => 'no-cache'
-        ]);
+        $this->setMockHeaders(
+            [
+                'X-Forwarded-For' => '192.168.1.1',
+                'X-Real-IP' => '10.0.0.1',
+                'Accept-Encoding' => 'gzip, deflate',
+                'Cache-Control' => 'no-cache'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -157,10 +169,12 @@ class HeaderRequestTest extends TestCase
 
     public function testHeadersWithSpecialCharacters(): void
     {
-        $this->setMockHeaders([
-            'Custom-Header' => 'value with spaces and symbols !@#$%',
-            'X-Test' => 'áéíóú çñü'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Custom-Header' => 'value with spaces and symbols !@#$%',
+                'X-Test' => 'áéíóú çñü'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -170,9 +184,11 @@ class HeaderRequestTest extends TestCase
 
     public function testCaseInsensitiveAccess(): void
     {
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json'
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 
@@ -203,10 +219,12 @@ class HeaderRequestTest extends TestCase
 
     public function testMultipleHeaderInstances(): void
     {
-        $this->setMockHeaders([
-            'Content-Type' => 'application/json',
-            'Authorization' => 'Bearer token123'
-        ]);
+        $this->setMockHeaders(
+            [
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer token123'
+            ]
+        );
 
         $headerRequest1 = new HeaderRequest();
         $headerRequest2 = new HeaderRequest();
@@ -218,12 +236,14 @@ class HeaderRequestTest extends TestCase
 
     public function testHeaderValueTypes(): void
     {
-        $this->setMockHeaders([
-            'X-Numeric' => '123',
-            'X-Boolean' => 'true',
-            'X-Empty' => '',
-            'X-Null' => null
-        ]);
+        $this->setMockHeaders(
+            [
+                'X-Numeric' => '123',
+                'X-Boolean' => 'true',
+                'X-Empty' => '',
+                'X-Null' => null
+            ]
+        );
 
         $headerRequest = new HeaderRequest();
 

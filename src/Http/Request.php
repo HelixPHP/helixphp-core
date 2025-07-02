@@ -8,16 +8,11 @@ use stdClass;
 use RuntimeException;
 
 /**
- * Classe Request representa a requisição HTTP recebida.
- * Facilita o acesso a parâmetros de rota, query string, corpo e cabeçalhos.
+ * Classe Request representa a requisição HTTP.
  *
- * @property string $method Método HTTP.
- * @property string $path Padrão da rota.
- * @property string $pathCallable Caminho real da requisição.
- * @property stdClass $params Parâmetros extraídos da URL.
- * @property stdClass $query Parâmetros da query string.
- * @property stdClass $body Corpo da requisição.
- * @property HeaderRequest $headers Cabeçalhos da requisição.
+ * Permite inclusão de atributos dinâmicos, como $req->user.
+ *
+ * @property mixed $user Usuário autenticado ou qualquer outro atributo dinâmico.
  */
 class Request
 {
@@ -358,5 +353,178 @@ class Request
 
         // @phpstan-ignore-next-line
         return new static($method, $path, $pathCallable);
+    }
+    /**
+     * Obtém o caminho da rota.
+     * @return string
+     * @throws RuntimeException Se o caminho não estiver definido.
+     */
+    public function getPath(): string
+    {
+        if (empty($this->path)) {
+            throw new RuntimeException('Path is not defined in Request');
+        }
+        return $this->path;
+    }
+
+    /**
+     * Obtém o caminho real da requisição.
+     * @return string
+     * @throws RuntimeException Se o caminho não estiver definido.
+     */
+    public function getPathCallable(): string
+    {
+        if (empty($this->pathCallable)) {
+            throw new RuntimeException('Path callable is not defined in Request');
+        }
+        return $this->pathCallable;
+    }
+
+    /**
+     * Obtém o método HTTP da requisição.
+     *
+     * @return string
+     * @throws RuntimeException Se o método não estiver definido.
+     */
+    public function getMethod(): string
+    {
+        if (empty($this->method)) {
+            throw new RuntimeException('Method is not defined in Request');
+        }
+        return $this->method;
+    }
+
+    /**
+     * Obtém os cabeçalhos da requisição.
+     *
+     * @return array<string, mixed>
+     * @throws RuntimeException Se os cabeçalhos não estiverem definidos.
+     */
+    public function getHeaders(): array
+    {
+        if (empty($this->headers)) {
+            throw new RuntimeException('Headers are not defined in Request');
+        }
+        if (!($this->headers instanceof HeaderRequest)) {
+            throw new InvalidArgumentException('Headers must be an instance of HeaderRequest');
+        }
+        return $this->headers->getAllHeaders();
+    }
+    /**
+     * Obtém header da requisição.
+     * @param  string $name Nome do cabeçalho.
+     * @return string|null Valor do cabeçalho ou null se não existir.
+     * @throws InvalidArgumentException Se o nome do cabeçalho não for uma string.
+     */
+    public function header(string $name): ?string
+    {
+        if (!is_string($name)) {
+            throw new InvalidArgumentException('Header name must be a string');
+        }
+        if (!$this->headers->hasHeader($name)) {
+            return null; // Return null if header does not exist
+        }
+
+        return $this->headers->getHeader($name);
+    }
+    /**
+     * Obtém os parâmetros da rota.
+     * @return stdClass
+     * @throws RuntimeException Se os parâmetros não estiverem definidos.
+     * @throws InvalidArgumentException Se os parâmetros não forem uma instância de stdClass.
+     */
+    public function getParams(): stdClass
+    {
+        if (empty($this->params)) {
+            throw new RuntimeException('Params are not defined in Request');
+        }
+        if (!($this->params instanceof stdClass)) {
+            throw new InvalidArgumentException('Params must be an instance of stdClass');
+        }
+        return $this->params;
+    }
+    /**
+     * Obtém um parâmetro específico da rota.
+     * @param  string $key     Nome do parâmetro.
+     * @param  mixed  $default Valor padrão se não encontrado.
+     * @return mixed Valor do parâmetro ou valor padrão.
+     * @throws InvalidArgumentException Se o nome do parâmetro não for uma string.
+     * @throws RuntimeException Se os parâmetros não estiverem definidos.
+     * @throws InvalidArgumentException Se os parâmetros não forem uma instância de stdClass.
+     */
+    public function getParam(string $key, $default = null)
+    {
+        if (!is_string($key)) {
+            throw new InvalidArgumentException('Param key must be a string');
+        }
+        if (empty($this->params)) {
+            throw new RuntimeException('Params are not defined in Request');
+        }
+        if (!($this->params instanceof stdClass)) {
+            throw new InvalidArgumentException('Params must be an instance of stdClass');
+        }
+        if (property_exists($this->params, $key)) {
+            return $this->params->{$key};
+        }
+        return $default;
+    }
+
+    /**
+     * Obtém os parâmetros da query string.
+     * @return stdClass
+     * @throws RuntimeException Se a query não estiver definida.
+     * @throws InvalidArgumentException Se a query não for uma instância de stdClass.
+     */
+    public function getQuerys(): stdClass
+    {
+        if (empty($this->query)) {
+            throw new RuntimeException('Query is not defined in Request');
+        }
+        if (!($this->query instanceof stdClass)) {
+            throw new InvalidArgumentException('Query must be an instance of stdClass');
+        }
+        return $this->query;
+    }
+    /**
+     * Obtém um parâmetro específico da query string.
+     * @param  string $key     Nome do parâmetro.
+     * @param  mixed  $default Valor padrão se não encontrado.
+     * @return mixed Valor do parâmetro ou valor padrão.
+     * @throws InvalidArgumentException Se o nome do parâmetro não for uma string.
+     * @throws RuntimeException Se a query não estiver definida.
+     * @throws InvalidArgumentException Se o parâmetro não for uma string.
+     */
+    public function getQuery(string $key, $default = null)
+    {
+        if (!is_string($key)) {
+            throw new InvalidArgumentException('Query key must be a string');
+        }
+        if (empty($this->query)) {
+            throw new RuntimeException('Query is not defined in Request');
+        }
+        if (!($this->query instanceof stdClass)) {
+            throw new InvalidArgumentException('Query must be an instance of stdClass');
+        }
+        if (property_exists($this->query, $key)) {
+            return $this->query->{$key};
+        }
+        return $default;
+    }
+
+    /**
+     * Obtém o corpo da requisição.
+     *
+     * @return stdClass
+     * @throws RuntimeException Se o corpo não estiver definido.
+     */
+    public function getBody(): stdClass
+    {
+        if (empty($this->body)) {
+            throw new RuntimeException('Body is not defined in Request');
+        }
+        if (in_array($this->method, ['GET', 'HEAD', 'OPTIONS', 'DELETE'])) {
+            return new stdClass(); // Return empty object for GET/HEAD/BODY/OPTIONS/DELETE requests
+        }
+        return $this->body;
     }
 }

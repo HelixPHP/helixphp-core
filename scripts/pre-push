@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# Express PHP - Pre-push Hook
+# Executa validação completa antes de fazer push para o repositório remoto
+
+set -e
+
+echo "🚀 Executando validações pre-push..."
+
+# Cores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+print_status() {
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[✓]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[✗]${NC} $1"
+}
+
+# Verifica se as dependências estão instaladas
+if [ ! -d "vendor" ]; then
+    print_error "Dependências não encontradas. Execute 'composer install' primeiro."
+    exit 1
+fi
+
+# Verifica se o script validate_all.sh existe
+if [ ! -f "scripts/validate_all.sh" ]; then
+    print_error "Script validate_all.sh não encontrado!"
+    exit 1
+fi
+
+print_status "Executando validação completa via validate_all.sh..."
+
+# Executa o script centralizado de validação (modo completo)
+if scripts/validate_all.sh; then
+    print_success "Todas as validações passaram! 🎉"
+    echo ""
+    echo "Push autorizado ✅"
+    exit 0
+else
+    print_error "Uma ou mais validações falharam!"
+    echo ""
+    print_error "Push rejeitado ❌"
+    echo ""
+    echo "Corrija os problemas reportados acima e tente novamente."
+    echo ""
+    echo "💡 Dicas:"
+    echo "• Execute 'scripts/validate_all.sh' para validação detalhada"
+    echo "• Execute 'scripts/validate_project.php' para validação específica do projeto"
+    echo "• Execute 'scripts/validate-docs.sh' para validação da documentação"
+    echo "• Execute 'scripts/validate_benchmarks.sh' para validação dos benchmarks"
+    echo ""
+    echo "Para forçar o push (não recomendado), use: git push --no-verify"
+    exit 1
+fi

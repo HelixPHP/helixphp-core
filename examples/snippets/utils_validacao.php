@@ -1,6 +1,6 @@
 <?php
 // Exemplo de validação usando Utils
-use Express\Helpers\Utils;
+use Express\Utils\Utils;
 
 $dados = [
     'email' => 'usuario@dominio.com',

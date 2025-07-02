@@ -147,11 +147,15 @@ class SerializationCache
         if (is_array($data)) {
             // Para arrays, usa estrutura de chaves e tipos
             $keyStructure = array_map('gettype', $data);
-            return 'array_' . md5(serialize([
-                'keys' => array_keys($data),
-                'types' => $keyStructure,
-                'count' => count($data)
-            ]));
+            return 'array_' . md5(
+                serialize(
+                    [
+                        'keys' => array_keys($data),
+                        'types' => $keyStructure,
+                        'count' => count($data)
+                    ]
+                )
+            );
         }
 
         if (is_object($data)) {

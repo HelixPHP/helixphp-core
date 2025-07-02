@@ -21,9 +21,12 @@ class HookServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register HookManager as singleton
-        $this->app->singleton(HookManager::class, function () {
-            return new HookManager($this->app);
-        });
+        $this->app->singleton(
+            HookManager::class,
+            function () {
+                return new HookManager($this->app);
+            }
+        );
 
         // Create alias for easier access
         $this->app->getContainer()->alias('hooks', HookManager::class);

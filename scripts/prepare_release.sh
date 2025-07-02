@@ -126,9 +126,16 @@ if [ -d ".git" ]; then
 fi
 
 # 8. Executar validação personalizada
-echo "🎯 Executando validação personalizada..."
+echo "🎯 Executando validação completa..."
 
-if [ -f "scripts/validate_project.php" ]; then
+if [ -f "scripts/validate_all.sh" ]; then
+    scripts/validate_all.sh
+    if [ $? -eq 0 ]; then
+        info "Validação completa passou"
+    else
+        error "Validação completa falhou - corrija os problemas antes de continuar"
+    fi
+elif [ -f "scripts/validate_project.php" ]; then
     php scripts/validate_project.php
     if [ $? -eq 0 ]; then
         info "Validação personalizada passou"
@@ -136,7 +143,7 @@ if [ -f "scripts/validate_project.php" ]; then
         error "Validação personalizada falhou"
     fi
 else
-    warning "Script de validação personalizada não encontrado"
+    warning "Scripts de validação não encontrados"
 fi
 
 # 9. Limpar arquivos temporários

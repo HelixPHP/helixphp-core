@@ -11,7 +11,7 @@ $app = new Application();
 
 // Middleware de autenticação para demonstração
 $authMiddleware = function (Request $req, Response $resp, $next) {
-    $authHeader = $req->getHeader('Authorization');
+    $authHeader = $req->header('Authorization');
     if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
         return $resp->status(401)->json(['error' => 'Unauthorized']);
     }
@@ -48,10 +48,10 @@ $app->get('/health', function (Request $req, Response $resp) {
 // GRUPO API v1 (com middlewares)
 // =========================
 
-$app->group('/api/v1', function () use ($app, $authMiddleware) {
+$app->use('/api/v1', function () use ($app, $authMiddleware) {
 
     // Rotas de usuários
-    $app->group('/users', function () use ($app) {
+    $app->use('/users', function () use ($app) {
         $app->get('/', function (Request $req, Response $resp) {
             return $resp->json([
                 'users' => [
@@ -77,7 +77,7 @@ $app->group('/api/v1', function () use ($app, $authMiddleware) {
     });
 
     // Rotas de produtos
-    $app->group('/products', function () use ($app) {
+    $app->use('/products', function () use ($app) {
         $app->get('/', function (Request $req, Response $resp) {
             return $resp->json([
                 'products' => [
@@ -96,7 +96,7 @@ $app->group('/api/v1', function () use ($app, $authMiddleware) {
     });
 
     // Rotas administrativas (com autenticação)
-    $app->group('/admin', function () use ($app, $authMiddleware) {
+    $app->use('/admin', function () use ($app, $authMiddleware) {
         $app->get('/dashboard', function (Request $req, Response $resp) {
             return $resp->json([
                 'dashboard' => [
@@ -120,7 +120,7 @@ $app->group('/api/v1', function () use ($app, $authMiddleware) {
 // GRUPO API v2 (versão mais nova)
 // =========================
 
-$app->group('/api/v2', function () use ($app) {
+$app->use('/api/v2', function () use ($app) {
     $app->get('/status', function (Request $req, Response $resp) {
         return $resp->json([
             'version' => '2.0',
@@ -191,9 +191,6 @@ function showOptimizationInfo() {
     echo "  curl http://localhost:8000/stats/groups\n";
     echo "\n";
 }
-
-// Aquece os caches antes de iniciar
-$app->warmupCaches();
 
 // Exibe informações se executado via CLI
 if (php_sapi_name() === 'cli') {

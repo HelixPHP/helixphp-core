@@ -11,32 +11,13 @@ require_once 'vendor/autoload.php';
 use Express\Core\Application;
 use Express\Http\Request;
 use Express\Http\Response;
-use Express\Middleware\Security\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
-use Express\Middleware\Performance\CacheMiddleware;
+use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Express\Http\Psr15\Middleware\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas
-$app = new Application([
-    // Otimizações de Performance v2.0.1
-    'optimizations' => [
-        'middleware_compiler' => true,     // Compilação inteligente de pipeline
-        'zero_copy' => true,              // Operações zero-copy
-        'memory_mapping' => true,         // Memory mapping para grandes datasets
-        'predictive_cache' => true,       // Cache preditivo com ML
-        'route_memory_manager' => true    // Gerenciamento de memória de rotas
-    ],
-
-    // Configurações de Produção
-    'environment' => 'production',
-    'debug' => false,
-    'cache_ttl' => 3600,
-
-    // Configurações de Performance
-    'performance' => [
-        'max_memory' => '128M',
-        'gc_optimization' => true,
-        'memory_limit_buffer' => '32M'
-    ]
-]);
+$app = new Application(__DIR__ . '/config.example_v2.0.1.php');
 
 // Middlewares de Segurança (Performance: 47M+ ops/sec)
 $app->use(new SecurityMiddleware([
@@ -54,11 +35,7 @@ $app->use(new CorsMiddleware([
 ]));
 
 // Cache Middleware com Predição ML
-$app->use(new CacheMiddleware([
-    'ttl' => 3600,
-    'predictive_warming' => true,  // Nova funcionalidade v2.0.1
-    'ml_learning' => true
-]));
+$app->use(new CacheMiddleware(3600));
 
 // Autenticação JWT
 $app->use(AuthMiddleware::jwt('sua_chave_secreta_super_segura'));

@@ -105,9 +105,12 @@ class RouterTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         try {
-            Router::get('/test', function () {
-                return 'test';
-            });
+            Router::get(
+                '/test',
+                function () {
+                    return 'test';
+                }
+            );
         } catch (\Exception $e) {
             // Se houver erro, pelo menos não é fatal
             $this->assertTrue(true);
@@ -120,9 +123,12 @@ class RouterTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         try {
-            Router::use('/test', function ($req, $res, $next) {
-                $next();
-            });
+            Router::use(
+                '/test',
+                function ($req, $res, $next) {
+                    $next();
+                }
+            );
         } catch (\Exception $e) {
             // Se houver erro, pelo menos não é fatal
             $this->assertTrue(true);

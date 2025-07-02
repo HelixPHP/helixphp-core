@@ -22,6 +22,7 @@
       <directory>vendor</directory>
       <directory>test</directory>
       <directory>examples</directory>
+      <directory>legacy</directory>
     </exclude>
   </source>
 </phpunit>

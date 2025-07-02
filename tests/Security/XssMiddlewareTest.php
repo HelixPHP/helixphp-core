@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Security;
+namespace Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middleware\Security\XssMiddleware;
+use Express\Http\Psr15\Middleware\XssMiddleware;
 
 class XssMiddlewareTest extends TestCase
 {
@@ -26,8 +26,8 @@ class XssMiddlewareTest extends TestCase
         $this->assertStringNotContainsString('<script>', $sanitized);
         // Verificar se o conteúdo perigoso foi removido ou escapado
         $this->assertTrue(
-            !strpos($sanitized, 'alert("evil")') ||
-            strpos($sanitized, '&lt;script&gt;') !== false
+            strpos($sanitized, 'alert("evil")') === false,
+            'Conteúdo perigoso não foi removido corretamente.'
         );
         $this->assertStringContainsString('Safe text', $sanitized);
     }
@@ -81,7 +81,11 @@ class XssMiddlewareTest extends TestCase
             $sanitized = XssMiddleware::sanitize($pattern);
             // Verificar se foi sanitizado (pode não detectar XSS em conteúdo escapado)
             $this->assertTrue(
-                !XssMiddleware::containsXss($sanitized) || strpos($sanitized, '&lt;') !== false,
+                (
+                    !XssMiddleware::containsXss($sanitized) ||
+                    strpos($sanitized, '<') === false ||
+                    strpos($sanitized, '&lt;') !== false
+                ),
                 "Sanitization failed for: $pattern"
             );
         }

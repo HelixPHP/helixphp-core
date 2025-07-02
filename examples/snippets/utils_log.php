@@ -1,8 +1,8 @@
 <?php
 // Exemplo de uso do helper de log
-use Express\Helpers\Utils;
+use Express\Utils\Utils;
 
-Utils::log('info', 'Usuário acessou a rota /api/user', [
+Utils::log('Usuário acessou a rota /api/user\n'.print_r([
     'user_id' => 123,
     'ip' => $_SERVER['REMOTE_ADDR'] ?? 'localhost',
-]);
+], true), 'info');

@@ -48,8 +48,8 @@ class ResponsePool
      * @var Response[]
      */
     private static array $activeObjects = [];    /**
-     * Get a response object from pool or create new
-     */
+                                                  * Get a response object from pool or create new
+                                                  */
     public static function getResponse(int $status = 200): Response
     {
         $poolKey = "status_{$status}";
@@ -153,9 +153,13 @@ class ResponsePool
         fwrite($stream, $json);
         rewind($stream);
 
-        $response = new Response($status, [
-            'Content-Type' => 'application/json'
-        ], new Stream($stream));
+        $response = new Response(
+            $status,
+            [
+                'Content-Type' => 'application/json'
+            ],
+            new Stream($stream)
+        );
 
         // Track the new response object for GC
         self::$activeObjects[spl_object_id($response)] = $response;

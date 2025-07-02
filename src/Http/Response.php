@@ -551,6 +551,34 @@ class Response
     }
 
     /**
+     * Envia qualquer tipo de dado como resposta, similar ao Express.js (Node.js).
+     *
+     * @param mixed $data Dados a serem enviados.
+     * @return $this
+     */
+    public function send($data = ''): self
+    {
+        if (is_array($data) || is_object($data)) {
+            return $this->json($data);
+        }
+        if (is_resource($data)) {
+            return $this->streamResource($data);
+        }
+        if (is_numeric($data)) {
+            $data = (string)$data;
+        }
+        // Detecta se é HTML simples
+        if (is_string($data) && preg_match('/<[^<]+>/', $data)) {
+            return $this->html($data);
+        }
+        // Default: texto puro
+        if (is_scalar($data) || (is_object($data) && method_exists($data, '__toString'))) {
+            return $this->text((string)$data);
+        }
+        return $this->text(json_encode($data));
+    }
+
+    /**
      * Sanitiza dados para garantir codificação UTF-8 válida para JSON.
      *
      * @param  mixed $data Dados a serem sanitizados.

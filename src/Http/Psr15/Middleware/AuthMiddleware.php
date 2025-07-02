@@ -19,12 +19,15 @@ class AuthMiddleware extends AbstractMiddleware
 
     public function __construct(array $config = [], array $publicPaths = [])
     {
-        $this->config = array_merge([
-            'header' => 'Authorization',
-            'prefix' => 'Bearer ',
-            'secret' => '',
-            'algorithm' => 'HS256',
-        ], $config);
+        $this->config = array_merge(
+            [
+                'header' => 'Authorization',
+                'prefix' => 'Bearer ',
+                'secret' => '',
+                'algorithm' => 'HS256',
+            ],
+            $config
+        );
 
         $this->publicPaths = $publicPaths;
     }
@@ -47,12 +50,125 @@ class AuthMiddleware extends AbstractMiddleware
     protected function getResponse(ServerRequestInterface $request): ResponseInterface
     {
         $jsonResponse = json_encode(['error' => 'Authentication required']);
+        if ($jsonResponse === false) {
+            $jsonResponse = '{"error": "Authentication required"}';
+        }
         return new \Express\Http\Psr7\Response(
             401,
             ['Content-Type' => 'application/json'],
-            \Express\Http\Psr7\Stream::createFromString(
-                $jsonResponse !== false ? $jsonResponse : '{"error": "Authentication required"}'
-            )
+            \Express\Http\Psr7\Stream::createFromString($jsonResponse)
+        );
+    }
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        $authMethods = $this->config['authMethods'] ?? ['jwt'];
+        foreach ($authMethods as $method) {
+            switch ($method) {
+                case 'jwt':
+                    if ($this->tryJwt($request, $handler)) {
+                        return $handler->handle($request);
+                    }
+                    break;
+                case 'basic':
+                    if ($this->tryBasic($request, $handler)) {
+                        return $handler->handle($request);
+                    }
+                    break;
+                case 'bearer':
+                    if ($this->tryBearer($request, $handler)) {
+                        return $handler->handle($request);
+                    }
+                    break;
+                case 'custom':
+                    if ($this->tryCustom($request, $handler)) {
+                        return $handler->handle($request);
+                    }
+                    break;
+            }
+        }
+        return $this->unauthorizedResponse();
+    }
+
+    private function tryJwt(ServerRequestInterface $request, RequestHandlerInterface $handler): bool
+    {
+        $header = $request->getHeaderLine('Authorization');
+        if (strpos($header, 'Bearer ') === 0) {
+            $token = substr($header, 7);
+            if (isset($this->config['jwtSecret'])) {
+                try {
+                    $jwtHelper = new \Express\Authentication\JWTHelper();
+                    $payload = $jwtHelper->decode($token, $this->config['jwtSecret']);
+                    if ($payload) {
+                        $request = $request->withAttribute('user', $payload);
+                        return true;
+                    }
+                } catch (\Throwable $e) {
+                    // Token inválido, não autentica
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+    private function tryBasic(ServerRequestInterface $request, RequestHandlerInterface $handler): bool
+    {
+        $header = $request->getHeaderLine('Authorization');
+        if (strpos($header, 'Basic ') === 0) {
+            $decoded = base64_decode(substr($header, 6));
+            if ($decoded && strpos($decoded, ':') !== false) {
+                [$username, $password] = explode(':', $decoded, 2);
+                if (isset($this->config['basicAuthCallback']) && is_callable($this->config['basicAuthCallback'])) {
+                    $result = call_user_func($this->config['basicAuthCallback'], $username, $password);
+                    if ($result) {
+                        $request = $request->withAttribute('user', $result);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private function tryBearer(ServerRequestInterface $request, RequestHandlerInterface $handler): bool
+    {
+        $header = $request->getHeaderLine('Authorization');
+        if (strpos($header, 'Bearer ') === 0) {
+            $token = substr($header, 7);
+            if (isset($this->config['bearerAuthCallback']) && is_callable($this->config['bearerAuthCallback'])) {
+                $result = call_user_func($this->config['bearerAuthCallback'], $token);
+                if ($result) {
+                    $request = $request->withAttribute('user', $result);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private function tryCustom(ServerRequestInterface $request, RequestHandlerInterface $handler): bool
+    {
+        if (isset($this->config['customAuthCallback']) && is_callable($this->config['customAuthCallback'])) {
+            $result = call_user_func($this->config['customAuthCallback'], $request);
+            if ($result) {
+                $request = $request->withAttribute('user', $result);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function unauthorizedResponse(): ResponseInterface
+    {
+        $jsonResponse = json_encode(['error' => 'Unauthorized']);
+        if ($jsonResponse === false) {
+            $jsonResponse = '{"error": "Unauthorized"}';
+        }
+        return new \Express\Http\Psr7\Response(
+            401,
+            ['Content-Type' => 'application/json'],
+            \Express\Http\Psr7\Stream::createFromString($jsonResponse)
         );
     }
 
