@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🧹 Express PHP v2.0.1 - Documentation Cleanup Script
+# 🧹 HelixPHP v1.0.0 - Documentation Cleanup Script
 # Remove arquivos redundantes e consolida documentação
 
 set -e
@@ -34,11 +34,11 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-title "Express PHP v2.0.1 - Documentation Cleanup"
+title "HelixPHP v1.0.0 - Documentation Cleanup"
 
 # Verificar se estamos no diretório correto
 if [ ! -f "composer.json" ] || [ ! -d "src" ]; then
-    error "Execute este script no diretório raiz do projeto Express PHP"
+    error "Execute este script no diretório raiz do projeto HelixPHP"
     exit 1
 fi
 
@@ -59,10 +59,10 @@ echo -e "${YELLOW}Criando backup em: $BACKUP_DIR${NC}"
 
 # Lista de arquivos para backup (redundantes que serão removidos)
 REDUNDANT_FILES=(
-    "README_v2.0.1.md"
+    "README_v1.0.0.md"
     "PERFORMANCE_REPORT_FINAL.md"
     "TECHNICAL_OPTIMIZATION_SUMMARY.md"
-    "CONSOLIDATION_SUMMARY_v2.0.1.md"
+    "CONSOLIDATION_SUMMARY_v1.0.0.md"
     "ADVANCED_OPTIMIZATIONS_REPORT.md"
     "OPTIMIZATION_FINAL_REPORT.md"
     "OPTIMIZATION_IMPLEMENTATION_COMPLETE.md"
@@ -81,7 +81,7 @@ done
 title "📊 Verificando Documentação Consolidada"
 
 CORE_DOCS=(
-    "FRAMEWORK_OVERVIEW_v2.0.1.md"
+    "FRAMEWORK_OVERVIEW_v1.0.0.md"
     "DOCUMENTATION_GUIDE.md"
     "README.md"
     "CHANGELOG.md"
@@ -123,7 +123,7 @@ for file in "${REDUNDANT_FILES[@]}"; do
     fi
 done
 
-echo -e "\n${BLUE}Motivo: Informações consolidadas em FRAMEWORK_OVERVIEW_v2.0.1.md${NC}"
+echo -e "\n${BLUE}Motivo: Informações consolidadas em FRAMEWORK_OVERVIEW_v1.0.0.md${NC}"
 
 # Perguntar confirmação
 echo -e "\n${YELLOW}Deseja continuar com a limpeza? (y/N):${NC}"
@@ -149,12 +149,12 @@ title "📝 Atualizando Referências"
 
 if [ -f "README.md" ]; then
     # Adicionar referência ao overview consolidado no início do README
-    if ! grep -q "FRAMEWORK_OVERVIEW_v2.0.1.md" README.md; then
+    if ! grep -q "FRAMEWORK_OVERVIEW_v1.0.0.md" README.md; then
         # Criar backup do README atual
         cp README.md README.md.backup
 
         # Adicionar linha de referência após os badges
-        sed -i '/^\[!\[.*\]\]/a\\n> 📖 **Complete v2.0.1 Guide**: See [FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md) for comprehensive documentation\n' README.md
+        sed -i '/^\[!\[.*\]\]/a\\n> 📖 **Complete v1.0.0 Guide**: See [FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md) for comprehensive documentation\n' README.md
 
         success "README.md atualizado com referência ao overview consolidado"
     fi
@@ -176,7 +176,7 @@ title "📁 Estrutura Final de Documentação"
 
 echo -e "${GREEN}📋 Documentação Principal:${NC}"
 echo "  ✅ README.md                        # Overview geral do framework"
-echo "  ✅ FRAMEWORK_OVERVIEW_v2.0.1.md     # Guia completo v2.0.1"
+echo "  ✅ FRAMEWORK_OVERVIEW_v1.0.0.md     # Guia completo v1.0.0"
 echo "  ✅ DOCUMENTATION_GUIDE.md           # Guia de navegação"
 echo "  ✅ CHANGELOG.md                     # Histórico de versões"
 
@@ -212,14 +212,14 @@ echo "  • Estrutura organizada: docs/, benchmarks/, examples/"
 echo ""
 
 echo -e "${BLUE}🎯 Próximos passos:${NC}"
-echo "1. Revisar FRAMEWORK_OVERVIEW_v2.0.1.md"
+echo "1. Revisar FRAMEWORK_OVERVIEW_v1.0.0.md"
 echo "2. Testar navegação com DOCUMENTATION_GUIDE.md"
 echo "3. Validar que todas as informações importantes foram preservadas"
 echo "4. Commit das mudanças"
 echo ""
 
 echo -e "${GREEN}📖 Para usuários:${NC}"
-echo "• Documentação principal: FRAMEWORK_OVERVIEW_v2.0.1.md"
+echo "• Documentação principal: FRAMEWORK_OVERVIEW_v1.0.0.md"
 echo "• Guia de navegação: DOCUMENTATION_GUIDE.md"
 echo "• Performance e benchmarks: benchmarks/"
 echo "• Exemplos práticos: examples/"
@@ -228,4 +228,4 @@ echo ""
 warning "Revise o backup em $BACKUP_DIR antes de fazer commit"
 
 echo -e "\n${GREEN}🎉 Documentação limpa e organizada!${NC}"
-echo -e "${BLUE}Express PHP v2.0.1 - Clear Documentation, Exceptional Performance${NC}"
+echo -e "${BLUE}HelixPHP v1.0.0 - Clear Documentation, Exceptional Performance${NC}"

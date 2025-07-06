@@ -1,4 +1,4 @@
-# 🐳 Docker Benchmarks for Express PHP
+# 🐳 Docker Benchmarks for HelixPHP
 
 This document explains how to run standardized benchmarks using Docker to ensure consistent results across different environments.
 
@@ -173,8 +173,8 @@ Create `benchmarks/custom_benchmark.php`:
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Database\PDOConnection;
+use Helix\Core\Application;
+use Helix\Database\PDOConnection;
 
 // Your custom benchmark code here
 ```
@@ -316,7 +316,7 @@ jobs:
 
 ## 📚 Additional Resources
 
-- [Express PHP Performance Guide](../docs/performance/README.md)
+- [HelixPHP Performance Guide](../docs/performance/README.md)
 - [PHP OPcache Documentation](https://www.php.net/manual/en/book.opcache.php)
 - [MySQL Performance Schema](https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html)
 - [Redis Benchmarking](https://redis.io/docs/management/optimization/benchmarks/)

@@ -231,10 +231,10 @@ Comparação com versões anteriores do HelixPHP:
 
 | Versão | MySQL | PostgreSQL | MariaDB | SQLite |
 |--------|-------|------------|---------|---------|
-| v2.0.1 | 2,345 req/s | 2,123 req/s | 2,456 req/s | 4,567 req/s |
-| v2.1.1 | 3,456 req/s | 2,876 req/s | 3,567 req/s | 6,234 req/s |
-| v2.1.2 | 3,987 req/s | 3,234 req/s | 4,012 req/s | 7,345 req/s |
-| **v2.1.3** | **4,123 req/s** | **3,567 req/s** | **4,234 req/s** | **7,812 req/s** |
+| v1.0.0 | 2,345 req/s | 2,123 req/s | 2,456 req/s | 4,567 req/s |
+| v1.0.0 | 3,456 req/s | 2,876 req/s | 3,567 req/s | 6,234 req/s |
+| v1.0.0 | 3,987 req/s | 3,234 req/s | 4,012 req/s | 7,345 req/s |
+| **v1.0.0** | **4,123 req/s** | **3,567 req/s** | **4,234 req/s** | **7,812 req/s** |
 
 ## 💻 Exemplo de Implementação com PDO
 

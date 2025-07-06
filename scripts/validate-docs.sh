@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Express PHP v2.1.2 - Validador de Documentação
-# Valida a nova estrutura de documentação v2.1.2
+# HelixPHP v1.0.0 - Validador de Documentação
+# Valida a nova estrutura de documentação v1.0.0
 
-echo "📚 Validando estrutura de documentação Express PHP v2.1.2..."
+echo "📚 Validando estrutura de documentação HelixPHP v1.0.0..."
 echo "============================================================="
 echo ""
 
@@ -75,7 +75,7 @@ print_status "Validando estrutura principal de documentação..."
 # Estrutura principal
 validate_directory "docs" "Diretório principal docs/"
 validate_directory "docs/releases" "Diretório de releases"
-validate_directory "docs/techinical" "Diretório técnico"
+validate_directory "docs/technical" "Diretório técnico"
 validate_directory "docs/performance" "Diretório de performance"
 validate_directory "docs/implementions" "Diretório de implementações"
 validate_directory "docs/testing" "Diretório de testes"
@@ -95,24 +95,24 @@ print_status "Validando documentação de releases..."
 
 # Releases
 validate_file "docs/releases/README.md" "Índice de releases" 1000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" "Overview v2.1.2 (ATUAL)" 10000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md" "Overview v2.1.1" 5000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md" "Overview v2.0.1" 5000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0 (ATUAL)" 10000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 5000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 5000
 
 echo ""
 print_status "Validando documentação técnica..."
 
 # Documentação técnica
-validate_file "docs/techinical/application.md" "Documentação da Application" 5000
-validate_file "docs/techinical/http/request.md" "Documentação de Request" 5000
-validate_file "docs/techinical/http/response.md" "Documentação de Response" 5000
-validate_file "docs/techinical/routing/router.md" "Documentação do Router" 5000
-validate_file "docs/techinical/middleware/README.md" "Índice de middlewares" 5000
-validate_file "docs/techinical/authentication/usage_native.md" "Autenticação nativa" 10000
+validate_file "docs/technical/application.md" "Documentação da Application" 5000
+validate_file "docs/technical/http/request.md" "Documentação de Request" 5000
+validate_file "docs/technical/http/response.md" "Documentação de Response" 5000
+validate_file "docs/technical/routing/router.md" "Documentação do Router" 5000
+validate_file "docs/technical/middleware/README.md" "Índice de middlewares" 5000
+validate_file "docs/technical/authentication/usage_native.md" "Autenticação nativa" 10000
 
 # Verificar documentação OpenAPI
-if [ -f "docs/techinical/http/openapi_documentation.md" ]; then
-    validate_file "docs/techinical/http/openapi_documentation.md" "Documentação OpenAPI" 5000
+if [ -f "docs/technical/http/openapi_documentation.md" ]; then
+    validate_file "docs/technical/http/openapi_documentation.md" "Documentação OpenAPI" 5000
 else
     print_warning "Documentação OpenAPI não encontrada (opcional)"
     ((WARNINGS++))
@@ -140,17 +140,17 @@ print_status "Validando documentação de contribuição..."
 validate_file "docs/contributing/README.md" "Guia de contribuição" 5000
 
 echo ""
-print_status "Verificando conteúdo específico v2.1.2..."
+print_status "Verificando conteúdo específico v1.0.0..."
 
-# Verificar conteúdo específico da v2.1.2
-if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" ]; then
-    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md")
+# Verificar conteúdo específico da v1.0.0
+if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" ]; then
+    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md")
 
     if echo "$content" | grep -q "2.69M" && echo "$content" | grep -q "PHP 8.4.8" && echo "$content" | grep -q "JIT"; then
-        print_success "FRAMEWORK_OVERVIEW_v2.1.2.md contém métricas de performance v2.1.2"
+        print_success "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance v1.0.0"
         ((PASSED++))
     else
-        print_warning "FRAMEWORK_OVERVIEW_v2.1.2.md pode estar incompleto (faltam métricas v2.1.2)"
+        print_warning "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas v1.0.0)"
         ((WARNINGS++))
     fi
 fi
@@ -159,11 +159,11 @@ fi
 if [ -f "docs/index.md" ]; then
     content=$(cat "docs/index.md")
 
-    if echo "$content" | grep -q "v2.1.2" && echo "$content" | grep -q "releases/" && echo "$content" | grep -q "techinical/"; then
-        print_success "Índice principal atualizado para estrutura v2.1.2"
+    if echo "$content" | grep -q "v1.0.0" && echo "$content" | grep -q "releases/" && echo "$content" | grep -q "technical/"; then
+        print_success "Índice principal atualizado para estrutura v1.0.0"
         ((PASSED++))
     else
-        print_warning "Índice principal pode não estar totalmente atualizado para v2.1.2"
+        print_warning "Índice principal pode não estar totalmente atualizado para v1.0.0"
         ((WARNINGS++))
     fi
 fi
@@ -172,7 +172,7 @@ echo ""
 print_status "Verificando migração de arquivos da raiz..."
 
 # Verificar se arquivos antigos foram movidos da raiz
-old_files=("FRAMEWORK_OVERVIEW_v2.0.1.md" "FRAMEWORK_OVERVIEW_v2.1.1.md" "FRAMEWORK_OVERVIEW_v2.1.2.md")
+old_files=("FRAMEWORK_OVERVIEW_v1.0.0.md" "FRAMEWORK_OVERVIEW_v1.0.0.md" "FRAMEWORK_OVERVIEW_v1.0.0.md")
 
 for file in "${old_files[@]}"; do
     if [ -f "$file" ]; then
@@ -208,9 +208,9 @@ echo ""
 if [ $ERRORS -eq 0 ]; then
     print_success "🎉 VALIDAÇÃO DE DOCUMENTAÇÃO CONCLUÍDA COM SUCESSO!"
     echo ""
-    echo "✅ A documentação Express PHP v2.1.2 está:"
+    echo "✅ A documentação HelixPHP v1.0.0 está:"
     echo "   • Bem estruturada e organizada"
-    echo "   • Atualizada para a versão v2.1.2"
+    echo "   • Atualizada para a versão v1.0.0"
     echo "   • Pronta para uso por desenvolvedores"
     echo "   • Compatível com publicação"
 
@@ -223,7 +223,7 @@ if [ $ERRORS -eq 0 ]; then
     echo "📖 Estrutura de navegação:"
     echo "   • Início: docs/index.md"
     echo "   • Releases: docs/releases/"
-    echo "   • Técnico: docs/techinical/"
+    echo "   • Técnico: docs/technical/"
     echo "   • Performance: docs/performance/"
     echo "   • Implementações: docs/implementions/"
     echo "   • Testes: docs/testing/"

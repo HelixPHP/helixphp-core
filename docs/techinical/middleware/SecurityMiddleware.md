@@ -340,7 +340,7 @@ class SecurityMiddleware
             ],
             'customHeaders' => [
                 'X-Environment' => 'production',
-                'Server' => 'Express-PHP'  // Ocultar versão do servidor
+                'Server' => 'HelixPHP'  // Ocultar versão do servidor
             ]
         ]);
     }

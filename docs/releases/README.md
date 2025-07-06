@@ -4,8 +4,8 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 
 ## 📚 Versões Disponíveis
 
-### 🐛 v2.1.3 (Atual) - 06/07/2025
-**[FRAMEWORK_OVERVIEW_v2.1.3.md](FRAMEWORK_OVERVIEW_v2.1.3.md)**
+### 🐛 v1.0.0 (Atual) - 06/07/2025
+**[FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)**
 
 **Destaques:**
 - ✅ **PHP 8.4 Ready**: Compatibilidade total com PHP 8.4
@@ -18,16 +18,16 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 - ReflectionProperty::setValue() deprecation warnings
 - Exception handler type compatibility
 - PSR-12 code style violations
-- Mantém toda performance da v2.1.2
+- Mantém toda performance da v1.0.0
 
-### 🚀 v2.1.2 - 02/07/2025
-**[FRAMEWORK_OVERVIEW_v2.1.2.md](FRAMEWORK_OVERVIEW_v2.1.2.md)**
+### 🚀 v1.0.0 - 02/07/2025
+**[FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)**
 
 **Destaques:**
 - ✅ **PHP 8.4.8 + JIT**: Otimização completa para PHP 8.4.8 com JIT
 - ✅ **+17% Performance**: Throughput geral melhorado
 - ✅ **2.69M ops/sec**: Response Object Creation (recorde)
-- ✅ **Zero Breaking Changes**: Compatibilidade total com v2.1.1
+- ✅ **Zero Breaking Changes**: Compatibilidade total com v1.0.0
 - ✅ **Enhanced Optimizations**: ML cache, zero-copy, memory mapping
 
 **Métricas principais:**
@@ -36,8 +36,8 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 - JSON Encoding: 1.73M ops/s
 - Memory overhead: 3.08 KB por instância
 
-### 🏆 v2.1.1 - 27/06/2025
-**[FRAMEWORK_OVERVIEW_v2.1.1.md](FRAMEWORK_OVERVIEW_v2.1.1.md)**
+### 🏆 v1.0.0 - 27/06/2025
+**[FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)**
 
 **Destaques:**
 - ✅ **Advanced Optimizations**: ML cache, zero-copy operations
@@ -45,8 +45,8 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 - ✅ **278% Improvement**: Performance geral vs v1.x
 - ✅ **Pipeline Compiler**: 14,889 compilações/sec
 
-### 📈 v2.0.1
-**[FRAMEWORK_OVERVIEW_v2.0.1.md](FRAMEWORK_OVERVIEW_v2.0.1.md)**
+### 📈 v1.0.0
+**[FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)**
 
 **Destaques:**
 - ✅ **Core Rewrite**: Arquitetura otimizada
@@ -58,19 +58,19 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 
 | Versão | Throughput | Memory | Latência | Destaque |
 |--------|------------|--------|----------|----------|
-| **v2.1.3** | **1,400 req/s** | **1.2 MB** | **0.71 ms** | PHP 8.4 Compatibility |
-| v2.1.2 | 1,400 req/s | 1.2 MB | 0.71 ms | PHP 8.4.8 JIT |
-| v2.1.1 | 1,200 req/s | 1.4 MB | 0.83 ms | ML Optimizations |
-| v2.0.1 | 950 req/s | 1.8 MB | 1.05 ms | Core Rewrite |
+| **v1.0.0** | **1,400 req/s** | **1.2 MB** | **0.71 ms** | PHP 8.4 Compatibility |
+| v1.0.0 | 1,400 req/s | 1.2 MB | 0.71 ms | PHP 8.4.8 JIT |
+| v1.0.0 | 1,200 req/s | 1.4 MB | 0.83 ms | ML Optimizations |
+| v1.0.0 | 950 req/s | 1.8 MB | 1.05 ms | Core Rewrite |
 | v2.0.0 | 800 req/s | 2.1 MB | 1.25 ms | Initial Release |
 
 ## 🔄 Guia de Migração
 
-### De v2.1.2 para v2.1.3
+### De v1.0.0 para v1.0.0
 - ✅ **Zero breaking changes** - Drop-in replacement
 - ✅ **PHP 8.4 Ready** - Compatibilidade total garantida
 
-### De v2.1.1 para v2.1.2
+### De v1.0.0 para v1.0.0
 - ✅ **Zero breaking changes** - Drop-in replacement
 - 🔧 **Configuração PHP**: Atualizar para PHP 8.4.8 + JIT
 - ⚡ **Performance**: Ganhos automáticos de 17%
@@ -128,4 +128,4 @@ Para dúvidas sobre versões específicas:
 ---
 
 **Última atualização:** 06/07/2025
-**Versão atual:** v2.1.3
+**Versão atual:** v1.0.0

@@ -1,6 +1,6 @@
-# Exemplos Express PHP
+# Exemplos HelixPHP
 
-Esta pasta contém exemplos práticos e funcionais do Express PHP Framework. Cada exemplo demonstra diferentes recursos e funcionalidades do framework.
+Esta pasta contém exemplos práticos e funcionais do HelixPHP Framework. Cada exemplo demonstra diferentes recursos e funcionalidades do framework.
 
 ## 📂 Lista de Exemplos
 
@@ -16,7 +16,7 @@ Esta pasta contém exemplos práticos e funcionais do Express PHP Framework. Cad
 
 ### 🎯 **Para Começar**
 
-1. **Novo no Express PHP?** → Comece com `example_basic.php`
+1. **Novo no HelixPHP?** → Comece com `example_basic.php`
 2. **Precisa de autenticação?** → Veja `example_auth_simple.php`
 3. **Quer usar middlewares padrão?** → Execute `example_standard_middlewares.php`
 4. **Quer documentação automática?** → Execute `example_openapi_docs.php`

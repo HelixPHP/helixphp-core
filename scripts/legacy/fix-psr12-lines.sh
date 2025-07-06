@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Express PHP - Correção de linhas longas PSR-12
+# HelixPHP - Correção de linhas longas PSR-12
 # Corrige automaticamente linhas que excedem 120 caracteres
 
 set -e

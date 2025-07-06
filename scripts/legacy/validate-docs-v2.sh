@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Express PHP v2.1.2 - Validador de Documentação Atualizada
-# Verifica se a documentação está organizada corretamente com nova estrutura v2.1.2
+# HelixPHP v1.0.0 - Validador de Documentação Atualizada
+# Verifica se a documentação está organizada corretamente com nova estrutura v1.0.0
 
-echo "📚 Validando estrutura de documentação do Express PHP v2.1.2..."
+echo "📚 Validando estrutura de documentação do HelixPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'
@@ -76,7 +76,7 @@ WARNINGS=0
 
 print_status "Verificando documentação principal..."
 
-# Documentação principal (estrutura atual v2.1.2)
+# Documentação principal (estrutura atual v1.0.0)
 check_file "README.md" "README principal" || ((ERRORS++))
 check_file "CHANGELOG.md" "Changelog" || ((WARNINGS++))
 check_file "CONTRIBUTING.md" "Guia de contribuição" || ((WARNINGS++))
@@ -86,17 +86,17 @@ print_status "Verificando estrutura de releases..."
 # Nova estrutura de releases
 check_directory "docs/releases" "Diretório de releases" 3 || ((ERRORS++))
 check_file "docs/releases/README.md" "Índice de releases" 500 || ((ERRORS++))
-check_file "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" "Overview v2.1.2 (ATUAL)" 5000 || ((ERRORS++))
-check_file "docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md" "Overview v2.1.1" 3000 || ((WARNINGS++))
-check_file "docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md" "Overview v2.0.1" 3000 || ((WARNINGS++))
+check_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0 (ATUAL)" 5000 || ((ERRORS++))
+check_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 3000 || ((WARNINGS++))
+check_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 3000 || ((WARNINGS++))
 
 print_status "Verificando se arquivos foram movidos corretamente da raiz..."
 
 # Arquivos que DEVEM ter sido movidos para docs/releases/
 MOVED_FILES=(
-    "FRAMEWORK_OVERVIEW_v2.0.1.md"
-    "FRAMEWORK_OVERVIEW_v2.1.1.md"
-    "FRAMEWORK_OVERVIEW_v2.1.2.md"
+    "FRAMEWORK_OVERVIEW_v1.0.0.md"
+    "FRAMEWORK_OVERVIEW_v1.0.0.md"
+    "FRAMEWORK_OVERVIEW_v1.0.0.md"
 )
 
 for file in "${MOVED_FILES[@]}"; do
@@ -112,10 +112,10 @@ print_status "Verificando se arquivos redundantes foram removidos..."
 
 # Arquivos que DEVEM ter sido removidos (redundantes)
 REDUNDANT_FILES=(
-    "README_v2.0.1.md"
+    "README_v1.0.0.md"
     "PERFORMANCE_REPORT_FINAL.md"
     "TECHNICAL_OPTIMIZATION_SUMMARY.md"
-    "CONSOLIDATION_SUMMARY_v2.0.1.md"
+    "CONSOLIDATION_SUMMARY_v1.0.0.md"
     "ADVANCED_OPTIMIZATIONS_REPORT.md"
     "OPTIMIZATION_FINAL_REPORT.md"
     "DOCUMENTATION_GUIDE.md"
@@ -132,7 +132,7 @@ done
 
 print_status "Verificando estrutura de benchmarks..."
 
-# Benchmarks (essenciais para v2.0.1)
+# Benchmarks (essenciais para v1.0.0)
 check_directory "benchmarks" "Diretório de benchmarks" 5 || ((ERRORS++))
 check_directory "benchmarks/reports" "Relatórios de benchmark" 5 || ((ERRORS++))
 check_file "benchmarks/run_benchmark.sh" "Script de execução de benchmarks" || ((ERRORS++))
@@ -140,7 +140,7 @@ check_file "benchmarks/README.md" "Documentação dos benchmarks" || ((WARNINGS+
 
 print_status "Verificando estrutura de documentação técnica atualizada..."
 
-# Documentação técnica organizada (estrutura v2.1.2)
+# Documentação técnica organizada (estrutura v1.0.0)
 check_directory "docs" "Diretório de documentação técnica" 5 || ((WARNINGS++))
 check_file "docs/index.md" "Índice principal da documentação" 2000 || ((ERRORS++))
 
@@ -181,7 +181,7 @@ check_directory "docs/releases" "Documentação de releases" 4 || ((WARNINGS++))
 
 print_status "Verificando exemplos atualizados..."
 
-# Exemplos (importantes para v2.1.2)
+# Exemplos (importantes para v1.0.0)
 check_directory "examples" "Diretório de exemplos" 5 || ((ERRORS++))
 check_file "examples/example_basic.php" "Exemplo básico" || ((WARNINGS++))
 check_file "examples/example_middleware.php" "Exemplo com middleware" || ((WARNINGS++))
@@ -200,25 +200,25 @@ check_file "scripts/validate_project.php" "Script de validação do projeto" || 
 echo ""
 print_status "Verificando conteúdo e qualidade da documentação..."
 
-# Verificar se FRAMEWORK_OVERVIEW v2.1.2 tem conteúdo específico
-if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" ]; then
-    if grep -q "2.69M ops/sec" "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" && \
-       grep -q "PHP 8.4.8" "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md" && \
-       grep -q "JIT" "docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md"; then
-        print_success "FRAMEWORK_OVERVIEW_v2.1.2.md contém métricas de performance esperadas"
+# Verificar se FRAMEWORK_OVERVIEW v1.0.0 tem conteúdo específico
+if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" ]; then
+    if grep -q "2.69M ops/sec" "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" && \
+       grep -q "PHP 8.4.8" "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" && \
+       grep -q "JIT" "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md"; then
+        print_success "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance esperadas"
     else
-        print_warning "FRAMEWORK_OVERVIEW_v2.1.2.md pode estar incompleto (faltam métricas v2.1.2)"
+        print_warning "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas v1.0.0)"
         ((WARNINGS++))
     fi
 else
-    print_error "FRAMEWORK_OVERVIEW_v2.1.2.md não encontrado em docs/releases/"
+    print_error "FRAMEWORK_OVERVIEW_v1.0.0.md não encontrado em docs/releases/"
     ((ERRORS++))
 fi
 
 # Verificar se docs/index.md referencia as releases
 if [ -f "docs/index.md" ]; then
     if grep -q "releases" "docs/index.md" && \
-       grep -q "v2.1.2" "docs/index.md"; then
+       grep -q "v1.0.0" "docs/index.md"; then
         print_success "docs/index.md referencia corretamente as releases"
     else
         print_warning "docs/index.md pode não estar referenciando as releases corretamente"
@@ -234,9 +234,9 @@ if [ -f "docs/performance/benchmarks/README.md" ]; then
     if grep -q "02/07/2025" "docs/performance/benchmarks/README.md" && \
        grep -q "2.69M" "docs/performance/benchmarks/README.md" && \
        grep -q "PHP 8.4.8" "docs/performance/benchmarks/README.md"; then
-        print_success "Benchmarks atualizados com dados v2.1.2"
+        print_success "Benchmarks atualizados com dados v1.0.0"
     else
-        print_warning "Benchmarks podem não estar atualizados para v2.1.2"
+        print_warning "Benchmarks podem não estar atualizados para v1.0.0"
         ((WARNINGS++))
     fi
 else
@@ -246,10 +246,10 @@ fi
 
 # Verificar se README principal referencia a nova estrutura
 if [ -f "README.md" ]; then
-    if grep -q "docs/releases" "README.md" || grep -q "v2.1.2" "README.md"; then
-        print_success "README principal referencia corretamente a nova estrutura v2.1.2"
+    if grep -q "docs/releases" "README.md" || grep -q "v1.0.0" "README.md"; then
+        print_success "README principal referencia corretamente a nova estrutura v1.0.0"
     else
-        print_warning "README principal pode não estar referenciando a nova estrutura v2.1.2"
+        print_warning "README principal pode não estar referenciando a nova estrutura v1.0.0"
         ((WARNINGS++))
     fi
 fi
@@ -302,12 +302,12 @@ done
 
 echo ""
 echo "=========================================="
-echo "🏁 RELATÓRIO FINAL DE VALIDAÇÃO v2.1.2"
+echo "🏁 RELATÓRIO FINAL DE VALIDAÇÃO v1.0.0"
 echo "=========================================="
 
 # Resumo da validação
-print_status "Resumo da estrutura v2.1.2:"
-echo "  📋 Releases: docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md"
+print_status "Resumo da estrutura v1.0.0:"
+echo "  📋 Releases: docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md"
 echo "  📖 Navegação: docs/index.md"
 echo "  📊 Benchmarks: docs/performance/benchmarks/README.md"
 echo "  💡 Exemplos: examples/"
@@ -317,23 +317,23 @@ echo "  🧪 Testes: docs/testing/"
 echo "  🤝 Contribuição: docs/contributing/"
 
 if [ $ERRORS -eq 0 ] && [ $WARNINGS -eq 0 ]; then
-    print_success "Documentação v2.1.2 perfeita! ✨"
+    print_success "Documentação v1.0.0 perfeita! ✨"
     echo ""
     echo "🎯 Estrutura validada:"
     echo "  ✅ Nova estrutura de releases implementada"
     echo "  ✅ Documentação técnica organizada"
     echo "  ✅ Navegação por categorias criada"
-    echo "  ✅ Performance data v2.1.2 preservada"
+    echo "  ✅ Performance data v1.0.0 preservada"
     echo "  ✅ Benchmarks atualizados"
     echo ""
     echo "📖 Próximos passos:"
-    echo "  1. Revisar docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md"
+    echo "  1. Revisar docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md"
     echo "  2. Testar navegação com docs/index.md"
     echo "  3. Executar benchmarks para validar dados"
     echo "  4. Fazer commit das mudanças"
     exit 0
 elif [ $ERRORS -eq 0 ]; then
-    print_warning "Estrutura v2.1.2 boa com $WARNINGS avisos"
+    print_warning "Estrutura v1.0.0 boa com $WARNINGS avisos"
     echo ""
     echo "⚠️  Avisos encontrados:"
     echo "  • Alguns arquivos opcionais podem estar ausentes"
@@ -343,7 +343,7 @@ elif [ $ERRORS -eq 0 ]; then
     echo "✅ Estrutura essencial está correta e funcional"
     exit 0
 else
-    print_error "Problemas encontrados na estrutura v2.1.2!"
+    print_error "Problemas encontrados na estrutura v1.0.0!"
     echo ""
     echo "❌ Erros: $ERRORS | ⚠️ Avisos: $WARNINGS"
     echo ""
@@ -351,7 +351,7 @@ else
     echo "  • Corrija os erros antes de continuar"
     echo "  • Verifique se a reestruturação foi executada corretamente"
     echo "  • Execute scripts de validação específicos se necessário"
-    echo "  • Verifique se FRAMEWORK_OVERVIEW_v2.1.2.md foi criado"
+    echo "  • Verifique se FRAMEWORK_OVERVIEW_v1.0.0.md foi criado"
     echo "  • Confirme que a documentação está na nova estrutura"
     exit 1
 fi

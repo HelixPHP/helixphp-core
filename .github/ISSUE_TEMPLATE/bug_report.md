@@ -1,6 +1,6 @@
 ---
 name: Bug Report
-about: Create a report to help us improve Express PHP
+about: Create a report to help us improve HelixPHP
 title: '[BUG] '
 labels: bug
 assignees: CAFernandes
@@ -26,7 +26,7 @@ Se aplicável, adicione screenshots para ajudar a explicar o problema.
 ## 🖥️ Ambiente
  - OS: [ex: Windows, macOS, Linux]
  - PHP Version: [ex: 8.1.0]
- - Express PHP Version: [ex: 1.0.0]
+ - HelixPHP Version: [ex: 1.0.0]
  - Web Server: [ex: Apache, Nginx]
 
 ## 📝 Contexto Adicional

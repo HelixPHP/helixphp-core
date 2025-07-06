@@ -133,8 +133,8 @@ Token validation: 117K ops/s
 | Symfony | 450 | 6.2 | 2.22 |
 | FastRoute | 1,100 | 1.8 | 0.91 |
 
-**Vantagens do HelixPHP (v2.1.3):**
-- ✅ **+47%** throughput vs. v2.0.1
+**Vantagens do HelixPHP (v1.0.0):**
+- ✅ **+47%** throughput vs. v1.0.0
 - ✅ **PHP 8.4** Compatibilidade total
 - ✅ **-15%** menor latência
 - ✅ **+27%** melhor eficiência geral
@@ -326,7 +326,7 @@ php benchmarks/EnhancedAdvancedOptimizationsBenchmark.php
 ### Configuração do PHP
 
 ```ini
-; php.ini otimizado para HelixPHP v2.1.2 + PHP 8.4.8
+; php.ini otimizado para HelixPHP v1.0.0 + PHP 8.4.8
 opcache.enable=1
 opcache.enable_cli=0
 opcache.memory_consumption=256
@@ -400,10 +400,10 @@ $app->configurePoolSizes([
 
 ```
 v2.0.0: 800 req/s
-v2.0.1: 950 req/s (+19%)
-v2.1.0: 1,100 req/s (+16%)
-v2.1.1: 1,200 req/s (+9%)
-v2.1.2: 1,400 req/s (+17%) - PHP 8.4.8
+v1.0.0: 950 req/s (+19%)
+v1.0.0: 1,100 req/s (+16%)
+v1.0.0: 1,200 req/s (+9%)
+v1.0.0: 1,400 req/s (+17%) - PHP 8.4.8
 ```
 
 ### Próximas Otimizações
@@ -507,12 +507,12 @@ $app->use(function($req, $res, $next) {
 });
 ```
 
-Os benchmarks do HelixPHP v2.1.2 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
+Os benchmarks do HelixPHP v1.0.0 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
 
 ### Destaques da Versão 2.1.3
 
 - **🚀 PHP 8.4**: Compatibilidade total com PHP 8.4
-- **💾 Performance**: Mantém todos ganhos da v2.1.2
+- **💾 Performance**: Mantém todos ganhos da v1.0.0
 - **⚡ Qualidade**: PHPStan Level 9, PSR-12 compliance
 - **🔧 Estabilidade**: 237 testes passando sem erros
 

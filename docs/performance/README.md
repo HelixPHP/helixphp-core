@@ -5,10 +5,10 @@ Este diretório contém toda a documentação relacionada à performance do Heli
 ## 📋 Índice
 
 ### Relatórios de Performance
-1. [**Performance Report v2.1.3**](PERFORMANCE_REPORT_v2.1.3.md) - Análise completa da versão atual
+1. [**Performance Report v1.0.0**](PERFORMANCE_REPORT_v1.0.0.md) - Análise completa da versão atual
 2. [**Database Performance**](DATABASE_PERFORMANCE.md) - Comparação entre MySQL, PostgreSQL, MariaDB e SQLite
 3. [**Performance Comparison**](PERFORMANCE_COMPARISON.md) - Evolução através das versões
-4. [**Performance Analysis v2.0.1**](PERFORMANCE_ANALYSIS_v2.0.1.md) - Análise histórica
+4. [**Performance Analysis v1.0.0**](PERFORMANCE_ANALYSIS_v1.0.0.md) - Análise histórica
 
 ### Ferramentas e Benchmarks
 5. [**Performance Monitor**](PerformanceMonitor.md) - Monitoramento em tempo real
@@ -24,7 +24,7 @@ O HelixPHP foi projetado desde o início com foco em alta performance, oferecend
 - 📊 **Métricas detalhadas**: Sistema completo de monitoramento e análise
 - 🚀 **Escalabilidade comprovada**: 2.5M+ operações por segundo
 
-## 📈 Principais Métricas (v2.1.3)
+## 📈 Principais Métricas (v1.0.0)
 
 ### Performance de Ponta
 

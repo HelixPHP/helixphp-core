@@ -1,8 +1,8 @@
-# 📊 HelixPHP v2.1.3 - Performance Report
+# 📊 HelixPHP v1.0.0 - Performance Report
 
 > **Comprehensive performance analysis with real-world benchmarks**
 
-[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.3)
+[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v1.0.0)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4.8-blue.svg)](https://php.net)
 [![Performance](https://img.shields.io/badge/Performance-Excellent-success.svg)](#benchmark-results)
 
@@ -10,7 +10,7 @@
 
 ## 🚀 Executive Summary
 
-HelixPHP v2.1.3 maintains exceptional performance while adding PHP 8.4 compatibility. Key highlights:
+HelixPHP v1.0.0 maintains exceptional performance while adding PHP 8.4 compatibility. Key highlights:
 
 - **2.58M ops/sec** - Response Object Creation (fastest operation)
 - **1.08M ops/sec** - JSON Encoding (small payloads)
@@ -73,7 +73,7 @@ HelixPHP v2.1.3 maintains exceptional performance while adding PHP 8.4 compatibi
 
 ## 🔥 Performance Improvements vs Previous Versions
 
-### v2.1.3 vs v2.1.2
+### v1.0.0 vs v1.0.0
 - **Response Creation**: Maintained at 2.5M+ ops/sec
 - **Memory Usage**: Reduced by 15% (6.6KB → 5.6KB per instance)
 - **JWT Performance**: Improved by 5%
@@ -84,10 +84,10 @@ HelixPHP v2.1.3 maintains exceptional performance while adding PHP 8.4 compatibi
 ```
 Version | Response Creation | Memory/App | PHP Support
 --------|------------------|------------|-------------
-v2.1.3  | 2.58M ops/sec   | 5.6 KB     | 8.1 - 8.4
-v2.1.2  | 2.69M ops/sec   | 3.08 KB    | 8.1 - 8.3
-v2.1.1  | 24M ops/sec     | 1.4 KB     | 8.1 - 8.2
-v2.0.1  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
+v1.0.0  | 2.58M ops/sec   | 5.6 KB     | 8.1 - 8.4
+v1.0.0  | 2.69M ops/sec   | 3.08 KB    | 8.1 - 8.3
+v1.0.0  | 24M ops/sec     | 1.4 KB     | 8.1 - 8.2
+v1.0.0  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
 ```
 
 ## 🏗️ Architecture Optimizations
@@ -177,7 +177,7 @@ v2.0.1  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
 
 ## 📈 Conclusion
 
-HelixPHP v2.1.3 delivers exceptional performance while maintaining code quality and adding PHP 8.4 support. The framework is production-ready and capable of handling high-traffic applications with minimal resource usage.
+HelixPHP v1.0.0 delivers exceptional performance while maintaining code quality and adding PHP 8.4 support. The framework is production-ready and capable of handling high-traffic applications with minimal resource usage.
 
 ### Key Takeaways
 - **Industry-leading performance** for PHP frameworks

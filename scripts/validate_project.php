@@ -16,7 +16,7 @@ class ProjectValidator
 
     public function validate()
     {
-        echo "🔍 Validando projeto HelixPHP v2.1.2...\n\n";
+        echo "🔍 Validando projeto HelixPHP v1.0.0...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -49,7 +49,7 @@ class ProjectValidator
             'tests/',
             'docs/',
             'docs/releases/',
-            'docs/techinical/',
+            'docs/technical/',
             'docs/performance/',
             'docs/implementions/',
             'docs/testing/',
@@ -73,14 +73,14 @@ class ProjectValidator
             'README.md',
             'docs/index.md',
             'docs/releases/README.md',
-            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md',
             'docs/implementions/usage_basic.md',
-            'docs/techinical/application.md',
-            'docs/techinical/http/request.md',
-            'docs/techinical/http/response.md',
-            'docs/techinical/routing/router.md',
-            'docs/techinical/middleware/README.md',
-            'docs/techinical/authentication/usage_native.md',
+            'docs/technical/application.md',
+            'docs/technical/http/request.md',
+            'docs/technical/http/response.md',
+            'docs/technical/routing/router.md',
+            'docs/technical/middleware/README.md',
+            'docs/technical/authentication/usage_native.md',
             'docs/performance/PerformanceMonitor.md',
             'docs/performance/benchmarks/README.md',
             'docs/testing/api_testing.md',
@@ -169,7 +169,7 @@ class ProjectValidator
 
             // Testar geração de token
             try {
-                $token = Express\Authentication\JWTHelper::encode(['user_id' => 1], 'test_secret');
+                $token = Helix\Authentication\JWTHelper::encode(['user_id' => 1], 'test_secret');
                 if ($token) {
                     $this->passed[] = "JWTHelper pode gerar tokens";
                 } else {
@@ -237,7 +237,7 @@ class ProjectValidator
 
     private function validateDocumentation()
     {
-        echo "📚 Validando documentação v2.1.2...\n";
+        echo "📚 Validando documentação v1.0.0...\n";
 
         // Documentação principal
         $mainDocs = [
@@ -262,9 +262,9 @@ class ProjectValidator
         // Documentação de releases
         $releaseDocs = [
             'docs/releases/README.md' => 'Índice de releases',
-            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md' => 'Overview v2.1.2 (ATUAL)',
-            'docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md' => 'Overview v2.1.1',
-            'docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Overview v2.0.1',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
         ];
 
         foreach ($releaseDocs as $file => $description) {
@@ -284,12 +284,12 @@ class ProjectValidator
         $technicalDocs = [
             'docs/index.md' => 'Índice principal da documentação',
             'docs/implementions/usage_basic.md' => 'Guia básico de uso',
-            'docs/techinical/application.md' => 'Documentação da Application',
-            'docs/techinical/http/request.md' => 'Documentação de Request',
-            'docs/techinical/http/response.md' => 'Documentação de Response',
-            'docs/techinical/routing/router.md' => 'Documentação do Router',
-            'docs/techinical/middleware/README.md' => 'Índice de middlewares',
-            'docs/techinical/authentication/usage_native.md' => 'Autenticação nativa',
+            'docs/technical/application.md' => 'Documentação da Application',
+            'docs/technical/http/request.md' => 'Documentação de Request',
+            'docs/technical/http/response.md' => 'Documentação de Response',
+            'docs/technical/routing/router.md' => 'Documentação do Router',
+            'docs/technical/middleware/README.md' => 'Índice de middlewares',
+            'docs/technical/authentication/usage_native.md' => 'Autenticação nativa',
             'docs/performance/PerformanceMonitor.md' => 'Monitor de performance',
             'docs/performance/benchmarks/README.md' => 'Documentação de benchmarks',
             'docs/testing/api_testing.md' => 'Testes de API',
@@ -325,7 +325,7 @@ class ProjectValidator
             // Validação básica de autenticação sem instanciar classes específicas
             if (class_exists('Helix\\Authentication\\JWTHelper')) {
                 // Testar JWT Helper básico
-                $jwt = Express\Authentication\JWTHelper::encode(['test' => true], 'secret');
+                $jwt = Helix\Authentication\JWTHelper::encode(['test' => true], 'secret');
                 if ($jwt) {
                     $this->passed[] = "Sistema de autenticação funcional";
                 } else {
@@ -402,7 +402,7 @@ class ProjectValidator
             // Testar export básico
             try {
                 if (class_exists('Helix\\Routing\\Router')) {
-                    $docs = Express\Utils\OpenApiExporter::export('Helix\\Routing\\Router');
+                    $docs = Helix\Utils\OpenApiExporter::export('Helix\\Routing\\Router');
                     if (is_array($docs) && isset($docs['openapi'])) {
                         $this->passed[] = "OpenApiExporter pode gerar documentação";
 
@@ -454,9 +454,9 @@ class ProjectValidator
             // Verificar arquivos de release
             $releaseFiles = [
                 'docs/releases/README.md' => 'Índice de releases',
-                'docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md' => 'Overview v2.1.2 (ATUAL)',
-                'docs/releases/FRAMEWORK_OVERVIEW_v2.1.1.md' => 'Overview v2.1.1',
-                'docs/releases/FRAMEWORK_OVERVIEW_v2.0.1.md' => 'Overview v2.0.1'
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0'
             ];
 
             foreach ($releaseFiles as $file => $description) {
@@ -468,7 +468,7 @@ class ProjectValidator
                         $this->warnings[] = "{$description} existe mas tem pouco conteúdo ({$size} bytes)";
                     }
                 } else {
-                    if (strpos($file, 'v2.1.2') !== false) {
+                    if (strpos($file, 'v1.0.0') !== false) {
                         $this->errors[] = "{$description} não encontrado: {$file}";
                     } else {
                         $this->warnings[] = "{$description} não encontrado: {$file}";
@@ -476,16 +476,16 @@ class ProjectValidator
                 }
             }
 
-            // Verificar se v2.1.2 tem conteúdo específico
-            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md')) {
-                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md');
+            // Verificar se v1.0.0 tem conteúdo específico
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md')) {
+                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md');
 
                 if (strpos($content, '2.69M ops/sec') !== false &&
                     strpos($content, 'PHP 8.4.8') !== false &&
                     strpos($content, 'JIT') !== false) {
-                    $this->passed[] = "FRAMEWORK_OVERVIEW_v2.1.2.md contém métricas de performance esperadas";
+                    $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance esperadas";
                 } else {
-                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v2.1.2.md pode estar incompleto (faltam métricas v2.1.2)";
+                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas v1.0.0)";
                 }
             }
 
@@ -495,9 +495,9 @@ class ProjectValidator
 
         // Verificar se arquivos foram movidos da raiz
         $movedFiles = [
-            'FRAMEWORK_OVERVIEW_v2.0.1.md',
-            'FRAMEWORK_OVERVIEW_v2.1.1.md',
-            'FRAMEWORK_OVERVIEW_v2.1.2.md'
+            'FRAMEWORK_OVERVIEW_v1.0.0.md',
+            'FRAMEWORK_OVERVIEW_v1.0.0.md',
+            'FRAMEWORK_OVERVIEW_v1.0.0.md'
         ];
 
         foreach ($movedFiles as $file) {
@@ -564,14 +564,14 @@ class ProjectValidator
             if ($size > 2000) {
                 $this->passed[] = "Documentação de benchmarks existe e tem conteúdo adequado ({$size} bytes)";
 
-                // Verificar se contém dados v2.1.2
+                // Verificar se contém dados v1.0.0
                 $content = file_get_contents('docs/performance/benchmarks/README.md');
                 if (strpos($content, '02/07/2025') !== false &&
                     strpos($content, '2.69M') !== false &&
                     strpos($content, 'PHP 8.4.8') !== false) {
-                    $this->passed[] = "Documentação de benchmarks atualizada com dados v2.1.2";
+                    $this->passed[] = "Documentação de benchmarks atualizada com dados v1.0.0";
                 } else {
-                    $this->warnings[] = "Documentação de benchmarks pode não estar atualizada para v2.1.2";
+                    $this->warnings[] = "Documentação de benchmarks pode não estar atualizada para v1.0.0";
                 }
             } else {
                 $this->warnings[] = "Documentação de benchmarks tem pouco conteúdo ({$size} bytes)";
@@ -612,7 +612,7 @@ class ProjectValidator
 
         // Status final
         if (empty($this->errors)) {
-            echo "🎉 PROJETO EXPRESS PHP v2.1.2 VALIDADO COM SUCESSO!\n";
+            echo "🎉 PROJETO EXPRESS PHP v1.0.0 VALIDADO COM SUCESSO!\n";
             echo "   O projeto está pronto para uso e publicação.\n";
 
             if (!empty($this->warnings)) {
@@ -625,10 +625,10 @@ class ProjectValidator
             echo "   3. Valide a documentação: ./scripts/validate-docs.sh\n";
             echo "   4. Valide os benchmarks: ./scripts/validate_benchmarks.sh\n";
             echo "   5. Faça commit das alterações\n";
-            echo "   6. Crie uma tag de versão: git tag -a v2.1.2 -m 'Release v2.1.2'\n";
+            echo "   6. Crie uma tag de versão: git tag -a v1.0.0 -m 'Release v1.0.0'\n";
             echo "   7. Push para o repositório: git push origin main --tags\n";
             echo "   8. Publique no Packagist: https://packagist.org\n";
-            echo "   9. Repositório: https://github.com/CAFernandes/express-php\n";
+            echo "   9. Repositório: https://github.com/CAFernandes/helixphp-core\n";
 
             return true;
         } else {

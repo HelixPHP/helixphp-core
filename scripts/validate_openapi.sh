@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Script de Validação OpenAPI/Swagger - Express PHP
+# Script de Validação OpenAPI/Swagger - HelixPHP
 # Verifica se os recursos de documentação OpenAPI estão funcionando corretamente
 
-echo "🔍 Validando recursos OpenAPI/Swagger do Express PHP..."
+echo "🔍 Validando recursos OpenAPI/Swagger do HelixPHP..."
 echo
 
 # Verificar se o OpenApiExporter existe

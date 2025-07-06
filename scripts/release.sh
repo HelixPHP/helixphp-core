@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de Release Automatizado para Express-PHP
+# Script de Release Automatizado para HelixPHP
 # Versão: 2.0.1
 # Data: 26 de junho de 2025
 
@@ -39,7 +39,7 @@ title() {
 
 # Verificar se estamos na raiz do projeto
 if [ ! -f "composer.json" ]; then
-    error "Este script deve ser executado na raiz do projeto Express-PHP"
+    error "Este script deve ser executado na raiz do projeto HelixPHP"
 fi
 
 # Verificar argumentos
@@ -57,7 +57,7 @@ VERSION=$1
 RELEASE_TYPE=${2:-"release"}
 CURRENT_BRANCH=$(git branch --show-current)
 
-title "Express-PHP Release Manager v2.0.1"
+title "HelixPHP Release Manager v1.0.0"
 echo ""
 
 info "Versão a ser criada: $VERSION"
@@ -158,7 +158,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [$VERSION] - $(date +%Y-%m-%d)
 
 ### Adicionado
-- Release $VERSION do Express-PHP Framework
+- Release $VERSION do HelixPHP Framework
 
 EOF
 else
@@ -170,7 +170,7 @@ else
         echo "## [$VERSION] - $(date +%Y-%m-%d)"
         echo ""
         echo "### Adicionado"
-        echo "- Release $VERSION do Express-PHP Framework"
+        echo "- Release $VERSION do HelixPHP Framework"
         echo ""
         tail -n +8 CHANGELOG.md
     } > "$temp_file"
@@ -198,7 +198,7 @@ Release Type: $RELEASE_TYPE"
 info "Criando tag v$VERSION..."
 git tag -a "v$VERSION" -m "Release v$VERSION
 
-Express-PHP Framework $VERSION - Modular Edition
+HelixPHP Framework $VERSION - Modular Edition
 
 $(date +%Y-%m-%d)
 
@@ -229,5 +229,5 @@ echo "  • Branch: $CURRENT_BRANCH"
 echo "  • Tag: v$VERSION"
 echo "  • Data: $(date +%Y-%m-%d)"
 echo ""
-success "Express-PHP Framework está pronto para distribuição!"
+success "HelixPHP Framework está pronto para distribuição!"
 echo ""

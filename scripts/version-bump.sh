@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de Versionamento Semântico para Express-PHP
+# Script de Versionamento Semântico para HelixPHP
 # Automatiza bump de versões seguindo Semantic Versioning
 
 set -e

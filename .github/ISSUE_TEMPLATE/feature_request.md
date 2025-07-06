@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for Express PHP
+about: Suggest an idea for HelixPHP
 title: '[FEATURE] '
 labels: enhancement
 assignees: CAFernandes

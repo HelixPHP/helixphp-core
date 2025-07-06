@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Express PHP v2.0.1 - Validador de Documentação Consolidada
+# HelixPHP v1.0.0 - Validador de Documentação Consolidada
 # Verifica se a documentação está organizada corretamente após consolidação
 
 set -e
 
-echo "📚 Validando estrutura de documentação consolidada do Express PHP v2.0.1..."
+echo "📚 Validando estrutura de documentação consolidada do HelixPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'
@@ -76,9 +76,9 @@ WARNINGS=0
 
 print_status "Verificando documentação principal consolidada..."
 
-# Documentação principal (nova estrutura v2.0.1)
+# Documentação principal (nova estrutura v1.0.0)
 check_file "README.md" "README principal" || ((ERRORS++))
-check_file "FRAMEWORK_OVERVIEW_v2.0.1.md" "Guia completo v2.0.1 (PRINCIPAL)" 1000 || ((ERRORS++))
+check_file "FRAMEWORK_OVERVIEW_v1.0.0.md" "Guia completo v1.0.0 (PRINCIPAL)" 1000 || ((ERRORS++))
 check_file "DOCUMENTATION_GUIDE.md" "Guia de navegação" || ((ERRORS++))
 check_file "CHANGELOG.md" "Changelog" || ((WARNINGS++))
 check_file "CONTRIBUTING.md" "Guia de contribuição" || ((WARNINGS++))
@@ -87,10 +87,10 @@ print_status "Verificando se arquivos redundantes foram removidos..."
 
 # Arquivos que DEVEM ter sido removidos (redundantes)
 REDUNDANT_FILES=(
-    "README_v2.0.1.md"
+    "README_v1.0.0.md"
     "PERFORMANCE_REPORT_FINAL.md"
     "TECHNICAL_OPTIMIZATION_SUMMARY.md"
-    "CONSOLIDATION_SUMMARY_v2.0.1.md"
+    "CONSOLIDATION_SUMMARY_v1.0.0.md"
     "ADVANCED_OPTIMIZATIONS_REPORT.md"
     "OPTIMIZATION_FINAL_REPORT.md"
 )
@@ -106,7 +106,7 @@ done
 
 print_status "Verificando estrutura de benchmarks..."
 
-# Benchmarks (essenciais para v2.0.1)
+# Benchmarks (essenciais para v1.0.0)
 check_directory "benchmarks" "Diretório de benchmarks" 5 || ((ERRORS++))
 check_directory "benchmarks/reports" "Relatórios de benchmark" 5 || ((ERRORS++))
 check_file "benchmarks/run_benchmark.sh" "Script de execução de benchmarks" || ((ERRORS++))
@@ -122,9 +122,9 @@ check_directory "docs/releases" "Notas de release" 1 || ((WARNINGS++))
 
 print_status "Verificando exemplos práticos..."
 
-# Exemplos (importantes para v2.0.1)
+# Exemplos (importantes para v1.0.0)
 check_directory "examples" "Diretório de exemplos" 3 || ((ERRORS++))
-check_file "examples/example_v2.0.1_showcase.php" "Showcase v2.0.1" || ((WARNINGS++))
+check_file "examples/example_v1.0.0_showcase.php" "Showcase v1.0.0" || ((WARNINGS++))
 check_file "examples/example_complete_optimizations.php" "Exemplo de otimizações" || ((WARNINGS++))
 
 print_status "Verificando scripts de suporte..."
@@ -132,29 +132,29 @@ print_status "Verificando scripts de suporte..."
 # Scripts
 check_directory "scripts" "Diretório de scripts" 5 || ((WARNINGS++))
 check_file "scripts/cleanup_docs.sh" "Script de limpeza de documentação" || ((WARNINGS++))
-check_file "scripts/publish_v2.0.1.sh" "Script de publicação v2.0.1" || ((WARNINGS++))
+check_file "scripts/publish_v1.0.0.sh" "Script de publicação v1.0.0" || ((WARNINGS++))
 
 echo ""
 print_status "Verificando conteúdo e qualidade da documentação..."
 
-# Verificar se FRAMEWORK_OVERVIEW tem conteúdo específico da v2.0.1
-if [ -f "FRAMEWORK_OVERVIEW_v2.0.1.md" ]; then
-    if grep -q "52M ops/sec" "FRAMEWORK_OVERVIEW_v2.0.1.md" && \
-       grep -q "ML-Powered Cache" "FRAMEWORK_OVERVIEW_v2.0.1.md" && \
-       grep -q "Zero-Copy Operations" "FRAMEWORK_OVERVIEW_v2.0.1.md"; then
-        print_success "FRAMEWORK_OVERVIEW_v2.0.1.md contém métricas de performance esperadas"
+# Verificar se FRAMEWORK_OVERVIEW tem conteúdo específico da v1.0.0
+if [ -f "FRAMEWORK_OVERVIEW_v1.0.0.md" ]; then
+    if grep -q "52M ops/sec" "FRAMEWORK_OVERVIEW_v1.0.0.md" && \
+       grep -q "ML-Powered Cache" "FRAMEWORK_OVERVIEW_v1.0.0.md" && \
+       grep -q "Zero-Copy Operations" "FRAMEWORK_OVERVIEW_v1.0.0.md"; then
+        print_success "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance esperadas"
     else
-        print_warning "FRAMEWORK_OVERVIEW_v2.0.1.md pode estar incompleto (faltam métricas)"
+        print_warning "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas)"
         ((WARNINGS++))
     fi
 fi
 
 # Verificar se README principal referencia a nova estrutura
 if [ -f "README.md" ]; then
-    if grep -q "FRAMEWORK_OVERVIEW_v2.0.1.md" "README.md"; then
-        print_success "README principal referencia corretamente a documentação v2.0.1"
+    if grep -q "FRAMEWORK_OVERVIEW_v1.0.0.md" "README.md"; then
+        print_success "README principal referencia corretamente a documentação v1.0.0"
     else
-        print_warning "README principal não referencia FRAMEWORK_OVERVIEW_v2.0.1.md"
+        print_warning "README principal não referencia FRAMEWORK_OVERVIEW_v1.0.0.md"
         ((WARNINGS++))
     fi
 fi
@@ -207,19 +207,19 @@ echo ""
 print_status "Validando qualidade da documentação consolidada..."
 
 # Verificar se a documentação principal tem tamanho adequado
-if [ -f "FRAMEWORK_OVERVIEW_v2.0.1.md" ]; then
-    OVERVIEW_SIZE=$(wc -c < "FRAMEWORK_OVERVIEW_v2.0.1.md")
+if [ -f "FRAMEWORK_OVERVIEW_v1.0.0.md" ]; then
+    OVERVIEW_SIZE=$(wc -c < "FRAMEWORK_OVERVIEW_v1.0.0.md")
     if [ "$OVERVIEW_SIZE" -gt 10000 ]; then
-        print_success "FRAMEWORK_OVERVIEW_v2.0.1.md tem tamanho adequado ($OVERVIEW_SIZE bytes)"
+        print_success "FRAMEWORK_OVERVIEW_v1.0.0.md tem tamanho adequado ($OVERVIEW_SIZE bytes)"
     else
-        print_warning "FRAMEWORK_OVERVIEW_v2.0.1.md pode estar incompleto ($OVERVIEW_SIZE bytes)"
+        print_warning "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto ($OVERVIEW_SIZE bytes)"
         ((WARNINGS++))
     fi
 fi
 
 # Verificar se há relatórios de benchmark recentes
 if [ -d "benchmarks/reports" ]; then
-    RECENT_REPORTS=$(find benchmarks/reports -name "*.md" -newer "FRAMEWORK_OVERVIEW_v2.0.1.md" 2>/dev/null | wc -l)
+    RECENT_REPORTS=$(find benchmarks/reports -name "*.md" -newer "FRAMEWORK_OVERVIEW_v1.0.0.md" 2>/dev/null | wc -l)
     if [ "$RECENT_REPORTS" -gt 0 ]; then
         print_success "Há $RECENT_REPORTS relatórios de benchmark mais recentes que a documentação"
     else
@@ -230,19 +230,19 @@ fi
 
 echo ""
 echo "=========================================="
-echo "🏁 RELATÓRIO FINAL DE VALIDAÇÃO v2.0.1"
+echo "🏁 RELATÓRIO FINAL DE VALIDAÇÃO v1.0.0"
 echo "=========================================="
 
 # Resumo da validação
 print_status "Resumo da estrutura consolidada:"
-echo "  📋 Documentação Principal: FRAMEWORK_OVERVIEW_v2.0.1.md"
+echo "  📋 Documentação Principal: FRAMEWORK_OVERVIEW_v1.0.0.md"
 echo "  📖 Navegação: DOCUMENTATION_GUIDE.md"
 echo "  📊 Benchmarks: benchmarks/reports/"
 echo "  💡 Exemplos: examples/"
 echo "  🔧 Técnica: docs/"
 
 if [ $ERRORS -eq 0 ] && [ $WARNINGS -eq 0 ]; then
-    print_success "Documentação consolidada v2.0.1 perfeita! ✨"
+    print_success "Documentação consolidada v1.0.0 perfeita! ✨"
     echo ""
     echo "🎯 Estrutura validada:"
     echo "  ✅ Arquivos redundantes removidos"
@@ -252,7 +252,7 @@ if [ $ERRORS -eq 0 ] && [ $WARNINGS -eq 0 ]; then
     echo "  ✅ Versão 2.0.1 consistente"
     echo ""
     echo "📖 Próximos passos:"
-    echo "  1. Revisar FRAMEWORK_OVERVIEW_v2.0.1.md"
+    echo "  1. Revisar FRAMEWORK_OVERVIEW_v1.0.0.md"
     echo "  2. Testar navegação com DOCUMENTATION_GUIDE.md"
     echo "  3. Executar benchmarks para validar dados"
     echo "  4. Fazer commit das mudanças"
@@ -276,7 +276,7 @@ else
     echo "  • Corrija os erros antes de continuar"
     echo "  • Verifique se a consolidação foi executada corretamente"
     echo "  • Execute: ./scripts/cleanup_docs.sh se necessário"
-    echo "  • Verifique se FRAMEWORK_OVERVIEW_v2.0.1.md foi criado"
+    echo "  • Verifique se FRAMEWORK_OVERVIEW_v1.0.0.md foi criado"
     echo "  • Confirme que a versão 2.0.1 está no código"
     exit 1
 fi

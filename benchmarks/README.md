@@ -1,8 +1,8 @@
-# 📊 Express PHP Framework - Benchmarks
+# 📊 HelixPHP Framework - Benchmarks
 
 *Última atualização: 6 de Julho de 2025*
 
-Sistema de benchmarks para análise de performance do Express PHP Framework.
+Sistema de benchmarks para análise de performance do HelixPHP Framework.
 
 ---
 
@@ -216,4 +216,4 @@ reports/
 
 ---
 
-**Express PHP Framework** - Benchmarks para garantir performance de classe mundial! 🚀
+**HelixPHP Framework** - Benchmarks para garantir performance de classe mundial! 🚀

@@ -52,7 +52,7 @@ class StrTest extends TestCase
 
     public function testStartsWith(): void
     {
-        $this->assertTrue(Str::startsWith('HelixPHP', 'Express'));
+        $this->assertTrue(Str::startsWith('HelixPHP', 'Helix'));
         $this->assertFalse(Str::startsWith('HelixPHP', 'PHP'));
     }
 
@@ -70,13 +70,13 @@ class StrTest extends TestCase
 
     public function testUcfirst(): void
     {
-        $this->assertEquals('Express', Str::ucfirst('express'));
+        $this->assertEquals('Helix', Str::ucfirst('helix'));
         $this->assertEquals('ÁBCD', Str::ucfirst('áBCD'));
     }
 
     public function testTitle(): void
     {
-        $this->assertEquals('Express Php Framework', Str::title('express php framework'));
+        $this->assertEquals('Helix Php Framework', Str::title('helix php framework'));
     }
 
     public function testAscii(): void

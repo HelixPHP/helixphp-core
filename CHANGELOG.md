@@ -8,27 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-01-06
 
 ### Changed
-- Complete rebrand from Express PHP to HelixPHP
-- All namespaces changed from `Express\` to `Helix\`
-- Package name changed from `cafernandes/express-php` to `helixphp/core`
+- Complete rebrand from HelixPHP to HelixPHP
+- All namespaces changed from `Helix\` to `Helix\`
+- Package name changed from `cafernandes/helixphp-core` to `helixphp/core`
 - Repository moved to HelixPHP organization
 - Version reset to 1.0.0 for the new brand
 
 ### Added
 - New HelixPHP branding and documentation
-- Migration guide for existing Express PHP users
+- Migration guide for existing HelixPHP users
 
 ### Note
-This is the first release under the HelixPHP brand. For previous versions, see the Express PHP project history.
+This is the first release under the HelixPHP brand. For previous versions, see the HelixPHP project history.
 
 
 ---
 
-## Previous Express PHP History
+## Previous HelixPHP History
 
 # Changelog
 
-Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste arquivo.
+Todas as mudanças notáveis no HelixPHP Framework serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -37,7 +37,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### 🐛 **PHP 8.4 Compatibility & Validation Fixes**
 
-> 📖 **Veja o overview completo da versão:** [docs/releases/FRAMEWORK_OVERVIEW_v2.1.3.md](docs/releases/FRAMEWORK_OVERVIEW_v2.1.3.md)
+> 📖 **Veja o overview completo da versão:** [docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md](docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md)
 
 #### Fixed
 - **PHP 8.4 Compatibility**: Resolvidos warnings de depreciação do `ReflectionProperty::setValue()` nos testes
@@ -59,13 +59,13 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [2.1.1] - 2025-06-30
 
-> 📖 **Veja o novo overview completo da versão:** [FRAMEWORK_OVERVIEW_v2.1.1.md](FRAMEWORK_OVERVIEW_v2.1.1.md)
+> 📖 **Veja o novo overview completo da versão:** [FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)
 
 ### 🚀 Performance & Modernization Release
 - **Advanced Optimizations**: ML-powered cache (5 models), Zero-copy operations (1.7GB saved), Memory mapping
 - **Performance**: 278x improvement - 52M ops/sec CORS, 24M ops/sec Response, 11M ops/sec JSON
 - **Benchmarks**: Scientific methodology with real production data
-- **Documentation**: Consolidated structure with FRAMEWORK_OVERVIEW_v2.0.1.md
+- **Documentation**: Consolidated structure with FRAMEWORK_OVERVIEW_v1.0.0.md
 - **Memory Efficiency**: Peak usage reduced to 89MB with intelligent GC
 - **Modern PHP 8.1+ Features**: Typed properties, constructor promotion, strict types
 - **Security**: CSRF, XSS, JWT, CORS, Rate Limiting, Security Headers
@@ -78,7 +78,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### 📚 **Major Documentation & Scripts Restructure**
 
-> 📖 **Veja o overview completo da versão:** [docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md](docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md)
+> 📖 **Veja o overview completo da versão:** [docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md](docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md)
 
 #### 🏗️ **Reestruturação Completa da Documentação**
 - **Nova estrutura organizada**: `docs/releases/`, `docs/techinical/`, `docs/implementions/`, `docs/performance/`, `docs/testing/`, `docs/contributing/`
@@ -99,12 +99,12 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 #### 📋 **Scripts Migrados para Legacy**
 - `cleanup_docs.sh` - Script de limpeza para estrutura antiga
 - `fix-psr12-lines.sh` - Correções PSR-12 específicas hardcoded
-- `publish_v2.0.1.sh` - Script de publicação v2.0.1
+- `publish_v1.0.0.sh` - Script de publicação v1.0.0
 - `validate-docs-legacy.sh` - Validação de docs estrutura antiga
 - `validate-docs-v2.sh` - Validação de docs v2.0
 
 #### 🚀 **Novos Scripts e Funcionalidades**
-- **`validate-docs.sh`**: Novo validador para estrutura v2.1.2
+- **`validate-docs.sh`**: Novo validador para estrutura v1.0.0
 - **`validate_all.sh`**: Script principal com modo `--pre-commit` para validações rápidas
 - **Validação modular**: Cada script especializado em sua área (docs, benchmarks, projeto, PSR-12)
 - **Relatórios detalhados**: Output colorido e estatísticas de sucesso para todos os scripts
@@ -126,7 +126,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - **Feedback claro**: Scripts com output colorido e instruções específicas
 - **Documentação técnica expandida**: Guias detalhados para todas as funcionalidades
 
-#### 📈 **Estatísticas da Release v2.1.2**
+#### 📈 **Estatísticas da Release v1.0.0**
 - **Arquivos de documentação**: 32 verificações, 100% de sucesso
 - **Scripts reorganizados**: 6 scripts integrados, 5 movidos para legacy
 - **Estrutura de diretórios**: 7 novas seções de documentação organizadas
@@ -143,7 +143,7 @@ e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 1. Execute `./scripts/setup-precommit.sh` para configurar hooks automáticos
 2. Navegue pela nova documentação em `docs/index.md`
 3. Use `scripts/validate_all.sh` para validação completa do projeto
-4. Consulte `docs/releases/FRAMEWORK_OVERVIEW_v2.1.2.md` para overview detalhado
+4. Consulte `docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md` para overview detalhado
 
 #### 🔧 **Mudanças Técnicas Detalhadas**
 
@@ -154,7 +154,7 @@ scripts/
 ├── pre-commit              # 🔄 Hook integrado (ATUALIZADO)
 ├── pre-push                # ✨ Hook novo (CRIADO)
 ├── setup-precommit.sh      # 🔄 Instalador (ATUALIZADO)
-├── validate-docs.sh        # 🆕 Validador docs v2.1.2 (RECRIADO)
+├── validate-docs.sh        # 🆕 Validador docs v1.0.0 (RECRIADO)
 ├── validate_project.php    # ✅ Validador PHP (EXISTENTE)
 ├── validate_benchmarks.sh  # ✅ Validador benchmarks (EXISTENTE)
 ├── validate-psr12.php      # ✅ Validador PSR-12 (EXISTENTE)

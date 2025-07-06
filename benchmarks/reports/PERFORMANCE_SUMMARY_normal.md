@@ -1,4 +1,4 @@
-# Express PHP Framework - Performance Benchmark
+# HelixPHP Framework - Performance Benchmark
 
 ## Test Environment
 - **Date**: 2025-07-02 16:53:57
@@ -37,7 +37,7 @@
 - **Total memory for 100 apps**: 308.02 KB
 
 ## Performance Summary
-Express PHP demonstrates excellent performance characteristics:
+HelixPHP demonstrates excellent performance characteristics:
 
 - **Best Performance**: Response Object Creation with 2,755,784 operations/second
 - **Framework Overhead**: Minimal memory usage per application instance

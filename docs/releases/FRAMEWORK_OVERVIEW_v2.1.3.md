@@ -1,16 +1,16 @@
-# 🚀 HelixPHP v2.1.3 - PHP 8.4 Compatibility Release
+# 🚀 HelixPHP v1.0.0 - PHP 8.4 Compatibility Release
 
 > **High-Performance Framework with Full PHP 8.4 Compatibility**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.3)
+[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v1.0.0)
 [![PHP 8.4](https://img.shields.io/badge/PHP%208.4-Ready-success.svg)](#php-84-compatibility)
 [![Quality](https://img.shields.io/badge/Quality-9.5%2F10-gold.svg)](#quality-metrics)
 
 ---
 
-## 🐛 **WHAT'S FIXED IN v2.1.3**
+## 🐛 **WHAT'S FIXED IN v1.0.0**
 
 ### **🔧 PHP 8.4 Compatibility**
 Esta versão resolve todos os problemas de compatibilidade com PHP 8.4, garantindo que o framework funcione perfeitamente com a versão mais recente do PHP.
@@ -36,7 +36,7 @@ Code Coverage:     Mantida em 94.7%
 
 Todas as otimizações de performance das versões anteriores foram mantidas:
 
-### **Performance Metrics (Atual v2.1.3)**
+### **Performance Metrics (Atual v1.0.0)**
 - **2.27M ops/sec** - Response Object Creation
 - **2.57M ops/sec** - CORS Headers Generation
 - **1.69M ops/sec** - JSON Encoding (Small)
@@ -140,4 +140,4 @@ MIT License - veja [LICENSE](../../LICENSE) para detalhes.
 
 ---
 
-> **HelixPHP v2.1.3** - Construído para performance, mantido para qualidade.
+> **HelixPHP v1.0.0** - Construído para performance, mantido para qualidade.

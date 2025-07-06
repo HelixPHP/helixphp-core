@@ -1,16 +1,16 @@
-# 🚀 HelixPHP v2.1.2 - High-Performance Framework
+# 🚀 HelixPHP v1.0.0 - High-Performance Framework
 
 > **Ultra-High Performance PHP Framework com Otimizações PHP 8.4.8 + JIT**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.2-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.2)
+[![Version](https://img.shields.io/badge/Version-2.1.2-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v1.0.0)
 [![Performance](https://img.shields.io/badge/Performance-325%25%20Improvement-red.svg)](#performance)
 [![JIT Ready](https://img.shields.io/badge/JIT-Optimized-orange.svg)](#jit-optimizations)
 
 ---
 
-## 📊 **PERFORMANCE OVERVIEW v2.1.2**
+## 📊 **PERFORMANCE OVERVIEW v1.0.0**
 
 ### **🏆 Performance Highlights - PHP 8.4.8 + JIT**
 - **2.69M ops/sec** - Response Object Creation
@@ -23,7 +23,7 @@
 - **123K ops/sec** - JWT Token Operations
 - **123K ops/sec** - Application Initialization
 
-### **🧠 Advanced Optimizations v2.1.2**
+### **🧠 Advanced Optimizations v1.0.0**
 - **Enhanced Pipeline Compiler**: 4,098 compilações/sec (training)
 - **Zero-Copy Operations**: 2.86M ops/sec string interning, 1.67GB saved
 - **ML Predictive Cache**: 7,347 accesses/sec, 5 models trained
@@ -31,17 +31,17 @@
 - **JIT Optimized**: Full compatibility with PHP 8.4.8 JIT compilation
 
 ### **💾 Memory Efficiency**
-- **Framework Overhead**: 3.08 KB por instância (vs 1.4KB v2.1.1)
+- **Framework Overhead**: 3.08 KB por instância (vs 1.4KB v1.0.0)
 - **Peak Memory**: < 8MB para 10,000 operações
 - **Memory per 100 apps**: 308 KB total
 - **Pool Hit Rates**: Header Pool 98%, Response Pool 85%
 
 ---
 
-## 🆕 **WHAT'S NEW IN v2.1.2**
+## 🆕 **WHAT'S NEW IN v1.0.0**
 
 ### **🚀 Performance Improvements**
-- **+17%** throughput geral vs v2.1.1
+- **+17%** throughput geral vs v1.0.0
 - **-14%** redução no uso de memória
 - **-15%** menor latência de resposta
 - **+27%** melhor eficiência geral
@@ -69,7 +69,7 @@ composer require cafernandes/helixphp-core
 
 ### Configuração PHP 8.4.8 Recomendada
 ```ini
-; php.ini otimizado para HelixPHP v2.1.2
+; php.ini otimizado para HelixPHP v1.0.0
 opcache.enable=1
 opcache.enable_cli=0
 opcache.memory_consumption=256
@@ -96,7 +96,7 @@ $app = new Application([
         'middleware_compiler' => true,
         'zero_copy' => true,
         'predictive_cache' => true,
-        'jit_optimized' => true // Novo em v2.1.2
+        'jit_optimized' => true // Novo em v1.0.0
     ]
 ]);
 
@@ -134,11 +134,11 @@ $app = new Application([
 
 ---
 
-## 📈 **BENCHMARK RESULTS v2.1.2**
+## 📈 **BENCHMARK RESULTS v1.0.0**
 
 ### **Production Metrics (Real Data - 10,000 iterations)**
 
-| **Operation** | **v2.1.1** | **v2.1.2** | **Improvement** |
+| **Operation** | **v1.0.0** | **v1.0.0** | **Improvement** |
 |---------------|-------------|-------------|-----------------|
 | Response Creation | 2.2M/sec | 2.69M/sec | **+22%** |
 | CORS Headers Generation | 2.1M/sec | 2.64M/sec | **+26%** |
@@ -153,7 +153,7 @@ $app = new Application([
 
 | **Framework** | **Requests/s** | **Memory (MB)** | **Time (ms)** |
 |---------------|----------------|-----------------|---------------|
-| **HelixPHP v2.1.2** | **1,400** | **1.2** | **0.71** |
+| **HelixPHP v1.0.0** | **1,400** | **1.2** | **0.71** |
 | Slim 4 | 950 | 2.1 | 1.05 |
 | Laravel | 280 | 8.5 | 3.57 |
 | Symfony | 450 | 6.2 | 2.22 |
@@ -227,7 +227,7 @@ Memory check: 0.0008 seconds
 - Intelligent route lookup optimization
 - Dynamic memory pool management
 
-### **5. JIT Optimizations (New in v2.1.2)**
+### **5. JIT Optimizations (New in v1.0.0)**
 ```
 JIT Buffer: 64MB
 Compilation Mode: Tracing
@@ -420,10 +420,10 @@ php benchmarks/generate_comprehensive_report.php
 
 ---
 
-## 🔄 **MIGRATION FROM v2.1.1**
+## 🔄 **MIGRATION FROM v1.0.0**
 
 ### **Breaking Changes**
-- **None** - v2.1.2 is fully backward compatible
+- **None** - v1.0.0 is fully backward compatible
 
 ### **New Configuration Options**
 ```php
@@ -454,7 +454,7 @@ $app->configurePoolSizes([
 
 ### **Throughput Comparison**
 ```
-HelixPHP v2.1.2: ████████████████████ 1,400 req/s
+HelixPHP v1.0.0: ████████████████████ 1,400 req/s
 Slim 4:            ██████████████        950 req/s
 FastRoute:         ███████████████      1,100 req/s
 Symfony:           ██████                 450 req/s
@@ -463,7 +463,7 @@ Laravel:           ████                   280 req/s
 
 ### **Memory Efficiency**
 ```
-HelixPHP v2.1.2: █████ 1.2 MB
+HelixPHP v1.0.0: █████ 1.2 MB
 Slim 4:            ██████████ 2.1 MB
 FastRoute:         █████████ 1.8 MB
 Symfony:           ███████████████████████████████ 6.2 MB
@@ -472,7 +472,7 @@ Laravel:           ████████████████████�
 
 ### **Response Time**
 ```
-HelixPHP v2.1.2: ███ 0.71 ms
+HelixPHP v1.0.0: ███ 0.71 ms
 Slim 4:            █████ 1.05 ms
 FastRoute:         ████ 0.91 ms
 Symfony:           ███████████ 2.22 ms
@@ -515,11 +515,11 @@ Laravel:           ███████████████████ 3.5
 
 ---
 
-## ⚡ **KEY TAKEAWAYS v2.1.2**
+## ⚡ **KEY TAKEAWAYS v1.0.0**
 
 ### **🚀 Performance**
 - **2.69M ops/sec** response creation - Industry leading
-- **17% improvement** over v2.1.1 - Continuous optimization
+- **17% improvement** over v1.0.0 - Continuous optimization
 - **PHP 8.4.8 JIT** fully optimized - Future-ready
 - **1.67GB memory saved** with zero-copy - Efficient
 
@@ -537,6 +537,6 @@ Laravel:           ███████████████████ 3.5
 
 ---
 
-**HelixPHP v2.1.2** representa o estado da arte em frameworks PHP de alta performance, combinando otimizações avançadas com uma API simples e intuitiva. Ideal para aplicações críticas que exigem máxima performance e eficiência.
+**HelixPHP v1.0.0** representa o estado da arte em frameworks PHP de alta performance, combinando otimizações avançadas com uma API simples e intuitiva. Ideal para aplicações críticas que exigem máxima performance e eficiência.
 
 **🚀 Ready to build lightning-fast applications? [Get started now!](../implementions/usage_basic.md)**

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🚀 Express PHP v2.0.1 - Snippet de Publicação
+# 🚀 HelixPHP v1.0.0 - Snippet de Publicação
 # Script consolidado para publicar a nova versão com documentação atualizada
 
 set -e
@@ -34,7 +34,7 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-title "Express PHP v2.0.1 - Publicação Consolidada"
+title "HelixPHP v1.0.0 - Publicação Consolidada"
 
 echo -e "${BLUE}🎯 Objetivos desta versão:${NC}"
 echo "• Consolidar documentação de performance"
@@ -45,7 +45,7 @@ echo ""
 
 # Verificar se estamos no diretório correto
 if [ ! -f "composer.json" ] || [ ! -d "src" ]; then
-    error "Execute este script no diretório raiz do projeto Express PHP"
+    error "Execute este script no diretório raiz do projeto HelixPHP"
     exit 1
 fi
 
@@ -70,8 +70,8 @@ title "📊 Validando Documentação Consolidada"
 REQUIRED_FILES=(
     "PERFORMANCE_REPORT_FINAL.md"
     "TECHNICAL_OPTIMIZATION_SUMMARY.md"
-    "docs/performance/PERFORMANCE_ANALYSIS_v2.0.1.md"
-    "docs/releases/v2.0.1-RELEASE-NOTES.md"
+    "docs/performance/PERFORMANCE_ANALYSIS_v1.0.0.md"
+    "docs/releases/v1.0.0-RELEASE-NOTES.md"
     "benchmarks/reports/EXECUTIVE_PERFORMANCE_SUMMARY.md"
     "CHANGELOG.md"
 )
@@ -137,14 +137,14 @@ echo -e "${NC}"
 # Gerar snippet de commit e tag
 title "🏷️  Snippet de Commit e Tag"
 
-echo -e "${YELLOW}Para fazer commit e criar tag v2.0.1:${NC}"
+echo -e "${YELLOW}Para fazer commit e criar tag v1.0.0:${NC}"
 echo -e "${GREEN}"
 cat << 'EOF'
 # Adicionar todas as mudanças
 git add .
 
 # Commit consolidado
-git commit -m "chore: release v2.0.1
+git commit -m "chore: release v1.0.0
 
 ✨ Performance & Documentation Release
 
@@ -164,7 +164,7 @@ git commit -m "chore: release v2.0.1
 📋 Documentation Consolidation:
 - PERFORMANCE_REPORT_FINAL.md
 - TECHNICAL_OPTIMIZATION_SUMMARY.md
-- docs/performance/PERFORMANCE_ANALYSIS_v2.0.1.md
+- docs/performance/PERFORMANCE_ANALYSIS_v1.0.0.md
 - Standardized benchmark reports
 
 🔧 Technical Improvements:
@@ -174,7 +174,7 @@ git commit -m "chore: release v2.0.1
 - Predictive cache with ML learning"
 
 # Criar tag anotada
-git tag -a v2.0.1 -m "Express PHP v2.0.1 - Performance & Documentation Release
+git tag -a v1.0.0 -m "HelixPHP v1.0.0 - Performance & Documentation Release
 
 🎯 Key Features:
 • Advanced optimizations with real production data
@@ -197,12 +197,12 @@ git tag -a v2.0.1 -m "Express PHP v2.0.1 - Performance & Documentation Release
 • Implementation guides
 • Validated benchmark data
 
-This release establishes Express PHP as a high-performance framework
+This release establishes HelixPHP as a high-performance framework
 suitable for production environments with enterprise-grade performance."
 
 # Push commits e tags
 git push origin main
-git push origin v2.0.1
+git push origin v1.0.0
 EOF
 echo -e "${NC}"
 
@@ -213,19 +213,19 @@ echo -e "${YELLOW}Para publicar no Packagist (se aplicável):${NC}"
 echo -e "${GREEN}"
 cat << 'EOF'
 # Se o projeto estiver conectado ao Packagist, a tag criará automaticamente uma nova versão
-# Caso contrário, acesse: https://packagist.org/packages/express-php/microframework
+# Caso contrário, acesse: https://packagist.org/packages/helixphp-core/microframework
 
 # Verificar se a versão apareceu
-curl -s https://packagist.org/packages/express-php/microframework.json | \
+curl -s https://packagist.org/packages/helixphp-core/microframework.json | \
   jq '.package.versions | keys | .[-1]'
 
 # Para projetos privados, usar:
-composer install express-php/microframework:^2.0.1
+composer install helixphp-core/microframework:^2.0.1
 EOF
 echo -e "${NC}"
 
 # Resumo final
-title "📋 Resumo da Publicação v2.0.1"
+title "📋 Resumo da Publicação v1.0.0"
 
 echo -e "${BLUE}✅ Checklist Final:${NC}"
 echo "□ Versão 2.0.1 atualizada em todos os arquivos"
@@ -239,7 +239,7 @@ echo "□ Push para repositório remoto"
 echo "□ Publicação no Packagist (se aplicável)"
 
 echo ""
-echo -e "${GREEN}🎉 Express PHP v2.0.1 pronto para publicação!${NC}"
+echo -e "${GREEN}🎉 HelixPHP v1.0.0 pronto para publicação!${NC}"
 echo -e "${BLUE}📊 Principais melhorias: Performance +278%, Documentação consolidada, Otimizações ML${NC}"
 echo ""
 
@@ -255,7 +255,7 @@ echo ""
 echo -e "${BLUE}📖 Documentação principal:${NC}"
 echo "• PERFORMANCE_REPORT_FINAL.md - Análise completa"
 echo "• TECHNICAL_OPTIMIZATION_SUMMARY.md - Resumo técnico"
-echo "• docs/releases/v2.0.1-RELEASE-NOTES.md - Notas do release"
+echo "• docs/releases/v1.0.0-RELEASE-NOTES.md - Notas do release"
 echo ""
 
 warning "Certifique-se de revisar todos os arquivos antes de publicar!"

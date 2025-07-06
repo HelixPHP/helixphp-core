@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Express PHP v2.1.2 - Validador de Benchmarks
+# HelixPHP v1.0.0 - Validador de Benchmarks
 # Verifica se os benchmarks estão atualizados e funcionando
 
-echo "🏃‍♂️ Validando benchmarks do Express PHP v2.1.2..."
+echo "🏃‍♂️ Validando benchmarks do HelixPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'
@@ -82,13 +82,13 @@ if [ -f "docs/performance/benchmarks/README.md" ]; then
     if [ "$size" -gt 5000 ]; then
         print_success "docs/performance/benchmarks/README.md existe e tem conteúdo adequado ($size bytes)"
 
-        # Verificar se contém dados v2.1.2
+        # Verificar se contém dados v1.0.0
         if grep -q "02/07/2025" "docs/performance/benchmarks/README.md" && \
            grep -q "2.69M" "docs/performance/benchmarks/README.md" && \
            grep -q "PHP 8.4.8" "docs/performance/benchmarks/README.md"; then
-            print_success "Documentação contém dados atualizados v2.1.2"
+            print_success "Documentação contém dados atualizados v1.0.0"
         else
-            print_warning "Documentação pode não estar atualizada para v2.1.2"
+            print_warning "Documentação pode não estar atualizada para v1.0.0"
             ((WARNINGS++))
         fi
     else
@@ -111,12 +111,12 @@ else
     ((WARNINGS++))
 fi
 
-# Verificar relatórios v2.1.2 específicos
+# Verificar relatórios v1.0.0 específicos
 V212_REPORTS=$(find benchmarks/reports -name "*2025-07-02*" 2>/dev/null | wc -l)
 if [ "$V212_REPORTS" -gt 0 ]; then
-    print_success "$V212_REPORTS relatório(s) v2.1.2 encontrado(s)"
+    print_success "$V212_REPORTS relatório(s) v1.0.0 encontrado(s)"
 else
-    print_warning "Nenhum relatório específico v2.1.2 encontrado"
+    print_warning "Nenhum relatório específico v1.0.0 encontrado"
     ((WARNINGS++))
 fi
 
@@ -143,7 +143,7 @@ PHP_VERSION=$(php -v | head -n1 | grep -o 'PHP [0-9]\+\.[0-9]\+\.[0-9]\+' || ech
 if [[ "$PHP_VERSION" == *"8.4"* ]]; then
     print_success "PHP 8.4.x detectado: $PHP_VERSION"
 else
-    print_warning "PHP 8.4.x recomendado para v2.1.2, detectado: $PHP_VERSION"
+    print_warning "PHP 8.4.x recomendado para v1.0.0, detectado: $PHP_VERSION"
     ((WARNINGS++))
 fi
 

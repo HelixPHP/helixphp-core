@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Express PHP - Pre-commit Hook
+# HelixPHP - Pre-commit Hook
 # Executa todas as validações usando o script centralizado validate_all.sh
 
 set -e

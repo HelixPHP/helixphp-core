@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Express PHP - Pre-push Hook
+# HelixPHP - Pre-push Hook
 # Executa validação completa antes de fazer push para o repositório remoto
 
 set -e

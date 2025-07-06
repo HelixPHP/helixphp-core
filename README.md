@@ -4,8 +4,8 @@
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
-[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/helixphp-core)](https://github.com/CAFernandes/helixphp-core/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/helixphp-core)](https://github.com/CAFernandes/helixphp-core/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/HelixPHP/helixphp-core)](https://github.com/HelixPHP/helixphp-core/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/HelixPHP/helixphp-core)](https://github.com/HelixPHP/helixphp-core/stargazers)
 
 ---
 
@@ -44,7 +44,7 @@
 - Sistemas extensíveis com plugins e hooks
 - Plataformas que exigem segurança e performance
 
-Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`benchmarks/`](benchmarks/) e [relatório de performance completo](docs/performance/PERFORMANCE_REPORT_v2.1.3.md).
+Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`benchmarks/`](benchmarks/) e [relatório de performance completo](docs/performance/PERFORMANCE_REPORT_v1.0.0.md).
 
 ---
 
@@ -53,7 +53,7 @@ Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`bench
 ### Instalação
 
 ```bash
-composer require cafernandes/helixphp-core
+composer require helixphp/core
 ```
 
 ### Exemplo Básico
@@ -62,8 +62,8 @@ composer require cafernandes/helixphp-core
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
+use Helix\Core\Application;
+use Helix\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 
 $app = new Application();
 

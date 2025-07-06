@@ -1,17 +1,17 @@
-# 🚀 HelixPHP v2.1.1 - Performance Framework
+# 🚀 HelixPHP v1.0.0 - Performance Framework
 
 > **Ultra-High Performance PHP Framework com Otimizações Avançadas**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.1-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.1)
+[![Version](https://img.shields.io/badge/Version-2.1.1-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v1.0.0)
 [![Performance](https://img.shields.io/badge/Performance-278%25%20Improvement-red.svg)](#performance)
 
 ---
 
 ## 📊 **PERFORMANCE OVERVIEW**
 
-### **🏆 Performance Highlights v2.1.1**
+### **🏆 Performance Highlights v1.0.0**
 - **52M ops/sec** - CORS Headers Generation
 - **24M ops/sec** - Response Creation
 - **11M ops/sec** - JSON Encoding
@@ -78,7 +78,7 @@ $app = new Application([
 
 ### **Production Metrics (Real Data)**
 
-| **Operation** | **v1.x** | **v2.1.1** | **Improvement** |
+| **Operation** | **v1.x** | **v1.0.0** | **Improvement** |
 |---------------|-----------|-------------|-----------------|
 | CORS Headers | 1M/sec | 52M/sec | **+5,200%** |
 | Response Creation | 800K/sec | 24M/sec | **+3,000%** |
@@ -156,7 +156,7 @@ $app = new Application([
 └──
 💡 Examples
 └── examples/                    # Usage examples
-    ├── example_v2.1.1_showcase.php
+    ├── example_v1.0.0_showcase.php
     └── example_complete_optimizations.php
 ```
 
@@ -214,7 +214,7 @@ Load:            Isolated
 
 ## 🔄 **MIGRATION GUIDE**
 
-### **From v2.0.0 to v2.1.1**
+### **From v2.0.0 to v1.0.0**
 - ✅ **100% Compatible** - No breaking changes
 - ✅ **Drop-in replacement** - Just update version
 - ✅ **Automatic optimizations** - Enable in config
@@ -260,13 +260,13 @@ cd benchmarks && ./run_benchmark.sh
 
 ## 📄 **LICENSE**
 
-HelixPHP Framework v2.1.1 is licensed under the [MIT License](LICENSE).
+HelixPHP Framework v1.0.0 is licensed under the [MIT License](LICENSE).
 
 ---
 
 ## 🎉 **CONCLUSION**
 
-**HelixPHP v2.1.1** delivers:
+**HelixPHP v1.0.0** delivers:
 
 - ✅ **World-class performance** (278x improvement)
 - ✅ **Advanced optimizations** validated in production
@@ -283,4 +283,4 @@ HelixPHP Framework v2.1.1 is licensed under the [MIT License](LICENSE).
 composer require cafernandes/helixphp-core
 ```
 
-**HelixPHP v2.1.1 - Where Performance Meets Excellence** 🎯
+**HelixPHP v1.0.0 - Where Performance Meets Excellence** 🎯

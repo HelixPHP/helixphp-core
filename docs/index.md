@@ -50,10 +50,10 @@ Bem-vindo ao guia completo do HelixPHP! Esta documentação foi criada para ser 
 
 ### 🚀 Histórico de Versões
 - [**Documentação de Releases**](releases/README.md) - Índice completo de versões
-- [**v2.1.3 (Atual)**](releases/FRAMEWORK_OVERVIEW_v2.1.3.md) - PHP 8.4 compatibility fixes
-- [**v2.1.2**](releases/FRAMEWORK_OVERVIEW_v2.1.2.md) - PHP 8.4.8 + JIT optimizations
-- [**v2.1.1**](releases/FRAMEWORK_OVERVIEW_v2.1.1.md) - Advanced ML optimizations
-- [**v2.0.1**](releases/FRAMEWORK_OVERVIEW_v2.0.1.md) - Core rewrite and PSR compliance
+- [**v1.0.0 (Atual)**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - PHP 8.4 compatibility fixes
+- [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - PHP 8.4.8 + JIT optimizations
+- [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - Advanced ML optimizations
+- [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - Core rewrite and PSR compliance
 
 ## 🧪 Testes
 

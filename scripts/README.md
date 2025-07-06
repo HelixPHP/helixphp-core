@@ -1,6 +1,6 @@
-# Scripts de Qualidade de Código - Express PHP v2.1.3
+# Scripts de Qualidade de Código - HelixPHP v1.0.0
 
-Este diretório contém scripts para garantir a qualidade do código no Express PHP v2.1.3.
+Este diretório contém scripts para garantir a qualidade do código no HelixPHP v1.0.0.
 
 ## 🚀 Script Principal de Validação
 
@@ -58,7 +58,7 @@ Instala automaticamente os Git hooks:
 ## 📚 Scripts de Validação Específicos
 
 ### validate-docs.sh
-Validação da estrutura de documentação v2.1.2:
+Validação da estrutura de documentação v1.0.0:
 
 ```bash
 ./scripts/validate-docs.sh
@@ -70,7 +70,7 @@ Validação da estrutura de documentação v2.1.2:
 - Guias de implementação (docs/implementions/)
 - Documentação de performance e benchmarks
 - Arquivos movidos e redundantes removidos
-- Consistência de versão v2.1.2
+- Consistência de versão v1.0.0
 
 ### validate_project.php
 Validação completa do projeto PHP:
@@ -80,7 +80,7 @@ php scripts/validate_project.php
 ```
 
 **Validações incluídas:**
-- Estrutura do projeto v2.1.2
+- Estrutura do projeto v1.0.0
 - Dependências (Composer)
 - Middlewares e segurança
 - Recursos OpenAPI
@@ -99,7 +99,7 @@ Validação específica dos benchmarks:
 **Características:**
 - Valida scripts de benchmark
 - Verifica relatórios gerados
-- Confirma dados v2.1.2
+- Confirma dados v1.0.0
 - Estrutura de performance
 
 ## Pre-commit Hooks
@@ -289,13 +289,13 @@ composer install
 ## 📁 Pasta Legacy
 
 ### scripts/legacy/
-Contém scripts obsoletos migrados durante a reestruturação v2.1.2:
+Contém scripts obsoletos migrados durante a reestruturação v1.0.0:
 
 ```bash
 scripts/legacy/
 ├── cleanup_docs.sh         # Script de limpeza da documentação antiga
 ├── fix-psr12-lines.sh      # Correções PSR-12 específicas hardcoded
-├── publish_v2.0.1.sh       # Script de publicação v2.0.1
+├── publish_v1.0.0.sh       # Script de publicação v1.0.0
 ├── validate-docs-legacy.sh # Validação de docs estrutura antiga
 └── validate-docs-v2.sh     # Validação de docs v2.0
 ```
@@ -318,4 +318,4 @@ Os scripts legacy são mantidos para referência histórica, mas não são mais 
 | Pre-commit hooks | `pre-commit` (integrado) | Manual individual | ♻️ Migrado |
 | Correções PSR-12 | `validate-psr12.php` | `fix-psr12-lines.sh` | ♻️ Migrado |
 | Limpeza de docs | Não necessário | `cleanup_docs.sh` | 🗂️ Arquivado |
-| Publicação | `release.sh` | `publish_v2.0.1.sh` | ♻️ Migrado |
+| Publicação | `release.sh` | `publish_v1.0.0.sh` | ♻️ Migrado |
