@@ -36,12 +36,12 @@ Code Coverage:     Mantida em 94.7%
 
 Todas as otimizações de performance das versões anteriores foram mantidas:
 
-### **Performance Metrics (v2.1.2 baseline)**
-- **2.69M ops/sec** - Response Object Creation
-- **2.64M ops/sec** - CORS Headers Generation
-- **1.73M ops/sec** - JSON Encoding
-- **727K ops/sec** - Route Pattern Matching
-- **266K ops/sec** - Middleware Execution
+### **Performance Metrics (Atual v2.1.3)**
+- **2.27M ops/sec** - Response Object Creation
+- **2.57M ops/sec** - CORS Headers Generation
+- **1.69M ops/sec** - JSON Encoding (Small)
+- **757K ops/sec** - Route Pattern Matching
+- **293K ops/sec** - Middleware Execution
 
 ### **Memory Efficiency**
 - **Framework Overhead**: 3.08 KB por instância

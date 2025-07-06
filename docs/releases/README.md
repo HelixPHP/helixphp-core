@@ -127,5 +127,5 @@ Para dúvidas sobre versões específicas:
 
 ---
 
-**Última atualização:** 02/07/2025
-**Versão atual:** v2.1.2
+**Última atualização:** 06/07/2025
+**Versão atual:** v2.1.3

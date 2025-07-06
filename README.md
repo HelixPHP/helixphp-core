@@ -13,7 +13,7 @@
 
 **Express PHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
 
-- **Alta Performance**: +52M ops/sec em CORS, +24M ops/sec em Response, cache integrado e roteamento otimizado.
+- **Alta Performance**: 2.57M ops/sec em CORS, 2.27M ops/sec em Response, 757K ops/sec roteamento, cache integrado.
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
@@ -44,7 +44,7 @@
 - Sistemas extensíveis com plugins e hooks
 - Plataformas que exigem segurança e performance
 
-Veja exemplos práticos em [`examples/`](examples/) e benchmarks reais em [`benchmarks/`](benchmarks/).
+Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`benchmarks/`](benchmarks/) e [relatório de performance completo](docs/performance/PERFORMANCE_REPORT_v2.1.3.md).
 
 ---
 
