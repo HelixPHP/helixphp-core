@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# Express PHP v2.1.2 - Validador Principal do Projeto
+# Express PHP v2.1.3 - Validador Principal do Projeto
 # Executa todos os scripts de validação em sequência
 
 # Parse argumentos
 PRE_COMMIT_MODE=false
 if [[ "$1" == "--pre-commit" ]]; then
     PRE_COMMIT_MODE=true
-    echo "🔍 Express PHP v2.1.2 - Validação Pre-commit"
+    echo "🔍 Express PHP v2.1.3 - Validação Pre-commit"
     echo "============================================="
 else
-    echo "🚀 Express PHP v2.1.2 - Validação Completa do Projeto"
+    echo "🚀 Express PHP v2.1.3 - Validação Completa do Projeto"
     echo "======================================================="
 fi
 echo ""
@@ -133,7 +133,7 @@ if [ "$PRE_COMMIT_MODE" = true ]; then
     fi
 
 else
-    print_status "Iniciando validação completa do projeto Express PHP v2.1.2..."
+    print_status "Iniciando validação completa do projeto Express PHP v2.1.3..."
     echo ""
 
     # 1. Validação da estrutura de documentação
@@ -180,9 +180,9 @@ fi
 echo ""
 echo "=========================================="
 if [ "$PRE_COMMIT_MODE" = true ]; then
-    echo "📊 RELATÓRIO PRE-COMMIT v2.1.2"
+    echo "📊 RELATÓRIO PRE-COMMIT v2.1.3"
 else
-    echo "📊 RELATÓRIO FINAL DE VALIDAÇÃO v2.1.2"
+    echo "📊 RELATÓRIO FINAL DE VALIDAÇÃO v2.1.3"
 fi
 echo "=========================================="
 echo ""
@@ -213,7 +213,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
         echo "   • Sintaxe PHP"
         echo "   • Estrutura básica do projeto"
     else
-        echo "✅ O projeto Express PHP v2.1.2 está pronto para:"
+        echo "✅ O projeto Express PHP v2.1.3 está pronto para:"
         echo "   • Execução em produção"
         echo "   • Publicação no Packagist"
         echo "   • Distribuição para desenvolvedores"
@@ -222,7 +222,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
         echo "🚀 Próximos passos recomendados:"
         echo "   1. Execute benchmarks finais: ./benchmarks/run_benchmark.sh -f"
         echo "   2. Execute testes unitários: composer test"
-        echo "   3. Crie tag de release: git tag -a v2.1.2 -m 'Release v2.1.2'"
+        echo "   3. Crie tag de release: git tag -a v2.1.3 -m 'Release v2.1.3'"
         echo "   4. Publique: git push origin main --tags"
     fi
 

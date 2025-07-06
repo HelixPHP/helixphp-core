@@ -45,6 +45,16 @@ class Response
     private bool $testMode = false;
 
     /**
+     * Indica se a resposta já foi enviada.
+     */
+    private bool $sent = false;
+
+    /**
+     * Indica se o controle de emissão automática está desabilitado.
+     */
+    private bool $disableAutoEmit = false;
+
+    /**
      * Define o status HTTP da resposta.
      *
      * @param  int $code Código de status.
@@ -154,9 +164,9 @@ class Response
 
         $this->body = $encoded;
 
-        // Só faz echo se não estiver em modo teste
-        if (!$this->testMode) {
-            echo $this->body;
+        // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
+        if (!$this->testMode && !$this->disableAutoEmit) {
+            $this->emit();
         }
 
         return $this;
@@ -173,9 +183,9 @@ class Response
         $this->header('Content-Type', 'text/plain; charset=utf-8');
         $this->body = $text;
 
-        // Só faz echo se não estiver em modo teste
-        if (!$this->testMode) {
-            echo $this->body;
+        // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
+        if (!$this->testMode && !$this->disableAutoEmit) {
+            $this->emit();
         }
 
         return $this;
@@ -192,9 +202,9 @@ class Response
         $this->header('Content-Type', 'text/html; charset=utf-8');
         $this->body = $html;
 
-        // Só faz echo se não estiver em modo teste
-        if (!$this->testMode) {
-            echo $this->body;
+        // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
+        if (!$this->testMode && !$this->disableAutoEmit) {
+            $this->emit();
         }
 
         return $this;
@@ -603,5 +613,71 @@ class Response
         }
 
         return $data;
+    }
+
+    /**
+     * Define se a emissão automática está desabilitada.
+     *
+     * @param bool $disable
+     * @return $this
+     */
+    public function disableAutoEmit(bool $disable = true): self
+    {
+        $this->disableAutoEmit = $disable;
+        return $this;
+    }
+
+    /**
+     * Verifica se a resposta já foi enviada.
+     *
+     * @return bool
+     */
+    public function isSent(): bool
+    {
+        return $this->sent;
+    }
+
+    /**
+     * Emite o corpo da resposta.
+     *
+     * @param bool $includeHeaders Se deve enviar headers e status (padrão: true)
+     * @return void
+     */
+    public function emit(bool $includeHeaders = true): void
+    {
+        if ($this->sent && !$this->isStreaming) {
+            error_log('Warning: Attempting to emit response body multiple times. Body already sent.');
+            return;
+        }
+
+        // Enviar headers e status se solicitado e ainda não enviados
+        if ($includeHeaders && !headers_sent()) {
+            // Enviar status HTTP
+            http_response_code($this->statusCode);
+
+            // Enviar headers
+            foreach ($this->headers as $name => $value) {
+                if (is_string($name) && (is_string($value) || is_numeric($value))) {
+                    header("{$name}: {$value}");
+                }
+            }
+        }
+
+        // Enviar corpo da resposta
+        if (!empty($this->body)) {
+            echo $this->body;
+            $this->sent = true;
+        }
+    }
+
+    /**
+     * Reseta o estado de envio (útil para testes).
+     *
+     * @return $this
+     */
+    public function resetSentState(): self
+    {
+        $this->sent = false;
+        return $this;
     }
 }

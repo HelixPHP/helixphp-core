@@ -127,6 +127,9 @@ class Application
         }
 
         $this->registerCoreServices();
+
+        // Configurar error handling o mais cedo possível
+        $this->configureBasicErrorHandling();
     }
 
     /**
@@ -287,7 +290,29 @@ class Application
     }
 
     /**
-     * Configura tratamento de erros.
+     * Configura tratamento básico de erros no construtor.
+     *
+     * @return void
+     */
+    protected function configureBasicErrorHandling(): void
+    {
+        // Configuração básica de erro que funciona mesmo sem config carregado
+        error_reporting(E_ALL);
+        ini_set('log_errors', '1');
+
+        // Por enquanto, mostrar erros até config ser carregado
+        ini_set('display_errors', '1');
+
+        set_error_handler([$this, 'handleError']);
+        set_exception_handler(
+            function (Throwable $e): void {
+                $this->handleException($e);
+            }
+        );
+    }
+
+    /**
+     * Configura tratamento de erros com base na configuração.
      *
      * @return void
      */
@@ -298,16 +323,19 @@ class Application
         if ($debug) {
             error_reporting(E_ALL);
             ini_set('display_errors', '1');
+            ini_set('log_errors', '1');
         } else {
-            error_reporting(0);
+            error_reporting(E_ALL); // Manter ativo para logs
             ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
         }
 
         set_error_handler([$this, 'handleError']);
-        /**
- * @phpstan-ignore-next-line
-*/
-        set_exception_handler([$this, 'handleException']);
+        set_exception_handler(
+            function (Throwable $e): void {
+                $this->handleException($e);
+            }
+        );
     }
 
     /**
@@ -458,11 +486,14 @@ class Application
 
         try {
             // Encontrar rota
-            $route = $this->router::identify($request->getMethod(), $request->getPathCallable);
+            $route = $this->router::identify($request->getMethod(), $request->getPathCallable());
 
             if (!$route) {
                 throw new HttpException(404, 'Route not found');
             }
+            // Definindo o path configurado na requisição
+            // Isso é necessário para middlewares que dependem do path para definir os parâmetros
+            $request->setPath($route['path']);
 
             // Executar middlewares e handler
             $result = $this->middlewares->execute(
@@ -624,10 +655,17 @@ class Application
                 ]
             );
         } else {
+            // Em produção, gerar ID único para o erro e logar detalhes
+            $errorId = uniqid('err_', true);
+
+            // Log detalhado para análise posterior
+            $this->logException($e, $errorId);
+
             return $response->json(
                 [
                     'error' => true,
-                    'message' => $statusCode === 404 ? 'Not Found' : 'Internal Server Error'
+                    'message' => $statusCode === 404 ? 'Not Found' : 'Internal Server Error',
+                    'error_id' => $errorId
                 ]
             );
         }
@@ -637,28 +675,42 @@ class Application
      * Registra uma exceção no log usando PSR-3.
      *
      * @param  Throwable $e Exceção
+     * @param  string|null $errorId ID único do erro (opcional)
      * @return void
      */
-    protected function logException(Throwable $e): void
+    protected function logException(Throwable $e, ?string $errorId = null): void
     {
         try {
             if ($this->container->has('logger')) {
                 $logger = $this->container->get('logger');
                 if ($logger instanceof LoggerInterface) {
-                    $logger->error(
-                        'Exception: {message}',
-                        [
-                            'message' => $e->getMessage(),
-                            'file' => $e->getFile(),
-                            'line' => $e->getLine(),
-                            'trace' => $e->getTraceAsString()
-                        ]
-                    );
+                    $context = [
+                        'message' => $e->getMessage(),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString(),
+                        'type' => get_class($e)
+                    ];
+
+                    if ($errorId) {
+                        $context['error_id'] = $errorId;
+                    }
+
+                    $logger->error('Exception: {message}', $context);
                     return;
                 }
             }
-        } catch (\Throwable) {
-            // Fallback se logger não disponível
+        } catch (\Throwable $loggerError) {
+            // Fallback se logger não disponível - usar error_log
+            $errorMessage = sprintf(
+                '[%s] CRITICAL: %s in %s:%d',
+                date('Y-m-d H:i:s'),
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine()
+            );
+            error_log($errorMessage);
+            error_log('Logger Error: ' . $loggerError->getMessage());
         }
 
         // Fallback para error_log
@@ -797,16 +849,8 @@ class Application
         // Processar requisição
         $response = $this->handle();
 
-        // Enviar resposta (em ambiente real, isso seria feito pelo servidor web)
-        http_response_code($response->getStatusCode());
-
-        foreach ($response->getHeaders() as $name => $value) {
-            if (is_string($name) && (is_string($value) || is_numeric($value))) {
-                header("{$name}: {$value}");
-            }
-        }
-
-        echo $response->getBody();
+        // Delegar toda a lógica de emissão para o Response
+        $response->emit();
     }
 
     /**
@@ -818,19 +862,8 @@ class Application
     {
         $response = $this->handle();
 
-        // Enviar headers se ainda não foram enviados
-        if (!headers_sent()) {
-            http_response_code($response->getStatusCode());
-
-            foreach ($response->getHeaders() as $name => $value) {
-                if (is_string($name) && (is_string($value) || is_numeric($value))) {
-                    header("{$name}: {$value}");
-                }
-            }
-        }
-
-        // Enviar conteúdo
-        echo $response->getBody();
+        // Delegar toda a lógica de emissão para o Response
+        $response->emit();
     }
 
     /**

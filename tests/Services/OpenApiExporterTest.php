@@ -43,6 +43,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -101,6 +102,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -154,6 +156,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'POST',
@@ -200,6 +203,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -233,6 +237,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -290,6 +295,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -323,6 +329,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
@@ -359,6 +366,7 @@ class OpenApiExporterTest extends TestCase
         $routesProperty = $reflection->getProperty('routes');
         $routesProperty->setAccessible(true);
         $routesProperty->setValue(
+            null,
             [
                 [
                     'method' => 'GET',
