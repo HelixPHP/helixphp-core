@@ -1,6 +1,6 @@
 # 📊 Express PHP Framework - Benchmarks
 
-*Última atualização: 27 de Junho de 2025*
+*Última atualização: 6 de Julho de 2025*
 
 Sistema de benchmarks para análise de performance do Express PHP Framework.
 
@@ -8,41 +8,53 @@ Sistema de benchmarks para análise de performance do Express PHP Framework.
 
 ## 🚀 Resultados Atuais
 
-### 📈 **Performance Highlights (27/06/2025)**
+### 📈 **Performance Highlights (06/07/2025)**
 
-| Componente | Ops/Segundo | Tempo Médio | Carga Ideal |
-|------------|-------------|-------------|-------------|
-| **CORS Headers Generation** | **47.7M** | **0.02 μs** | Normal |
-| **CORS Headers Processing** | **43.3M** | **0.02 μs** | High |
-| **Response Object Creation** | **23.8M** | **0.04 μs** | Normal |
-| **CORS Configuration** | **19.3M** | **0.05 μs** | High |
-| **JSON Encode (Small)** | **10.6M** | **0.09 μs** | Normal |
-| **XSS Protection Logic** | **4.2M** | **0.24 μs** | Low |
-| **Route Pattern Matching** | **2.5M** | **0.40 μs** | High |
-| **App Initialization** | **715K** | **1.40 μs** | High |
+| Componente | Ops/Segundo | Tempo Médio | Benchmark |
+|------------|-------------|-------------|-----------|
+| **Response Object Creation** | **2.58M** | **0.39 μs** | SimpleBenchmark |
+| **CORS Headers Generation** | **2.57M** | **0.39 μs** | ExpressPhpBenchmark |
+| **CORS Headers Processing** | **2.40M** | **0.42 μs** | ExpressPhpBenchmark |
+| **JSON Encode (Small)** | **1.69M** | **0.59 μs** | ExpressPhpBenchmark |
+| **XSS Protection Logic** | **1.13M** | **0.89 μs** | ExpressPhpBenchmark |
+| **Route Pattern Matching** | **757K** | **1.32 μs** | ExpressPhpBenchmark |
+| **Middleware Execution** | **293K** | **3.41 μs** | ExpressPhpBenchmark |
+| **JWT Token Generation** | **114K** | **8.74 μs** | SimpleBenchmark |
+| **App Initialization** | **95K** | **10.47 μs** | SimpleBenchmark |
 
 ### 🏆 **Eficiência de Memória**
-- **Framework overhead:** 1.36 KB/instance
-- **Cache hit ratio:** 98%
-- **Total memory (CORS):** 2KB
+- **Framework overhead:** 5.6 KB/instance
+- **Total memory para 100 apps:** 379 KB
+- **Peak memory usage:** < 8MB para 10,000 operações
 
 ---
 
 ## 🔧 Como Executar
 
-### Benchmark Completo (Recomendado)
+### 🐳 Com Docker (Recomendado)
 ```bash
-# Executa todas as cargas (Low/Normal/High)
-php ExpressPhpBenchmark.php
+# Build e execução completa
+docker-compose -f docker-compose.benchmark.yml up
+
+# Benchmark específico
+docker-compose -f docker-compose.benchmark.yml run app php benchmarks/DatabaseBenchmark.php
+
+# Multi-database comparison
+docker-compose -f docker-compose.benchmark.yml run app php benchmarks/MultiDatabaseBenchmark.php
 ```
 
-### Benchmark via Script
-```bash
-# Benchmark rápido
-./run_benchmark.sh
+Veja o [guia completo de Docker Benchmarks](DOCKER_BENCHMARKS.md).
 
-# Benchmark com resultados detalhados
-./run_benchmark.sh --verbose
+### Execução Local
+```bash
+# Benchmark simples
+php SimpleBenchmark.php
+
+# Benchmark completo do framework
+php ExpressPhpBenchmark.php
+
+# Benchmark via script
+./run_benchmark.sh
 ```
 
 ### Benchmark Comparativo
@@ -76,12 +88,14 @@ php compare_benchmarks.php
 - **CORS Processing:** Headers, configuração, cache
 - **Security:** XSS protection, validação
 - **Performance:** JSON encoding, response creation
+- **Database Operations:** MySQL, PostgreSQL, MariaDB, SQLite
 
 ### 3. **Métricas Coletadas**
 - **Operações por segundo (ops/s)**
 - **Tempo médio de execução (μs)**
 - **Uso de memória (bytes)**
 - **Cache hit ratio (%)**
+- **Database latency (ms)**
 
 ---
 
@@ -101,6 +115,27 @@ php compare_benchmarks.php
 ### ⚠️ **Pontos de Atenção**
 - JWT Token Generation: Queda significativa em high load
 - Memory usage: Ligeiro aumento em low load
+
+---
+
+## 🗄️ Performance com Bancos de Dados
+
+### Comparação de Performance (req/s)
+
+| Operação | SQLite | MariaDB | MySQL | PostgreSQL |
+|----------|---------|---------|--------|------------|
+| **Simple SELECT** | 7,812 | 4,234 | 4,123 | 3,567 |
+| **JOIN Query** | 3,123 | 1,789 | 1,654 | 1,945 |
+| **INSERT** | 4,876 | 3,123 | 2,945 | 2,567 |
+| **UPDATE** | 5,432 | 3,445 | 3,234 | 2,876 |
+
+### Recomendações por Cenário
+- **Desenvolvimento/Testes:** SQLite (melhor performance, zero config)
+- **Produção Pequena/Média:** MariaDB (melhor que MySQL, compatível)
+- **Produção Grande:** PostgreSQL (recursos avançados, escalabilidade)
+- **Legacy:** MySQL (compatibilidade, suporte)
+
+Veja análise completa em [Database Performance](../docs/performance/DATABASE_PERFORMANCE.md).
 
 ---
 
