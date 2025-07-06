@@ -31,13 +31,24 @@ composer test
 #### 🎯 Estrutura do Código
 ```
 src/
-├── ApiExpress.php           # Classe principal
-├── Controller/              # Roteamento
-├── Services/               # Serviços (Request, Response)
-├── Helpers/               # Utilitários (JWT, Utils)
-└── Middlewares/           # Sistema de middlewares
-    ├── Core/              # Middlewares principais
-    └── Security/          # Middlewares de segurança
+├── Core/                    # Núcleo do framework
+│   ├── Application.php      # Classe principal da aplicação
+│   ├── Config.php           # Gerenciamento de configuração
+│   └── Container.php        # Container de injeção de dependência
+├── Http/                    # Componentes HTTP
+│   ├── Request.php          # Implementação PSR-7 Request
+│   ├── Response.php         # Implementação PSR-7 Response
+│   └── Psr15/               # Implementações PSR-15
+├── Routing/                 # Sistema de roteamento
+│   ├── Router.php           # Roteador principal
+│   └── Route.php            # Representação de rotas
+├── Middleware/              # Sistema de middlewares
+│   ├── Core/                # Middlewares principais
+│   └── MiddlewareStack.php  # Gerenciamento de middleware
+├── Providers/               # Service Providers
+├── Events/                  # Sistema de eventos PSR-14
+├── Authentication/          # Autenticação (JWT)
+└── Utils/                   # Utilitários diversos
 ```
 
 ### 3. Desenvolvendo Middlewares

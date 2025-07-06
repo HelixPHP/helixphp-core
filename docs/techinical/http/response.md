@@ -208,7 +208,7 @@ $app->get('/api/health', function($req, $res) {
 $app->get('/api/version', function($req, $res) {
     return $res
         ->header('Content-Type', 'text/plain; charset=utf-8')
-        ->text('Express PHP v2.1.0');
+        ->text('Express PHP Framework');
 });
 ```
 

@@ -1,6 +1,6 @@
-# Scripts de Qualidade de Código - Express PHP v2.1.2
+# Scripts de Qualidade de Código - Express PHP v2.1.3
 
-Este diretório contém scripts para garantir a qualidade do código no Express PHP v2.1.2.
+Este diretório contém scripts para garantir a qualidade do código no Express PHP v2.1.3.
 
 ## 🚀 Script Principal de Validação
 

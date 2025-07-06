@@ -5,6 +5,30 @@ Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),
 e este projeto adere ao [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.3] - 2025-07-06
+
+### 🐛 **PHP 8.4 Compatibility & Validation Fixes**
+
+> 📖 **Veja o overview completo da versão:** [docs/releases/FRAMEWORK_OVERVIEW_v2.1.3.md](docs/releases/FRAMEWORK_OVERVIEW_v2.1.3.md)
+
+#### Fixed
+- **PHP 8.4 Compatibility**: Resolvidos warnings de depreciação do `ReflectionProperty::setValue()` nos testes
+- **PHPStan Level 9**: Corrigido erro de tipo no callback do `set_exception_handler` em `Application.php`
+- **PSR-12 Compliance**: Corrigidas todas as violações de estilo de código em múltiplos arquivos
+- **Type Safety**: Melhorada compatibilidade de tipos para callbacks de tratamento de exceções
+
+#### Changed
+- Atualizado método `setValue()` para incluir parâmetro `null` em propriedades estáticas
+- Wrapper de callback implementado para garantir assinatura correta do exception handler
+- Formatação de código ajustada para conformidade total com PSR-12
+
+#### Quality
+- ✅ PHPUnit: 237 testes, 661 asserções passando
+- ✅ PHPStan: Nível 9 sem erros
+- ✅ PSR-12: Score 9.5/10 (apenas avisos não-críticos)
+
+---
+
 ## [2.1.1] - 2025-06-30
 
 > 📖 **Veja o novo overview completo da versão:** [FRAMEWORK_OVERVIEW_v2.1.1.md](FRAMEWORK_OVERVIEW_v2.1.1.md)
