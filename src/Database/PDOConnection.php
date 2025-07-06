@@ -44,11 +44,17 @@ class PDOConnection
     
     /**
      * Get PDO instance (singleton)
+     * 
+     * @throws DatabaseException If connection fails
      */
     public static function getInstance(): PDO
     {
         if (self::$instance === null) {
             self::connect();
+        }
+        
+        if (self::$instance === null) {
+            throw new DatabaseException('Failed to establish database connection');
         }
         
         return self::$instance;
@@ -169,10 +175,18 @@ class PDOConnection
     
     /**
      * Get last insert ID
+     * 
+     * @throws DatabaseException If unable to get last insert ID
      */
     public static function lastInsertId(): string
     {
-        return self::getInstance()->lastInsertId();
+        $lastId = self::getInstance()->lastInsertId();
+        
+        if ($lastId === false) {
+            throw new DatabaseException('Unable to retrieve last insert ID');
+        }
+        
+        return $lastId;
     }
     
     /**
