@@ -52,8 +52,9 @@ class PDOConnection
             $defaultOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
         }
 
-        // Merge default options with user-provided options (preserving numeric keys)
-        $config['options'] = $config['options'] + $defaultOptions;
+        // Merge default options with user-provided options
+        // array_replace() gives precedence to user options while preserving numeric keys
+        $config['options'] = array_replace($defaultOptions, $config['options']);
 
         self::$config = $config;
     }
