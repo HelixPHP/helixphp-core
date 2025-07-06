@@ -141,7 +141,7 @@ class PDOConnection
             self::$instance->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
         } catch (PDOException $e) {
             throw new DatabaseException(
-                'Database connection failed: ' . $e->getMessage(),
+                'Database connection failed',
                 (int)$e->getCode(),
                 $e
             );
