@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Authentication;
+namespace Helix\Authentication;
 
 use Exception;
 use InvalidArgumentException;

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Database\PDOConnection;
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Core\Application;
+use Helix\Database\PDOConnection;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 /**
- * Database Benchmark for Express PHP
+ * Database Benchmark for HelixPHP
  * 
  * Tests performance with real database operations
  * Simulates production-like scenarios
@@ -104,7 +104,7 @@ class DatabaseBenchmark
     }
     
     /**
-     * Setup Express PHP routes for benchmarking
+     * Setup HelixPHP routes for benchmarking
      */
     private function setupRoutes(): void
     {
@@ -236,7 +236,7 @@ class DatabaseBenchmark
      */
     public function run(): void
     {
-        echo "🚀 Express PHP Database Benchmark\n";
+        echo "🚀 HelixPHP Database Benchmark\n";
         echo "================================\n\n";
         
         // Warmup

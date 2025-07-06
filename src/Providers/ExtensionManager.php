@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Express\Providers;
+namespace Helix\Providers;
 
-use Express\Core\Application;
-use Express\Providers\ServiceProvider;
+use Helix\Core\Application;
+use Helix\Providers\ServiceProvider;
 use Psr\Container\ContainerInterface;
 use Composer\Autoload\ClassLoader;
 
@@ -356,7 +356,7 @@ class ExtensionManager
             return;
         }
 
-        /** @var \Express\Core\Config $config */
+        /** @var \Helix\Core\Config $config */
         $config = $this->container->get('config');
 
         // Load from app.extensions config

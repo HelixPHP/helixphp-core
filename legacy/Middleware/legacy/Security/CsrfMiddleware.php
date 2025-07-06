@@ -1,11 +1,11 @@
 <?php
 
-namespace Express\Middleware\Security;
+namespace Helix\Middleware\Security;
 
-use Express\Middleware\Core\BaseMiddleware;
+use Helix\Middleware\Core\BaseMiddleware;
 
 /**
- * Middleware de proteção CSRF para Express PHP.
+ * Middleware de proteção CSRF para HelixPHP.
  */
 class CsrfMiddleware extends BaseMiddleware
 {

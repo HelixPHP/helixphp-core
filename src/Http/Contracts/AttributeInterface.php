@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Http\Contracts;
+namespace Helix\Http\Contracts;
 
 /**
  * Interface para objetos que suportam atributos dinâmicos.

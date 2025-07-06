@@ -1,6 +1,6 @@
-# 📚 Índice da Documentação Express PHP
+# 📚 Índice da Documentação HelixPHP
 
-Bem-vindo ao guia completo do Express PHP! Esta documentação foi criada para ser um guia prático para quem quer usar o framework na prática.
+Bem-vindo ao guia completo do HelixPHP! Esta documentação foi criada para ser um guia prático para quem quer usar o framework na prática.
 
 ## 🚀 Para Começar
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7;
+namespace Helix\Http\Psr7;
 
-use Express\Http\Psr7\Pool\HeaderPool;
+use Helix\Http\Psr7\Pool\HeaderPool;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * This class implements the base functionality for both HTTP requests and responses
  * following the PSR-7 HTTP Message Interface standard.
  *
- * @package Express\Http\Psr7
+ * @package Helix\Http\Psr7
  * @since 2.1.0
  */
 class Message implements MessageInterface

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Express\Support;
+namespace Helix\Support;
 
-use Express\Core\Application;
-use Express\Events\Hook;
+use Helix\Core\Application;
+use Helix\Events\Hook;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -176,7 +176,7 @@ class HookManager
      */
     protected function registerWithEventSystem(string $hook): void
     {
-        /** @var \Express\Providers\ListenerProvider $listenerProvider */
+        /** @var \Helix\Providers\ListenerProvider $listenerProvider */
         $listenerProvider = $this->app->make('listeners');
 
         // Remove listener antigo, se existir

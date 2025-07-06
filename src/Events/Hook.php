@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Express\Events;
+namespace Helix\Events;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * Hook System for Express-PHP
+ * Hook System for Helix-PHP
  *
  * Provides a flexible hook system for extensions to register
  * listeners and modify application behavior.

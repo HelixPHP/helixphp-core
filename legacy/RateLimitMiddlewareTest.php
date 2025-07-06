@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Core;
+namespace Helix\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middleware\Core\RateLimitMiddleware;
+use Helix\Middleware\Core\RateLimitMiddleware;
 
 class RateLimitMiddlewareTest extends TestCase
 {

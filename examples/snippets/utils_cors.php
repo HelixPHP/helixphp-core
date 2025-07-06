@@ -1,6 +1,6 @@
 <?php
 // Exemplo de uso do helper de CORS
-use Express\Utils\Utils;
+use Helix\Utils\Utils;
 
 // Em um middleware customizado:
 function corsMiddleware($response) {

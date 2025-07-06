@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Database\PDOConnection;
+use Helix\Database\PDOConnection;
 
 /**
- * Multi-Database Benchmark for Express PHP
+ * Multi-Database Benchmark for HelixPHP
  * 
  * Compares performance across MySQL, PostgreSQL, and MariaDB
  */
@@ -52,7 +52,7 @@ class MultiDatabaseBenchmark
      */
     public function run(): void
     {
-        echo "🚀 Express PHP Multi-Database Benchmark\n";
+        echo "🚀 HelixPHP Multi-Database Benchmark\n";
         echo "======================================\n\n";
         echo "Iterations per test: {$this->iterations}\n";
         echo "Warmup iterations: {$this->warmup}\n\n";

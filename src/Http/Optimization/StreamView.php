@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Optimization;
+namespace Helix\Http\Optimization;
 
 /**
  * Stream View for zero-copy file reading

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Factory;
+namespace Helix\Http\Psr7\Factory;
 
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Express\Http\Psr7\Response;
-use Express\Http\Psr7\Stream;
-use Express\Http\Psr7\Pool\ResponsePool;
+use Helix\Http\Psr7\Response;
+use Helix\Http\Psr7\Stream;
+use Helix\Http\Psr7\Pool\ResponsePool;
 
 /**
  * PSR-17 Response Factory implementation with object pooling optimization

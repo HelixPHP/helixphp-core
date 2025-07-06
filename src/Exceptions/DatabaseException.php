@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Exceptions;
+namespace Helix\Exceptions;
 
 use Exception;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Optimization;
+namespace Helix\Http\Optimization;
 
 /**
  * Zero-Copy Optimization Manager
@@ -10,7 +10,7 @@ namespace Express\Http\Optimization;
  * Implements zero-copy techniques to minimize memory allocations
  * and data copying operations for better performance.
  *
- * @package Express\Http\Optimization
+ * @package Helix\Http\Optimization
  * @since 2.3.0
  */
 class ZeroCopyOptimizer
@@ -388,7 +388,7 @@ class ZeroCopyOptimizer
     {
         return [
             'copies_avoided' => self::$stats['copies_avoided'],
-            'memory_saved' => \Express\Utils\Utils::formatBytes(self::$stats['memory_saved']),
+            'memory_saved' => \Helix\Utils\Utils::formatBytes(self::$stats['memory_saved']),
             'references_active' => count(self::$references),
             'interned_strings' => count(self::$internedStrings),
             'buffer_pools' => array_map('count', self::$bufferPools),

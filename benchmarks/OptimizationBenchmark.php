@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Http\Psr7\Message;
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Message;
+use Helix\Http\Psr7\Stream;
 
 class OptimizationBenchmark
 {

@@ -2,10 +2,10 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Routing\Router;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Routing\Router;
 
 $app = new Application();
 
@@ -30,7 +30,7 @@ $logMiddleware = function (Request $req, Response $resp, $next) {
 
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
-        'message' => 'Express PHP - Rotas Otimizadas',
+        'message' => 'HelixPHP - Rotas Otimizadas',
         'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => true,

@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Logging;
+namespace Helix\Logging;
 
 /**
  * Handler para arquivo

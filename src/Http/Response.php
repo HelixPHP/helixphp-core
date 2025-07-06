@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Http;
+namespace Helix\Http;
 
 /**
  * Classe Response constrói e envia a resposta HTTP.

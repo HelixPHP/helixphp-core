@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Factory;
+namespace Helix\Http\Psr7\Factory;
 
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Stream;
 
 /**
  * PSR-17 Stream Factory implementation

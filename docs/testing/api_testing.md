@@ -1,6 +1,6 @@
 # 🧪 Testando sua API
 
-Guia prático para testar endpoints de API criados com Express PHP.
+Guia prático para testar endpoints de API criados com HelixPHP.
 
 ## 🚀 Configuração Inicial
 
@@ -27,7 +27,7 @@ tests/
 ```php
 <?php
 // tests/TestCase.php
-use Express\Core\Application;
+use Helix\Core\Application;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
@@ -195,7 +195,7 @@ composer test
 - **Teste casos de erro** além dos casos de sucesso
 
 ### ❌ O que Evitar
-- **Não teste frameworks externos** (PHPUnit, Express PHP internals)
+- **Não teste frameworks externos** (PHPUnit, HelixPHP internals)
 - **Não faça testes dependentes** uns dos outros
 - **Não ignore casos extremos** (dados vazios, nulos, etc.)
 
@@ -297,4 +297,4 @@ class CrudApiTest extends TestCase
 
 ---
 
-*📝 Esta documentação mostra como testar APIs de forma prática e eficiente com Express PHP!*
+*📝 Esta documentação mostra como testar APIs de forma prática e eficiente com HelixPHP!*

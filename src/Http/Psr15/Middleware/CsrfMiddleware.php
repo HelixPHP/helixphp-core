@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr15\Middleware;
+namespace Helix\Http\Psr15\Middleware;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Express\Http\Psr7\Response;
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Response;
+use Helix\Http\Psr7\Stream;
 
 class CsrfMiddleware implements MiddlewareInterface
 {

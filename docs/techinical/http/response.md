@@ -208,7 +208,7 @@ $app->get('/api/health', function($req, $res) {
 $app->get('/api/version', function($req, $res) {
     return $res
         ->header('Content-Type', 'text/plain; charset=utf-8')
-        ->text('Express PHP Framework');
+        ->text('HelixPHP Framework');
 });
 ```
 
@@ -239,11 +239,11 @@ $app->get('/', function($req, $res) {
     <!DOCTYPE html>
     <html>
     <head>
-        <title>Express PHP</title>
+        <title>HelixPHP</title>
         <meta charset="utf-8">
     </head>
     <body>
-        <h1>Welcome to Express PHP!</h1>
+        <h1>Welcome to HelixPHP!</h1>
         <p>Your application is running.</p>
     </body>
     </html>';

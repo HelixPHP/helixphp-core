@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Pool;
+namespace Helix\Http\Psr7\Pool;
 
-use Express\Http\Psr7\Response;
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Response;
+use Helix\Http\Psr7\Stream;
 
 /**
  * Response Object Pool for Performance Optimization
@@ -13,7 +13,7 @@ use Express\Http\Psr7\Stream;
  * Reduces object allocation overhead by reusing Response objects
  * for common HTTP responses.
  *
- * @package Express\Http\Psr7\Pool
+ * @package Helix\Http\Psr7\Pool
  * @since 2.1.1
  */
 class ResponsePool

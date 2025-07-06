@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Validation;
+namespace Helix\Validation;
 
 /**
- * Sistema de validação para Express-PHP
+ * Sistema de validação para Helix-PHP
  */
 class Validator
 {

@@ -1,6 +1,6 @@
 <?php
 
-use Express\Routing\RouterInstance;
+use Helix\Routing\RouterInstance;
 
 // Sub-router especializado para upload de arquivos
 $uploadRouter = new RouterInstance('/upload');

@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Support;
+namespace Helix\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Express\Support\Arr;
+use Helix\Support\Arr;
 
 class ArrTest extends TestCase
 {

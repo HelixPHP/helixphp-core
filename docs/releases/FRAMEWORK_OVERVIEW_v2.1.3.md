@@ -1,10 +1,10 @@
-# 🚀 Express PHP v2.1.3 - PHP 8.4 Compatibility Release
+# 🚀 HelixPHP v2.1.3 - PHP 8.4 Compatibility Release
 
 > **High-Performance Framework with Full PHP 8.4 Compatibility**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/express-php/releases/tag/v2.1.3)
+[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.3)
 [![PHP 8.4](https://img.shields.io/badge/PHP%208.4-Ready-success.svg)](#php-84-compatibility)
 [![Quality](https://img.shields.io/badge/Quality-9.5%2F10-gold.svg)](#quality-metrics)
 
@@ -87,7 +87,7 @@ set_exception_handler(function (Throwable $e): void {
 ## 📦 **INSTALLATION**
 
 ```bash
-composer require cafernandes/express-php:^2.1.3
+composer require cafernandes/helixphp-core:^2.1.3
 ```
 
 ### **Requirements**
@@ -140,4 +140,4 @@ MIT License - veja [LICENSE](../../LICENSE) para detalhes.
 
 ---
 
-> **Express PHP v2.1.3** - Construído para performance, mantido para qualidade.
+> **HelixPHP v2.1.3** - Construído para performance, mantido para qualidade.

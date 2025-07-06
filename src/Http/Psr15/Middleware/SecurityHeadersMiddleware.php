@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr15\Middleware;
+namespace Helix\Http\Psr15\Middleware;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;

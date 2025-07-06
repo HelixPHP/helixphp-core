@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Express\Routing;
+namespace Helix\Routing;
 
-use Express\Utils\SerializationCache;
-use Express\Utils\Utils;
+use Helix\Utils\SerializationCache;
+use Helix\Utils\Utils;
 
 /**
  * Advanced Route Memory Manager
@@ -13,7 +13,7 @@ use Express\Utils\Utils;
  * Manages memory usage of compiled routes with intelligent cleanup,
  * garbage collection, and memory optimization strategies.
  *
- * @package Express\Routing
+ * @package Helix\Routing
  * @since 2.2.0
  */
 class RouteMemoryManager

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Providers;
+namespace Helix\Providers;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;

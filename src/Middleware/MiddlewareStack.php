@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\Middleware;
+namespace Helix\Middleware;
 
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Utils\SerializationCache;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Utils\SerializationCache;
 
 /**
  * Classe para gerenciar e executar uma stack de middlewares com otimizações.

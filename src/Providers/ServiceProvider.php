@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Express\Providers;
+namespace Helix\Providers;
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 /**
  * Base Service Provider class

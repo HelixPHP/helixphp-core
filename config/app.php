@@ -1,6 +1,6 @@
 <?php
 /**
- * Configuração Principal do Express PHP
+ * Configuração Principal do HelixPHP
  *
  * Este arquivo centraliza todas as configurações do framework
  */
@@ -8,7 +8,7 @@
 return [
     // Informações da aplicação
     'app' => [
-        'name' => $_ENV['APP_NAME'] ?? 'Express PHP Application',
+        'name' => $_ENV['APP_NAME'] ?? 'HelixPHP Application',
         'version' => '2.1.0',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
         'debug' => filter_var($_ENV['APP_DEBUG'] ?? ($_ENV['APP_ENV'] === 'development' ? true : false), FILTER_VALIDATE_BOOLEAN),
@@ -104,7 +104,7 @@ return [
             ],
             'basic' => [
                 'driver' => 'basic',
-                'realm' => $_ENV['BASIC_AUTH_REALM'] ?? 'Express PHP API'
+                'realm' => $_ENV['BASIC_AUTH_REALM'] ?? 'HelixPHP API'
             ],
             'bearer' => [
                 'driver' => 'bearer',
@@ -221,7 +221,7 @@ return [
         ],
         'from' => [
             'address' => $_ENV['MAIL_FROM_ADDRESS'] ?? 'hello@example.com',
-            'name' => $_ENV['MAIL_FROM_NAME'] ?? 'Express PHP'
+            'name' => $_ENV['MAIL_FROM_NAME'] ?? 'HelixPHP'
         ]
     ],
 
@@ -265,13 +265,13 @@ return [
 
     // Providers de serviços (desabilitado temporariamente)
     'providers' => [
-        // 'Express\\Providers\\AuthServiceProvider',
-        // 'Express\\Providers\\CacheServiceProvider',
-        // 'Express\\Providers\\DatabaseServiceProvider',
-        // 'Express\\Providers\\LoggingServiceProvider',
-        // 'Express\\Providers\\MailServiceProvider',
-        // 'Express\\Providers\\SecurityServiceProvider',
-        // 'Express\\Providers\\ValidationServiceProvider'
+        // 'Helix\\Providers\\AuthServiceProvider',
+        // 'Helix\\Providers\\CacheServiceProvider',
+        // 'Helix\\Providers\\DatabaseServiceProvider',
+        // 'Helix\\Providers\\LoggingServiceProvider',
+        // 'Helix\\Providers\\MailServiceProvider',
+        // 'Helix\\Providers\\SecurityServiceProvider',
+        // 'Helix\\Providers\\ValidationServiceProvider'
     ],
 
     // Extensions and Plugins Configuration
@@ -308,13 +308,13 @@ return [
 
     // Aliases
     'aliases' => [
-        'Auth' => 'Express\\Facades\\Auth',
-        'Cache' => 'Express\\Facades\\Cache',
-        'Config' => 'Express\\Facades\\Config',
-        'Log' => 'Express\\Facades\\Log',
-        'Request' => 'Express\\Facades\\Request',
-        'Response' => 'Express\\Facades\\Response',
-        'Security' => 'Express\\Facades\\Security',
-        'Validator' => 'Express\\Facades\\Validator'
+        'Auth' => 'Helix\\Facades\\Auth',
+        'Cache' => 'Helix\\Facades\\Cache',
+        'Config' => 'Helix\\Facades\\Config',
+        'Log' => 'Helix\\Facades\\Log',
+        'Request' => 'Helix\\Facades\\Request',
+        'Response' => 'Helix\\Facades\\Response',
+        'Security' => 'Helix\\Facades\\Security',
+        'Validator' => 'Helix\\Facades\\Validator'
     ]
 ];

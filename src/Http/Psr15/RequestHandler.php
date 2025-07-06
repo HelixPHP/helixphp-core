@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr15;
+namespace Helix\Http\Psr15;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,10 +45,10 @@ class RequestHandler implements RequestHandlerInterface
             }
 
             // Default response if no fallback handler
-            return new \Express\Http\Psr7\Response(
+            return new \Helix\Http\Psr7\Response(
                 404,
                 [],
-                \Express\Http\Psr7\Stream::createFromString('Not Found')
+                \Helix\Http\Psr7\Stream::createFromString('Not Found')
             );
         }
 

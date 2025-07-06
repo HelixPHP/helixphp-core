@@ -1,6 +1,6 @@
 <?php
 // Exemplo de proteção XSS e sanitização de dados
-use Express\Http\Psr15\Middleware\XssMiddleware;
+use Helix\Http\Psr15\Middleware\XssMiddleware;
 
 // Dados potencialmente perigosos
 $maliciousInput = '<script>alert("XSS")</script><p>Texto normal</p>';

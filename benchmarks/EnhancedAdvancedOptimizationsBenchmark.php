@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Middleware\MiddlewarePipelineCompiler;
-use Express\Http\Optimization\ZeroCopyOptimizer;
-use Express\Http\Optimization\MemoryMappingManager;
-use Express\Http\Psr7\Cache\PredictiveCacheWarmer;
-use Express\Routing\RouteMemoryManager;
+use Helix\Middleware\MiddlewarePipelineCompiler;
+use Helix\Http\Optimization\ZeroCopyOptimizer;
+use Helix\Http\Optimization\MemoryMappingManager;
+use Helix\Http\Psr7\Cache\PredictiveCacheWarmer;
+use Helix\Routing\RouteMemoryManager;
 
 class EnhancedAdvancedOptimizationsBenchmark
 {
@@ -69,7 +69,7 @@ class EnhancedAdvancedOptimizationsBenchmark
         MiddlewarePipelineCompiler::clearAll();
         ZeroCopyOptimizer::reset();
 
-        if (class_exists('Express\Routing\RouteMemoryManager')) {
+        if (class_exists('Helix\Routing\RouteMemoryManager')) {
             RouteMemoryManager::clearAll();
         }
     }
@@ -334,7 +334,7 @@ class EnhancedAdvancedOptimizationsBenchmark
     {
         echo "🔮 Testing Enhanced Predictive Cache Warming...\n";
 
-        if (!class_exists('Express\Http\Psr7\Cache\PredictiveCacheWarmer')) {
+        if (!class_exists('Helix\Http\Psr7\Cache\PredictiveCacheWarmer')) {
             echo "   Predictive Cache Warmer not available\n";
             $this->results['predictive_cache'] = ['status' => 'not_available'];
             return;
@@ -414,7 +414,7 @@ class EnhancedAdvancedOptimizationsBenchmark
     {
         echo "🛣️ Testing Enhanced Route Memory Manager...\n";
 
-        if (!class_exists('Express\Routing\RouteMemoryManager')) {
+        if (!class_exists('Helix\Routing\RouteMemoryManager')) {
             echo "   Route Memory Manager not available\n";
             $this->results['route_memory'] = ['status' => 'not_available'];
             return;
@@ -495,7 +495,7 @@ class EnhancedAdvancedOptimizationsBenchmark
             }
 
             // Route tracking
-            if (class_exists('Express\Routing\RouteMemoryManager')) {
+            if (class_exists('Helix\Routing\RouteMemoryManager')) {
                 RouteMemoryManager::trackRouteUsage("integrated_route_{$i}");
                 $operations++;
             }
@@ -507,7 +507,7 @@ class EnhancedAdvancedOptimizationsBenchmark
         // Get final stats from all components
         $pipelineStats = MiddlewarePipelineCompiler::getStats();
         $zeroCopyStats = ZeroCopyOptimizer::getStats();
-        $routeStats = class_exists('Express\Routing\RouteMemoryManager') ?
+        $routeStats = class_exists('Helix\Routing\RouteMemoryManager') ?
             RouteMemoryManager::getStats() : ['status' => 'not_available'];
 
         $this->results['integrated_performance'] = [

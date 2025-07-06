@@ -1,8 +1,8 @@
 <?php
 
-namespace Express\Utils;
+namespace Helix\Utils;
 
-use Express\Routing\Router;
+use Helix\Routing\Router;
 
 /**
  * Service responsible for exporting OpenAPI documentation from Router routes.
@@ -125,7 +125,7 @@ class OpenApiExporter
         return [
             'openapi' => '3.0.0',
             'info' => [
-                'title' => 'Express-PHP API',
+                'title' => 'Helix-PHP API',
                 'version' => '1.0.0',
                 'description' => 'Auto-generated API documentation'
             ],

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Events;
+namespace Helix\Events;
 
 /**
  * Request Received Event

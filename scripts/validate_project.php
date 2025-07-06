@@ -1,6 +1,6 @@
 <?php
 /**
- * Script de Validação do Projeto Express PHP
+ * Script de Validação do Projeto HelixPHP
  *
  * Este script verifica se todos os componentes estão funcionando
  * corretamente antes da publicação do projeto.
@@ -16,7 +16,7 @@ class ProjectValidator
 
     public function validate()
     {
-        echo "🔍 Validando projeto Express PHP v2.1.2...\n\n";
+        echo "🔍 Validando projeto HelixPHP v2.1.2...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -150,11 +150,11 @@ class ProjectValidator
         echo "🛡️ Validando middlewares...\n";
 
         // Verificar SecurityHeaderMiddleware (PSR-15)
-        if (class_exists('Express\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
+        if (class_exists('Helix\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
             $this->passed[] = "SecurityHeaderMiddleware carregado";
 
             try {
-                $security = new \Express\Http\Psr15\Middleware\SecurityHeadersMiddleware();
+                $security = new \Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware();
                 $this->passed[] = "SecurityHeaderMiddleware pode ser instanciado";
             } catch (Exception $e) {
                 $this->errors[] = "Erro ao instanciar SecurityHeaderMiddleware: " . $e->getMessage();
@@ -164,7 +164,7 @@ class ProjectValidator
         }
 
         // Verificar JWTHelper
-        if (class_exists('Express\\Authentication\\JWTHelper')) {
+        if (class_exists('Helix\\Authentication\\JWTHelper')) {
             $this->passed[] = "JWTHelper carregado";
 
             // Testar geração de token
@@ -323,7 +323,7 @@ class ProjectValidator
             $_SERVER['REQUEST_URI'] = '/api/test';
 
             // Validação básica de autenticação sem instanciar classes específicas
-            if (class_exists('Express\\Authentication\\JWTHelper')) {
+            if (class_exists('Helix\\Authentication\\JWTHelper')) {
                 // Testar JWT Helper básico
                 $jwt = Express\Authentication\JWTHelper::encode(['test' => true], 'secret');
                 if ($jwt) {
@@ -396,13 +396,13 @@ class ProjectValidator
         echo "📚 Validando recursos OpenAPI/Swagger...\n";
 
         // Verificar se OpenApiExporter existe
-        if (class_exists('Express\\Utils\\OpenApiExporter')) {
+        if (class_exists('Helix\\Utils\\OpenApiExporter')) {
             $this->passed[] = "OpenApiExporter carregado";
 
             // Testar export básico
             try {
-                if (class_exists('Express\\Routing\\Router')) {
-                    $docs = Express\Utils\OpenApiExporter::export('Express\\Routing\\Router');
+                if (class_exists('Helix\\Routing\\Router')) {
+                    $docs = Express\Utils\OpenApiExporter::export('Helix\\Routing\\Router');
                     if (is_array($docs) && isset($docs['openapi'])) {
                         $this->passed[] = "OpenApiExporter pode gerar documentação";
 

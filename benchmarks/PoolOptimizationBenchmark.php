@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Http\Psr7\Pool\PoolManager;
-use Express\Http\Psr7\Pool\ResponsePool;
-use Express\Http\Psr7\Pool\HeaderPool;
-use Express\Http\Psr7\Cache\OperationsCache;
-use Express\Http\Psr7\Factory\ResponseFactory;
-use Express\Http\Psr7\Message;
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Pool\PoolManager;
+use Helix\Http\Psr7\Pool\ResponsePool;
+use Helix\Http\Psr7\Pool\HeaderPool;
+use Helix\Http\Psr7\Cache\OperationsCache;
+use Helix\Http\Psr7\Factory\ResponseFactory;
+use Helix\Http\Psr7\Message;
+use Helix\Http\Psr7\Stream;
 
 /**
  * Pool Optimization Performance Benchmark

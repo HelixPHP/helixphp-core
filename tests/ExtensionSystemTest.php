@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Express\Tests;
+namespace Helix\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Express\Core\Application;
-use Express\Providers\ServiceProvider;
-use Express\Providers\ExtensionManager;
-use Express\Support\HookManager;
-use Express\Events\Hook;
+use Helix\Core\Application;
+use Helix\Providers\ServiceProvider;
+use Helix\Providers\ExtensionManager;
+use Helix\Support\HookManager;
+use Helix\Events\Hook;
 
 class ExtensionSystemTest extends TestCase
 {

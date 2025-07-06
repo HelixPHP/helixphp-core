@@ -1,6 +1,6 @@
 <?php
 
-use Express\Routing\RouterInstance;
+use Helix\Routing\RouterInstance;
 
 // Sub-router especializado para rotas de usuário
 $userRouter = new RouterInstance('/user');

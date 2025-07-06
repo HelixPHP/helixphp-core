@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Factory;
+namespace Helix\Http\Psr7\Factory;
 
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
-use Express\Http\Psr7\Uri;
+use Helix\Http\Psr7\Uri;
 
 /**
  * PSR-17 URI Factory implementation

@@ -1,6 +1,6 @@
 # 🎭 Mocks e Stubs
 
-Guia prático para usar mocks e stubs nos testes do Express PHP.
+Guia prático para usar mocks e stubs nos testes do HelixPHP.
 
 ## 🤔 Conceitos Básicos
 

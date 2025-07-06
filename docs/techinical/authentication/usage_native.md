@@ -1,6 +1,6 @@
-# 🔐 Autenticação Nativa do Express PHP
+# 🔐 Autenticação Nativa do HelixPHP
 
-Guia completo dos métodos de autenticação nativos do Express PHP, incluindo JWT, Basic Auth, Bearer Token, API Key e configurações avançadas.
+Guia completo dos métodos de autenticação nativos do HelixPHP, incluindo JWT, Basic Auth, Bearer Token, API Key e configurações avançadas.
 
 ## 📋 Índice
 
@@ -17,7 +17,7 @@ Guia completo dos métodos de autenticação nativos do Express PHP, incluindo J
 
 ## 🔍 Visão Geral
 
-O Express PHP oferece um sistema de autenticação robusto e flexível que suporta múltiplos métodos de autenticação com detecção automática e configuração granular.
+O HelixPHP oferece um sistema de autenticação robusto e flexível que suporta múltiplos métodos de autenticação com detecção automática e configuração granular.
 
 ### Métodos Suportados
 
@@ -41,8 +41,8 @@ O Express PHP oferece um sistema de autenticação robusto e flexível que supor
 ```php
 <?php
 
-use Express\Core\Application;
-use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Helix\Core\Application;
+use Helix\Http\Psr15\Middleware\AuthMiddleware;
 
 $app = new Application();
 
@@ -85,7 +85,7 @@ $app->use(new AuthMiddleware([
 ```php
 <?php
 
-use Express\Authentication\JWTHelper;
+use Helix\Authentication\JWTHelper;
 
 // Login endpoint que gera JWT
 $app->post('/login', function($req, $res) {
@@ -633,7 +633,7 @@ $app->use(new AuthMiddleware([
 namespace Tests\Auth;
 
 use Tests\TestCase;
-use Express\Authentication\JWTHelper;
+use Helix\Authentication\JWTHelper;
 
 class JwtAuthTest extends TestCase
 {
@@ -755,8 +755,8 @@ class MultiMethodAuthTest extends TestCase
 ```php
 <?php
 
-use Express\Core\Application;
-use Express\Http\Psr15\Middleware\AuthMiddleware;
+use Helix\Core\Application;
+use Helix\Http\Psr15\Middleware\AuthMiddleware;
 
 $app = new Application();
 

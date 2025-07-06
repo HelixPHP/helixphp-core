@@ -1,6 +1,6 @@
-# Como Contribuir com o Express PHP
+# Como Contribuir com o HelixPHP
 
-Obrigado pelo interesse em contribuir com o Express PHP! Este guia contém todas as informações necessárias para participar do desenvolvimento do framework.
+Obrigado pelo interesse em contribuir com o HelixPHP! Este guia contém todas as informações necessárias para participar do desenvolvimento do framework.
 
 ## 🚀 Formas de Contribuir
 
@@ -42,14 +42,14 @@ Obrigado pelo interesse em contribuir com o Express PHP! Este guia contém todas
 ```bash
 # 1. Fork do repositório no GitHub
 # 2. Clone seu fork
-git clone https://github.com/seu-usuario/express-php.git
-cd express-php
+git clone https://github.com/seu-usuario/helixphp-core.git
+cd helixphp-core
 
 # 3. Instalar dependências
 composer install
 
 # 4. Configurar remote upstream
-git remote add upstream https://github.com/express-php/framework.git
+git remote add upstream https://github.com/helixphp-core/framework.git
 
 # 5. Criar branch para desenvolvimento
 git checkout -b feature/minha-funcionalidade
@@ -58,7 +58,7 @@ git checkout -b feature/minha-funcionalidade
 ### Estrutura do Projeto
 
 ```
-express-php/
+helixphp-core/
 ├── src/                    # Código fonte do framework
 │   ├── Core/              # Classes principais
 │   ├── Http/              # HTTP components
@@ -83,7 +83,7 @@ express-php/
 [Descrição clara e concisa do problema]
 
 ## Passos para Reproduzir
-1. Instalar Express PHP v2.x.x
+1. Instalar HelixPHP v2.x.x
 2. Criar rota com '...'
 3. Executar '...'
 4. Ver erro
@@ -96,7 +96,7 @@ express-php/
 
 ## Ambiente
 - PHP Version: 8.1.x
-- Express PHP Version: 2.x.x
+- HelixPHP Version: 2.x.x
 - OS: Ubuntu 22.04
 - Servidor: Apache/Nginx/Built-in
 
@@ -168,7 +168,7 @@ $app = new Application();
 
 #### PSR Standards
 
-O Express PHP segue as PSRs:
+O HelixPHP segue as PSRs:
 - **PSR-1**: Basic Coding Standard
 - **PSR-2**: Coding Style Guide (deprecated, use PSR-12)
 - **PSR-4**: Autoloading Standard
@@ -181,10 +181,10 @@ O Express PHP segue as PSRs:
 
 declare(strict_types=1);
 
-namespace Express\Middleware;
+namespace Helix\Middleware;
 
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 /**
  * Middleware de exemplo seguindo as convenções.
@@ -266,7 +266,7 @@ composer analyze
 namespace Tests\Http;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Request;
+use Helix\Http\Request;
 
 class RequestTest extends TestCase
 {
@@ -486,10 +486,10 @@ $result = $obj->exemplo('valor');
     "name": "vendor/express-extension",
     "type": "library",
     "require": {
-        "express-php/framework": "^2.1"
+        "helixphp-core/framework": "^2.1"
     },
     "extra": {
-        "express-php": {
+        "helixphp-core": {
             "providers": [
                 "Vendor\\Extension\\ServiceProvider"
             ]
@@ -505,7 +505,7 @@ $result = $obj->exemplo('valor');
 
 namespace Vendor\Extension;
 
-use Express\Providers\ServiceProvider;
+use Helix\Providers\ServiceProvider;
 
 class ExtensionServiceProvider extends ServiceProvider
 {
@@ -565,7 +565,7 @@ Todos os contribuidores são reconhecidos:
 
 - **GitHub Issues**: Para bugs e feature requests
 - **GitHub Discussions**: Para discussões gerais
-- **Email**: contato@express-php.com
+- **Email**: contato@helixphp-core.com
 - **Discord**: [Link do servidor]
 
 ### Documentação Útil
@@ -597,4 +597,4 @@ Todos os contribuidores são reconhecidos:
 - Assédio público ou privado
 - Publicar informações privadas sem permissão
 
-Contribuir com o Express PHP é uma excelente maneira de aprender, ensinar e construir algo incrível junto com a comunidade. Agradecemos sua participação! 🚀
+Contribuir com o HelixPHP é uma excelente maneira de aprender, ensinar e construir algo incrível junto com a comunidade. Agradecemos sua participação! 🚀

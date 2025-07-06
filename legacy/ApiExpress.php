@@ -1,15 +1,15 @@
 <?php
 
-namespace Express;
+namespace Helix;
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 /**
  * Alias de compatibilidade para Application.
  *
  * @deprecated Versão 3.0.0 - Use Express\Core\Application diretamente
  */
-class ApiExpress extends Application
+class ApiHelix extends Application
 {
     /**
      * Construtor que delega para Application.
@@ -19,7 +19,7 @@ class ApiExpress extends Application
     public function __construct(?string $basePath = null)
     {
         trigger_error(
-            'Express\ApiExpress está depreciado. Use Express\Core\Application diretamente.',
+            'Helix\ApiHelix está depreciado. Use Express\Core\Application diretamente.',
             E_USER_DEPRECATED
         );
 

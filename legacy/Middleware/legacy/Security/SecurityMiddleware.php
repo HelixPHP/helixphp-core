@@ -1,11 +1,11 @@
 <?php
 
-namespace Express\Middleware\Security;
+namespace Helix\Middleware\Security;
 
-use Express\Middleware\Core\BaseMiddleware;
+use Helix\Middleware\Core\BaseMiddleware;
 
 /**
- * Middleware de segurança geral para Express PHP.
+ * Middleware de segurança geral para HelixPHP.
  */
 class SecurityMiddleware extends BaseMiddleware
 {

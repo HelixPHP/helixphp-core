@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Adapters;
+namespace Helix\Http\Adapters;
 
 use Psr\Http\Message\ResponseInterface;
 

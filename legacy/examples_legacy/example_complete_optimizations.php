@@ -2,15 +2,15 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Routing\Router;
-use Express\Http\Psr15\Middleware\MiddlewareStack;
-use Express\Http\Psr15\Middleware\SecurityMiddleware;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Routing\RouteCache;
-use Express\Routing\RouterInstance;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Routing\Router;
+use Helix\Http\Psr15\Middleware\MiddlewareStack;
+use Helix\Http\Psr15\Middleware\SecurityMiddleware;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Routing\RouteCache;
+use Helix\Routing\RouterInstance;
 
 $app = new Application();
 
@@ -54,7 +54,7 @@ $securityMiddleware = function (Request $req, Response $resp, $next) {
 
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
-        'message' => '🚀 Express PHP - Otimizações Implementadas',
+        'message' => '🚀 HelixPHP - Otimizações Implementadas',
         'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => 'Cache de rotas pré-compiladas',

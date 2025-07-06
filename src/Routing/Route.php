@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Routing;
+namespace Helix\Routing;
 
 use InvalidArgumentException;
 

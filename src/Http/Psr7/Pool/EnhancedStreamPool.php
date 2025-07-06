@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Pool;
+namespace Helix\Http\Psr7\Pool;
 
-use Express\Http\Psr7\Stream;
+use Helix\Http\Psr7\Stream;
 
 /**
  * Enhanced Stream Pool with Size-Based Optimization
@@ -12,7 +12,7 @@ use Express\Http\Psr7\Stream;
  * Optimizes stream pooling by categorizing streams by buffer size
  * and implementing LRU eviction for better memory management.
  *
- * @package Express\Http\Psr7\Pool
+ * @package Helix\Http\Psr7\Pool
  * @since 2.2.0
  */
 class EnhancedStreamPool
@@ -241,7 +241,7 @@ class EnhancedStreamPool
             $totalMemory += $categoryMemory;
         }
 
-        return \Express\Utils\Utils::formatBytes($totalMemory);
+        return \Helix\Utils\Utils::formatBytes($totalMemory);
     }
 
     /**

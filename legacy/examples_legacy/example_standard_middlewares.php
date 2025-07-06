@@ -1,28 +1,28 @@
 <?php
 // =============================================================
-// EXEMPLO 100% PSR-15: Use apenas middlewares PSR-15 no Express PHP Framework
+// EXEMPLO 100% PSR-15: Use apenas middlewares PSR-15 no HelixPHP Framework
 // Não utilize middlewares legados. Consulte a documentação oficial para detalhes.
 // =============================================================
 
 /**
- * Exemplo Prático - Middlewares Padrão do Express PHP
+ * Exemplo Prático - Middlewares Padrão do HelixPHP
  *
  * Este exemplo demonstra o uso dos middlewares padrão inclusos
- * no Express PHP Framework com diferentes configurações.
+ * no HelixPHP Framework com diferentes configurações.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 // Importar middlewares padrão
-use Express\Http\Psr15\Middleware\SecurityMiddleware;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Http\Psr15\Middleware\AuthMiddleware;
-use Express\Http\Psr15\Middleware\CsrfMiddleware;
-use Express\Http\Psr15\Middleware\RateLimitMiddleware;
+use Helix\Http\Psr15\Middleware\SecurityMiddleware;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Http\Psr15\Middleware\AuthMiddleware;
+use Helix\Http\Psr15\Middleware\CsrfMiddleware;
+use Helix\Http\Psr15\Middleware\RateLimitMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -68,7 +68,7 @@ $app->use(new RateLimitMiddleware([
 // Status da API - sem middleware adicional
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'Express PHP - Exemplo de Middlewares Padrão',
+        'message' => 'HelixPHP - Exemplo de Middlewares Padrão',
         'version' => '2.0',
         'timestamp' => date('c'),
         'endpoints' => [
@@ -294,7 +294,7 @@ $app->post('/auth/login', function(Request $req, Response $res) {
             'exp' => time() + 3600 // 1 hora
         ];
 
-        $token = \Express\Authentication\JWTHelper::encode($payload, 'sua_chave_secreta_super_forte_aqui');
+        $token = \Helix\Authentication\JWTHelper::encode($payload, 'sua_chave_secreta_super_forte_aqui');
 
         $res->json([
             'message' => 'Login realizado com sucesso!',
@@ -347,7 +347,7 @@ $app->get('/middlewares/info', function(Request $req, Response $res) {
 // EXECUTAR APLICAÇÃO
 // ================================
 
-echo "\n🛡️ Iniciando Express PHP com demonstração de middlewares padrão...\n";
+echo "\n🛡️ Iniciando HelixPHP com demonstração de middlewares padrão...\n";
 echo "📋 Endpoints disponíveis:\n";
 echo "  • GET /                     - Informações da API\n";
 echo "  • GET /public/info          - Informações públicas (rate limited)\n";

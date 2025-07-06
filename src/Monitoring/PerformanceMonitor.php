@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Express\Monitoring;
+namespace Helix\Monitoring;
 
-use Express\Utils\Utils;
-use Express\Http\Psr7\Pool\HeaderPool;
-use Express\Http\Psr7\Pool\ResponsePool;
-use Express\Http\Psr7\Pool\DynamicPoolManager;
-use Express\Http\Psr7\Pool\EnhancedStreamPool;
-use Express\Http\Psr7\Cache\OperationsCache;
-use Express\Http\Psr7\Cache\IntelligentJsonCache;
-use Express\Routing\RouteCache;
+use Helix\Utils\Utils;
+use Helix\Http\Psr7\Pool\HeaderPool;
+use Helix\Http\Psr7\Pool\ResponsePool;
+use Helix\Http\Psr7\Pool\DynamicPoolManager;
+use Helix\Http\Psr7\Pool\EnhancedStreamPool;
+use Helix\Http\Psr7\Cache\OperationsCache;
+use Helix\Http\Psr7\Cache\IntelligentJsonCache;
+use Helix\Routing\RouteCache;
 
 /**
  * Real-time Performance Monitor
@@ -19,7 +19,7 @@ use Express\Routing\RouteCache;
  * Provides comprehensive monitoring of all optimization components
  * with alerts and recommendations for performance tuning.
  *
- * @package Express\Monitoring
+ * @package Helix\Monitoring
  * @since 2.2.0
  */
 class PerformanceMonitor

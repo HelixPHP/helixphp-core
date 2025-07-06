@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Express\Providers;
+namespace Helix\Providers;
 
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
-use Express\Exceptions\Container\ServiceNotFoundException;
-use Express\Exceptions\Container\ContainerException;
+use Helix\Exceptions\Container\ServiceNotFoundException;
+use Helix\Exceptions\Container\ContainerException;
 
 /**
  * Simple PSR-11 compliant container implementation

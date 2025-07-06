@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Events;
+namespace Helix\Events;
 
 /**
  * Classe de evento

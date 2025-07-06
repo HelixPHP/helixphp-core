@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Optimization;
+namespace Helix\Http\Optimization;
 
 /**
  * Memory Mapping Manager for Large Files
@@ -10,7 +10,7 @@ namespace Express\Http\Optimization;
  * Provides memory-mapped file I/O for efficient handling of large files
  * without loading entire contents into memory.
  *
- * @package Express\Http\Optimization
+ * @package Helix\Http\Optimization
  * @since 2.3.0
  */
 class MemoryMappingManager
@@ -397,10 +397,10 @@ class MemoryMappingManager
 
         return [
             'active_mappings' => count(self::$mappings),
-            'total_mapped_size' => \Express\Utils\Utils::formatBytes($totalMappedSize),
+            'total_mapped_size' => \Helix\Utils\Utils::formatBytes($totalMappedSize),
             'mappings_created' => self::$stats['mappings_created'],
             'cache_hit_rate' => self::calculateCacheHitRate(),
-            'memory_saved_estimate' => \Express\Utils\Utils::formatBytes(self::$stats['memory_saved']),
+            'memory_saved_estimate' => \Helix\Utils\Utils::formatBytes(self::$stats['memory_saved']),
             'config' => self::$config,
             'detailed_stats' => self::$stats
         ];

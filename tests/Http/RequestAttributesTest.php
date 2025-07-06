@@ -1,8 +1,8 @@
 <?php
 
-namespace Express\Tests\Http;
+namespace Helix\Tests\Http;
 
-use Express\Http\Request;
+use Helix\Http\Request;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

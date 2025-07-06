@@ -1,6 +1,6 @@
 # 🚀 Guia de Implementação Básica
 
-Como criar sua primeira API RESTful com Express PHP em 5 minutos.
+Como criar sua primeira API RESTful com HelixPHP em 5 minutos.
 
 ## 📋 Pré-requisitos
 
@@ -15,7 +15,7 @@ Como criar sua primeira API RESTful com Express PHP em 5 minutos.
 mkdir minha-api
 cd minha-api
 composer init
-composer require cafernandes/express-php
+composer require cafernandes/helixphp-core
 ```
 
 ### 2. Estrutura Básica
@@ -36,7 +36,7 @@ minha-api/
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 $app = new Application();
 
@@ -54,7 +54,7 @@ $app->get('/hello/:name', function($req, $res) {
     $name = $req->params['name'];
     $res->json([
         'message' => "Olá, {$name}!",
-        'greeting' => 'Hello from Express PHP'
+        'greeting' => 'Hello from HelixPHP'
     ]);
 });
 
@@ -90,7 +90,7 @@ return [
 // index.php
 require_once 'vendor/autoload.php';
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 $app = new Application();
 
@@ -359,7 +359,7 @@ Agora que você tem uma API básica funcionando:
 
 ## 🎉 Parabéns!
 
-Você criou sua primeira API RESTful com Express PHP! 🚀
+Você criou sua primeira API RESTful com HelixPHP! 🚀
 
 ---
 

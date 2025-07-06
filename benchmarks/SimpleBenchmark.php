@@ -1,19 +1,19 @@
 <?php
 /**
- * Express PHP Framework - Simple Benchmark
+ * HelixPHP Framework - Simple Benchmark
  *
- * Focused performance testing for core Express PHP functionality
+ * Focused performance testing for core HelixPHP functionality
  */
 
 declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Authentication\JWTHelper;
-use Express\Utils\Utils;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Authentication\JWTHelper;
+use Helix\Utils\Utils;
 
 class SimpleBenchmark
 {
@@ -27,7 +27,7 @@ class SimpleBenchmark
 
     public function runAll(): void
     {
-        echo "🚀 Express PHP Framework - Simple Performance Benchmark\n";
+        echo "🚀 HelixPHP Framework - Simple Performance Benchmark\n";
         echo "====================================================\n";
         echo "Iterations per test: " . number_format($this->iterations) . "\n";
         echo "PHP Version: " . PHP_VERSION . "\n";
@@ -216,7 +216,7 @@ class SimpleBenchmark
 
     private function generateMarkdownSummary(): void
     {
-        $markdown = "# Express PHP Framework - Performance Benchmark\n\n";
+        $markdown = "# HelixPHP Framework - Performance Benchmark\n\n";
         $markdown .= "## Test Environment\n";
         $markdown .= "- **Date**: " . date('Y-m-d H:i:s') . "\n";
         $markdown .= "- **PHP Version**: " . PHP_VERSION . "\n";
@@ -247,7 +247,7 @@ class SimpleBenchmark
         }
 
         $markdown .= "\n## Performance Summary\n";
-        $markdown .= "Express PHP demonstrates excellent performance characteristics for a PHP microframework:\n\n";
+        $markdown .= "HelixPHP demonstrates excellent performance characteristics for a PHP microframework:\n\n";
 
         // Find best performing test
         $sortedResults = $this->results;

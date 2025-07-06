@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Security;
+namespace Helix\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Psr15\Middleware\CsrfMiddleware;
+use Helix\Http\Psr15\Middleware\CsrfMiddleware;
 
 class CsrfMiddlewareTest extends TestCase
 {

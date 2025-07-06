@@ -1,6 +1,6 @@
 <?php
 // =============================================================
-// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no Express PHP Framework
+// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no HelixPHP Framework
 // Este exemplo NÃO é compatível com middlewares legados. Utilize apenas middlewares PSR-15.
 // =============================================================
 //
@@ -8,13 +8,13 @@
 // https://www.php-fig.org/psr/psr-15/
 // =============================================================
 
-// Exemplo de uso do middleware de autenticação automática do Express PHP
+// Exemplo de uso do middleware de autenticação automática do HelixPHP
 
 require_once '../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Psr15\Middleware\AuthMiddleware;
-use Express\Authentication\JWTHelper;
+use Helix\Core\Application;
+use Helix\Http\Psr15\Middleware\AuthMiddleware;
+use Helix\Authentication\JWTHelper;
 
 // Cria a aplicação
 $app = new Application();
@@ -97,14 +97,14 @@ function customAuth($request) {
 
 // 1. Autenticação JWT apenas
 echo "=== EXEMPLO 1: JWT APENAS ===\n";
-$jwtAuth = new \Express\Http\Psr15\Middleware\AuthMiddleware([
+$jwtAuth = new \Helix\Http\Psr15\Middleware\AuthMiddleware([
     'authMethods' => ['jwt'],
     'jwtSecret' => $jwtSecret
 ]);
 
 // 2. Basic Auth apenas
 echo "=== EXEMPLO 2: BASIC AUTH APENAS ===\n";
-$basicAuth = new \Express\Http\Psr15\Middleware\AuthMiddleware([
+$basicAuth = new \Helix\Http\Psr15\Middleware\AuthMiddleware([
     'authMethods' => ['basic'],
     'basicAuthCallback' => 'validateBasicAuth'
 ]);
@@ -134,7 +134,7 @@ $flexibleAuth = new AuthMiddleware([
 
 // 5. Configuração customizada
 echo "=== EXEMPLO 5: AUTENTICAÇÃO CUSTOMIZADA ===\n";
-$customAuthMiddleware = new \Express\Http\Psr15\Middleware\AuthMiddleware([
+$customAuthMiddleware = new \Helix\Http\Psr15\Middleware\AuthMiddleware([
     'authMethods' => ['custom'],
     'customAuthCallback' => 'customAuth'
 ]);
@@ -253,7 +253,7 @@ $app->get('/admin/users', function($req, $res) {
 });
 
 // Rota com autenticação específica (apenas JWT)
-$app->get('/jwt-only', new \Express\Http\Psr15\Middleware\AuthMiddleware([
+$app->get('/jwt-only', new \Helix\Http\Psr15\Middleware\AuthMiddleware([
     'authMethods' => ['jwt'],
     'jwtSecret' => $jwtSecret
 ]), function($req, $res) {
@@ -265,7 +265,7 @@ $app->get('/jwt-only', new \Express\Http\Psr15\Middleware\AuthMiddleware([
 });
 
 // Rota com autenticação específica (apenas API Key)
-$app->get('/api-key-only', new \Express\Http\Psr15\Middleware\AuthMiddleware([
+$app->get('/api-key-only', new \Helix\Http\Psr15\Middleware\AuthMiddleware([
     'authMethods' => ['bearer'],
     'bearerAuthCallback' => 'validateApiKey'
 ]), function($req, $res) {

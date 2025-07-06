@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 /**
- * Simulated Database Benchmark for Express PHP
+ * Simulated Database Benchmark for HelixPHP
  * 
  * Tests API response times with simulated database operations
  */
@@ -145,7 +145,7 @@ class SimulatedDatabaseBenchmark
     
     public function run(): void
     {
-        echo "\n🚀 Express PHP Database Performance Benchmark\n";
+        echo "\n🚀 HelixPHP Database Performance Benchmark\n";
         echo "============================================\n\n";
         echo "Testing API endpoints with simulated database operations...\n";
         echo "Iterations per test: {$this->iterations}\n\n";
@@ -292,7 +292,7 @@ class SimulatedDatabaseBenchmark
         
         $data = [
             'timestamp' => date('Y-m-d H:i:s'),
-            'framework' => 'Express PHP v2.1.3',
+            'framework' => 'HelixPHP v2.1.3',
             'php_version' => PHP_VERSION,
             'iterations' => $this->iterations,
             'results' => $this->results,

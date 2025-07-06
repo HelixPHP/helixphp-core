@@ -1,30 +1,30 @@
 <?php
 
-namespace Express\Core;
+namespace Helix\Core;
 
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Routing\Router;
-use Express\Middleware\MiddlewareStack;
-use Express\Exceptions\HttpException;
-use Express\Providers\Container;
-use Express\Providers\ServiceProvider;
-use Express\Providers\ContainerServiceProvider;
-use Express\Providers\EventServiceProvider;
-use Express\Providers\LoggingServiceProvider;
-use Express\Providers\HookServiceProvider;
-use Express\Providers\ExtensionServiceProvider;
-use Express\Support\HookManager;
-use Express\Events\ApplicationStarted;
-use Express\Events\RequestReceived;
-use Express\Events\ResponseSent;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Routing\Router;
+use Helix\Middleware\MiddlewareStack;
+use Helix\Exceptions\HttpException;
+use Helix\Providers\Container;
+use Helix\Providers\ServiceProvider;
+use Helix\Providers\ContainerServiceProvider;
+use Helix\Providers\EventServiceProvider;
+use Helix\Providers\LoggingServiceProvider;
+use Helix\Providers\HookServiceProvider;
+use Helix\Providers\ExtensionServiceProvider;
+use Helix\Support\HookManager;
+use Helix\Events\ApplicationStarted;
+use Helix\Events\RequestReceived;
+use Helix\Events\ResponseSent;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
- * Classe principal da aplicação Express-PHP.
+ * Classe principal da aplicação Helix-PHP.
  *
  * Gerencia o ciclo de vida da aplicação, incluindo:
  * - Inicialização e configuração
@@ -38,7 +38,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '2.1.0';
+    public const VERSION = '1.0.0';
 
     /**
      * Container de dependências PSR-11.
@@ -735,7 +735,7 @@ class Application
     {
         if ($this->container->has('listeners')) {
             $listenerProvider = $this->container->get('listeners');
-            if ($listenerProvider instanceof \Express\Providers\ListenerProvider) {
+            if ($listenerProvider instanceof \Helix\Providers\ListenerProvider) {
                 $listenerProvider->addListener($eventType, $listener);
                 // Rastrear listener
                 $this->registeredListeners[$eventType][] = $listener;
@@ -753,7 +753,7 @@ class Application
     {
         if ($this->container->has('listeners')) {
             $listenerProvider = $this->container->get('listeners');
-            if ($listenerProvider instanceof \Express\Providers\ListenerProvider) {
+            if ($listenerProvider instanceof \Helix\Providers\ListenerProvider) {
                 foreach ($this->registeredListeners as $eventType => $listeners) {
                     foreach ($listeners as $listener) {
                         $listenerProvider->removeListener($eventType, $listener);
@@ -843,7 +843,7 @@ class Application
      */
     public function listen(int $port = 8000, string $host = 'localhost'): void
     {
-        echo "Express-PHP v" . self::VERSION . " server started at http://{$host}:{$port}\n";
+        echo "Helix-PHP v" . self::VERSION . " server started at http://{$host}:{$port}\n";
         echo "Press Ctrl+C to stop\n\n";
 
         // Processar requisição
@@ -953,7 +953,7 @@ class Application
     }
 
     /**
-     * Factory method para criar instância da aplicação (compatibilidade com ApiExpress).
+     * Factory method para criar instância da aplicação (compatibilidade com ApiHelix).
      *
      * @param string|null $basePath Caminho base da aplicação
      * @return self
@@ -1018,10 +1018,10 @@ class Application
     /**
      * Get extension manager instance
      */
-    public function extensions(): \Express\Providers\ExtensionManager
+    public function extensions(): \Helix\Providers\ExtensionManager
     {
-        /** @var \Express\Providers\ExtensionManager */
-        return $this->make(\Express\Providers\ExtensionManager::class);
+        /** @var \Helix\Providers\ExtensionManager */
+        return $this->make(\Helix\Providers\ExtensionManager::class);
     }
 
     /**

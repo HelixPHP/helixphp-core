@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Exceptions;
+namespace Helix\Exceptions;
 
 use Exception;
 use Throwable;

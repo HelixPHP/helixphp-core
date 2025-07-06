@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Optimization;
+namespace Helix\Http\Optimization;
 
 /**
  * Array View for zero-copy array operations

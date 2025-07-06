@@ -1,6 +1,6 @@
 <?php
 // Exemplo de uso do helper de log
-use Express\Utils\Utils;
+use Helix\Utils\Utils;
 
 Utils::log('Usuário acessou a rota /api/user\n'.print_r([
     'user_id' => 123,

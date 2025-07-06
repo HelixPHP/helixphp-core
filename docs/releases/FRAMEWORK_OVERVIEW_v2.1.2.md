@@ -1,10 +1,10 @@
-# 🚀 Express PHP v2.1.2 - High-Performance Framework
+# 🚀 HelixPHP v2.1.2 - High-Performance Framework
 
 > **Ultra-High Performance PHP Framework com Otimizações PHP 8.4.8 + JIT**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.2-brightgreen.svg)](https://github.com/CAFernandes/express-php/releases/tag/v2.1.2)
+[![Version](https://img.shields.io/badge/Version-2.1.2-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.2)
 [![Performance](https://img.shields.io/badge/Performance-325%25%20Improvement-red.svg)](#performance)
 [![JIT Ready](https://img.shields.io/badge/JIT-Optimized-orange.svg)](#jit-optimizations)
 
@@ -64,12 +64,12 @@
 
 ### Instalação
 ```bash
-composer require cafernandes/express-php
+composer require cafernandes/helixphp-core
 ```
 
 ### Configuração PHP 8.4.8 Recomendada
 ```ini
-; php.ini otimizado para Express PHP v2.1.2
+; php.ini otimizado para HelixPHP v2.1.2
 opcache.enable=1
 opcache.enable_cli=0
 opcache.memory_consumption=256
@@ -89,7 +89,7 @@ realpath_cache_ttl=600
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 $app = new Application([
     'optimizations' => [
@@ -153,7 +153,7 @@ $app = new Application([
 
 | **Framework** | **Requests/s** | **Memory (MB)** | **Time (ms)** |
 |---------------|----------------|-----------------|---------------|
-| **Express PHP v2.1.2** | **1,400** | **1.2** | **0.71** |
+| **HelixPHP v2.1.2** | **1,400** | **1.2** | **0.71** |
 | Slim 4 | 950 | 2.1 | 1.05 |
 | Laravel | 280 | 8.5 | 3.57 |
 | Symfony | 450 | 6.2 | 2.22 |
@@ -280,7 +280,7 @@ Request → Router → Middleware Stack → Controller → Response
 ### **High-Performance API**
 ```php
 <?php
-use Express\Core\Application;
+use Helix\Core\Application;
 
 $app = new Application([
     'optimizations' => [
@@ -387,7 +387,7 @@ $app->run();
 
 ### **Performance Monitor**
 ```php
-use Express\Performance\PerformanceMonitor;
+use Helix\Performance\PerformanceMonitor;
 
 $monitor = new PerformanceMonitor();
 
@@ -454,7 +454,7 @@ $app->configurePoolSizes([
 
 ### **Throughput Comparison**
 ```
-Express PHP v2.1.2: ████████████████████ 1,400 req/s
+HelixPHP v2.1.2: ████████████████████ 1,400 req/s
 Slim 4:            ██████████████        950 req/s
 FastRoute:         ███████████████      1,100 req/s
 Symfony:           ██████                 450 req/s
@@ -463,7 +463,7 @@ Laravel:           ████                   280 req/s
 
 ### **Memory Efficiency**
 ```
-Express PHP v2.1.2: █████ 1.2 MB
+HelixPHP v2.1.2: █████ 1.2 MB
 Slim 4:            ██████████ 2.1 MB
 FastRoute:         █████████ 1.8 MB
 Symfony:           ███████████████████████████████ 6.2 MB
@@ -472,7 +472,7 @@ Laravel:           ████████████████████�
 
 ### **Response Time**
 ```
-Express PHP v2.1.2: ███ 0.71 ms
+HelixPHP v2.1.2: ███ 0.71 ms
 Slim 4:            █████ 1.05 ms
 FastRoute:         ████ 0.91 ms
 Symfony:           ███████████ 2.22 ms
@@ -537,6 +537,6 @@ Laravel:           ███████████████████ 3.5
 
 ---
 
-**Express PHP v2.1.2** representa o estado da arte em frameworks PHP de alta performance, combinando otimizações avançadas com uma API simples e intuitiva. Ideal para aplicações críticas que exigem máxima performance e eficiência.
+**HelixPHP v2.1.2** representa o estado da arte em frameworks PHP de alta performance, combinando otimizações avançadas com uma API simples e intuitiva. Ideal para aplicações críticas que exigem máxima performance e eficiência.
 
 **🚀 Ready to build lightning-fast applications? [Get started now!](../implementions/usage_basic.md)**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Support;
+namespace Helix\Support;
 
 /**
  * Helper para trabalhar com arrays
@@ -16,7 +16,7 @@ class Arr
      */
     public static function get(array $array, string $key, $default = null)
     {
-        return \Express\Utils\Arr::get($array, $key, $default);
+        return \Helix\Utils\Arr::get($array, $key, $default);
     }
 
     /**
@@ -27,7 +27,7 @@ class Arr
      */
     public static function set(array &$array, string $key, $value): void
     {
-        \Express\Utils\Arr::set($array, $key, $value);
+        \Helix\Utils\Arr::set($array, $key, $value);
     }
 
     /**
@@ -37,7 +37,7 @@ class Arr
      */
     public static function has(array $array, string $key): bool
     {
-        return \Express\Utils\Arr::has($array, $key);
+        return \Helix\Utils\Arr::has($array, $key);
     }
 
     /**
@@ -67,7 +67,7 @@ class Arr
     {
         // A implementação em Utils\Arr::flatten usa depth ao invés de delimiter
         // Para manter compatibilidade, usamos dot() que é equivalente
-        return \Express\Utils\Arr::dot($array, '');
+        return \Helix\Utils\Arr::dot($array, '');
     }
 
     /**
@@ -77,7 +77,7 @@ class Arr
      */
     public static function only(array $array, array $keys): array
     {
-        return \Express\Utils\Arr::only($array, $keys);
+        return \Helix\Utils\Arr::only($array, $keys);
     }
 
     /**
@@ -87,7 +87,7 @@ class Arr
      */
     public static function except(array $array, array $keys): array
     {
-        return \Express\Utils\Arr::except($array, $keys);
+        return \Helix\Utils\Arr::except($array, $keys);
     }
 
     /**
@@ -97,7 +97,7 @@ class Arr
      */
     public static function chunk(array $array, int $size): array
     {
-        return \Express\Utils\Arr::chunk($array, $size, true);
+        return \Helix\Utils\Arr::chunk($array, $size, true);
     }
 
     /**
@@ -107,7 +107,7 @@ class Arr
      */
     public static function isAssoc(array $array): bool
     {
-        return \Express\Utils\Arr::isAssoc($array);
+        return \Helix\Utils\Arr::isAssoc($array);
     }
 
     /**

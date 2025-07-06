@@ -1,17 +1,17 @@
-# Express PHP Microframework
+# HelixPHP Microframework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
-[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/express-php)](https://github.com/CAFernandes/express-php/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/CAFernandes/helixphp-core)](https://github.com/CAFernandes/helixphp-core/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/CAFernandes/helixphp-core)](https://github.com/CAFernandes/helixphp-core/stargazers)
 
 ---
 
-## 🚀 O que é o Express PHP?
+## 🚀 O que é o HelixPHP?
 
-**Express PHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
+**HelixPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
 
 - **Alta Performance**: 2.57M ops/sec em CORS, 2.27M ops/sec em Response, 757K ops/sec roteamento, cache integrado.
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
@@ -53,7 +53,7 @@ Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`bench
 ### Instalação
 
 ```bash
-composer require cafernandes/express-php
+composer require cafernandes/helixphp-core
 ```
 
 ### Exemplo Básico
@@ -105,7 +105,7 @@ Principais links:
 
 ## 🤝 Como Contribuir
 
-Quer ajudar a evoluir o Express PHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.
+Quer ajudar a evoluir o HelixPHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.
 
 ---
 

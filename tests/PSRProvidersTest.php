@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Express\Core\Application;
-use Express\Providers\Container;
-use Express\Providers\ServiceProvider;
-use Express\Events\ApplicationStarted;
+use Helix\Core\Application;
+use Helix\Providers\Container;
+use Helix\Providers\ServiceProvider;
+use Helix\Events\ApplicationStarted;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;

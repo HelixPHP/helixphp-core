@@ -8,11 +8,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Http\Psr7\Factory\ResponseFactory;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Http\Psr7\Factory\ResponseFactory;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -40,7 +40,7 @@ $responseFactory = new ResponseFactory();
 // Rota básica com resposta JSON otimizada
 $app->get('/', function (Request $req, Response $res) use ($responseFactory) {
     $data = [
-        'message' => 'High Performance Express PHP!',
+        'message' => 'High Performance HelixPHP!',
         'version' => '2.1.0',
         'timestamp' => date('Y-m-d H:i:s'),
         'performance' => 'optimized'
@@ -155,7 +155,7 @@ $app->use(function (Request $req, Response $res, $next) {
 // INICIAR SERVIDOR
 // ================================
 
-echo "🚀 High Performance Express PHP Server\n";
+echo "🚀 High Performance HelixPHP Server\n";
 echo "=====================================\n";
 echo "Otimizações ativas:\n";
 echo "✅ Optimized Response Factory (padrão)\n";

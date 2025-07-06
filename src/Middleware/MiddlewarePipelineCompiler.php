@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Middleware;
+namespace Helix\Middleware;
 
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Utils\Utils;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Utils\Utils;
 
 /**
  * Advanced Middleware Pipeline Compiler
@@ -14,7 +14,7 @@ use Express\Utils\Utils;
  * Pre-compiles middleware stacks into optimized execution paths
  * to eliminate runtime overhead and improve performance.
  *
- * @package Express\Middleware
+ * @package Helix\Middleware
  * @since 2.2.0
  */
 class MiddlewarePipelineCompiler

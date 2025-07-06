@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Services;
+namespace Helix\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\HeaderRequest;
+use Helix\Http\HeaderRequest;
 
 class HeaderRequestTest extends TestCase
 {

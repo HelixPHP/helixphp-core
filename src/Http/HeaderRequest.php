@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Http;
+namespace Helix\Http;
 
 /**
  * HeaderRequest class manages and facilitates access to request headers.

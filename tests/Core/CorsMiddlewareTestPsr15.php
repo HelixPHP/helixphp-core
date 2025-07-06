@@ -3,9 +3,9 @@
 namespace Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Http\Psr7\ServerRequest;
-use Express\Http\Psr7\Response;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Http\Psr7\ServerRequest;
+use Helix\Http\Psr7\Response;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 

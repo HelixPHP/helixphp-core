@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Exceptions\Container;
+namespace Helix\Exceptions\Container;
 
 use Psr\Container\NotFoundExceptionInterface;
 

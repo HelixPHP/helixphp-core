@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7;
+namespace Helix\Http\Psr7;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -92,7 +92,7 @@ class Response extends Message implements ResponseInterface
             if ($resource === false) {
                 throw new \RuntimeException('Unable to create temporary stream');
             }
-            $body = new \Express\Http\Psr7\Stream($resource);
+            $body = new \Helix\Http\Psr7\Stream($resource);
         }
 
         parent::__construct($body, $headers, $version);
@@ -220,7 +220,7 @@ class Response extends Message implements ResponseInterface
         if ($body === false) {
             $body = '';
         }
-        $stream = \Express\Http\Psr7\Stream::createFromString($body);
+        $stream = \Helix\Http\Psr7\Stream::createFromString($body);
         $new = $new->withBody($stream);
         // Copia propriedades para manter compatibilidade
         foreach (get_object_vars($new) as $k => $v) {

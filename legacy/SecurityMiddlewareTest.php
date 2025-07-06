@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\Tests\Security;
+namespace Helix\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Express\Middleware\Security\SecurityMiddleware;
-use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use Helix\Middleware\Security\SecurityMiddleware;
+use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 class SecurityMiddlewareTest extends TestCase
 {

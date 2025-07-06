@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Cache;
+namespace Helix\Http\Psr7\Cache;
 
 /**
  * Predictive Cache Warmer with Machine Learning
@@ -10,7 +10,7 @@ namespace Express\Http\Psr7\Cache;
  * Uses ML algorithms to predict which cache entries will be needed
  * and pre-loads them to improve cache hit rates.
  *
- * @package Express\Http\Psr7\Cache
+ * @package Helix\Http\Psr7\Cache
  * @since 2.3.0
  */
 class PredictiveCacheWarmer

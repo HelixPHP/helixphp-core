@@ -1,6 +1,6 @@
-# 📋 Express PHP Framework - Release Documentation
+# 📋 HelixPHP Framework - Release Documentation
 
-Este diretório contém a documentação completa de cada versão do Express PHP Framework, incluindo novos recursos, melhorias de performance e guias de migração.
+Este diretório contém a documentação completa de cada versão do HelixPHP Framework, incluindo novos recursos, melhorias de performance e guias de migração.
 
 ## 📚 Versões Disponíveis
 
@@ -85,7 +85,7 @@ Este diretório contém a documentação completa de cada versão do Express PHP
 Ao criar documentação para uma nova versão, siga este template:
 
 ```markdown
-# 🚀 Express PHP vX.Y.Z - [Title]
+# 🚀 HelixPHP vX.Y.Z - [Title]
 
 > **[Subtitle/Description]**
 
@@ -123,7 +123,7 @@ Para dúvidas sobre versões específicas:
 1. Consulte a documentação da versão correspondente
 2. Verifique os benchmarks e métricas
 3. Consulte o guia de migração se aplicável
-4. Acesse o [repositório oficial](https://github.com/CAFernandes/express-php) para issues
+4. Acesse o [repositório oficial](https://github.com/CAFernandes/helixphp-core) para issues
 
 ---
 

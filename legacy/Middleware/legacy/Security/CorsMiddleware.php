@@ -1,11 +1,11 @@
 <?php
 
-namespace Express\Middleware\Security;
+namespace Helix\Middleware\Security;
 
-use Express\Middleware\Core\BaseMiddleware;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Utils\SerializationCache;
+use Helix\Middleware\Core\BaseMiddleware;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Utils\SerializationCache;
 
 /**
  * Middleware CORS (Cross-Origin Resource Sharing) com otimizações de performance.
@@ -145,7 +145,7 @@ class CorsMiddleware extends BaseMiddleware
         $this->addCorsHeaders($response, $origin);
 
         // Para requisições OPTIONS (preflight), retorna imediatamente
-        if ($request instanceof \Express\Http\Request && $request->getMethod() === 'OPTIONS') {
+        if ($request instanceof \Helix\Http\Request && $request->getMethod() === 'OPTIONS') {
             if ($response instanceof Response) {
                 $response->status(200)->send();
             }
@@ -303,7 +303,7 @@ class CorsMiddleware extends BaseMiddleware
      */
     private function setHeader($response, string $name, string $value): void
     {
-        if ($response instanceof \Express\Http\Response) {
+        if ($response instanceof \Helix\Http\Response) {
             $response->header($name, $value);
         } elseif (is_object($response)) {
             // Handle test objects

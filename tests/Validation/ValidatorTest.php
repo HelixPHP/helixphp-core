@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Validation;
+namespace Helix\Tests\Validation;
 
 use PHPUnit\Framework\TestCase;
-use Express\Validation\Validator;
+use Helix\Validation\Validator;
 
 class ValidatorTest extends TestCase
 {

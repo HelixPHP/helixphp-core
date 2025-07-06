@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\Tests\Services;
+namespace Helix\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Request;
-use Express\Http\HeaderRequest;
+use Helix\Http\Request;
+use Helix\Http\HeaderRequest;
 use InvalidArgumentException;
 
 class RequestTest extends TestCase

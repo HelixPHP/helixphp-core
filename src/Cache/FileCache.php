@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Cache;
+namespace Helix\Cache;
 
 /**
  * Driver de cache em arquivo

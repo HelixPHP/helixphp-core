@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Utils;
+namespace Helix\Utils;
 
 /**
  * Utilitários para manipulação de arrays.

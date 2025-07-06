@@ -1,6 +1,6 @@
 # 🔧 Criando Middlewares Customizados
 
-Guia completo para criação, implementação e otimização de middlewares personalizados no Express PHP, incluindo padrões avançados, testing e boas práticas.
+Guia completo para criação, implementação e otimização de middlewares personalizados no HelixPHP, incluindo padrões avançados, testing e boas práticas.
 
 ## 📋 Índice
 
@@ -55,9 +55,9 @@ class CustomMiddleware
 
 namespace App\Middleware;
 
-use Express\Middleware\Core\BaseMiddleware;
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Middleware\Core\BaseMiddleware;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 class TimingMiddleware extends BaseMiddleware
 {
@@ -280,7 +280,7 @@ class RequestValidationMiddleware implements MiddlewareInterface
 
     private function createErrorResponse(array $errors): ResponseInterface
     {
-        $factory = new \Express\Http\Psr7\Factory\ResponseFactory();
+        $factory = new \Helix\Http\Psr7\Factory\ResponseFactory();
         $response = $factory->createResponse(400);
 
         $errorData = [

@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Events;
+namespace Helix\Events;
 
 /**
- * Sistema de eventos para Express-PHP
+ * Sistema de eventos para Helix-PHP
  */
 class EventDispatcher
 {

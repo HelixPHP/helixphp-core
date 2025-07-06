@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7;
+namespace Helix\Http\Psr7;
 
 use Psr\Http\Message\UriInterface;
 
@@ -12,7 +12,7 @@ use Psr\Http\Message\UriInterface;
  * This class implements the UriInterface for handling URIs
  * following the PSR-7 HTTP Message Interface standard.
  *
- * @package Express\Http\Psr7
+ * @package Helix\Http\Psr7
  * @since 2.1.0
  */
 class Uri implements UriInterface

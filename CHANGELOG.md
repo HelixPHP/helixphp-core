@@ -1,5 +1,33 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.0.0] - 2024-01-06
+
+### Changed
+- Complete rebrand from Express PHP to HelixPHP
+- All namespaces changed from `Express\` to `Helix\`
+- Package name changed from `cafernandes/express-php` to `helixphp/core`
+- Repository moved to HelixPHP organization
+- Version reset to 1.0.0 for the new brand
+
+### Added
+- New HelixPHP branding and documentation
+- Migration guide for existing Express PHP users
+
+### Note
+This is the first release under the HelixPHP brand. For previous versions, see the Express PHP project history.
+
+
+---
+
+## Previous Express PHP History
+
+# Changelog
+
 Todas as mudanças notáveis no Express-PHP Framework serão documentadas neste arquivo.
 
 O formato é baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/),

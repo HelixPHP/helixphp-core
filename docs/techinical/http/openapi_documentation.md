@@ -1,14 +1,14 @@
 # 📚 Documentação Automática com OpenAPI/Swagger
 
-O Express PHP inclui um poderoso sistema de geração automática de documentação usando **OpenAPI 3.0.0** (Swagger). Com poucos comentários no seu código, você pode gerar documentação interativa profissional.
+O HelixPHP inclui um poderoso sistema de geração automática de documentação usando **OpenAPI 3.0.0** (Swagger). Com poucos comentários no seu código, você pode gerar documentação interativa profissional.
 
 ## 🚀 Introdução Rápida
 
 ### **Exemplo Básico**
 ```php
 <?php
-use Express\Core\Application;
-use Express\Utils\OpenApiExporter;
+use Helix\Core\Application;
+use Helix\Utils\OpenApiExporter;
 
 $app = new Application();
 
@@ -102,8 +102,8 @@ $app->run();
 
 ```php
 <?php
-use Express\Core\Application;
-use Express\Utils\OpenApiExporter;
+use Helix\Core\Application;
+use Helix\Utils\OpenApiExporter;
 
 $app = new Application();
 
@@ -575,7 +575,7 @@ cp docs/api-docs.html public/docs.html
 
 ---
 
-**💡 Dica:** A documentação OpenAPI do Express PHP é gerada automaticamente a partir dos comentários do seu código. Mantenha-os sempre atualizados para ter uma documentação precisa!
+**💡 Dica:** A documentação OpenAPI do HelixPHP é gerada automaticamente a partir dos comentários do seu código. Mantenha-os sempre atualizados para ter uma documentação precisa!
 
 ---
 

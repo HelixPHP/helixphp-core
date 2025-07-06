@@ -2,11 +2,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Http\Psr7\Pool\DynamicPoolManager;
-use Express\Http\Psr7\Pool\EnhancedStreamPool;
-use Express\Http\Psr7\Pool\HeaderPool;
-use Express\Http\Psr7\Cache\IntelligentJsonCache;
-use Express\Utils\Utils;
+use Helix\Http\Psr7\Pool\DynamicPoolManager;
+use Helix\Http\Psr7\Pool\EnhancedStreamPool;
+use Helix\Http\Psr7\Pool\HeaderPool;
+use Helix\Http\Psr7\Cache\IntelligentJsonCache;
+use Helix\Utils\Utils;
 
 /**
  * Benchmark for New Optimization Features

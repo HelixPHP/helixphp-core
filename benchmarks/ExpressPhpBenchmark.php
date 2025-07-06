@@ -1,8 +1,8 @@
 <?php
 /**
- * Express PHP Framework - Benchmark Suite
+ * HelixPHP Framework - Benchmark Suite
  *
- * Comprehensive performance testing for Express PHP Framework
+ * Comprehensive performance testing for HelixPHP Framework
  * Tests various aspects: routing, middleware, authentication, etc.
  */
 
@@ -10,17 +10,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Middleware\Security\CsrfMiddleware;
-use Express\Middleware\Security\XssMiddleware;
-use Express\Middleware\Security\CorsMiddleware;
-use Express\Middleware\Core\RateLimitMiddleware;
-use Express\Authentication\JWTHelper;
-use Express\Utils\Utils;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Middleware\Security\CsrfMiddleware;
+use Helix\Middleware\Security\XssMiddleware;
+use Helix\Middleware\Security\CorsMiddleware;
+use Helix\Middleware\Core\RateLimitMiddleware;
+use Helix\Authentication\JWTHelper;
+use Helix\Utils\Utils;
 
-class ExpressPhpBenchmark
+class HelixPhpBenchmark
 {
     private array $results = [];
     private int $iterations = 1000;
@@ -35,7 +35,7 @@ class ExpressPhpBenchmark
      */
     public function runAll(): void
     {
-        echo "🚀 Express PHP Framework - Performance Benchmark\n";
+        echo "🚀 HelixPHP Framework - Performance Benchmark\n";
         echo "================================================\n";
         echo "Iterations per test: " . number_format($this->iterations) . "\n";
         echo "PHP Version: " . PHP_VERSION . "\n";
@@ -434,7 +434,7 @@ class ExpressPhpBenchmark
      */
     private function generateMarkdownSummary(): void
     {
-        $markdown = "# Express PHP Framework - Performance Benchmark\n\n";
+        $markdown = "# HelixPHP Framework - Performance Benchmark\n\n";
         $markdown .= "## Test Environment\n";
         $markdown .= "- **Date**: " . date('Y-m-d H:i:s') . "\n";
         $markdown .= "- **PHP Version**: " . PHP_VERSION . "\n";
@@ -465,7 +465,7 @@ class ExpressPhpBenchmark
         }
 
         $markdown .= "\n## Performance Summary\n";
-        $markdown .= "Express PHP demonstrates excellent performance characteristics:\n\n";
+        $markdown .= "HelixPHP demonstrates excellent performance characteristics:\n\n";
 
         // Find best performing tests
         $sortedResults = $this->results;
@@ -493,6 +493,6 @@ class ExpressPhpBenchmark
 // Run benchmarks if called directly
 if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
     $iterations = (int)($argv[1] ?? 1000);
-    $benchmark = new ExpressPhpBenchmark($iterations);
+    $benchmark = new HelixPhpBenchmark($iterations);
     $benchmark->runAll();
 }

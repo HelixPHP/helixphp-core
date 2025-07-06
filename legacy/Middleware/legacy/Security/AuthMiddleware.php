@@ -1,12 +1,12 @@
 <?php
 
-namespace Express\Middleware\Security;
+namespace Helix\Middleware\Security;
 
-use Express\Middleware\Core\BaseMiddleware;
-use Express\Authentication\JWTHelper;
+use Helix\Middleware\Core\BaseMiddleware;
+use Helix\Authentication\JWTHelper;
 
 /**
- * Middleware de autenticação automática para Express PHP.
+ * Middleware de autenticação automática para HelixPHP.
  * Suporta JWT, Basic Auth, Bearer Token, API Key e outros métodos de autorização nativamente.
  */
 class AuthMiddleware extends BaseMiddleware
@@ -403,7 +403,7 @@ class AuthMiddleware extends BaseMiddleware
     public function process(\Psr\Http\Message\ServerRequestInterface $request, \Psr\Http\Server\RequestHandlerInterface $handler): \Psr\Http\Message\ResponseInterface
     {
         // Adapta para o formato do Express
-        $response = $this->handle($request, new \Express\Http\Psr7\Response(), function (
+        $response = $this->handle($request, new \Helix\Http\Psr7\Response(), function (
             $req = null,
             $res = null
         ) use ($handler, $request) {

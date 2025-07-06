@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Utils;
+namespace Helix\Utils;
 
 /**
  * Classe Utils com utilitários gerais para o framework.

@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Helpers;
+namespace Helix\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
-use Express\Authentication\JWTHelper;
+use Helix\Authentication\JWTHelper;
 
 class JWTHelperTest extends TestCase
 {

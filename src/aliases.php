@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Aliases e funções globais para Express PHP.
+ * Aliases e funções globais para HelixPHP.
  */
 
 // Função global para criação rápida de aplicações (estilo Express.js)
 if (!function_exists('express')) {
     /**
-     * Cria uma nova instância da aplicação Express PHP.
+     * Cria uma nova instância da aplicação HelixPHP.
      *
      * @param string|null $basePath Caminho base da aplicação
      * @return Express\Core\Application

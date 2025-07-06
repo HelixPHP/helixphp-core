@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Support;
+namespace Helix\Support;
 
 /**
  * Helper para trabalhar com strings

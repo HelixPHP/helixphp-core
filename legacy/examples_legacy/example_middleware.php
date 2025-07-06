@@ -1,6 +1,6 @@
 <?php
 /**
- * Exemplo de API com Middlewares PSR-15 - Express PHP
+ * Exemplo de API com Middlewares PSR-15 - HelixPHP
  *
  * Demonstra o uso dos middlewares oficiais PSR-15 do framework
  * e como criar um middleware customizado seguindo o padrão PSR-15.
@@ -8,13 +8,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Http\Psr15\Middleware\RateLimitMiddleware;
-use Express\Http\Psr15\Middleware\XssMiddleware;
-use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use Helix\Core\Application;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Http\Psr15\Middleware\RateLimitMiddleware;
+use Helix\Http\Psr15\Middleware\XssMiddleware;
+use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -104,7 +104,7 @@ $products = [
 // Página inicial
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'API de Produtos - Express PHP',
+        'message' => 'API de Produtos - HelixPHP',
         'version' => '2.0',
         'features' => [
             'CORS habilitado',
@@ -286,7 +286,7 @@ $app->get('/test/rate-limit', function(Request $req, Response $res) {
 // ================================
 
 if (php_sapi_name() === 'cli-server') {
-    echo "Express PHP Middleware API rodando em http://localhost:8000\n";
+    echo "HelixPHP Middleware API rodando em http://localhost:8000\n";
     echo "\nFuncionalidades:\n";
     echo "  ✓ CORS habilitado\n";
     echo "  ✓ Rate limiting (30 requests/minuto)\n";

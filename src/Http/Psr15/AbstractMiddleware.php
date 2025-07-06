@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr15;
+namespace Helix\Http\Psr15;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -64,10 +64,10 @@ abstract class AbstractMiddleware implements MiddlewareInterface
      */
     protected function getResponse(ServerRequestInterface $request): ResponseInterface
     {
-        return new \Express\Http\Psr7\Response(
+        return new \Helix\Http\Psr7\Response(
             200,
             [],
-            \Express\Http\Psr7\Stream::createFromString('')
+            \Helix\Http\Psr7\Stream::createFromString('')
         );
     }
 }

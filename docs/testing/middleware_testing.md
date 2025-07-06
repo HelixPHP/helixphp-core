@@ -1,6 +1,6 @@
 # 🛡️ Testando Middlewares
 
-Guia prático para testar middlewares no Express PHP.
+Guia prático para testar middlewares no HelixPHP.
 
 ## 🧪 Estrutura de Teste de Middleware
 
@@ -8,7 +8,7 @@ Guia prático para testar middlewares no Express PHP.
 ```php
 <?php
 // tests/Unit/MiddlewareTest.php
-use Express\Http\Psr15\Middleware\SecurityMiddleware;
+use Helix\Http\Psr15\Middleware\SecurityMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class SecurityMiddlewareTest extends TestCase

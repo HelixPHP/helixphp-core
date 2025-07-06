@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Helpers;
+namespace Helix\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
-use Express\Utils\Utils;
+use Helix\Utils\Utils;
 
 class UtilsTest extends TestCase
 {

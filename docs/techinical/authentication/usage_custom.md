@@ -1,10 +1,10 @@
 # 🔐 Autenticação Customizada
 
-Guia prático para implementar métodos de autenticação personalizados no Express PHP.
+Guia prático para implementar métodos de autenticação personalizados no HelixPHP.
 
 ## 🚀 Conceitos Básicos
 
-O Express PHP permite criar sistemas de autenticação totalmente customizados através de callbacks no AuthMiddleware.
+O HelixPHP permite criar sistemas de autenticação totalmente customizados através de callbacks no AuthMiddleware.
 
 ### Tipos de Autenticação Customizada
 

@@ -1,10 +1,10 @@
-# Benchmarks do Express PHP
+# Benchmarks do HelixPHP
 
-Análise completa de performance, resultados de benchmarks e insights para otimização do Express PHP Framework.
+Análise completa de performance, resultados de benchmarks e insights para otimização do HelixPHP Framework.
 
 ## Visão Geral dos Benchmarks
 
-O Express PHP inclui uma suite completa de benchmarks que mede a performance de todos os componentes principais do framework, desde inicialização até processamento de requisições complexas.
+O HelixPHP inclui uma suite completa de benchmarks que mede a performance de todos os componentes principais do framework, desde inicialização até processamento de requisições complexas.
 
 ### Componentes Testados
 
@@ -127,13 +127,13 @@ Token validation: 117K ops/s
 
 | Framework | Requests/s | Memory (MB) | Time (ms) |
 |-----------|------------|-------------|-----------|
-| **Express PHP** | **1,400** | **1.2** | **0.71** |
+| **HelixPHP** | **1,400** | **1.2** | **0.71** |
 | Slim 4 | 950 | 2.1 | 1.05 |
 | Laravel | 280 | 8.5 | 3.57 |
 | Symfony | 450 | 6.2 | 2.22 |
 | FastRoute | 1,100 | 1.8 | 0.91 |
 
-**Vantagens do Express PHP (v2.1.3):**
+**Vantagens do HelixPHP (v2.1.3):**
 - ✅ **+47%** throughput vs. v2.0.1
 - ✅ **PHP 8.4** Compatibilidade total
 - ✅ **-15%** menor latência
@@ -326,7 +326,7 @@ php benchmarks/EnhancedAdvancedOptimizationsBenchmark.php
 ### Configuração do PHP
 
 ```ini
-; php.ini otimizado para Express PHP v2.1.2 + PHP 8.4.8
+; php.ini otimizado para HelixPHP v2.1.2 + PHP 8.4.8
 opcache.enable=1
 opcache.enable_cli=0
 opcache.memory_consumption=256
@@ -445,7 +445,7 @@ if ($dashboard['performance_alerts']) {
 ```php
 <?php
 
-use Express\Benchmarks\BenchmarkRunner;
+use Helix\Benchmarks\BenchmarkRunner;
 
 $benchmark = new BenchmarkRunner();
 
@@ -507,7 +507,7 @@ $app->use(function($req, $res, $next) {
 });
 ```
 
-Os benchmarks do Express PHP v2.1.2 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
+Os benchmarks do HelixPHP v2.1.2 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
 
 ### Destaques da Versão 2.1.3
 

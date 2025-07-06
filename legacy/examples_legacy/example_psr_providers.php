@@ -1,9 +1,9 @@
 <?php
 
-use Express\Core\Application;
-use Express\Events\ApplicationStarted;
-use Express\Events\RequestReceived;
-use Express\Events\ResponseSent;
+use Helix\Core\Application;
+use Helix\Events\ApplicationStarted;
+use Helix\Events\RequestReceived;
+use Helix\Events\ResponseSent;
 
 require_once '../vendor/autoload.php';
 
@@ -33,7 +33,7 @@ $app->get('/', function ($request, $response) use ($app) {
     }
 
     return $response->json([
-        'message' => 'Hello from Express-PHP with PSR Providers!',
+        'message' => 'Hello from Helix-PHP with PSR Providers!',
         'version' => $app->version(),
         'providers' => [
             'container' => $app->has('container') ? 'PSR-11' : 'none',

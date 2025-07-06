@@ -1,11 +1,11 @@
 <?php
 
-namespace Express\Tests\Core;
+namespace Helix\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
-use Express\Http\Psr7\ServerRequest;
-use Express\Http\Psr7\Response;
+use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use Helix\Http\Psr7\ServerRequest;
+use Helix\Http\Psr7\Response;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 

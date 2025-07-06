@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Logging;
+namespace Helix\Logging;
 
 /**
- * Sistema de logging para Express-PHP
+ * Sistema de logging para Helix-PHP
  */
 class Logger
 {

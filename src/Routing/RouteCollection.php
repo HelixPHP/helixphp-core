@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Routing;
+namespace Helix\Routing;
 
 /**
  * Classe RouteCollection para gerenciar coleções de rotas.

@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Http;
+namespace Helix\Http;
 
-use Express\Http\HeaderRequest;
-use Express\Http\Contracts\AttributeInterface;
+use Helix\Http\HeaderRequest;
+use Helix\Http\Contracts\AttributeInterface;
 use InvalidArgumentException;
 use stdClass;
 use RuntimeException;

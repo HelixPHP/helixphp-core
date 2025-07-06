@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Exemplo Avançado - Criando uma Extensão Completa para Express-PHP
+ * Exemplo Avançado - Criando uma Extensão Completa para Helix-PHP
  *
  * Este exemplo demonstra como criar uma extensão completa com:
  * - Service Provider personalizado
@@ -15,8 +15,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Core\Application;
-use Express\Providers\ServiceProvider;
+use Helix\Core\Application;
+use Helix\Providers\ServiceProvider;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 // ============================================
@@ -538,7 +538,7 @@ class CacheProvider extends ServiceProvider
 // DEMONSTRAÇÃO DO USO DAS EXTENSÕES
 // ============================================
 
-echo "🚀 Express-PHP Advanced Extensions Demo\n";
+echo "🚀 Helix-PHP Advanced Extensions Demo\n";
 echo "=======================================\n\n";
 
 // Inicializar aplicação
@@ -624,7 +624,7 @@ $app->get('/extensions/advanced-stats', function ($req, $res) use ($app) {
     $stats = $app->applyFilter('app.stats', [], []);
 
     $advancedStats = [
-        'framework' => 'Express-PHP',
+        'framework' => 'Helix-PHP',
         'version' => Application::VERSION,
         'extensions' => $app->getExtensionStats(),
         'features' => $stats,
@@ -721,7 +721,7 @@ echo "2. Configure composer.json com auto-discovery:\n\n";
 echo <<<COMPOSER
 {
     "name": "vendor/express-php-rate-limiter",
-    "description": "Advanced rate limiting for Express-PHP",
+    "description": "Advanced rate limiting for Helix-PHP",
     "type": "express-php-extension",
     "require": {
         "cafernandes/express-php": "^2.1"

@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\Tests;
+namespace Helix\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 class ModularFrameworkTest extends TestCase
 {

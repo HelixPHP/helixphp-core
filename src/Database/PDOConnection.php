@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Database;
+namespace Helix\Database;
 
 use PDO;
 use PDOException;
-use Express\Exceptions\DatabaseException;
+use Helix\Exceptions\DatabaseException;
 
 /**
  * PDO Database Connection Manager

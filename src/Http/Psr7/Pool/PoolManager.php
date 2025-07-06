@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Pool;
+namespace Helix\Http\Psr7\Pool;
 
-use Express\Http\Psr7\Cache\OperationsCache;
+use Helix\Http\Psr7\Cache\OperationsCache;
 
 /**
  * Pool Manager for coordinating all object pools and caches
  *
- * @package Express\Http\Psr7\Pool
+ * @package Helix\Http\Psr7\Pool
  * @since 2.1.1
  */
 class PoolManager

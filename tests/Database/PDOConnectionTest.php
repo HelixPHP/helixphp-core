@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Tests\Database;
+namespace Helix\Tests\Database;
 
 use PHPUnit\Framework\TestCase;
-use Express\Database\PDOConnection;
-use Express\Exceptions\DatabaseException;
+use Helix\Database\PDOConnection;
+use Helix\Exceptions\DatabaseException;
 use PDO;
 
 class PDOConnectionTest extends TestCase

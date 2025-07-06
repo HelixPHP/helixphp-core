@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Providers;
+namespace Helix\Providers;
 
-use Express\Core\Application;
-use Express\Providers\ServiceProvider;
-use Express\Support\HookManager;
+use Helix\Core\Application;
+use Helix\Providers\ServiceProvider;
+use Helix\Support\HookManager;
 
 /**
  * Hook Service Provider

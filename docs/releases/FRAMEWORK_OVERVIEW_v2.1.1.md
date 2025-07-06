@@ -1,10 +1,10 @@
-# 🚀 Express PHP v2.1.1 - Performance Framework
+# 🚀 HelixPHP v2.1.1 - Performance Framework
 
 > **Ultra-High Performance PHP Framework com Otimizações Avançadas**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
-[![Version](https://img.shields.io/badge/Version-2.1.1-brightgreen.svg)](https://github.com/CAFernandes/express-php/releases/tag/v2.1.1)
+[![Version](https://img.shields.io/badge/Version-2.1.1-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v2.1.1)
 [![Performance](https://img.shields.io/badge/Performance-278%25%20Improvement-red.svg)](#performance)
 
 ---
@@ -30,7 +30,7 @@
 
 ### Instalação
 ```bash
-composer require cafernandes/express-php
+composer require cafernandes/helixphp-core
 ```
 
 ### Exemplo Básico
@@ -38,7 +38,7 @@ composer require cafernandes/express-php
 <?php
 require_once 'vendor/autoload.php';
 
-use Express\Core\Application;
+use Helix\Core\Application;
 
 $app = new Application([
     'optimizations' => [
@@ -222,10 +222,10 @@ Load:            Isolated
 ### **Upgrade Steps**
 ```bash
 # Update via Composer
-composer update express-php/microframework
+composer update helixphp-core/microframework
 
 # Verify version
-php -r "echo Express\Core\Application::VERSION;" # 2.1.1
+php -r "echo Helix\Core\Application::VERSION;" # 2.1.1
 
 # Enable optimizations (opcional)
 $app = new Application(['optimizations' => ['all' => true]]);
@@ -236,15 +236,15 @@ $app = new Application(['optimizations' => ['all' => true]]);
 ## 🤝 **SUPPORT & COMMUNITY**
 
 ### **Links**
-- **🐛 Issues**: [GitHub Issues](https://github.com/CAFernandes/express-php/issues)
-- **💡 Discussions**: [GitHub Discussions](https://github.com/CAFernandes/express-php/discussions)
-- **📖 Documentation**: [/docs](https://github.com/CAFernandes/express-php/tree/main/docs)
-- **🚀 Examples**: [/examples](https://github.com/CAFernandes/express-php/tree/main/examples)
+- **🐛 Issues**: [GitHub Issues](https://github.com/CAFernandes/helixphp-core/issues)
+- **💡 Discussions**: [GitHub Discussions](https://github.com/CAFernandes/helixphp-core/discussions)
+- **📖 Documentation**: [/docs](https://github.com/CAFernandes/helixphp-core/tree/main/docs)
+- **🚀 Examples**: [/examples](https://github.com/CAFernandes/helixphp-core/tree/main/examples)
 
 ### **Contributing**
 ```bash
 # Fork & Clone
-git clone https://github.com/your-username/express-php.git
+git clone https://github.com/your-username/helixphp-core.git
 
 # Install dependencies
 composer install
@@ -260,13 +260,13 @@ cd benchmarks && ./run_benchmark.sh
 
 ## 📄 **LICENSE**
 
-Express PHP Framework v2.1.1 is licensed under the [MIT License](LICENSE).
+HelixPHP Framework v2.1.1 is licensed under the [MIT License](LICENSE).
 
 ---
 
 ## 🎉 **CONCLUSION**
 
-**Express PHP v2.1.1** delivers:
+**HelixPHP v2.1.1** delivers:
 
 - ✅ **World-class performance** (278x improvement)
 - ✅ **Advanced optimizations** validated in production
@@ -280,7 +280,7 @@ Express PHP Framework v2.1.1 is licensed under the [MIT License](LICENSE).
 ### 🚀 **Get Started Now**
 
 ```bash
-composer require cafernandes/express-php
+composer require cafernandes/helixphp-core
 ```
 
-**Express PHP v2.1.1 - Where Performance Meets Excellence** 🎯
+**HelixPHP v2.1.1 - Where Performance Meets Excellence** 🎯

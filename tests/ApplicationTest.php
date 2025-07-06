@@ -1,10 +1,10 @@
 <?php
 
-namespace Express\Tests;
+namespace Helix\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Express\Core\Application;
-use Express\Routing\Router;
+use Helix\Core\Application;
+use Helix\Routing\Router;
 
 class ApplicationTest extends TestCase
 {

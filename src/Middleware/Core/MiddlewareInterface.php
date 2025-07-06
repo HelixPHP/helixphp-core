@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Middleware\Core;
+namespace Helix\Middleware\Core;
 
 /**
  * Interface para middlewares.
@@ -10,8 +10,8 @@ interface MiddlewareInterface
     /**
      * Executa o middleware.
      *
-     * @param  \Express\Http\Request  $request
-     * @param  \Express\Http\Response $response
+     * @param  \Helix\Http\Request  $request
+     * @param  \Helix\Http\Response $response
      * @param  callable               $next
      * @return mixed
      */

@@ -1,11 +1,11 @@
 <?php
 
-namespace Express\Core;
+namespace Helix\Core;
 
-use Express\Utils\Arr;
+use Helix\Utils\Arr;
 
 /**
- * Sistema de configuração centralizado do Express-PHP.
+ * Sistema de configuração centralizado do Helix-PHP.
  *
  * Gerencia configurações da aplicação com suporte a:
  * - Carregamento de arquivos de configuração

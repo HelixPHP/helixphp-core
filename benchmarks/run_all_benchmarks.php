@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Run all Express PHP benchmarks
+ * Run all HelixPHP benchmarks
  * 
  * This script orchestrates all benchmark executions
  * and generates a comprehensive report
@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-echo "🚀 Express PHP Comprehensive Benchmark Suite\n";
+echo "🚀 HelixPHP Comprehensive Benchmark Suite\n";
 echo "==========================================\n\n";
 
 // Check environment
@@ -24,7 +24,7 @@ echo "OPcache: " . (function_exists('opcache_get_status') ? 'Enabled' : 'Disable
 // List of benchmarks to run
 $benchmarks = [
     'SimpleBenchmark' => 'Basic framework operations',
-    'ExpressPhpBenchmark' => 'Core Express PHP features',
+    'HelixPhpBenchmark' => 'Core HelixPHP features',
     'DatabaseBenchmark' => 'Database operations with PDO',
     'PSRPerformanceBenchmark' => 'PSR-15 middleware performance',
     'EnhancedAdvancedOptimizationsBenchmark' => 'Advanced optimizations',

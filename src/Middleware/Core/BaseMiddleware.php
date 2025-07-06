@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Middleware\Core;
+namespace Helix\Middleware\Core;
 
-use Express\Http\Request;
-use Express\Http\Response;
+use Helix\Http\Request;
+use Helix\Http\Response;
 
 /**
  * Classe base para middlewares.

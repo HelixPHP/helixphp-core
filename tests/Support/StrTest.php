@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Support;
+namespace Helix\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Express\Support\Str;
+use Helix\Support\Str;
 
 class StrTest extends TestCase
 {
@@ -52,20 +52,20 @@ class StrTest extends TestCase
 
     public function testStartsWith(): void
     {
-        $this->assertTrue(Str::startsWith('Express PHP', 'Express'));
-        $this->assertFalse(Str::startsWith('Express PHP', 'PHP'));
+        $this->assertTrue(Str::startsWith('HelixPHP', 'Express'));
+        $this->assertFalse(Str::startsWith('HelixPHP', 'PHP'));
     }
 
     public function testEndsWith(): void
     {
-        $this->assertTrue(Str::endsWith('Express PHP', 'PHP'));
-        $this->assertFalse(Str::endsWith('Express PHP', 'Express'));
+        $this->assertTrue(Str::endsWith('HelixPHP', 'PHP'));
+        $this->assertFalse(Str::endsWith('HelixPHP', 'Express'));
     }
 
     public function testContains(): void
     {
-        $this->assertTrue(Str::contains('Express PHP Framework', 'PHP'));
-        $this->assertFalse(Str::contains('Express PHP Framework', 'Laravel'));
+        $this->assertTrue(Str::contains('HelixPHP Framework', 'PHP'));
+        $this->assertFalse(Str::contains('HelixPHP Framework', 'Laravel'));
     }
 
     public function testUcfirst(): void

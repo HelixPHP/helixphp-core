@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr15\Middleware;
+namespace Helix\Http\Psr15\Middleware;
 
-use Express\Http\Psr15\AbstractMiddleware;
-use Express\Http\Psr7\Request;
-use Express\Http\Psr7\Response;
+use Helix\Http\Psr15\AbstractMiddleware;
+use Helix\Http\Psr7\Request;
+use Helix\Http\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -67,7 +67,7 @@ class CorsMiddleware extends AbstractMiddleware
 
     private function handlePreflightOptimized(ServerRequestInterface $request): ResponseInterface
     {
-        $factory = new \Express\Http\Psr7\Factory\ResponseFactory();
+        $factory = new \Helix\Http\Psr7\Factory\ResponseFactory();
         $response = $factory->createResponse(200);
 
         // Métodos sem espaço após vírgula

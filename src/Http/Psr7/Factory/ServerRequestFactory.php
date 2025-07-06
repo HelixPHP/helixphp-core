@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Factory;
+namespace Helix\Http\Psr7\Factory;
 
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Express\Http\Psr7\ServerRequest;
+use Helix\Http\Psr7\ServerRequest;
 
 /**
  * PSR-17 Server Request Factory implementation

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Adapters;
+namespace Helix\Http\Adapters;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Express\Http\Psr7\ServerRequest;
-use Express\Http\Psr7\Uri;
-use Express\Http\Psr7\Stream;
-use Express\Http\Psr7\UploadedFile;
+use Helix\Http\Psr7\ServerRequest;
+use Helix\Http\Psr7\Uri;
+use Helix\Http\Psr7\Stream;
+use Helix\Http\Psr7\UploadedFile;
 
 /**
  * Adapter to convert PHP globals to PSR-7 ServerRequest

@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Utils;
+namespace Helix\Utils;
 
 /**
  * Cache otimizado para serialização de dados intensivos.

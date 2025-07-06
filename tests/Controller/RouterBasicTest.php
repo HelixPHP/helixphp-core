@@ -1,9 +1,9 @@
 <?php
 
-namespace Express\Tests\Controller;
+namespace Helix\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Express\Routing\Router;
+use Helix\Routing\Router;
 
 class RouterBasicTest extends TestCase
 {

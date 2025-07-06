@@ -1,7 +1,7 @@
 <?php
 // Exemplo de geração e validação de token CSRF
-use Express\Utils\Utils;
-use Express\Http\Psr15\Middleware\CsrfMiddleware;
+use Helix\Utils\Utils;
+use Helix\Http\Psr15\Middleware\CsrfMiddleware;
 
 // Método 1: Usando Utils (básico)
 $token = Utils::csrfToken();

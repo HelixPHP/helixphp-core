@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Express\Http\Psr7\Cache;
+namespace Helix\Http\Psr7\Cache;
 
-use Express\Utils\SerializationCache;
+use Helix\Utils\SerializationCache;
 
 /**
  * Advanced Probabilistic Cache Strategy
@@ -12,7 +12,7 @@ use Express\Utils\SerializationCache;
  * Implements intelligent caching with probabilistic warming,
  * adaptive TTL, and statistical learning for optimal performance.
  *
- * @package Express\Http\Psr7\Cache
+ * @package Helix\Http\Psr7\Cache
  * @since 2.2.0
  */
 class ProbabilisticCache

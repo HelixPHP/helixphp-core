@@ -1,8 +1,8 @@
 <?php
 // Exemplo de configuração e uso dos middlewares de segurança
-// use Express\ApiExpress;
-use Express\Core\Application;
-use Express\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+// use Helix\ApiHelix;
+use Helix\Core\Application;
+use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 
 $app = new Application();

@@ -7,16 +7,16 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Express\Http\Adapters\GlobalsToServerRequestAdapter;
-use Express\Http\Request;
-use Express\Http\Response;
-use Express\Http\Psr7\Factory\ServerRequestFactory;
-use Express\Http\Psr7\Factory\ResponseFactory;
-use Express\Http\Psr15\Middleware\CorsMiddleware;
-use Express\Utils\Utils;
+use Helix\Http\Adapters\GlobalsToServerRequestAdapter;
+use Helix\Http\Request;
+use Helix\Http\Response;
+use Helix\Http\Psr7\Factory\ServerRequestFactory;
+use Helix\Http\Psr7\Factory\ResponseFactory;
+use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use Helix\Utils\Utils;
 
 // Add the correct import for RequestHandler and CorsMiddleware if they exist
-use Express\Http\Psr15\RequestHandler;
+use Helix\Http\Psr15\RequestHandler;
 
 class PSRPerformanceBenchmark
 {
@@ -139,7 +139,7 @@ class PSRPerformanceBenchmark
         $traditional = $this->benchmark('Traditional Headers', function() {
             $res = new Response();
             $res->header('Content-Type', 'application/json');
-            $res->header('X-Powered-By', 'Express PHP');
+            $res->header('X-Powered-By', 'HelixPHP');
             $res->header('Cache-Control', 'no-cache');
             return $res;
         });
@@ -149,7 +149,7 @@ class PSRPerformanceBenchmark
             $factory = new ResponseFactory();
             $res = $factory->createResponse(200)
                 ->withHeader('Content-Type', 'application/json')
-                ->withHeader('X-Powered-By', 'Express PHP')
+                ->withHeader('X-Powered-By', 'HelixPHP')
                 ->withHeader('Cache-Control', 'no-cache');
             return $res;
         });

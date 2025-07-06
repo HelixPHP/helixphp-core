@@ -1,6 +1,6 @@
 <?php
 
-namespace Express\Database;
+namespace Helix\Database;
 
 /**
  * Conexão simples com banco de dados usando PDO
