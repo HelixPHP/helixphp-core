@@ -36,7 +36,7 @@ Code Coverage:     Mantida em 94.7%
 
 Todas as otimizações de performance das versões anteriores foram mantidas:
 
-### **Performance Metrics (Atuais v2.1.3)**
+### **Performance Metrics (Atual v2.1.3)**
 - **2.27M ops/sec** - Response Object Creation
 - **2.57M ops/sec** - CORS Headers Generation
 - **1.69M ops/sec** - JSON Encoding (Small)
