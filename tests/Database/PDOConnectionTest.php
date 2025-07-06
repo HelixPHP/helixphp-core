@@ -46,6 +46,15 @@ class PDOConnectionTest extends TestCase
         if (defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY')) {
             $this->assertArrayHasKey(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $actualConfig['options']);
             $this->assertTrue($actualConfig['options'][PDO::MYSQL_ATTR_USE_BUFFERED_QUERY]);
+
+            // Test that collation is set via INIT command
+            if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+                $this->assertArrayHasKey(PDO::MYSQL_ATTR_INIT_COMMAND, $actualConfig['options']);
+                $this->assertEquals(
+                    'SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci',
+                    $actualConfig['options'][PDO::MYSQL_ATTR_INIT_COMMAND]
+                );
+            }
         } else {
             $this->markTestSkipped('MySQL PDO extension not available');
         }
@@ -235,5 +244,58 @@ class PDOConnectionTest extends TestCase
         // Should have new config, not old one
         $this->assertEquals('sqlite', $actualConfig['driver']);
         $this->assertArrayHasKey(PDO::ATTR_ERRMODE, $actualConfig['options']);
+    }
+
+    public function testMySQLCollationIsSetViaInitCommand(): void
+    {
+        if (!defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+            $this->markTestSkipped('MySQL PDO extension not available');
+        }
+
+        $config = [
+            'driver' => 'mysql',
+            'database' => 'test',
+            'charset' => 'latin1',
+            'collation' => 'latin1_german1_ci'
+        ];
+
+        PDOConnection::configure($config);
+
+        $reflection = new \ReflectionClass(PDOConnection::class);
+        $configProperty = $reflection->getProperty('config');
+        $configProperty->setAccessible(true);
+        $actualConfig = $configProperty->getValue();
+
+        // Should have INIT command with custom charset and collation
+        $this->assertArrayHasKey(PDO::MYSQL_ATTR_INIT_COMMAND, $actualConfig['options']);
+        $this->assertEquals(
+            'SET NAMES latin1 COLLATE latin1_german1_ci',
+            $actualConfig['options'][PDO::MYSQL_ATTR_INIT_COMMAND]
+        );
+    }
+
+    public function testNoCollationMeansNoInitCommand(): void
+    {
+        $config = [
+            'driver' => 'mysql',
+            'database' => 'test',
+            'charset' => 'utf8mb4',
+            'collation' => '' // Empty collation
+        ];
+
+        PDOConnection::configure($config);
+
+        $reflection = new \ReflectionClass(PDOConnection::class);
+        $configProperty = $reflection->getProperty('config');
+        $configProperty->setAccessible(true);
+        $actualConfig = $configProperty->getValue();
+
+        // Should not have INIT command if collation is empty
+        if (defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+            $this->assertArrayNotHasKey(PDO::MYSQL_ATTR_INIT_COMMAND, $actualConfig['options']);
+        } else {
+            // Assert that config was at least processed correctly
+            $this->assertEquals('mysql', $actualConfig['driver']);
+        }
     }
 }

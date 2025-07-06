@@ -48,8 +48,20 @@ class PDOConnection
         );
 
         // Apply driver-specific options
-        if (in_array($config['driver'], ['mysql', 'mariadb']) && defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY')) {
-            $defaultOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+        if (in_array($config['driver'], ['mysql', 'mariadb'])) {
+            // Set buffered query if available
+            if (defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY')) {
+                $defaultOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
+            }
+
+            // Set collation via INIT command if specified
+            if (!empty($config['collation']) && defined('PDO::MYSQL_ATTR_INIT_COMMAND')) {
+                $defaultOptions[PDO::MYSQL_ATTR_INIT_COMMAND] = sprintf(
+                    "SET NAMES %s COLLATE %s",
+                    $config['charset'],
+                    $config['collation']
+                );
+            }
         }
 
         // Merge default options with user-provided options
