@@ -571,7 +571,7 @@ Todos os contribuidores são reconhecidos:
 ### Documentação Útil
 
 - [Guia de Implementação Básica](../implementions/usage_basic.md)
-- [Documentação da API](../techinical/application.md)
+- [Documentação da API](../technical/application.md)
 - [Guias de Teste](../testing/api_testing.md)
 
 ## 📜 Código de Conduta

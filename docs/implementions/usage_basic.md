@@ -353,8 +353,8 @@ $app->get('/users', function($req, $res) use ($users) {
 Agora que você tem uma API básica funcionando:
 
 1. **[Adicione Middlewares](usage_with_middleware.md)** - Segurança, CORS, autenticação
-2. **[Conecte um Banco Real](../techinical/application.md)** - PostgreSQL, MySQL, MongoDB
-3. **[Implemente Validação](../techinical/middleware/ValidationMiddleware.md)** - Dados de entrada
+2. **[Conecte um Banco Real](../technical/application.md)** - PostgreSQL, MySQL, MongoDB
+3. **[Implemente Validação](../technical/middleware/ValidationMiddleware.md)** - Dados de entrada
 4. **[Adicione Testes](../testing/api_testing.md)** - Teste sua API
 
 ## 🎉 Parabéns!

@@ -162,7 +162,7 @@ v1.0.0  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
 
 ## 🔮 Future Optimizations
 
-### Planned for v2.2.0
+### Planned for v1.0.0
 - [ ] Database connection pooling
 - [ ] Async operation support
 - [ ] HTTP/3 compatibility

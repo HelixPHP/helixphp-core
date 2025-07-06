@@ -483,13 +483,13 @@ Laravel:           ███████████████████ 3.5
 
 ## 🎯 **ROADMAP**
 
-### **v2.2.0 (Planned)**
+### **v1.0.0 (Planned)**
 - **HTTP/2 Support**: +15% throughput estimado
 - **Async Operations**: Non-blocking I/O
 - **Database Pools**: Connection pooling
 - **GraphQL Integration**: Native support
 
-### **v2.3.0 (Future)**
+### **v1.0.0 (Future)**
 - **PHP 8.5 Support**: Next-generation optimizations
 - **Advanced JIT**: Custom JIT optimizations
 - **ML Enhancements**: Improved prediction models
@@ -501,17 +501,17 @@ Laravel:           ███████████████████ 3.5
 
 ### **Complete Documentation**
 - **[Getting Started](../implementions/usage_basic.md)** - Basic implementation guide
-- **[Technical Reference](../techinical/application.md)** - Detailed technical documentation
+- **[Technical Reference](../technical/application.md)** - Detailed technical documentation
 - **[Performance Guide](../performance/PerformanceMonitor.md)** - Optimization strategies
 - **[Benchmarks](../performance/benchmarks/README.md)** - Complete performance analysis
 - **[Contributing](../contributing/README.md)** - Development guidelines
 
 ### **API Reference**
-- **[Application](../techinical/application.md)** - Core application class
-- **[Router](../techinical/routing/router.md)** - Routing system
-- **[HTTP Objects](../techinical/http/request.md)** - Request/Response handling
-- **[Middleware](../techinical/middleware/README.md)** - Middleware system
-- **[Extensions](../techinical/extesions/README.md)** - Extension system
+- **[Application](../technical/application.md)** - Core application class
+- **[Router](../technical/routing/router.md)** - Routing system
+- **[HTTP Objects](../technical/http/request.md)** - Request/Response handling
+- **[Middleware](../technical/middleware/README.md)** - Middleware system
+- **[Extensions](../technical/extesions/README.md)** - Extension system
 
 ---
 

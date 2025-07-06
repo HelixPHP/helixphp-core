@@ -62,7 +62,7 @@ Este diretório contém a documentação completa de cada versão do HelixPHP Fr
 | v1.0.0 | 1,400 req/s | 1.2 MB | 0.71 ms | PHP 8.4.8 JIT |
 | v1.0.0 | 1,200 req/s | 1.4 MB | 0.83 ms | ML Optimizations |
 | v1.0.0 | 950 req/s | 1.8 MB | 1.05 ms | Core Rewrite |
-| v2.0.0 | 800 req/s | 2.1 MB | 1.25 ms | Initial Release |
+| v1.0.0 | 800 req/s | 2.1 MB | 1.25 ms | Initial Release |
 
 ## 🔄 Guia de Migração
 

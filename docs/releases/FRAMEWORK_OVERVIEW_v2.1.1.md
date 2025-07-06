@@ -214,7 +214,7 @@ Load:            Isolated
 
 ## 🔄 **MIGRATION GUIDE**
 
-### **From v2.0.0 to v1.0.0**
+### **From v1.0.0 to v1.0.0**
 - ✅ **100% Compatible** - No breaking changes
 - ✅ **Drop-in replacement** - Just update version
 - ✅ **Automatic optimizations** - Enable in config

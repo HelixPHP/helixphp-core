@@ -399,7 +399,7 @@ $app->configurePoolSizes([
 ### Evolução da Performance
 
 ```
-v2.0.0: 800 req/s
+v1.0.0: 800 req/s
 v1.0.0: 950 req/s (+19%)
 v1.0.0: 1,100 req/s (+16%)
 v1.0.0: 1,200 req/s (+9%)

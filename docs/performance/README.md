@@ -104,7 +104,7 @@ Veja o [guia completo](../../benchmarks/DOCKER_BENCHMARKS.md) para mais detalhes
 
 ## 🔮 Roadmap de Performance
 
-### v2.2.0 (Próximo Release)
+### v1.0.0 (Próximo Release)
 - [ ] Suporte assíncrono nativo
 - [ ] Connection pooling avançado
 - [ ] Route compilation cache

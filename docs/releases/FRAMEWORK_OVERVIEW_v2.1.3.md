@@ -109,7 +109,7 @@ Esta versão mantém total compatibilidade com versões anteriores:
 ## 📚 **DOCUMENTATION**
 
 - [Guia de Instalação](../index.md)
-- [Documentação Técnica](../techinical/application.md)
+- [Documentação Técnica](../technical/application.md)
 - [Guia de Migração](../contributing/README.md)
 - [Changelog Completo](../../CHANGELOG.md)
 

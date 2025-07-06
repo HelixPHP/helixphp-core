@@ -125,7 +125,7 @@ With v1.0.0 performance improvements:
 
 ## 🔮 Future Projections
 
-### Expected Performance (v2.2.0)
+### Expected Performance (v1.0.0)
 
 | Feature | Current | Target | Improvement |
 |---------|---------|---------|-------------|
