@@ -230,11 +230,12 @@ class PDOConnection
     }
 
     /**
-     * Close connection
+     * Close connection and clear configuration
      */
     public static function close(): void
     {
         self::$instance = null;
+        self::$config = [];
     }
 
     /**

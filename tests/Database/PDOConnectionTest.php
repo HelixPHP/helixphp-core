@@ -192,4 +192,48 @@ class PDOConnectionTest extends TestCase
 
         PDOConnection::getInstance();
     }
+
+    public function testCloseConnectionClearsConfiguration(): void
+    {
+        // Configure connection
+        $config = [
+            'driver' => 'sqlite',
+            'database' => ':memory:'
+        ];
+
+        PDOConnection::configure($config);
+
+        // Get instance to ensure connection is established
+        $pdo = PDOConnection::getInstance();
+        $this->assertInstanceOf(PDO::class, $pdo);
+
+        // Close connection
+        PDOConnection::close();
+
+        // Try to get instance again - should use default config from environment
+        // Since we don't have environment variables set, this should create a connection
+        // with default values
+        $reflection = new \ReflectionClass(PDOConnection::class);
+        $configProperty = $reflection->getProperty('config');
+        $configProperty->setAccessible(true);
+
+        // Config should be empty after close
+        $this->assertEmpty($configProperty->getValue());
+
+        // Configure again with different settings to ensure clean state
+        $newConfig = [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'options' => [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT
+            ]
+        ];
+
+        PDOConnection::configure($newConfig);
+        $actualConfig = $configProperty->getValue();
+
+        // Should have new config, not old one
+        $this->assertEquals('sqlite', $actualConfig['driver']);
+        $this->assertArrayHasKey(PDO::ATTR_ERRMODE, $actualConfig['options']);
+    }
 }
