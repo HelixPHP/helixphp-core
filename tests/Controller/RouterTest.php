@@ -21,19 +21,19 @@ class RouterTest extends TestCase
         if ($reflection->hasProperty('routes')) {
             $routesProperty = $reflection->getProperty('routes');
             $routesProperty->setAccessible(true);
-            $routesProperty->setValue([]);
+            $routesProperty->setValue(null, []);
         }
 
         if ($reflection->hasProperty('prev_path')) {
             $prevPathProperty = $reflection->getProperty('prev_path');
             $prevPathProperty->setAccessible(true);
-            $prevPathProperty->setValue('');
+            $prevPathProperty->setValue(null, '');
         }
 
         if ($reflection->hasProperty('current_group_prefix')) {
             $currentGroupPrefixProperty = $reflection->getProperty('current_group_prefix');
             $currentGroupPrefixProperty->setAccessible(true);
-            $currentGroupPrefixProperty->setValue('');
+            $currentGroupPrefixProperty->setValue(null, '');
         }
     }
 

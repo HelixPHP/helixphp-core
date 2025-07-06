@@ -227,6 +227,31 @@ yarn.lock
 # examples/custom_*
 
 # ==============================================
+# Issues and Project Management
+# ==============================================
+# Issue tracking files
+issues/
+issue/
+*.issue
+*.issues
+.issues/
+*ISSUE*
+*REGEX_ROUTE*
+*PROTOTYPE*
+COMPATIBILITY_TEST.php
+COMPARAÇÃO.md
+PERFORMANCE_ANALYSIS.php
+
+# GitHub issues local copies
+.github-issues/
+github-issues/
+
+# Bug reports and feature requests
+bugs/
+features/
+feature-requests/
+
+# ==============================================
 # Custom Project Files
 # ==============================================
 # Add your custom ignore patterns here

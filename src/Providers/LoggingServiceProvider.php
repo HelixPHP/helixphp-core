@@ -21,7 +21,7 @@ class LoggingServiceProvider extends ServiceProvider
             LoggerInterface::class,
             function () {
                 $logPath = $this->getLogPath();
-                return new Logger($logPath);
+                return new \Express\Providers\Logger($logPath);
             }
         );
 

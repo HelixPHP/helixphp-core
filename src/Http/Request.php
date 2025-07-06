@@ -3,6 +3,7 @@
 namespace Express\Http;
 
 use Express\Http\HeaderRequest;
+use Express\Http\Contracts\AttributeInterface;
 use InvalidArgumentException;
 use stdClass;
 use RuntimeException;
@@ -14,7 +15,7 @@ use RuntimeException;
  *
  * @property mixed $user Usuário autenticado ou qualquer outro atributo dinâmico.
  */
-class Request
+class Request implements AttributeInterface
 {
     /**
      * Método HTTP.
@@ -59,6 +60,13 @@ class Request
     private array $files = [];
 
     /**
+     * Atributos dinâmicos adicionados ao request.
+     *
+     * @var array<string, mixed>
+     */
+    private array $attributes = [];
+
+    /**
      * Construtor da classe Request.
      *
      * @param string $method       Método HTTP.
@@ -93,7 +101,56 @@ class Request
         if (property_exists($this, $name)) {
             return $this->$name;
         }
+
+        // Verifica se é um atributo dinâmico
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
+        }
+
         throw new InvalidArgumentException("Property {$name} does not exist in Request class");
+    }
+
+    /**
+     * Magic method to set properties dynamically
+     *
+     * @param  string $name The property name
+     * @param  mixed $value The property value
+     * @throws RuntimeException if trying to override native properties
+     */
+    public function __set($name, $value)
+    {
+        // Previne sobrescrever propriedades nativas
+        if (property_exists($this, $name)) {
+            throw new RuntimeException("Cannot override native property: {$name}");
+        }
+
+        $this->attributes[$name] = $value;
+    }
+
+    /**
+     * Magic method to check if property exists
+     *
+     * @param  string $name The property name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        return property_exists($this, $name) || array_key_exists($name, $this->attributes);
+    }
+
+    /**
+     * Magic method to unset properties
+     *
+     * @param  string $name The property name
+     * @throws RuntimeException if trying to unset native properties
+     */
+    public function __unset($name)
+    {
+        if (property_exists($this, $name)) {
+            throw new RuntimeException("Cannot unset native property: {$name}");
+        }
+
+        unset($this->attributes[$name]);
     }
 
     /**
@@ -368,6 +425,28 @@ class Request
     }
 
     /**
+     * Define o caminho da rota.
+     *
+     * @param  string $path Caminho da rota.
+     * @return self
+     * @throws InvalidArgumentException Se o caminho estiver vazio.
+     */
+    public function setPath(string $path): self
+    {
+        if (empty($path)) {
+            throw new InvalidArgumentException('Path cannot be empty');
+        }
+        $this->path = $path;
+        // Ensure path ends with a slash
+        if (!str_ends_with($this->path, '/')) {
+            $this->path .= '/';
+        }
+        // Re-parse the params to update parameters
+        $this->parsePath();
+        return $this;
+    }
+
+    /**
      * Obtém o caminho real da requisição.
      * @return string
      * @throws RuntimeException Se o caminho não estiver definido.
@@ -526,5 +605,83 @@ class Request
             return new stdClass(); // Return empty object for GET/HEAD/BODY/OPTIONS/DELETE requests
         }
         return $this->body;
+    }
+
+    /**
+     * Adiciona um atributo dinâmico ao request.
+     *
+     * @param  string $name  Nome do atributo
+     * @param  mixed  $value Valor do atributo
+     * @return self
+     * @throws RuntimeException se tentar sobrescrever propriedade nativa
+     */
+    public function setAttribute(string $name, $value): self
+    {
+        if (property_exists($this, $name)) {
+            throw new RuntimeException("Cannot override native property: {$name}");
+        }
+
+        $this->attributes[$name] = $value;
+        return $this;
+    }
+
+    /**
+     * Obtém um atributo dinâmico do request.
+     *
+     * @param  string $name    Nome do atributo
+     * @param  mixed  $default Valor padrão se não encontrado
+     * @return mixed
+     */
+    public function getAttribute(string $name, $default = null)
+    {
+        return $this->attributes[$name] ?? $default;
+    }
+
+    /**
+     * Verifica se um atributo dinâmico existe.
+     *
+     * @param  string $name Nome do atributo
+     * @return bool
+     */
+    public function hasAttribute(string $name): bool
+    {
+        return array_key_exists($name, $this->attributes);
+    }
+
+    /**
+     * Remove um atributo dinâmico do request.
+     *
+     * @param  string $name Nome do atributo
+     * @return self
+     */
+    public function removeAttribute(string $name): self
+    {
+        unset($this->attributes[$name]);
+        return $this;
+    }
+
+    /**
+     * Obtém todos os atributos dinâmicos.
+     *
+     * @return array<string, mixed>
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
+     * Define múltiplos atributos dinâmicos de uma vez.
+     *
+     * @param  array<string, mixed> $attributes
+     * @return self
+     * @throws RuntimeException se tentar sobrescrever propriedade nativa
+     */
+    public function setAttributes(array $attributes): self
+    {
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
+        }
+        return $this;
     }
 }
