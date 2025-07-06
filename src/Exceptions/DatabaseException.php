@@ -8,7 +8,7 @@ use Exception;
 
 /**
  * Database Exception
- * 
+ *
  * Thrown when database operations fail
  */
 class DatabaseException extends Exception

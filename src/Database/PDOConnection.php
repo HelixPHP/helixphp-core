@@ -10,7 +10,7 @@ use Express\Exceptions\DatabaseException;
 
 /**
  * PDO Database Connection Manager
- * 
+ *
  * Provides a simple interface for database operations using PDO
  * Designed for benchmark testing with real database interactions
  */
@@ -18,7 +18,7 @@ class PDOConnection
 {
     private static ?PDO $instance = null;
     private static array $config = [];
-    
+
     /**
      * Configure database connection
      */
@@ -30,34 +30,37 @@ class PDOConnection
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
         ];
-        
+
         // Merge with provided config
-        $config = array_merge([
-            'driver' => 'mysql',
-            'host' => 'localhost',
-            'port' => 3306,
-            'database' => 'test',
-            'username' => 'root',
-            'password' => '',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'options' => []
-        ], $config);
-        
+        $config = array_merge(
+            [
+                'driver' => 'mysql',
+                'host' => 'localhost',
+                'port' => 3306,
+                'database' => 'test',
+                'username' => 'root',
+                'password' => '',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_unicode_ci',
+                'options' => []
+            ],
+            $config
+        );
+
         // Apply driver-specific options
-        if (in_array($config['driver'], ['mysql', 'mariadb'])) {
+        if (in_array($config['driver'], ['mysql', 'mariadb']) && defined('PDO::MYSQL_ATTR_USE_BUFFERED_QUERY')) {
             $defaultOptions[PDO::MYSQL_ATTR_USE_BUFFERED_QUERY] = true;
         }
-        
-        // Merge default options with user-provided options
-        $config['options'] = array_merge($defaultOptions, $config['options']);
-        
+
+        // Merge default options with user-provided options (preserving numeric keys)
+        $config['options'] = $config['options'] + $defaultOptions;
+
         self::$config = $config;
     }
-    
+
     /**
      * Get PDO instance (singleton)
-     * 
+     *
      * @throws DatabaseException If connection fails
      */
     public static function getInstance(): PDO
@@ -65,21 +68,21 @@ class PDOConnection
         if (self::$instance === null) {
             self::connect();
         }
-        
+
         if (self::$instance === null) {
             throw new DatabaseException('Failed to establish database connection');
         }
-        
+
         return self::$instance;
     }
-    
+
     /**
      * Connect to database
      */
     private static function connect(): void
     {
         $config = self::$config;
-        
+
         if (empty($config)) {
             // Load from environment if not configured
             $config = [
@@ -92,7 +95,7 @@ class PDOConnection
             ];
             self::configure($config);
         }
-        
+
         try {
             // Build DSN based on driver
             switch ($config['driver']) {
@@ -105,11 +108,11 @@ class PDOConnection
                         $config['database']
                     );
                     break;
-                    
+
                 case 'sqlite':
                     $dsn = sprintf('sqlite:%s', $config['database']);
                     break;
-                    
+
                 case 'mysql':
                 case 'mariadb':
                 default:
@@ -122,21 +125,20 @@ class PDOConnection
                     );
                     break;
             }
-            
+
             self::$instance = new PDO(
                 $dsn,
                 $config['username'],
                 $config['password'],
                 $config['options']
             );
-            
+
             // Set driver-specific attributes
-            if (in_array($config['driver'], ['mysql', 'mariadb'])) {
+            if (in_array($config['driver'], ['mysql', 'mariadb']) && defined('PDO::MYSQL_ATTR_COMPRESS')) {
                 self::$instance->setAttribute(PDO::MYSQL_ATTR_COMPRESS, true);
             }
-            
+
             self::$instance->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, false);
-            
         } catch (PDOException $e) {
             throw new DatabaseException(
                 'Database connection failed: ' . $e->getMessage(),
@@ -145,14 +147,14 @@ class PDOConnection
             );
         }
     }
-    
+
     /**
      * Execute a query and return results
      */
     public static function query(string $sql, array $params = []): array
     {
         $pdo = self::getInstance();
-        
+
         try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
@@ -165,14 +167,14 @@ class PDOConnection
             );
         }
     }
-    
+
     /**
      * Execute a statement (INSERT, UPDATE, DELETE)
      */
     public static function execute(string $sql, array $params = []): int
     {
         $pdo = self::getInstance();
-        
+
         try {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
@@ -185,23 +187,23 @@ class PDOConnection
             );
         }
     }
-    
+
     /**
      * Get last insert ID
-     * 
+     *
      * @throws DatabaseException If unable to get last insert ID
      */
     public static function lastInsertId(): string
     {
         $lastId = self::getInstance()->lastInsertId();
-        
+
         if ($lastId === false) {
             throw new DatabaseException('Unable to retrieve last insert ID');
         }
-        
+
         return $lastId;
     }
-    
+
     /**
      * Begin transaction
      */
@@ -209,7 +211,7 @@ class PDOConnection
     {
         return self::getInstance()->beginTransaction();
     }
-    
+
     /**
      * Commit transaction
      */
@@ -217,7 +219,7 @@ class PDOConnection
     {
         return self::getInstance()->commit();
     }
-    
+
     /**
      * Rollback transaction
      */
@@ -225,7 +227,7 @@ class PDOConnection
     {
         return self::getInstance()->rollBack();
     }
-    
+
     /**
      * Close connection
      */
@@ -233,14 +235,14 @@ class PDOConnection
     {
         self::$instance = null;
     }
-    
+
     /**
      * Get connection statistics for benchmarking
      */
     public static function getStats(): array
     {
         $pdo = self::getInstance();
-        
+
         return [
             'driver' => $pdo->getAttribute(PDO::ATTR_DRIVER_NAME),
             'server_version' => $pdo->getAttribute(PDO::ATTR_SERVER_VERSION),
