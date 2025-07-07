@@ -13,7 +13,7 @@ All scripts have been updated to reflect the PivotPHP branding:
 - All version references updated to v1.0.0
 
 ### Namespace References
-- All PHP namespace references updated from Helix\ to PivotPHP\Core\
+- All PHP namespace references updated to PivotPHP\Core\
 
 ### Directory Structure
 - Fixed typo: "techinical" → "technical"
@@ -33,7 +33,7 @@ All scripts have been updated to reflect the PivotPHP branding:
 - ✅ version-bump.sh
 
 ### Legacy Scripts
-Legacy scripts in scripts/legacy/ were NOT updated as they are historical references.
+Legacy scripts have been removed from the project.
 
 ## Verification
 Run `./scripts/validate_all.sh` to verify all scripts are working correctly.

@@ -12,7 +12,7 @@
 | **Documentation** | ✅ PASSOU | Todos os arquivos presentes |
 | **PSR-12** | ✅ PASSOU | Compliance total |
 | **PHPStan** | ✅ PASSOU | Level 9 analysis |
-| **Namespace** | ✅ PASSOU | Express → Helix migrado |
+| **Namespace** | ✅ PASSOU | PivotPHP\Core\ |
 | **Version** | ✅ PASSOU | v1.0.0 configurado |
 | **Packagist** | ✅ PASSOU | Publicado com sucesso |
 
@@ -30,7 +30,7 @@
 ✅ **Content Updates**
 - Framework name: Express PHP → PivotPHP
 - Version references: v2.x → v1.0.0
-- Namespace examples: PivotPHP\Core\ → Helix\
+- Namespace examples: PivotPHP\Core\
 
 ### Scripts and Automation
 ✅ **All Scripts Updated**
@@ -74,7 +74,7 @@ Status: ✅ ALL DOCUMENTATION FILES PRESENT
   "name": "pivotphp/core",
   "version": "1.0.0",
   "description": "A lightweight, fast, and secure microframework for modern PHP",
-  "namespace": "Helix\\",
+  "namespace": "PivotPHP\\Core\\",
   "php": "^8.1",
   "psr": ["PSR-7", "PSR-11", "PSR-12", "PSR-15"],
   "license": "MIT"

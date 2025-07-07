@@ -6,7 +6,7 @@ As of $(date +"%Y-%m-%d"), all documentation has been updated to reflect:
 
 - **Framework Name**: PivotPHP (previously Express PHP)
 - **Package Name**: pivotphp/core (previously cafernandes/express-php)
-- **Namespace**: PivotPHP\Core\ (previously Helix\)
+- **Namespace**: PivotPHP\Core\
 - **Version**: 1.0.0
 - **Repository**: PivotPHP/pivotphp-core
 
