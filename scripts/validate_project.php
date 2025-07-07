@@ -150,11 +150,11 @@ class ProjectValidator
         echo "🛡️ Validando middlewares...\n";
 
         // Verificar SecurityHeaderMiddleware (PSR-15)
-        if (class_exists('Helix\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
+        if (class_exists('PivotPHP\\Core\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
             $this->passed[] = "SecurityHeaderMiddleware carregado";
 
             try {
-                $security = new \Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware();
+                $security = new \PivotPHP\Core\Http\Psr15\Middleware\SecurityHeadersMiddleware();
                 $this->passed[] = "SecurityHeaderMiddleware pode ser instanciado";
             } catch (Exception $e) {
                 $this->errors[] = "Erro ao instanciar SecurityHeaderMiddleware: " . $e->getMessage();
@@ -164,12 +164,12 @@ class ProjectValidator
         }
 
         // Verificar JWTHelper
-        if (class_exists('Helix\\Authentication\\JWTHelper')) {
+        if (class_exists('PivotPHP\\Core\\Authentication\\JWTHelper')) {
             $this->passed[] = "JWTHelper carregado";
 
             // Testar geração de token
             try {
-                $token = Helix\Authentication\JWTHelper::encode(['user_id' => 1], 'test_secret');
+                $token = PivotPHP\Core\Authentication\JWTHelper::encode(['user_id' => 1], 'test_secret');
                 if ($token) {
                     $this->passed[] = "JWTHelper pode gerar tokens";
                 } else {
@@ -323,9 +323,9 @@ class ProjectValidator
             $_SERVER['REQUEST_URI'] = '/api/test';
 
             // Validação básica de autenticação sem instanciar classes específicas
-            if (class_exists('Helix\\Authentication\\JWTHelper')) {
+            if (class_exists('PivotPHP\\Core\\Authentication\\JWTHelper')) {
                 // Testar JWT Helper básico
-                $jwt = Helix\Authentication\JWTHelper::encode(['test' => true], 'secret');
+                $jwt = PivotPHP\Core\Authentication\JWTHelper::encode(['test' => true], 'secret');
                 if ($jwt) {
                     $this->passed[] = "Sistema de autenticação funcional";
                 } else {
@@ -396,13 +396,13 @@ class ProjectValidator
         echo "📚 Validando recursos OpenAPI/Swagger...\n";
 
         // Verificar se OpenApiExporter existe
-        if (class_exists('Helix\\Utils\\OpenApiExporter')) {
+        if (class_exists('PivotPHP\\Core\\Utils\\OpenApiExporter')) {
             $this->passed[] = "OpenApiExporter carregado";
 
             // Testar export básico
             try {
-                if (class_exists('Helix\\Routing\\Router')) {
-                    $docs = Helix\Utils\OpenApiExporter::export('Helix\\Routing\\Router');
+                if (class_exists('PivotPHP\\Core\\Routing\\Router')) {
+                    $docs = PivotPHP\Core\Utils\OpenApiExporter::export('PivotPHP\\Core\\Routing\\Router');
                     if (is_array($docs) && isset($docs['openapi'])) {
                         $this->passed[] = "OpenApiExporter pode gerar documentação";
 
