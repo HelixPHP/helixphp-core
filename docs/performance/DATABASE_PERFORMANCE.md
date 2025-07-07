@@ -1,4 +1,4 @@
-# 🗄️ HelixPHP Database Performance Analysis
+# 🗄️ PivotPHP Database Performance Analysis
 
 > **Análise comparativa de performance com diferentes bancos de dados usando PDO**
 
@@ -6,7 +6,7 @@
 
 ## 📊 Visão Geral
 
-O HelixPHP foi testado com múltiplos bancos de dados usando **PDO (PHP Data Objects)** como camada de abstração. Os testes incluíram operações comuns como SELECT, JOIN, INSERT, UPDATE e agregações, todos executados através da extensão PDO nativa do PHP para garantir comparação justa entre os diferentes SGBDs.
+O PivotPHP foi testado com múltiplos bancos de dados usando **PDO (PHP Data Objects)** como camada de abstração. Os testes incluíram operações comuns como SELECT, JOIN, INSERT, UPDATE e agregações, todos executados através da extensão PDO nativa do PHP para garantir comparação justa entre os diferentes SGBDs.
 
 ## 🔧 Configuração dos Testes
 
@@ -44,11 +44,11 @@ O HelixPHP foi testado com múltiplos bancos de dados usando **PDO (PHP Data Obj
 | **UPDATE** | 0.28 | 0.32 | 0.26 | 0.17 |
 | **Aggregation** | 0.43 | 0.36 | 0.41 | 0.22 |
 
-## 📈 Análise de Performance com HelixPHP
+## 📈 Análise de Performance com PivotPHP
 
 ### Overhead do Framework por Banco
 
-Comparando requisições diretas ao banco vs através do HelixPHP:
+Comparando requisições diretas ao banco vs através do PivotPHP:
 
 | Banco | Overhead Médio | Impact |
 |-------|----------------|---------|
@@ -57,7 +57,7 @@ Comparando requisições diretas ao banco vs através do HelixPHP:
 | **MySQL** | +0.14ms | Baixo |
 | **PostgreSQL** | +0.16ms | Baixo |
 
-### Throughput Real com HelixPHP
+### Throughput Real com PivotPHP
 
 Performance medida em requisições por segundo para APIs completas:
 
@@ -188,11 +188,11 @@ Com pool de conexões implementado:
 2. **MariaDB supera MySQL** em praticamente todos os cenários
 3. **PostgreSQL excele** em queries complexas apesar da latência maior
 4. **Connection pooling é essencial** para MySQL/PostgreSQL/MariaDB
-5. **HelixPHP adiciona overhead mínimo** (< 0.2ms em média)
+5. **PivotPHP adiciona overhead mínimo** (< 0.2ms em média)
 
 ## 🔧 Configuração Recomendada com PDO
 
-Para máxima performance com HelixPHP usando PDO:
+Para máxima performance com PivotPHP usando PDO:
 
 ```php
 // config/database.php
@@ -227,7 +227,7 @@ return [
 
 ## 📈 Evolução da Performance
 
-Comparação com versões anteriores do HelixPHP:
+Comparação com versões anteriores do PivotPHP:
 
 | Versão | MySQL | PostgreSQL | MariaDB | SQLite |
 |--------|-------|------------|---------|---------|
@@ -239,8 +239,8 @@ Comparação com versões anteriores do HelixPHP:
 ## 💻 Exemplo de Implementação com PDO
 
 ```php
-use Helix\Core\Application;
-use Helix\Database\PDOConnection;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Database\PDOConnection;
 
 $app = new Application();
 

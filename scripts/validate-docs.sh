@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# HelixPHP v1.0.0 - Validador de Documentação
+# PivotPHP v1.0.0 - Validador de Documentação
 # Valida a nova estrutura de documentação v1.0.0
 
-echo "📚 Validando estrutura de documentação HelixPHP v1.0.0..."
+echo "📚 Validando estrutura de documentação PivotPHP v1.0.0..."
 echo "============================================================="
 echo ""
 
@@ -208,7 +208,7 @@ echo ""
 if [ $ERRORS -eq 0 ]; then
     print_success "🎉 VALIDAÇÃO DE DOCUMENTAÇÃO CONCLUÍDA COM SUCESSO!"
     echo ""
-    echo "✅ A documentação HelixPHP v1.0.0 está:"
+    echo "✅ A documentação PivotPHP v1.0.0 está:"
     echo "   • Bem estruturada e organizada"
     echo "   • Atualizada para a versão v1.0.0"
     echo "   • Pronta para uso por desenvolvedores"

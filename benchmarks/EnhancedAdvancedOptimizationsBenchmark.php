@@ -11,11 +11,11 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Middleware\MiddlewarePipelineCompiler;
-use Helix\Http\Optimization\ZeroCopyOptimizer;
-use Helix\Http\Optimization\MemoryMappingManager;
-use Helix\Http\Psr7\Cache\PredictiveCacheWarmer;
-use Helix\Routing\RouteMemoryManager;
+use PivotPHP\Core\Middleware\MiddlewarePipelineCompiler;
+use PivotPHP\Core\Http\Optimization\ZeroCopyOptimizer;
+use PivotPHP\Core\Http\Optimization\MemoryMappingManager;
+use PivotPHP\Core\Http\Psr7\Cache\PredictiveCacheWarmer;
+use PivotPHP\Core\Routing\RouteMemoryManager;
 
 class EnhancedAdvancedOptimizationsBenchmark
 {

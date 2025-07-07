@@ -1,19 +1,19 @@
-# HelixPHP Framework v1.0.0 - Complete Overview
+# PivotPHP Framework v1.0.0 - Complete Overview
 
 <div align="center">
 
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.1-blue.svg)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/HelixPHP/helixphp-core/releases)
+[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/PivotPHP/pivotphp-core/releases)
 [![PSR](https://img.shields.io/badge/PSR-7%20|%2011%20|%2012%20|%2015-orange.svg)](https://www.php-fig.org/psr/)
 
 **A lightweight, fast, and secure microframework for modern PHP applications**
 
 </div>
 
-## 🎯 What is HelixPHP?
+## 🎯 What is PivotPHP?
 
-HelixPHP v1.0.0 is a high-performance microframework designed for rapid development of modern PHP applications. Born from the evolution of HelixPHP, HelixPHP brings enterprise-grade performance with developer-friendly simplicity.
+PivotPHP v1.0.0 is a high-performance microframework designed for rapid development of modern PHP applications. Born from the evolution of PivotPHP, PivotPHP brings enterprise-grade performance with developer-friendly simplicity.
 
 ### Key Highlights
 - **🚀 High Performance**: 13.9M operations/second (278x improvement)
@@ -27,7 +27,7 @@ HelixPHP v1.0.0 is a high-performance microframework designed for rapid developm
 ### Installation
 
 ```bash
-composer create-project helixphp/core my-app
+composer create-project pivotphp/core my-app
 cd my-app
 php -S localhost:8000 -t public
 ```
@@ -39,12 +39,12 @@ php -S localhost:8000 -t public
 // public/index.php
 require '../vendor/autoload.php';
 
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 $app = new Application();
 
 $app->get('/', function ($req, $res) {
-    return $res->json(['message' => 'Hello HelixPHP v1.0.0!']);
+    return $res->json(['message' => 'Hello PivotPHP v1.0.0!']);
 });
 
 $app->run();
@@ -153,7 +153,7 @@ $app->get('/users', function ($req, $res) use ($app) {
 
 ```php
 // JWT Authentication
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 $token = JWTHelper::encode(['user_id' => 123], 'secret');
 $payload = JWTHelper::decode($token, 'secret');
@@ -194,7 +194,7 @@ $app->use(new SecurityHeadersMiddleware([
 ### Input Validation
 
 ```php
-use Helix\Validation\Validator;
+use PivotPHP\Core\Validation\Validator;
 
 $app->post('/users', function ($req, $res) {
     $validator = new Validator($req->getParsedBody(), [
@@ -202,11 +202,11 @@ $app->post('/users', function ($req, $res) {
         'email' => 'required|email|unique:users',
         'password' => 'required|min:8|confirmed'
     ]);
-    
+
     if ($validator->fails()) {
         return $res->json(['errors' => $validator->errors()], 422);
     }
-    
+
     // Create user...
 });
 ```
@@ -216,7 +216,7 @@ $app->post('/users', function ($req, $res) {
 ### Performance Monitoring
 
 ```php
-use Helix\Monitoring\PerformanceMonitor;
+use PivotPHP\Core\Monitoring\PerformanceMonitor;
 
 // Enable monitoring
 $app->use(new PerformanceMonitor([
@@ -234,7 +234,7 @@ PerformanceMonitor::endTimer('db_query');
 ### Logging System
 
 ```php
-use Helix\Logging\Logger;
+use PivotPHP\Core\Logging\Logger;
 
 $logger = new Logger([
     'handlers' => [
@@ -257,7 +257,7 @@ $app->get('/test', function ($req, $res) use ($app) {
 ### Service Providers
 
 ```php
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
@@ -267,7 +267,7 @@ class DatabaseServiceProvider extends ServiceProvider
             return new Database($_ENV['DB_DSN']);
         });
     }
-    
+
     public function boot()
     {
         // Boot logic
@@ -281,7 +281,7 @@ $app->register(new DatabaseServiceProvider());
 ### Extension System
 
 ```php
-use Helix\Providers\ExtensionManager;
+use PivotPHP\Core\Providers\ExtensionManager;
 
 // Load extensions
 $manager = new ExtensionManager($app);
@@ -295,27 +295,27 @@ $manager->loadExtension('redis-cache');
 
 ```php
 use PHPUnit\Framework\TestCase;
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 class ApplicationTest extends TestCase
 {
     private Application $app;
-    
+
     protected function setUp(): void
     {
         $this->app = new Application();
     }
-    
+
     public function testBasicRoute()
     {
         $this->app->get('/test', function () {
             return 'Hello Test';
         });
-        
+
         $response = $this->app->handle(
             $this->createRequest('GET', '/test')
         );
-        
+
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Hello Test', (string) $response->getBody());
     }
@@ -334,7 +334,7 @@ class ApiTest extends TestCase
             'email' => 'john@example.com',
             'password' => 'password123'
         ]);
-        
+
         $response->assertStatus(201);
         $response->assertJsonStructure([
             'id', 'name', 'email', 'created_at'
@@ -348,7 +348,7 @@ class ApiTest extends TestCase
 ### Custom Exception Handling
 
 ```php
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 $app->use(function ($req, $handler) {
     try {
@@ -366,9 +366,9 @@ $app->use(function ($req, $handler) {
 
 ```php
 // With Cycle ORM
-composer require helixphp/cycle-orm
+composer require pivotphp/cycle-orm
 
-use Helix\CycleORM\CycleServiceProvider;
+use PivotPHP\Core\CycleORM\CycleServiceProvider;
 
 $app->register(new CycleServiceProvider());
 
@@ -382,8 +382,8 @@ $app->get('/users', function ($req, $res) {
 ### Caching
 
 ```php
-use Helix\Cache\FileCache;
-use Helix\Cache\MemoryCache;
+use PivotPHP\Core\Cache\FileCache;
+use PivotPHP\Core\Cache\MemoryCache;
 
 // File cache
 $app->bind('cache', new FileCache('cache/'));
@@ -394,7 +394,7 @@ $app->bind('cache', new MemoryCache());
 // Usage
 $app->get('/expensive-operation', function ($req, $res) use ($app) {
     $cache = $app->make('cache');
-    
+
     return $cache->remember('expensive_data', 3600, function () {
         // Expensive operation
         return ['result' => 'cached data'];
@@ -503,8 +503,8 @@ server {
 ### Development Setup
 
 ```bash
-git clone https://github.com/HelixPHP/helixphp-core.git
-cd helixphp-core
+git clone https://github.com/PivotPHP/pivotphp-core.git
+cd pivotphp-core
 composer install
 cp .env.example .env
 ```
@@ -538,14 +538,14 @@ composer phpstan
 ## 🔗 Resources
 
 ### Official Links
-- **GitHub**: https://github.com/HelixPHP/helixphp-core
-- **Packagist**: https://packagist.org/packages/helixphp/core
-- **Documentation**: https://docs.helixphp.com
-- **Community**: https://discord.gg/helixphp
+- **GitHub**: https://github.com/PivotPHP/pivotphp-core
+- **Packagist**: https://packagist.org/packages/pivotphp/core
+- **Documentation**: https://docs.pivotphp.com
+- **Community**: https://discord.gg/pivotphp
 
 ### Extensions
-- **Cycle ORM**: https://packagist.org/packages/helixphp/cycle-orm
-- **Redis Cache**: https://packagist.org/packages/helixphp/redis-cache
+- **Cycle ORM**: https://packagist.org/packages/pivotphp/cycle-orm
+- **Redis Cache**: https://packagist.org/packages/pivotphp/redis-cache
 - **JWT Auth**: Built-in authentication system
 
 ### Learning Resources
@@ -556,10 +556,10 @@ composer phpstan
 
 ## 📄 License
 
-HelixPHP is open-source software licensed under the [MIT license](LICENSE).
+PivotPHP is open-source software licensed under the [MIT license](LICENSE).
 
 ---
 
-**HelixPHP v1.0.0** - Built with ❤️ for modern PHP development.
+**PivotPHP v1.0.0** - Built with ❤️ for modern PHP development.
 
 *High Performance • Type Safe • PSR Compliant • Developer Friendly*

@@ -1,6 +1,6 @@
 <?php
 /**
- * HelixPHP Framework - Comprehensive Benchmark Report Generator
+ * PivotPHP Framework - Comprehensive Benchmark Report Generator
  *
  * Generates a comprehensive report comparing Low, Normal, and High quantity benchmarks
  */
@@ -122,7 +122,7 @@ echo "📄 Markdown Summary: {$markdownFile}\n";
 
 function generateMarkdownSummary(array $data): string
 {
-    $markdown = "# HelixPHP Framework - Comprehensive Performance Report\n\n";
+    $markdown = "# PivotPHP Framework - Comprehensive Performance Report\n\n";
     $markdown .= "*Generated on: {$data['generated_at']}*\n\n";
 
     // Overview section

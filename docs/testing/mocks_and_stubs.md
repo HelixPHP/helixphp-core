@@ -1,6 +1,6 @@
 # 🎭 Mocks e Stubs
 
-Guia prático para usar mocks e stubs nos testes do HelixPHP.
+Guia prático para usar mocks e stubs nos testes do PivotPHP.
 
 ## 🤔 Conceitos Básicos
 

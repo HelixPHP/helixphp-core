@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Services;
+namespace PivotPHP\Core\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\HeaderRequest;
+use PivotPHP\Core\Http\HeaderRequest;
 
 class HeaderRequestTest extends TestCase
 {

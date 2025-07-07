@@ -1,6 +1,6 @@
 <?php
 /**
- * Script de Validação do Projeto HelixPHP
+ * Script de Validação do Projeto PivotPHP
  *
  * Este script verifica se todos os componentes estão funcionando
  * corretamente antes da publicação do projeto.
@@ -16,7 +16,7 @@ class ProjectValidator
 
     public function validate()
     {
-        echo "🔍 Validando projeto HelixPHP v1.0.0...\n\n";
+        echo "🔍 Validando projeto PivotPHP v1.0.0...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -628,7 +628,7 @@ class ProjectValidator
             echo "   6. Crie uma tag de versão: git tag -a v1.0.0 -m 'Release v1.0.0'\n";
             echo "   7. Push para o repositório: git push origin main --tags\n";
             echo "   8. Publique no Packagist: https://packagist.org\n";
-            echo "   9. Repositório: https://github.com/CAFernandes/helixphp-core\n";
+            echo "   9. Repositório: https://github.com/CAFernandes/pivotphp-core\n";
 
             return true;
         } else {

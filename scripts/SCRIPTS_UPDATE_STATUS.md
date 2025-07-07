@@ -1,19 +1,19 @@
-# Scripts Update Status - HelixPHP v1.0.0
+# Scripts Update Status - PivotPHP v1.0.0
 
 ## ✅ Updates Applied
 
-All scripts have been updated to reflect the HelixPHP branding:
+All scripts have been updated to reflect the PivotPHP branding:
 
 ### Framework References
-- Updated from "Express PHP" to "HelixPHP"
-- Updated from "Express-PHP" to "HelixPHP"
-- Updated from "express-php" to "helixphp-core"
+- Updated from "Express PHP" to "PivotPHP"
+- Updated from "PivotPHP" to "PivotPHP"
+- Updated from "express-php" to "pivotphp-core"
 
 ### Version References
 - All version references updated to v1.0.0
 
 ### Namespace References
-- All PHP namespace references updated from Express\ to Helix\
+- All PHP namespace references updated from Helix\ to PivotPHP\Core\
 
 ### Directory Structure
 - Fixed typo: "techinical" → "technical"

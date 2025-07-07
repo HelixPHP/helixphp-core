@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Http;
+namespace PivotPHP\Core\Http;
 
 /**
  * HeaderRequest class manages and facilitates access to request headers.

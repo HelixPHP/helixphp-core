@@ -1,6 +1,6 @@
 # 🔄 Testes de Integração
 
-Guia prático para testes de integração no HelixPHP - testando o fluxo completo da aplicação.
+Guia prático para testes de integração no PivotPHP - testando o fluxo completo da aplicação.
 
 ## 🎯 O que são Testes de Integração?
 

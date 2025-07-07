@@ -1,6 +1,6 @@
 <?php
 /**
- * Exemplo com Otimizações Padrão - HelixPHP
+ * Exemplo com Otimizações Padrão - PivotPHP
  *
  * Este exemplo demonstra o uso das otimizações de performance
  * implementadas nas classes padrão PSR-7/PSR-15.
@@ -8,11 +8,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Psr7\Factory\ResponseFactory;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr7\Factory\ResponseFactory;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 // Criar aplicação
 $app = new Application();

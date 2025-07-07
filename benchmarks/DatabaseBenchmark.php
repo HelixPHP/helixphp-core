@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Database\PDOConnection;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Database\PDOConnection;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 /**
- * Database Benchmark for HelixPHP
- * 
+ * Database Benchmark for PivotPHP
+ *
  * Tests performance with real database operations
  * Simulates production-like scenarios
  */
@@ -21,14 +21,14 @@ class DatabaseBenchmark
     private array $results = [];
     private int $iterations = 1000;
     private int $warmup = 100;
-    
+
     public function __construct()
     {
         $this->app = new Application();
         $this->setupDatabase();
         $this->setupRoutes();
     }
-    
+
     /**
      * Setup database tables and seed data
      */
@@ -47,7 +47,7 @@ class DatabaseBenchmark
                 INDEX idx_created_at (created_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
-        
+
         // Create posts table
         PDOConnection::execute("
             CREATE TABLE IF NOT EXISTS posts (
@@ -66,13 +66,13 @@ class DatabaseBenchmark
                 FULLTEXT idx_fulltext (title, content)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ");
-        
+
         // Seed initial data if empty
         $userCount = PDOConnection::query("SELECT COUNT(*) as count FROM users")[0]['count'];
-        
+
         if ($userCount < 1000) {
             echo "Seeding database with test data...\n";
-            
+
             // Insert users
             for ($i = 0; $i < 1000; $i++) {
                 PDOConnection::execute(
@@ -84,7 +84,7 @@ class DatabaseBenchmark
                     ]
                 );
             }
-            
+
             // Insert posts
             for ($i = 0; $i < 5000; $i++) {
                 PDOConnection::execute(
@@ -98,13 +98,13 @@ class DatabaseBenchmark
                     ]
                 );
             }
-            
+
             echo "Database seeding completed.\n";
         }
     }
-    
+
     /**
-     * Setup HelixPHP routes for benchmarking
+     * Setup PivotPHP routes for benchmarking
      */
     private function setupRoutes(): void
     {
@@ -112,14 +112,14 @@ class DatabaseBenchmark
         $this->app->get('/api/users/:id', function (Request $req, Response $res) {
             $id = $req->param('id');
             $user = PDOConnection::query("SELECT * FROM users WHERE id = ?", [$id]);
-            
+
             if (empty($user)) {
                 return $res->status(404)->json(['error' => 'User not found']);
             }
-            
+
             return $res->json($user[0]);
         });
-        
+
         // Complex JOIN query
         $this->app->get('/api/users/:id/posts', function (Request $req, Response $res) {
             $id = $req->param('id');
@@ -131,18 +131,18 @@ class DatabaseBenchmark
                 ORDER BY p.created_at DESC
                 LIMIT 10
             ", [$id]);
-            
+
             return $res->json(['posts' => $posts]);
         });
-        
+
         // Search with full-text
         $this->app->get('/api/posts/search', function (Request $req, Response $res) {
             $query = $req->query('q', '');
-            
+
             if (strlen($query) < 3) {
                 return $res->json(['posts' => []]);
             }
-            
+
             $posts = PDOConnection::query("
                 SELECT p.*, u.name as author_name,
                        MATCH(p.title, p.content) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance
@@ -153,14 +153,14 @@ class DatabaseBenchmark
                 ORDER BY relevance DESC
                 LIMIT 20
             ", [$query, $query]);
-            
+
             return $res->json(['posts' => $posts]);
         });
-        
+
         // Aggregation query
         $this->app->get('/api/stats/posts', function (Request $req, Response $res) {
             $stats = PDOConnection::query("
-                SELECT 
+                SELECT
                     COUNT(*) as total_posts,
                     SUM(views) as total_views,
                     AVG(views) as avg_views,
@@ -172,14 +172,14 @@ class DatabaseBenchmark
                 GROUP BY status, DATE(created_at)
                 ORDER BY date DESC
             ");
-            
+
             return $res->json(['stats' => $stats]);
         });
-        
+
         // Insert operation
         $this->app->post('/api/posts', function (Request $req, Response $res) {
             $data = $req->getParsedBody();
-            
+
             PDOConnection::execute(
                 "INSERT INTO posts (user_id, title, content, status) VALUES (?, ?, ?, ?)",
                 [
@@ -189,19 +189,19 @@ class DatabaseBenchmark
                     $data['status'] ?? 'draft'
                 ]
             );
-            
+
             $id = PDOConnection::lastInsertId();
-            
+
             return $res->status(201)->json(['id' => $id, 'message' => 'Post created']);
         });
-        
+
         // Update with transaction
         $this->app->put('/api/posts/:id', function (Request $req, Response $res) {
             $id = $req->param('id');
             $data = $req->getParsedBody();
-            
+
             PDOConnection::beginTransaction();
-            
+
             try {
                 // Update post
                 $affected = PDOConnection::execute(
@@ -213,36 +213,36 @@ class DatabaseBenchmark
                         $id
                     ]
                 );
-                
+
                 // Update view count
                 PDOConnection::execute(
                     "UPDATE posts SET views = views + 1 WHERE id = ?",
                     [$id]
                 );
-                
+
                 PDOConnection::commit();
-                
+
                 return $res->json(['affected' => $affected, 'message' => 'Post updated']);
-                
+
             } catch (\Exception $e) {
                 PDOConnection::rollback();
                 return $res->status(500)->json(['error' => 'Update failed']);
             }
         });
     }
-    
+
     /**
      * Run benchmarks
      */
     public function run(): void
     {
-        echo "🚀 HelixPHP Database Benchmark\n";
+        echo "🚀 PivotPHP Database Benchmark\n";
         echo "================================\n\n";
-        
+
         // Warmup
         echo "Warming up...\n";
         $this->warmupBenchmarks();
-        
+
         // Run benchmarks
         $benchmarks = [
             'simple_select' => 'Simple SELECT by ID',
@@ -252,16 +252,16 @@ class DatabaseBenchmark
             'insert_operation' => 'INSERT operation',
             'transaction_update' => 'UPDATE with transaction'
         ];
-        
+
         foreach ($benchmarks as $method => $description) {
             echo "Running: $description\n";
             $this->results[$method] = $this->$method();
         }
-        
+
         // Display results
         $this->displayResults();
     }
-    
+
     /**
      * Warmup benchmarks
      */
@@ -272,45 +272,45 @@ class DatabaseBenchmark
             $this->makeRequest('GET', '/api/users/1/posts');
         }
     }
-    
+
     /**
      * Benchmark simple SELECT
      */
     private function simple_select(): array
     {
         $times = [];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $userId = rand(1, 1000);
             $start = microtime(true);
-            
+
             $this->makeRequest('GET', "/api/users/$userId");
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Benchmark JOIN query
      */
     private function join_query(): array
     {
         $times = [];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $userId = rand(1, 1000);
             $start = microtime(true);
-            
+
             $this->makeRequest('GET', "/api/users/$userId/posts");
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Benchmark full-text search
      */
@@ -318,83 +318,83 @@ class DatabaseBenchmark
     {
         $times = [];
         $searchTerms = ['lorem', 'ipsum', 'dolor', 'post', 'content', 'title'];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $term = $searchTerms[array_rand($searchTerms)];
             $start = microtime(true);
-            
+
             $this->makeRequest('GET', "/api/posts/search?q=$term");
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Benchmark aggregation
      */
     private function aggregation(): array
     {
         $times = [];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $start = microtime(true);
-            
+
             $this->makeRequest('GET', '/api/stats/posts');
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Benchmark INSERT operation
      */
     private function insert_operation(): array
     {
         $times = [];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $start = microtime(true);
-            
+
             $this->makeRequest('POST', '/api/posts', [
                 'user_id' => rand(1, 1000),
                 'title' => "Benchmark Post $i",
                 'content' => "Benchmark content " . bin2hex(random_bytes(16)),
                 'status' => 'published'
             ]);
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Benchmark transaction update
      */
     private function transaction_update(): array
     {
         $times = [];
-        
+
         for ($i = 0; $i < $this->iterations; $i++) {
             $postId = rand(1, 5000);
             $start = microtime(true);
-            
+
             $this->makeRequest('PUT', "/api/posts/$postId", [
                 'title' => "Updated Title $i",
                 'content' => "Updated content " . time(),
                 'status' => 'published'
             ]);
-            
+
             $times[] = microtime(true) - $start;
         }
-        
+
         return $this->calculateStats($times);
     }
-    
+
     /**
      * Make HTTP request to the application
      */
@@ -404,17 +404,17 @@ class DatabaseBenchmark
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['PATH_INFO'] = parse_url($uri, PHP_URL_PATH);
         $_SERVER['QUERY_STRING'] = parse_url($uri, PHP_URL_QUERY) ?? '';
-        
+
         if (!empty($data)) {
             $_POST = $data;
             $_SERVER['CONTENT_TYPE'] = 'application/json';
         }
-        
+
         ob_start();
         $this->app->run();
         ob_end_clean();
     }
-    
+
     /**
      * Calculate statistics
      */
@@ -422,7 +422,7 @@ class DatabaseBenchmark
     {
         sort($times);
         $count = count($times);
-        
+
         return [
             'iterations' => $count,
             'total_time' => array_sum($times),
@@ -435,7 +435,7 @@ class DatabaseBenchmark
             'ops_per_sec' => $count / array_sum($times)
         ];
     }
-    
+
     /**
      * Display results
      */
@@ -443,7 +443,7 @@ class DatabaseBenchmark
     {
         echo "\n📊 Benchmark Results\n";
         echo "===================\n\n";
-        
+
         foreach ($this->results as $benchmark => $stats) {
             echo sprintf("📌 %s\n", str_replace('_', ' ', ucfirst($benchmark)));
             echo sprintf("   Iterations: %d\n", $stats['iterations']);
@@ -456,11 +456,11 @@ class DatabaseBenchmark
             echo sprintf("   Ops/sec: %.2f\n", $stats['ops_per_sec']);
             echo "\n";
         }
-        
+
         // Save results
         $this->saveResults();
     }
-    
+
     /**
      * Save results to file
      */
@@ -468,7 +468,7 @@ class DatabaseBenchmark
     {
         $timestamp = date('Y-m-d_H-i-s');
         $filename = __DIR__ . "/results/database_benchmark_$timestamp.json";
-        
+
         $data = [
             'timestamp' => $timestamp,
             'environment' => [
@@ -480,11 +480,11 @@ class DatabaseBenchmark
             ],
             'results' => $this->results
         ];
-        
+
         if (!is_dir(__DIR__ . '/results')) {
             mkdir(__DIR__ . '/results', 0755, true);
         }
-        
+
         file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT));
         echo "\n💾 Results saved to: $filename\n";
     }

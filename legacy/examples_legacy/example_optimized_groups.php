@@ -2,10 +2,10 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Routing\Router;
 
 $app = new Application();
 
@@ -30,7 +30,7 @@ $logMiddleware = function (Request $req, Response $resp, $next) {
 
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
-        'message' => 'HelixPHP - Rotas Otimizadas',
+        'message' => 'PivotPHP - Rotas Otimizadas',
         'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => true,

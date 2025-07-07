@@ -1,6 +1,6 @@
 <?php
 // Exemplo de uso do helper de CORS
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\Utils;
 
 // Em um middleware customizado:
 function corsMiddleware($response) {

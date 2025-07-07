@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Pool;
+namespace PivotPHP\Core\Http\Psr7\Pool;
 
-use Helix\Http\Psr7\Cache\OperationsCache;
+use PivotPHP\Core\Http\Psr7\Cache\OperationsCache;
 
 /**
  * Dynamic Pool Manager for Memory-Adaptive Pool Sizing
@@ -12,7 +12,7 @@ use Helix\Http\Psr7\Cache\OperationsCache;
  * Adjusts pool sizes based on current memory usage and system resources
  * to prevent memory exhaustion and optimize performance.
  *
- * @package Helix\Http\Psr7\Pool
+ * @package PivotPHP\Core\Http\Psr7\Pool
  * @since 2.2.0
  */
 class DynamicPoolManager
@@ -169,9 +169,9 @@ class DynamicPoolManager
         $memoryLimit = self::getMemoryLimit();
 
         return [
-            'current_memory' => \Helix\Utils\Utils::formatBytes($currentMemory),
-            'peak_memory' => \Helix\Utils\Utils::formatBytes($peakMemory),
-            'memory_limit' => $memoryLimit > 0 ? \Helix\Utils\Utils::formatBytes($memoryLimit) : 'unlimited',
+            'current_memory' => \PivotPHP\Core\Utils\Utils::formatBytes($currentMemory),
+            'peak_memory' => \PivotPHP\Core\Utils\Utils::formatBytes($peakMemory),
+            'memory_limit' => $memoryLimit > 0 ? \PivotPHP\Core\Utils\Utils::formatBytes($memoryLimit) : 'unlimited',
             'usage_percentage' => $memoryLimit > 0 ? round(($currentMemory / $memoryLimit) * 100, 2) : 0,
             'current_tier' => self::$currentTier,
             'tier_changes' => self::$memoryStats['tier_changes'],

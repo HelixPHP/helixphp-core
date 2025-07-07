@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Events;
+namespace PivotPHP\Core\Events;
 
 /**
  * Classe de evento

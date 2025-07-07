@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;

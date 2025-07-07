@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Http\Psr15\Middleware;
 
-use Helix\Http\Psr15\AbstractMiddleware;
+use PivotPHP\Core\Http\Psr15\AbstractMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -53,10 +53,10 @@ class AuthMiddleware extends AbstractMiddleware
         if ($jsonResponse === false) {
             $jsonResponse = '{"error": "Authentication required"}';
         }
-        return new \Helix\Http\Psr7\Response(
+        return new \PivotPHP\Core\Http\Psr7\Response(
             401,
             ['Content-Type' => 'application/json'],
-            \Helix\Http\Psr7\Stream::createFromString($jsonResponse)
+            \PivotPHP\Core\Http\Psr7\Stream::createFromString($jsonResponse)
         );
     }
 
@@ -97,7 +97,7 @@ class AuthMiddleware extends AbstractMiddleware
             $token = substr($header, 7);
             if (isset($this->config['jwtSecret'])) {
                 try {
-                    $jwtHelper = new \Helix\Authentication\JWTHelper();
+                    $jwtHelper = new \PivotPHP\Core\Authentication\JWTHelper();
                     $payload = $jwtHelper->decode($token, $this->config['jwtSecret']);
                     if ($payload) {
                         $request = $request->withAttribute('user', $payload);
@@ -165,10 +165,10 @@ class AuthMiddleware extends AbstractMiddleware
         if ($jsonResponse === false) {
             $jsonResponse = '{"error": "Unauthorized"}';
         }
-        return new \Helix\Http\Psr7\Response(
+        return new \PivotPHP\Core\Http\Psr7\Response(
             401,
             ['Content-Type' => 'application/json'],
-            \Helix\Http\Psr7\Stream::createFromString($jsonResponse)
+            \PivotPHP\Core\Http\Psr7\Stream::createFromString($jsonResponse)
         );
     }
 

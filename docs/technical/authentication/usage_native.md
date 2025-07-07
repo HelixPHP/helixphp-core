@@ -1,6 +1,6 @@
-# 🔐 Autenticação Nativa do HelixPHP
+# 🔐 Autenticação Nativa do PivotPHP
 
-Guia completo dos métodos de autenticação nativos do HelixPHP, incluindo JWT, Basic Auth, Bearer Token, API Key e configurações avançadas.
+Guia completo dos métodos de autenticação nativos do PivotPHP, incluindo JWT, Basic Auth, Bearer Token, API Key e configurações avançadas.
 
 ## 📋 Índice
 
@@ -17,7 +17,7 @@ Guia completo dos métodos de autenticação nativos do HelixPHP, incluindo JWT,
 
 ## 🔍 Visão Geral
 
-O HelixPHP oferece um sistema de autenticação robusto e flexível que suporta múltiplos métodos de autenticação com detecção automática e configuração granular.
+O PivotPHP oferece um sistema de autenticação robusto e flexível que suporta múltiplos métodos de autenticação com detecção automática e configuração granular.
 
 ### Métodos Suportados
 
@@ -41,8 +41,8 @@ O HelixPHP oferece um sistema de autenticação robusto e flexível que suporta 
 ```php
 <?php
 
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
 
 $app = new Application();
 
@@ -85,7 +85,7 @@ $app->use(new AuthMiddleware([
 ```php
 <?php
 
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 // Login endpoint que gera JWT
 $app->post('/login', function($req, $res) {
@@ -633,7 +633,7 @@ $app->use(new AuthMiddleware([
 namespace Tests\Auth;
 
 use Tests\TestCase;
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 class JwtAuthTest extends TestCase
 {
@@ -755,8 +755,8 @@ class MultiMethodAuthTest extends TestCase
 ```php
 <?php
 
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
 
 $app = new Application();
 

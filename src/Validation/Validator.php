@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Validation;
+namespace PivotPHP\Core\Validation;
 
 /**
- * Sistema de validação para Helix-PHP
+ * Sistema de validação para PivotPHP
  */
 class Validator
 {

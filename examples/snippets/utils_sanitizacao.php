@@ -1,6 +1,6 @@
 <?php
 // Exemplo de uso do helper de sanitização em middleware e rota
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\Utils;
 
 $router->use(function($req, $res, $next) {
     // Sanitiza todos os parâmetros de query

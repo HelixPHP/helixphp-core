@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Optimization;
+namespace PivotPHP\Core\Http\Optimization;
 
 /**
  * Array View for zero-copy array operations

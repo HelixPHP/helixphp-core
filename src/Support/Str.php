@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Support;
+namespace PivotPHP\Core\Support;
 
 /**
  * Helper para trabalhar com strings

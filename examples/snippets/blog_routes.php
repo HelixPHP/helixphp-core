@@ -1,6 +1,6 @@
 <?php
 
-use Helix\Routing\RouterInstance;
+use PivotPHP\Core\Routing\RouterInstance;
 
 // Sub-router especializado para rotas de blog
 $blogRouter = new RouterInstance('/blog');

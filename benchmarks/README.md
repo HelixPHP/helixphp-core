@@ -1,8 +1,8 @@
-# 📊 HelixPHP Framework - Benchmarks
+# 📊 PivotPHP Framework - Benchmarks
 
 *Última atualização: 6 de Julho de 2025*
 
-Sistema de benchmarks para análise de performance do HelixPHP Framework.
+Sistema de benchmarks para análise de performance do PivotPHP Framework.
 
 ---
 
@@ -216,4 +216,4 @@ reports/
 
 ---
 
-**HelixPHP Framework** - Benchmarks para garantir performance de classe mundial! 🚀
+**PivotPHP Framework** - Benchmarks para garantir performance de classe mundial! 🚀

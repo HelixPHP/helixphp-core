@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Core;
+namespace PivotPHP\Core\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Middleware\Core\RateLimitMiddleware;
+use PivotPHP\Core\Middleware\Core\RateLimitMiddleware;
 
 class RateLimitMiddlewareTest extends TestCase
 {

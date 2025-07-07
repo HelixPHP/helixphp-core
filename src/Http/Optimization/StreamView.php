@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Optimization;
+namespace PivotPHP\Core\Http\Optimization;
 
 /**
  * Stream View for zero-copy file reading

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7;
+namespace PivotPHP\Core\Http\Psr7;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
@@ -15,7 +15,7 @@ use Psr\Http\Message\UploadedFileInterface;
  * This class implements the ServerRequestInterface for handling server requests
  * following the PSR-7 HTTP Message Interface standard.
  *
- * @package Helix\Http\Psr7
+ * @package PivotPHP\Core\Http\Psr7
  * @since 2.1.0
  */
 class ServerRequest extends Request implements ServerRequestInterface

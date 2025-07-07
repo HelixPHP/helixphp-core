@@ -2,13 +2,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Middleware\MiddlewarePipelineCompiler;
-use Helix\Routing\RouteMemoryManager;
-use Helix\Http\Psr7\Cache\ProbabilisticCache;
-use Helix\Http\Psr7\Cache\AdaptiveLearningCache;
-use Helix\Http\Psr7\Cache\PredictiveCacheWarmer;
-use Helix\Http\Optimization\ZeroCopyOptimizer;
-use Helix\Http\Optimization\MemoryMappingManager;
+use PivotPHP\Core\Middleware\MiddlewarePipelineCompiler;
+use PivotPHP\Core\Routing\RouteMemoryManager;
+use PivotPHP\Core\Http\Psr7\Cache\ProbabilisticCache;
+use PivotPHP\Core\Http\Psr7\Cache\AdaptiveLearningCache;
+use PivotPHP\Core\Http\Psr7\Cache\PredictiveCacheWarmer;
+use PivotPHP\Core\Http\Optimization\ZeroCopyOptimizer;
+use PivotPHP\Core\Http\Optimization\MemoryMappingManager;
 
 /**
  * Advanced Optimizations Phase 3 Benchmark

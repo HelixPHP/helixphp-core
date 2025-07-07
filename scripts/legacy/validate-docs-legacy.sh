@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HelixPHP v1.0.0 - Validador de Documentação Consolidada
+# PivotPHP v1.0.0 - Validador de Documentação Consolidada
 # Verifica se a documentação está organizada corretamente após consolidação
 
 set -e
 
-echo "📚 Validando estrutura de documentação consolidada do HelixPHP v1.0.0..."
+echo "📚 Validando estrutura de documentação consolidada do PivotPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'

@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Test;
+namespace PivotPHP\Core\Test;
 
 $path = __DIR__;
 $path = explode(DIRECTORY_SEPARATOR, $path);
@@ -8,9 +8,9 @@ $path = array_slice($path, 0, count($path) - 2); // volta duas pastas
 $path = implode(DIRECTORY_SEPARATOR, $path);
 require_once $path . '/vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Http\Psr15\Middleware\ErrorMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\ErrorMiddleware;
 
 $baseUrl = "https://{$_SERVER['SSL_TLS_SNI']}{$_SERVER['SCRIPT_NAME']}";
 substr($baseUrl, -1) === '/' && $baseUrl = substr($baseUrl, 0, -1);

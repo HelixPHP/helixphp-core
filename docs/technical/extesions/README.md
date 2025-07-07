@@ -1,6 +1,6 @@
 # 🧩 Sistema de Extensões e Plugins
 
-Guia completo do sistema de extensões do HelixPHP, incluindo criação, configuração, descoberta automática e padrões avançados.
+Guia completo do sistema de extensões do PivotPHP, incluindo criação, configuração, descoberta automática e padrões avançados.
 
 ## 📋 Índice
 
@@ -17,7 +17,7 @@ Guia completo do sistema de extensões do HelixPHP, incluindo criação, configu
 
 ## 🔍 Visão Geral
 
-O HelixPHP possui um sistema de extensões robusto que permite modularizar funcionalidades, criar plugins reutilizáveis e estender o framework de forma limpa e padronizada.
+O PivotPHP possui um sistema de extensões robusto que permite modularizar funcionalidades, criar plugins reutilizáveis e estender o framework de forma limpa e padronizada.
 
 ### Componentes Principais
 
@@ -56,7 +56,7 @@ $app = new Application();
 ```php
 <?php
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
 abstract class ServiceProvider
 {
@@ -107,7 +107,7 @@ abstract class ServiceProvider
 
 namespace MyVendor\MyExtension;
 
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class MyExtensionProvider extends ServiceProvider
 {
@@ -165,8 +165,8 @@ class MyExtensionProvider extends ServiceProvider
 
 namespace MyVendor\SecurityExtension;
 
-use Helix\Providers\ServiceProvider;
-use Helix\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
 
 class SecurityExtensionProvider extends ServiceProvider
 {
@@ -233,7 +233,7 @@ class SecurityScannerMiddleware extends BaseMiddleware
 
 namespace MyVendor\PaymentExtension;
 
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class PaymentExtensionProvider extends ServiceProvider
 {
@@ -310,7 +310,7 @@ class PaymentExtensionProvider extends ServiceProvider
 
 namespace MyVendor\DatabaseExtension;
 
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class DatabaseExtensionProvider extends ServiceProvider
 {
@@ -465,7 +465,7 @@ class RequestLoggingProvider extends ServiceProvider
     "name": "meu-vendor/minha-extensao",
     "type": "express-extension",
     "require": {
-        "cafernandes/helixphp-core": "^2.1"
+        "cafernandes/pivotphp-core": "^2.1"
     },
     "extra": {
         "express": {
@@ -495,7 +495,7 @@ class RequestLoggingProvider extends ServiceProvider
 ```php
 <?php
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
 class ExtensionDiscoveryProvider extends ServiceProvider
 {
@@ -583,7 +583,7 @@ class ExtensionDiscovery
 
 namespace MyVendor\Events;
 
-use Helix\Events\Event;
+use PivotPHP\Core\Events\Event;
 
 class UserRegisteredEvent extends Event
 {
@@ -822,7 +822,7 @@ public function register(): void
 namespace Tests;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 use MyVendor\PaymentExtension\PaymentExtensionProvider;
 
 class PaymentExtensionTest extends TestCase

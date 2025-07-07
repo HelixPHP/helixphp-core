@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Helpers;
+namespace PivotPHP\Core\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 class JWTHelperTest extends TestCase
 {

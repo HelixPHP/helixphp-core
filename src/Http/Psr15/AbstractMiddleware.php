@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr15;
+namespace PivotPHP\Core\Http\Psr15;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -64,10 +64,10 @@ abstract class AbstractMiddleware implements MiddlewareInterface
      */
     protected function getResponse(ServerRequestInterface $request): ResponseInterface
     {
-        return new \Helix\Http\Psr7\Response(
+        return new \PivotPHP\Core\Http\Psr7\Response(
             200,
             [],
-            \Helix\Http\Psr7\Stream::createFromString('')
+            \PivotPHP\Core\Http\Psr7\Stream::createFromString('')
         );
     }
 }

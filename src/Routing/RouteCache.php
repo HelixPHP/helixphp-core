@@ -1,8 +1,8 @@
 <?php
 
-namespace Helix\Routing;
+namespace PivotPHP\Core\Routing;
 
-use Helix\Utils\SerializationCache;
+use PivotPHP\Core\Utils\SerializationCache;
 
 /**
  * Cache para rotas compiladas para melhorar performance

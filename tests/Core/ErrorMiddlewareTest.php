@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests\Core;
+namespace PivotPHP\Core\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Psr15\Middleware\ErrorMiddleware;
-use Helix\Http\Psr7\ServerRequest;
+use PivotPHP\Core\Http\Psr15\Middleware\ErrorMiddleware;
+use PivotPHP\Core\Http\Psr7\ServerRequest;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 

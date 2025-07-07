@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Exceptions;
+namespace PivotPHP\Core\Exceptions;
 
 use Exception;
 

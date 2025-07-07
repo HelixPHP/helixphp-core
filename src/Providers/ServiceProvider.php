@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 /**
  * Base Service Provider class

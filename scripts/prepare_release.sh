@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de preparação para publicação do HelixPHP v1.0.0
+# Script de preparação para publicação do PivotPHP v1.0.0
 # Este script limpa, valida e prepara o projeto para release
 
 set -e
@@ -19,12 +19,12 @@ success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-title "HelixPHP v1.0.0 - Release Preparation"
+title "PivotPHP v1.0.0 - Release Preparation"
 echo ""
 
 # Verificar se estamos na raiz do projeto
 if [ ! -f "composer.json" ]; then
-    error "Execute este script na raiz do projeto HelixPHP"
+    error "Execute este script na raiz do projeto PivotPHP"
 fi
 
 # 1. Verificar se há arquivos sensíveis
@@ -196,7 +196,7 @@ echo "   4. Push para o repositório: git push origin main --tags"
 echo "   5. Publicar no Packagist"
 echo ""
 echo "🔗 Links úteis:"
-echo "   - Repositório: https://github.com/CAFernandes/helixphp-core"
+echo "   - Repositório: https://github.com/CAFernandes/pivotphp-core"
 echo "   - Packagist: https://packagist.org"
 echo "   - Guia de publicação: PUBLISHING_GUIDE.md"
 echo ""
@@ -216,4 +216,4 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo "🚀 HelixPHP está pronto para o mundo!"
+echo "🚀 PivotPHP está pronto para o mundo!"

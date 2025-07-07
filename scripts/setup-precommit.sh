@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# HelixPHP - Instalador de Git Hooks
+# PivotPHP - Instalador de Git Hooks
 # Configura as validações de qualidade de código para pre-commit e pre-push
 
 set -e
 
-echo "🛠️  Configurando Git hooks para HelixPHP..."
+echo "🛠️  Configurando Git hooks para PivotPHP..."
 
 # Cores para output
 RED='\033[0;31m'

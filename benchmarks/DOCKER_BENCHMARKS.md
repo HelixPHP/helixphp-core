@@ -1,4 +1,4 @@
-# 🐳 Docker Benchmarks for HelixPHP
+# 🐳 Docker Benchmarks for PivotPHP
 
 This document explains how to run standardized benchmarks using Docker to ensure consistent results across different environments.
 
@@ -173,8 +173,8 @@ Create `benchmarks/custom_benchmark.php`:
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Database\PDOConnection;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Database\PDOConnection;
 
 // Your custom benchmark code here
 ```
@@ -227,7 +227,7 @@ php benchmarks/compare_benchmarks.php \
    ```bash
    # Check if MySQL is healthy
    docker-compose -f docker-compose.benchmark.yml ps
-   
+
    # View MySQL logs
    docker-compose -f docker-compose.benchmark.yml logs mysql
    ```
@@ -236,7 +236,7 @@ php benchmarks/compare_benchmarks.php \
    ```bash
    # Increase Docker memory limit
    # Docker Desktop: Preferences > Resources > Memory
-   
+
    # Or adjust PHP memory limit
    docker-compose -f docker-compose.benchmark.yml run -e PHP_MEMORY_LIMIT=2G app
    ```
@@ -245,7 +245,7 @@ php benchmarks/compare_benchmarks.php \
    ```bash
    # Ensure no other containers are running
    docker ps
-   
+
    # Reset Docker volumes
    docker-compose -f docker-compose.benchmark.yml down -v
    ```
@@ -291,14 +291,14 @@ on:
 jobs:
   benchmark:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v2
-    
+
     - name: Run benchmarks
       run: |
         docker-compose -f docker-compose.benchmark.yml up --abort-on-container-exit
-        
+
     - name: Upload results
       uses: actions/upload-artifact@v2
       with:
@@ -316,7 +316,7 @@ jobs:
 
 ## 📚 Additional Resources
 
-- [HelixPHP Performance Guide](../docs/performance/README.md)
+- [PivotPHP Performance Guide](../docs/performance/README.md)
 - [PHP OPcache Documentation](https://www.php.net/manual/en/book.opcache.php)
 - [MySQL Performance Schema](https://dev.mysql.com/doc/refman/8.0/en/performance-schema.html)
 - [Redis Benchmarking](https://redis.io/docs/management/optimization/benchmarks/)

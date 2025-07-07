@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Routing;
+namespace PivotPHP\Core\Routing;
 
 use InvalidArgumentException;
-use Helix\Utils\Arr;
+use PivotPHP\Core\Utils\Arr;
 
 /**
  * RouterInstance permite criar sub-routers independentes com prefixo e rotas próprias.

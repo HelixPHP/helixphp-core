@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Helix\Support;
+namespace PivotPHP\Core\Support;
 
-use Helix\Core\Application;
-use Helix\Events\Hook;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Events\Hook;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -176,7 +176,7 @@ class HookManager
      */
     protected function registerWithEventSystem(string $hook): void
     {
-        /** @var \Helix\Providers\ListenerProvider $listenerProvider */
+        /** @var \PivotPHP\Core\Providers\ListenerProvider $listenerProvider */
         $listenerProvider = $this->app->make('listeners');
 
         // Remove listener antigo, se existir

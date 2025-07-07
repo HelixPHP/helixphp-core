@@ -1,12 +1,12 @@
-# Tratamento de Erros no HelixPHP
+# Tratamento de Erros no PivotPHP
 
-O HelixPHP oferece um sistema robusto de tratamento de erros que captura exceções automaticamente e fornece respostas padronizadas. O sistema é flexível e permite customização completa.
+O PivotPHP oferece um sistema robusto de tratamento de erros que captura exceções automaticamente e fornece respostas padronizadas. O sistema é flexível e permite customização completa.
 
 ## Como Funciona o Tratamento de Erros
 
 ### Sistema Automático
 
-O HelixPHP automaticamente:
+O PivotPHP automaticamente:
 - **Captura exceções** não tratadas
 - **Converte erros PHP** em exceções
 - **Retorna respostas JSON** padronizadas
@@ -40,7 +40,7 @@ return [
 ### Handler Customizado
 
 ```php
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 $app = new Application();
 
@@ -549,4 +549,4 @@ $app->use('/api', function($req, $res, $next) {
 });
 ```
 
-O sistema de tratamento de erros do HelixPHP é flexível e poderoso, permitindo desde configurações simples até handlers complexos que atendem às necessidades específicas da sua aplicação.
+O sistema de tratamento de erros do PivotPHP é flexível e poderoso, permitindo desde configurações simples até handlers complexos que atendem às necessidades específicas da sua aplicação.

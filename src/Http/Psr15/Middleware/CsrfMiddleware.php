@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Http\Psr15\Middleware;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Helix\Http\Psr7\Response;
-use Helix\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Response;
+use PivotPHP\Core\Http\Psr7\Stream;
 
 class CsrfMiddleware implements MiddlewareInterface
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests\Services;
+namespace PivotPHP\Core\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Utils\OpenApiExporter;
-use Helix\Routing\Router;
+use PivotPHP\Core\Utils\OpenApiExporter;
+use PivotPHP\Core\Routing\Router;
 
 class OpenApiExporterTest extends TestCase
 {
@@ -28,7 +28,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('openapi', $result);
@@ -57,7 +57,7 @@ class OpenApiExporterTest extends TestCase
         );
 
         $baseUrl = 'https://api.myapp.com';
-        $result = OpenApiExporter::export('Helix\Routing\Router', $baseUrl);
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router', $baseUrl);
 
         $this->assertArrayHasKey('servers', $result);
         $this->assertGreaterThan(0, count($result['servers']));
@@ -82,7 +82,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertArrayHasKey('/users/{id}', $result['paths']);
         $this->assertArrayHasKey('get', $result['paths']['/users/{id}']);
@@ -131,7 +131,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertArrayHasKey('/users', $result['paths']);
         $this->assertArrayHasKey('get', $result['paths']['/users']);
@@ -188,7 +188,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $responses = $result['paths']['/users']['post']['responses'];
         $this->assertArrayHasKey('201', $responses);
@@ -219,7 +219,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertArrayHasKey('tags', $result['paths']['/users']['get']);
         $this->assertEquals(['Users', 'Management'], $result['paths']['/users']['get']['tags']);
@@ -266,7 +266,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $userPath = $result['paths']['/users/{id}'];
         $this->assertArrayHasKey('get', $userPath);
@@ -280,7 +280,7 @@ class OpenApiExporterTest extends TestCase
 
     public function testEmptyRoutes(): void
     {
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('openapi', $result);
@@ -307,7 +307,7 @@ class OpenApiExporterTest extends TestCase
                 ]
             ]
         );
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $responses = $result['paths']['/test']['get']['responses'];
 
@@ -348,7 +348,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertArrayHasKey('/api/v1/users/{userId}/posts/{postId}', $result['paths']);
 
@@ -379,7 +379,7 @@ class OpenApiExporterTest extends TestCase
             ]
         );
 
-        $result = OpenApiExporter::export('Helix\Routing\Router');
+        $result = OpenApiExporter::export('PivotPHP\Core\Routing\Router');
 
         $this->assertArrayHasKey('/test', $result['paths']);
         $this->assertArrayHasKey('get', $result['paths']['/test']);

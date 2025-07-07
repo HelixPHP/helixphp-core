@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Http;
+namespace PivotPHP\Core\Http;
 
 /**
  * Classe Response constrói e envia a resposta HTTP.

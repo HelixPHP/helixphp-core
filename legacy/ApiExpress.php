@@ -2,14 +2,14 @@
 
 namespace Helix;
 
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 /**
  * Alias de compatibilidade para Application.
  *
- * @deprecated Versão 3.0.0 - Use Express\Core\Application diretamente
+ * @deprecated Versão 3.0.0 - Use PivotPHP\Core\Core\Application diretamente
  */
-class ApiHelix extends Application
+class ApiPivot extends Application
 {
     /**
      * Construtor que delega para Application.
@@ -19,7 +19,7 @@ class ApiHelix extends Application
     public function __construct(?string $basePath = null)
     {
         trigger_error(
-            'Helix\ApiHelix está depreciado. Use Express\Core\Application diretamente.',
+            'Helix\ApiPivot está depreciado. Use PivotPHP\Core\Core\Application diretamente.',
             E_USER_DEPRECATED
         );
 

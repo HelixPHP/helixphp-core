@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Routing;
+namespace PivotPHP\Core\Routing;
 
 /**
  * Classe RouteCollection para gerenciar coleções de rotas.

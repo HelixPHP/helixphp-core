@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Middleware\Core;
+namespace PivotPHP\Core\Middleware\Core;
 
 /**
  * Interface para middlewares.
@@ -10,8 +10,8 @@ interface MiddlewareInterface
     /**
      * Executa o middleware.
      *
-     * @param  \Helix\Http\Request  $request
-     * @param  \Helix\Http\Response $response
+     * @param  \PivotPHP\Core\Http\Request  $request
+     * @param  \PivotPHP\Core\Http\Response $response
      * @param  callable               $next
      * @return mixed
      */

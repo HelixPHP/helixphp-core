@@ -2,11 +2,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Http\Psr7\Pool\DynamicPoolManager;
-use Helix\Http\Psr7\Pool\EnhancedStreamPool;
-use Helix\Http\Psr7\Pool\HeaderPool;
-use Helix\Http\Psr7\Cache\IntelligentJsonCache;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Http\Psr7\Pool\DynamicPoolManager;
+use PivotPHP\Core\Http\Psr7\Pool\EnhancedStreamPool;
+use PivotPHP\Core\Http\Psr7\Pool\HeaderPool;
+use PivotPHP\Core\Http\Psr7\Cache\IntelligentJsonCache;
+use PivotPHP\Core\Utils\Utils;
 
 /**
  * Benchmark for New Optimization Features

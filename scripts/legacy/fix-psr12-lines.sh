@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HelixPHP - Correção de linhas longas PSR-12
+# PivotPHP - Correção de linhas longas PSR-12
 # Corrige automaticamente linhas que excedem 120 caracteres
 
 set -e

@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests\Services;
+namespace PivotPHP\Core\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Request;
-use Helix\Http\HeaderRequest;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\HeaderRequest;
 use InvalidArgumentException;
 
 class RequestTest extends TestCase

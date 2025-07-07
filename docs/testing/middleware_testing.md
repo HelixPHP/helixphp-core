@@ -1,6 +1,6 @@
 # 🛡️ Testando Middlewares
 
-Guia prático para testar middlewares no HelixPHP.
+Guia prático para testar middlewares no PivotPHP.
 
 ## 🧪 Estrutura de Teste de Middleware
 
@@ -8,7 +8,7 @@ Guia prático para testar middlewares no HelixPHP.
 ```php
 <?php
 // tests/Unit/MiddlewareTest.php
-use Helix\Http\Psr15\Middleware\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class SecurityMiddlewareTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Support;
+namespace PivotPHP\Core\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Support\Arr;
+use PivotPHP\Core\Support\Arr;
 
 class ArrTest extends TestCase
 {

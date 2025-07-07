@@ -1,6 +1,6 @@
 <?php
 
-use Helix\Routing\RouterInstance;
+use PivotPHP\Core\Routing\RouterInstance;
 
 // Sub-router especializado para rotas de admin
 $adminRouter = new RouterInstance('/admin');

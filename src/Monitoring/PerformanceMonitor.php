@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Helix\Monitoring;
+namespace PivotPHP\Core\Monitoring;
 
-use Helix\Utils\Utils;
-use Helix\Http\Psr7\Pool\HeaderPool;
-use Helix\Http\Psr7\Pool\ResponsePool;
-use Helix\Http\Psr7\Pool\DynamicPoolManager;
-use Helix\Http\Psr7\Pool\EnhancedStreamPool;
-use Helix\Http\Psr7\Cache\OperationsCache;
-use Helix\Http\Psr7\Cache\IntelligentJsonCache;
-use Helix\Routing\RouteCache;
+use PivotPHP\Core\Utils\Utils;
+use PivotPHP\Core\Http\Psr7\Pool\HeaderPool;
+use PivotPHP\Core\Http\Psr7\Pool\ResponsePool;
+use PivotPHP\Core\Http\Psr7\Pool\DynamicPoolManager;
+use PivotPHP\Core\Http\Psr7\Pool\EnhancedStreamPool;
+use PivotPHP\Core\Http\Psr7\Cache\OperationsCache;
+use PivotPHP\Core\Http\Psr7\Cache\IntelligentJsonCache;
+use PivotPHP\Core\Routing\RouteCache;
 
 /**
  * Real-time Performance Monitor
@@ -19,7 +19,7 @@ use Helix\Routing\RouteCache;
  * Provides comprehensive monitoring of all optimization components
  * with alerts and recommendations for performance tuning.
  *
- * @package Helix\Monitoring
+ * @package PivotPHP\Core\Monitoring
  * @since 2.2.0
  */
 class PerformanceMonitor

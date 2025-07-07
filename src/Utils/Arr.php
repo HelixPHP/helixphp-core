@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Utils;
+namespace PivotPHP\Core\Utils;
 
 /**
  * Utilitários para manipulação de arrays.

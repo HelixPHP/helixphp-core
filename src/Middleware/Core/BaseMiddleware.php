@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Middleware\Core;
+namespace PivotPHP\Core\Middleware\Core;
 
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 /**
  * Classe base para middlewares.

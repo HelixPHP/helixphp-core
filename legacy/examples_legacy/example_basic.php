@@ -1,6 +1,6 @@
 <?php
 /**
- * Exemplo Básico do HelixPHP
+ * Exemplo Básico do PivotPHP
  *
  * Este exemplo demonstra o uso básico do framework
  * para criar uma API REST simples.
@@ -8,9 +8,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 // Criar aplicação
 $app = new Application();
@@ -22,7 +22,7 @@ $app = new Application();
 // Rota de boas-vindas
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'Bem-vindo ao HelixPHP!',
+        'message' => 'Bem-vindo ao PivotPHP!',
         'version' => '2.0',
         'timestamp' => date('Y-m-d H:i:s')
     ]);
@@ -200,7 +200,7 @@ $app->use(function(Request $req, Response $res, callable $next) {
 
 // Iniciar servidor (se executado diretamente)
 if (php_sapi_name() === 'cli-server') {
-    echo "HelixPHP Server rodando em http://localhost:8000\n";
+    echo "PivotPHP Server rodando em http://localhost:8000\n";
     echo "Teste os endpoints:\n";
     echo "  GET  /               - Página inicial\n";
     echo "  GET  /test           - Teste da API\n";

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Script de Validação OpenAPI/Swagger - HelixPHP
+# Script de Validação OpenAPI/Swagger - PivotPHP
 # Verifica se os recursos de documentação OpenAPI estão funcionando corretamente
 
-echo "🔍 Validando recursos OpenAPI/Swagger do HelixPHP..."
+echo "🔍 Validando recursos OpenAPI/Swagger do PivotPHP..."
 echo
 
 # Verificar se o OpenApiExporter existe
@@ -49,11 +49,11 @@ fi
 php -r "
 require_once 'vendor/autoload.php';
 try {
-    if (class_exists('Express\\Utils\\OpenApiExporter')) {
+    if (class_exists('PivotPHP\Core\\Utils\\OpenApiExporter')) {
         echo '✅ OpenApiExporter pode ser carregado' . PHP_EOL;
 
         // Testar método export básico
-        if (method_exists('Express\\Utils\\OpenApiExporter', 'export')) {
+        if (method_exists('PivotPHP\Core\\Utils\\OpenApiExporter', 'export')) {
             echo '✅ Método export() disponível' . PHP_EOL;
         } else {
             echo '❌ Método export() não encontrado' . PHP_EOL;
@@ -81,12 +81,12 @@ php -r "
 require_once 'vendor/autoload.php';
 try {
     // Criar rota simples para teste
-    Express\Routing\Router::get('/test', function() {
+    PivotPHP\Core\Routing\Router::get('/test', function() {
         return ['test' => true];
     }, ['summary' => 'Teste']);
 
     // Gerar documentação
-    \$docs = Express\Utils\OpenApiExporter::export('Express\\Routing\\Router');
+    \$docs = PivotPHP\Core\Utils\OpenApiExporter::export('PivotPHP\Core\\Routing\\Router');
 
     if (is_array(\$docs) && isset(\$docs['openapi'])) {
         echo '✅ Documentação OpenAPI gerada com sucesso' . PHP_EOL;

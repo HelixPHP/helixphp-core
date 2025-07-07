@@ -1,6 +1,6 @@
-# Exceptions Customizadas no HelixPHP
+# Exceptions Customizadas no PivotPHP
 
-O HelixPHP oferece um conjunto de exceções customizadas para diferentes cenários de erro, permitindo um tratamento mais específico e informativo.
+O PivotPHP oferece um conjunto de exceções customizadas para diferentes cenários de erro, permitindo um tratamento mais específico e informativo.
 
 ## Exceções Principais do Framework
 
@@ -9,7 +9,7 @@ O HelixPHP oferece um conjunto de exceções customizadas para diferentes cenár
 A exceção base para erros HTTP com códigos de status específicos.
 
 ```php
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 // Uso básico
 throw new HttpException(404, 'Resource not found');
@@ -71,7 +71,7 @@ Para erros de validação de dados com detalhes específicos.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class ValidationException extends HttpException
 {
@@ -147,7 +147,7 @@ Para erros de autenticação.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class AuthenticationException extends HttpException
 {
@@ -194,7 +194,7 @@ Para erros de autorização/permissões.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class AuthorizationException extends HttpException
 {
@@ -251,7 +251,7 @@ Para erros relacionados ao banco de dados.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class DatabaseException extends HttpException
 {
@@ -328,7 +328,7 @@ Para controle de taxa de requisições.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class RateLimitException extends HttpException
 {
@@ -416,7 +416,7 @@ Para erros que precisam de notificação.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class NotificationException extends HttpException
 {
@@ -484,7 +484,7 @@ Para operações de arquivo.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class FileException extends HttpException
 {
@@ -542,7 +542,7 @@ Para erros de configuração.
 
 namespace App\Exceptions;
 
-use Helix\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\HttpException;
 
 class ConfigurationException extends HttpException
 {

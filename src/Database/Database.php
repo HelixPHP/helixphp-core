@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Database;
+namespace PivotPHP\Core\Database;
 
 /**
  * Conexão simples com banco de dados usando PDO

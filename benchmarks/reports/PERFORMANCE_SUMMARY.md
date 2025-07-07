@@ -1,4 +1,4 @@
-# HelixPHP Framework - Performance Benchmark
+# PivotPHP Framework - Performance Benchmark
 
 ## Test Environment
 - **Date**: 2025-07-06 14:39:41
@@ -25,7 +25,7 @@
 - **Total memory for 50 apps**: 275.34 KB
 
 ## Performance Summary
-HelixPHP demonstrates excellent performance characteristics for a PHP microframework:
+PivotPHP demonstrates excellent performance characteristics for a PHP microframework:
 
 - **Best Performance**: Response Object Creation with 2,582,700 operations/second
 - **Framework Overhead**: Minimal memory usage per application instance

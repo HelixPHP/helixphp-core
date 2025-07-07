@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Middleware;
+namespace PivotPHP\Core\Middleware;
 
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Utils\Utils;
 
 /**
  * Advanced Middleware Pipeline Compiler
@@ -14,7 +14,7 @@ use Helix\Utils\Utils;
  * Pre-compiles middleware stacks into optimized execution paths
  * to eliminate runtime overhead and improve performance.
  *
- * @package Helix\Middleware
+ * @package PivotPHP\Core\Middleware
  * @since 2.2.0
  */
 class MiddlewarePipelineCompiler

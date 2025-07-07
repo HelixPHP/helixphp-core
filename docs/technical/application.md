@@ -1,6 +1,6 @@
 # Guia do Objeto Application
 
-A classe `Application` é o coração do HelixPHP. Ela gerencia todo o ciclo de vida da aplicação, desde a inicialização até o processamento de requisições.
+A classe `Application` é o coração do PivotPHP. Ela gerencia todo o ciclo de vida da aplicação, desde a inicialização até o processamento de requisições.
 
 ## Conceitos Fundamentais
 
@@ -19,7 +19,7 @@ A Application funciona como um container principal que:
 <?php
 require_once 'vendor/autoload.php';
 
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 // Criar aplicação com caminho base opcional
 $app = new Application(__DIR__);
@@ -44,7 +44,7 @@ $app->register(MyCustomServiceProvider::class);
 
 // Configurar middleware global
 $app->use(function($req, $res, $next) {
-    $res->header('X-Powered-By', 'HelixPHP');
+    $res->header('X-Powered-By', 'PivotPHP');
     return $next();
 });
 ```

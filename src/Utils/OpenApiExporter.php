@@ -1,8 +1,8 @@
 <?php
 
-namespace Helix\Utils;
+namespace PivotPHP\Core\Utils;
 
-use Helix\Routing\Router;
+use PivotPHP\Core\Routing\Router;
 
 /**
  * Service responsible for exporting OpenAPI documentation from Router routes.
@@ -125,7 +125,7 @@ class OpenApiExporter
         return [
             'openapi' => '3.0.0',
             'info' => [
-                'title' => 'Helix-PHP API',
+                'title' => 'PivotPHP API',
                 'version' => '1.0.0',
                 'description' => 'Auto-generated API documentation'
             ],

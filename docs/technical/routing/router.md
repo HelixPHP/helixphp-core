@@ -1,6 +1,6 @@
 # Guia do Router
 
-O Router é o sistema de roteamento do HelixPHP, responsável por registrar, organizar e encontrar rotas HTTP de forma otimizada.
+O Router é o sistema de roteamento do PivotPHP, responsável por registrar, organizar e encontrar rotas HTTP de forma otimizada.
 
 ## Conceitos Fundamentais
 
@@ -28,7 +28,7 @@ O Router oferece:
 ### Rotas Simples
 
 ```php
-use Helix\Routing\Router;
+use PivotPHP\Core\Routing\Router;
 
 // Rota GET simples
 Router::get('/', function($req, $res) {
@@ -530,4 +530,4 @@ class RouteServiceProvider extends ServiceProvider
 }
 ```
 
-O Router do HelixPHP é projetado para performance e flexibilidade, oferecendo todas as funcionalidades necessárias para aplicações modernas, desde APIs simples até sistemas complexos com múltiplas versões e recursos avançados.
+O Router do PivotPHP é projetado para performance e flexibilidade, oferecendo todas as funcionalidades necessárias para aplicações modernas, desde APIs simples até sistemas complexos com múltiplas versões e recursos avançados.

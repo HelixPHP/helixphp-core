@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# HelixPHP - Pre-push Hook
+# PivotPHP - Pre-push Hook
 # Executa validação completa antes de fazer push para o repositório remoto
 
 set -e

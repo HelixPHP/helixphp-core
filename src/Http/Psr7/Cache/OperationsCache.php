@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Cache;
+namespace PivotPHP\Core\Http\Psr7\Cache;
 
 /**
  * Operations Cache for Performance Optimization
@@ -10,7 +10,7 @@ namespace Helix\Http\Psr7\Cache;
  * Caches frequently used operations like route patterns,
  * header validations, and JSON encoding.
  *
- * @package Helix\Http\Psr7\Cache
+ * @package PivotPHP\Core\Http\Psr7\Cache
  * @since 2.1.1
  */
 class OperationsCache

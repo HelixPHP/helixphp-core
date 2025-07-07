@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7;
+namespace PivotPHP\Core\Http\Psr7;
 
-use Helix\Http\Psr7\Pool\HeaderPool;
+use PivotPHP\Core\Http\Psr7\Pool\HeaderPool;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
  * This class implements the base functionality for both HTTP requests and responses
  * following the PSR-7 HTTP Message Interface standard.
  *
- * @package Helix\Http\Psr7
+ * @package PivotPHP\Core\Http\Psr7
  * @since 2.1.0
  */
 class Message implements MessageInterface

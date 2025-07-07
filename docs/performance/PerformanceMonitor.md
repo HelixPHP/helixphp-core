@@ -1,13 +1,13 @@
 # PerformanceMonitor
 
-O PerformanceMonitor é uma ferramenta completa para análise e monitoramento de performance no HelixPHP. Ele oferece insights em tempo real sobre uso de memória, cache, pools e performance geral da aplicação.
+O PerformanceMonitor é uma ferramenta completa para análise e monitoramento de performance no PivotPHP. Ele oferece insights em tempo real sobre uso de memória, cache, pools e performance geral da aplicação.
 
 ## Inicialização do Monitor
 
 ### Configuração Básica
 
 ```php
-use Helix\Monitoring\PerformanceMonitor;
+use PivotPHP\Core\Monitoring\PerformanceMonitor;
 
 // Inicializar com configuração padrão
 PerformanceMonitor::initialize();
@@ -440,7 +440,7 @@ PerformanceMonitor::setBuffering([
 ```php
 // Configurar storage para métricas históricas
 PerformanceMonitor::setStorage('file', [
-    'path' => '/var/log/helixphp-core/metrics',
+    'path' => '/var/log/pivotphp-core/metrics',
     'rotation' => 'daily',
     'retention' => '30 days'
 ]);
@@ -497,4 +497,4 @@ PerformanceMonitor::setProductionMode([
 ]);
 ```
 
-O PerformanceMonitor é uma ferramenta essencial para manter sua aplicação HelixPHP otimizada e monitorada em produção, oferecendo insights valiosos para tomada de decisões sobre performance.
+O PerformanceMonitor é uma ferramenta essencial para manter sua aplicação PivotPHP otimizada e monitorada em produção, oferecendo insights valiosos para tomada de decisões sobre performance.

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# HelixPHP v1.0.0 - Validador de Benchmarks
+# PivotPHP v1.0.0 - Validador de Benchmarks
 # Verifica se os benchmarks estão atualizados e funcionando
 
-echo "🏃‍♂️ Validando benchmarks do HelixPHP v1.0.0..."
+echo "🏃‍♂️ Validando benchmarks do PivotPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
-use Helix\Http\Psr7\Response;
-use Helix\Http\Psr7\Stream;
-use Helix\Http\Psr7\Pool\ResponsePool;
+use PivotPHP\Core\Http\Psr7\Response;
+use PivotPHP\Core\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Pool\ResponsePool;
 
 /**
  * PSR-17 Response Factory implementation with object pooling optimization

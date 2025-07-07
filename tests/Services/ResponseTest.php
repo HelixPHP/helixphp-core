@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Services;
+namespace PivotPHP\Core\Tests\Services;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Response;
+use PivotPHP\Core\Http\Response;
 
 class ResponseTest extends TestCase
 {

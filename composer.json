@@ -1,6 +1,6 @@
 {
-    "name": "helixphp/core",
-    "description": "HelixPHP Core - A lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs",
+    "name": "pivotphp/core",
+    "description": "PivotPHP Core - A lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs",
     "type": "library",
     "keywords": [
         "php",
@@ -20,7 +20,7 @@
         "jwt",
         "auth"
     ],
-    "homepage": "https://github.com/CAFernandes/helixphp-core",
+    "homepage": "https://github.com/CAFernandes/pivotphp-core",
     "license": "MIT",
     "authors": [
         {
@@ -28,8 +28,8 @@
             "homepage": "https://github.com/CAFernandes"
         },
         {
-            "name": "HelixPHP Contributors",
-            "homepage": "https://github.com/CAFernandes/helixphp-core/contributors"
+            "name": "PivotPHP Contributors",
+            "homepage": "https://github.com/CAFernandes/pivotphp-core/contributors"
         }
     ],
     "require": {
@@ -61,13 +61,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Helix\\": "src/"
+            "PivotPHP\\Core\\": "src/"
         },
         "files": ["src/aliases.php"]
     },
     "autoload-dev": {
         "psr-4": {
-            "Helix\\Tests\\": "tests/",
+            "PivotPHP\\Core\\Tests\\": "tests/",
             "Tests\\Security\\": "tests/Security/"
         }
     },
@@ -152,10 +152,10 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/CAFernandes/helixphp-core/issues",
-        "source": "https://github.com/CAFernandes/helixphp-core",
-        "docs": "https://github.com/CAFernandes/helixphp-core/blob/main/README.md",
-        "wiki": "https://github.com/CAFernandes/helixphp-core/wiki"
+        "issues": "https://github.com/CAFernandes/pivotphp-core/issues",
+        "source": "https://github.com/CAFernandes/pivotphp-core",
+        "docs": "https://github.com/CAFernandes/pivotphp-core/blob/main/README.md",
+        "wiki": "https://github.com/CAFernandes/pivotphp-core/wiki"
     },
     "funding": [
         {

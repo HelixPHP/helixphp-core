@@ -1,6 +1,6 @@
 <?php
 /**
- * HelixPHP v2.0.1 - Exemplo de Uso Completo
+ * PivotPHP v2.0.1 - Exemplo de Uso Completo
  *
  * Este exemplo demonstra todas as principais funcionalidades
  * e otimizações avançadas da versão 2.0.1
@@ -8,13 +8,13 @@
 
 require_once 'vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Http\Psr15\Middleware\SecurityMiddleware;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
-use Helix\Http\Psr15\Middleware\CacheMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CacheMiddleware;
 
 // Criar aplicação com otimizações avançadas
 $app = new Application(__DIR__ . '/config.example_v2.0.1.php');
@@ -167,7 +167,7 @@ $app->get('/api/status', function(Request $req, Response $res) {
     $res->json([
         'status' => 'online',
         'version' => '2.0.1',
-        'framework' => 'HelixPHP',
+        'framework' => 'PivotPHP',
         'timestamp' => time(),
         'uptime' => sys_getloadavg(),
         'memory_usage' => [
@@ -224,7 +224,7 @@ $app->get('/api/performance', function(Request $req, Response $res) {
 
 $app->use(function($error, Request $req, Response $res, $next) {
     // Log do erro (em produção, usar sistema de log apropriado)
-    error_log("HelixPHP Error: " . $error->getMessage());
+    error_log("PivotPHP Error: " . $error->getMessage());
 
     $res->status(500)->json([
         'error' => 'Erro interno do servidor',
@@ -238,7 +238,7 @@ $app->use(function($error, Request $req, Response $res, $next) {
 // Inicialização da Aplicação
 // ============================================
 
-echo "🚀 HelixPHP v2.0.1 - High Performance API\n";
+echo "🚀 PivotPHP v2.0.1 - High Performance API\n";
 echo "📊 Performance: +278% improvement over baseline\n";
 echo "⚡ Optimizations: ML Cache, Zero-Copy, Memory Mapping\n";
 echo "🌐 Server starting...\n\n";

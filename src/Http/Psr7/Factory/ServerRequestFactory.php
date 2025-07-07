@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\ServerRequestFactoryInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Helix\Http\Psr7\ServerRequest;
+use PivotPHP\Core\Http\Psr7\ServerRequest;
 
 /**
  * PSR-17 Server Request Factory implementation

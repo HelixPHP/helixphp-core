@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\StreamInterface;
-use Helix\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Stream;
 
 /**
  * PSR-17 Stream Factory implementation

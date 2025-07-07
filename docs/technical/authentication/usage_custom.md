@@ -1,10 +1,10 @@
 # 🔐 Autenticação Customizada
 
-Guia prático para implementar métodos de autenticação personalizados no HelixPHP.
+Guia prático para implementar métodos de autenticação personalizados no PivotPHP.
 
 ## 🚀 Conceitos Básicos
 
-O HelixPHP permite criar sistemas de autenticação totalmente customizados através de callbacks no AuthMiddleware.
+O PivotPHP permite criar sistemas de autenticação totalmente customizados através de callbacks no AuthMiddleware.
 
 ### Tipos de Autenticação Customizada
 

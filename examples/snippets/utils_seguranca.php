@@ -1,8 +1,8 @@
 <?php
 // Exemplo de configuração e uso dos middlewares de segurança
-// use Helix\ApiHelix;
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+// use PivotPHP\Core\ApiPivot;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 
 $app = new Application();

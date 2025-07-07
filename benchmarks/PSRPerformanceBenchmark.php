@@ -7,16 +7,16 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Http\Adapters\GlobalsToServerRequestAdapter;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Http\Psr7\Factory\ServerRequestFactory;
-use Helix\Http\Psr7\Factory\ResponseFactory;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Http\Adapters\GlobalsToServerRequestAdapter;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Http\Psr7\Factory\ServerRequestFactory;
+use PivotPHP\Core\Http\Psr7\Factory\ResponseFactory;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Utils\Utils;
 
 // Add the correct import for RequestHandler and CorsMiddleware if they exist
-use Helix\Http\Psr15\RequestHandler;
+use PivotPHP\Core\Http\Psr15\RequestHandler;
 
 class PSRPerformanceBenchmark
 {
@@ -139,7 +139,7 @@ class PSRPerformanceBenchmark
         $traditional = $this->benchmark('Traditional Headers', function() {
             $res = new Response();
             $res->header('Content-Type', 'application/json');
-            $res->header('X-Powered-By', 'HelixPHP');
+            $res->header('X-Powered-By', 'PivotPHP');
             $res->header('Cache-Control', 'no-cache');
             return $res;
         });
@@ -149,7 +149,7 @@ class PSRPerformanceBenchmark
             $factory = new ResponseFactory();
             $res = $factory->createResponse(200)
                 ->withHeader('Content-Type', 'application/json')
-                ->withHeader('X-Powered-By', 'HelixPHP')
+                ->withHeader('X-Powered-By', 'PivotPHP')
                 ->withHeader('Cache-Control', 'no-cache');
             return $res;
         });

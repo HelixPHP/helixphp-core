@@ -2,10 +2,10 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Middleware\MiddlewarePipelineCompiler;
-use Helix\Routing\RouteMemoryManager;
-use Helix\Http\Psr7\Cache\ProbabilisticCache;
-use Helix\Http\Psr7\Cache\AdaptiveLearningCache;
+use PivotPHP\Core\Middleware\MiddlewarePipelineCompiler;
+use PivotPHP\Core\Routing\RouteMemoryManager;
+use PivotPHP\Core\Http\Psr7\Cache\ProbabilisticCache;
+use PivotPHP\Core\Http\Psr7\Cache\AdaptiveLearningCache;
 
 /**
  * Comprehensive Benchmark for Advanced Optimizations Phase 2

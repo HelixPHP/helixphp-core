@@ -2,15 +2,15 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Routing\Router;
-use Helix\Http\Psr15\Middleware\MiddlewareStack;
-use Helix\Http\Psr15\Middleware\SecurityMiddleware;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Routing\RouteCache;
-use Helix\Routing\RouterInstance;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Routing\Router;
+use PivotPHP\Core\Http\Psr15\Middleware\MiddlewareStack;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Routing\RouteCache;
+use PivotPHP\Core\Routing\RouterInstance;
 
 $app = new Application();
 
@@ -54,7 +54,7 @@ $securityMiddleware = function (Request $req, Response $resp, $next) {
 
 $app->get('/', function (Request $req, Response $resp) {
     return $resp->json([
-        'message' => '🚀 HelixPHP - Otimizações Implementadas',
+        'message' => '🚀 PivotPHP - Otimizações Implementadas',
         'version' => '2.0.1',
         'optimizations' => [
             'route_cache' => 'Cache de rotas pré-compiladas',

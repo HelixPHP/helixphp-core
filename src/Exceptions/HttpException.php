@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Exceptions;
+namespace PivotPHP\Core\Exceptions;
 
 use Exception;
 use Throwable;

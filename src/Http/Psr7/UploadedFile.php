@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7;
+namespace PivotPHP\Core\Http\Psr7;
 
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\StreamInterface;
@@ -13,7 +13,7 @@ use Psr\Http\Message\StreamInterface;
  * This class implements the UploadedFileInterface for handling uploaded files
  * following the PSR-7 HTTP Message Interface standard.
  *
- * @package Helix\Http\Psr7
+ * @package PivotPHP\Core\Http\Psr7
  * @since 2.1.0
  */
 class UploadedFile implements UploadedFileInterface

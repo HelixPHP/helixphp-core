@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Adapters;
+namespace PivotPHP\Core\Http\Adapters;
 
 use Psr\Http\Message\ResponseInterface;
 

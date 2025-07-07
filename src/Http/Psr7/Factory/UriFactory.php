@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
-use Helix\Http\Psr7\Uri;
+use PivotPHP\Core\Http\Psr7\Uri;
 
 /**
  * PSR-17 URI Factory implementation

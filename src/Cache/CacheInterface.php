@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Cache;
+namespace PivotPHP\Core\Cache;
 
 /**
  * Interface para drivers de cache

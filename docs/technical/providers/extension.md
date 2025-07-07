@@ -1,6 +1,6 @@
 # Criando Extensões com Providers
 
-As extensões do HelixPHP permitem criar funcionalidades reutilizáveis que podem ser facilmente integradas em diferentes projetos. Use providers para criar extensões robustas e modulares.
+As extensões do PivotPHP permitem criar funcionalidades reutilizáveis que podem ser facilmente integradas em diferentes projetos. Use providers para criar extensões robustas e modulares.
 
 ## Conceitos de Extensões
 
@@ -54,8 +54,8 @@ minha-extensao/
 
 ```json
 {
-    "name": "vendor/helixphp-core-extension",
-    "description": "Uma extensão incrível para HelixPHP",
+    "name": "vendor/pivotphp-core-extension",
+    "description": "Uma extensão incrível para PivotPHP",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -66,7 +66,7 @@ minha-extensao/
     ],
     "require": {
         "php": "^8.1",
-        "helixphp-core/framework": "^2.1"
+        "pivotphp-core/framework": "^2.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0"
@@ -82,7 +82,7 @@ minha-extensao/
         }
     },
     "extra": {
-        "helixphp-core": {
+        "pivotphp-core": {
             "providers": [
                 "Vendor\\ExpressPhpExtension\\MyExtensionServiceProvider"
             ],
@@ -105,8 +105,8 @@ minha-extensao/
 
 namespace Vendor\ExpressPhpExtension;
 
-use Helix\Providers\ServiceProvider;
-use Helix\Routing\Router;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Routing\Router;
 
 class MyExtensionServiceProvider extends ServiceProvider
 {
@@ -510,7 +510,7 @@ return [
 ```json
 {
     "extra": {
-        "helixphp-core": {
+        "pivotphp-core": {
             "providers": [
                 "Vendor\\ExpressPhpExtension\\MyExtensionServiceProvider"
             ],
@@ -527,7 +527,7 @@ return [
 
 ### Extension Manager
 
-O HelixPHP automaticamente descobre e registra extensões:
+O PivotPHP automaticamente descobre e registra extensões:
 
 ```php
 // src/Providers/ExtensionServiceProvider.php (no framework)
@@ -596,7 +596,7 @@ class PublishExtensionCommand
 namespace Vendor\ExpressPhpExtension\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 use Vendor\ExpressPhpExtension\MyExtensionServiceProvider;
 
 class ExtensionTest extends TestCase
@@ -723,4 +723,4 @@ class AnalyticsExtensionServiceProvider extends ServiceProvider
 3. **Versionamento** - Use versionamento semântico
 4. **Changelog** - Documente mudanças
 
-As extensões permitem criar funcionalidades reutilizáveis e modulares para o HelixPHP. Use os padrões estabelecidos para garantir qualidade e compatibilidade.
+As extensões permitem criar funcionalidades reutilizáveis e modulares para o PivotPHP. Use os padrões estabelecidos para garantir qualidade e compatibilidade.

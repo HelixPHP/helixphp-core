@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Utils;
+namespace PivotPHP\Core\Utils;
 
 /**
  * Classe Utils com utilitários gerais para o framework.

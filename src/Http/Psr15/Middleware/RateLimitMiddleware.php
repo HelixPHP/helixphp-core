@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Http\Psr15\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -63,7 +63,7 @@ class RateLimitMiddleware implements MiddlewareInterface
         );
         $currentCount = count($_SESSION['rate_limit'][$key]);
         if ($currentCount >= $this->options['max']) {
-            $factory = new \Helix\Http\Psr7\Factory\ResponseFactory();
+            $factory = new \PivotPHP\Core\Http\Psr7\Factory\ResponseFactory();
             $response = $factory->createResponse($this->options['statusCode']);
             $response->getBody()->write(
                 json_encode(

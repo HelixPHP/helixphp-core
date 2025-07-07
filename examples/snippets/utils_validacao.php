@@ -1,6 +1,6 @@
 <?php
 // Exemplo de validação usando Utils
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\Utils;
 
 $dados = [
     'email' => 'usuario@dominio.com',

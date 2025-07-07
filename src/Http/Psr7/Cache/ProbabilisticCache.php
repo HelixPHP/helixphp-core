@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Cache;
+namespace PivotPHP\Core\Http\Psr7\Cache;
 
-use Helix\Utils\SerializationCache;
+use PivotPHP\Core\Utils\SerializationCache;
 
 /**
  * Advanced Probabilistic Cache Strategy
@@ -12,7 +12,7 @@ use Helix\Utils\SerializationCache;
  * Implements intelligent caching with probabilistic warming,
  * adaptive TTL, and statistical learning for optimal performance.
  *
- * @package Helix\Http\Psr7\Cache
+ * @package PivotPHP\Core\Http\Psr7\Cache
  * @since 2.2.0
  */
 class ProbabilisticCache

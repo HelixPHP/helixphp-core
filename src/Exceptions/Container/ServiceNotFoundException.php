@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Exceptions\Container;
+namespace PivotPHP\Core\Exceptions\Container;
 
 use Psr\Container\NotFoundExceptionInterface;
 

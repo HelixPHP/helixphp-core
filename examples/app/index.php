@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-$app = new Express\Core\Application();
+$app = new PivotPHP\Core\Core\Application();
 $app->get('/', function ($req, $res) {
 
     $res->html('Hello, World!');

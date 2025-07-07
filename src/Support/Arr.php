@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Support;
+namespace PivotPHP\Core\Support;
 
 /**
  * Helper para trabalhar com arrays
@@ -10,34 +10,34 @@ class Arr
     /**
      * Obtém um valor do array usando notação de ponto
      *
-     * @deprecated Use Express\Utils\Arr::get() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::get() instead
      * @param  mixed $default
      * @return mixed
      */
     public static function get(array $array, string $key, $default = null)
     {
-        return \Helix\Utils\Arr::get($array, $key, $default);
+        return \PivotPHP\Core\Utils\Arr::get($array, $key, $default);
     }
 
     /**
      * Define um valor no array usando notação de ponto
      *
-     * @deprecated Use Express\Utils\Arr::set() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::set() instead
      * @param mixed $value
      */
     public static function set(array &$array, string $key, $value): void
     {
-        \Helix\Utils\Arr::set($array, $key, $value);
+        \PivotPHP\Core\Utils\Arr::set($array, $key, $value);
     }
 
     /**
      * Verifica se uma chave existe usando notação de ponto
      *
-     * @deprecated Use Express\Utils\Arr::has() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::has() instead
      */
     public static function has(array $array, string $key): bool
     {
-        return \Helix\Utils\Arr::has($array, $key);
+        return \PivotPHP\Core\Utils\Arr::has($array, $key);
     }
 
     /**
@@ -61,53 +61,53 @@ class Arr
     /**
      * Achata um array multidimensional
      *
-     * @deprecated Use Express\Utils\Arr::flatten() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::flatten() instead
      */
     public static function flatten(array $array, string $delimiter = '.'): array
     {
         // A implementação em Utils\Arr::flatten usa depth ao invés de delimiter
         // Para manter compatibilidade, usamos dot() que é equivalente
-        return \Helix\Utils\Arr::dot($array, '');
+        return \PivotPHP\Core\Utils\Arr::dot($array, '');
     }
 
     /**
      * Filtra um array mantendo apenas as chaves especificadas
      *
-     * @deprecated Use Express\Utils\Arr::only() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::only() instead
      */
     public static function only(array $array, array $keys): array
     {
-        return \Helix\Utils\Arr::only($array, $keys);
+        return \PivotPHP\Core\Utils\Arr::only($array, $keys);
     }
 
     /**
      * Filtra um array removendo as chaves especificadas
      *
-     * @deprecated Use Express\Utils\Arr::except() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::except() instead
      */
     public static function except(array $array, array $keys): array
     {
-        return \Helix\Utils\Arr::except($array, $keys);
+        return \PivotPHP\Core\Utils\Arr::except($array, $keys);
     }
 
     /**
      * Divide um array em chunks
      *
-     * @deprecated Use Express\Utils\Arr::chunk() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::chunk() instead
      */
     public static function chunk(array $array, int $size): array
     {
-        return \Helix\Utils\Arr::chunk($array, $size, true);
+        return \PivotPHP\Core\Utils\Arr::chunk($array, $size, true);
     }
 
     /**
      * Verifica se um array é associativo
      *
-     * @deprecated Use Express\Utils\Arr::isAssoc() instead
+     * @deprecated Use PivotPHP\Core\Utils\Arr::isAssoc() instead
      */
     public static function isAssoc(array $array): bool
     {
-        return \Helix\Utils\Arr::isAssoc($array);
+        return \PivotPHP\Core\Utils\Arr::isAssoc($array);
     }
 
     /**

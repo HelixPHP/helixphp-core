@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Logging;
+namespace PivotPHP\Core\Logging;
 
 /**
  * Handler para arquivo

@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# HelixPHP v1.0.0 - Validador Principal do Projeto
+# PivotPHP v1.0.0 - Validador Principal do Projeto
 # Executa todos os scripts de validação em sequência
 
 # Parse argumentos
 PRE_COMMIT_MODE=false
 if [[ "$1" == "--pre-commit" ]]; then
     PRE_COMMIT_MODE=true
-    echo "🔍 HelixPHP v1.0.0 - Validação Pre-commit"
+    echo "🔍 PivotPHP v1.0.0 - Validação Pre-commit"
     echo "============================================="
 else
-    echo "🚀 HelixPHP v1.0.0 - Validação Completa do Projeto"
+    echo "🚀 PivotPHP v1.0.0 - Validação Completa do Projeto"
     echo "======================================================="
 fi
 echo ""
@@ -133,7 +133,7 @@ if [ "$PRE_COMMIT_MODE" = true ]; then
     fi
 
 else
-    print_status "Iniciando validação completa do projeto HelixPHP v1.0.0..."
+    print_status "Iniciando validação completa do projeto PivotPHP v1.0.0..."
     echo ""
 
     # 1. Validação da estrutura de documentação
@@ -213,7 +213,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
         echo "   • Sintaxe PHP"
         echo "   • Estrutura básica do projeto"
     else
-        echo "✅ O projeto HelixPHP v1.0.0 está pronto para:"
+        echo "✅ O projeto PivotPHP v1.0.0 está pronto para:"
         echo "   • Execução em produção"
         echo "   • Publicação no Packagist"
         echo "   • Distribuição para desenvolvedores"

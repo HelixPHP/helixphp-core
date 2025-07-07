@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr15;
+namespace PivotPHP\Core\Http\Psr15;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,10 +45,10 @@ class RequestHandler implements RequestHandlerInterface
             }
 
             // Default response if no fallback handler
-            return new \Helix\Http\Psr7\Response(
+            return new \PivotPHP\Core\Http\Psr7\Response(
                 404,
                 [],
-                \Helix\Http\Psr7\Stream::createFromString('Not Found')
+                \PivotPHP\Core\Http\Psr7\Stream::createFromString('Not Found')
             );
         }
 

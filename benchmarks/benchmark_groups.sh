@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Benchmark de otimizações de rotas por grupo integradas
-# Express PHP Framework
+# PivotPHP Framework
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
-echo "🚀 Benchmark de Otimizações de Rotas por Grupo - Express PHP"
+echo "🚀 Benchmark de Otimizações de Rotas por Grupo - PivotPHP"
 echo "============================================================"
 
 # Função para executar benchmark PHP
@@ -40,15 +40,15 @@ cat > "$PROJECT_ROOT/temp_group_registration_benchmark.php" << 'EOF'
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Express\ApiExpress;
-use Express\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Routing\Router;
 
 $iterations = isset($argv[1]) ? (int)$argv[1] : 1000;
 
 $start = microtime(true);
 
 for ($i = 0; $i < $iterations; $i++) {
-    $app = new ApiExpress();
+    $app = new Application();
 
     // Registra grupo com middlewares
     $app->group('/api/v1', function() use ($app) {
@@ -78,13 +78,13 @@ cat > "$PROJECT_ROOT/temp_group_identification_benchmark.php" << 'EOF'
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Express\ApiExpress;
-use Express\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Routing\Router;
 
 $iterations = isset($argv[1]) ? (int)$argv[1] : 1000;
 
 // Setup inicial
-$app = new ApiExpress();
+$app = new Application();
 
 $app->group('/api/v1', function() use ($app) {
     $app->get('/users', function() { return 'users'; });
@@ -136,13 +136,13 @@ cat > "$PROJECT_ROOT/temp_comparative_benchmark.php" << 'EOF'
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Express\ApiExpress;
-use Express\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Routing\Router;
 
 $iterations = isset($argv[1]) ? (int)$argv[1] : 1000;
 
 // Setup das rotas
-$app = new ApiExpress();
+$app = new Application();
 
 // Registra rotas de forma tradicional (Router padrão)
 for ($i = 1; $i <= 20; $i++) {
@@ -224,10 +224,10 @@ cat > "$PROJECT_ROOT/temp_group_stats.php" << 'EOF'
 <?php
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Express\ApiExpress;
-use Express\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Routing\Router;
 
-$app = new ApiExpress();
+$app = new Application();
 
 // Registra vários grupos
 $app->group('/api/v1', function() use ($app) {

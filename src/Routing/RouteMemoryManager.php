@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Helix\Routing;
+namespace PivotPHP\Core\Routing;
 
-use Helix\Utils\SerializationCache;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\SerializationCache;
+use PivotPHP\Core\Utils\Utils;
 
 /**
  * Advanced Route Memory Manager
@@ -13,7 +13,7 @@ use Helix\Utils\Utils;
  * Manages memory usage of compiled routes with intelligent cleanup,
  * garbage collection, and memory optimization strategies.
  *
- * @package Helix\Routing
+ * @package PivotPHP\Core\Routing
  * @since 2.2.0
  */
 class RouteMemoryManager

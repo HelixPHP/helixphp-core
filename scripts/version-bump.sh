@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script de Versionamento Semântico para HelixPHP
+# Script de Versionamento Semântico para PivotPHP
 # Automatiza bump de versões seguindo Semantic Versioning
 
 set -e

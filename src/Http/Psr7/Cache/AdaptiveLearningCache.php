@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Cache;
+namespace PivotPHP\Core\Http\Psr7\Cache;
 
 /**
  * Adaptive Learning Cache Strategy
@@ -10,7 +10,7 @@ namespace Helix\Http\Psr7\Cache;
  * Implements machine learning-inspired caching that adapts to usage patterns
  * and optimizes cache behavior based on historical data.
  *
- * @package Helix\Http\Psr7\Cache
+ * @package PivotPHP\Core\Http\Psr7\Cache
  * @since 2.2.0
  */
 class AdaptiveLearningCache

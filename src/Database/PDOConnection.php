@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Database;
+namespace PivotPHP\Core\Database;
 
 use PDO;
 use PDOException;
-use Helix\Exceptions\DatabaseException;
+use PivotPHP\Core\Exceptions\DatabaseException;
 
 /**
  * PDO Database Connection Manager

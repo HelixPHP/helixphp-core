@@ -1,28 +1,28 @@
 <?php
 // =============================================================
-// EXEMPLO 100% PSR-15: Use apenas middlewares PSR-15 no HelixPHP Framework
+// EXEMPLO 100% PSR-15: Use apenas middlewares PSR-15 no PivotPHP Framework
 // Não utilize middlewares legados. Consulte a documentação oficial para detalhes.
 // =============================================================
 
 /**
- * Exemplo Prático - Middlewares Padrão do HelixPHP
+ * Exemplo Prático - Middlewares Padrão do PivotPHP
  *
  * Este exemplo demonstra o uso dos middlewares padrão inclusos
- * no HelixPHP Framework com diferentes configurações.
+ * no PivotPHP Framework com diferentes configurações.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 // Importar middlewares padrão
-use Helix\Http\Psr15\Middleware\SecurityMiddleware;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
-use Helix\Http\Psr15\Middleware\CsrfMiddleware;
-use Helix\Http\Psr15\Middleware\RateLimitMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CsrfMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\RateLimitMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -68,7 +68,7 @@ $app->use(new RateLimitMiddleware([
 // Status da API - sem middleware adicional
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'HelixPHP - Exemplo de Middlewares Padrão',
+        'message' => 'PivotPHP - Exemplo de Middlewares Padrão',
         'version' => '2.0',
         'timestamp' => date('c'),
         'endpoints' => [
@@ -347,7 +347,7 @@ $app->get('/middlewares/info', function(Request $req, Response $res) {
 // EXECUTAR APLICAÇÃO
 // ================================
 
-echo "\n🛡️ Iniciando HelixPHP com demonstração de middlewares padrão...\n";
+echo "\n🛡️ Iniciando PivotPHP com demonstração de middlewares padrão...\n";
 echo "📋 Endpoints disponíveis:\n";
 echo "  • GET /                     - Informações da API\n";
 echo "  • GET /public/info          - Informações públicas (rate limited)\n";

@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Utils;
+namespace PivotPHP\Core\Utils;
 
 /**
  * Cache otimizado para serialização de dados intensivos.

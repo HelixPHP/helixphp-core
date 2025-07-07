@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Helix\Events;
+namespace PivotPHP\Core\Events;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * Hook System for Helix-PHP
+ * Hook System for PivotPHP
  *
  * Provides a flexible hook system for extensions to register
  * listeners and modify application behavior.

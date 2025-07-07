@@ -34,8 +34,8 @@ O `SecurityMiddleware` é um middleware fundamental que aplica múltiplas camada
 ```php
 <?php
 
-use Helix\Core\Application;
-use Helix\Middleware\Security\SecurityMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Middleware\Security\SecurityMiddleware;
 
 $app = new Application();
 
@@ -80,7 +80,7 @@ $app->use(new SecurityMiddleware([
     'customHeaders' => [
         'X-Custom-Security' => 'enabled',
         'X-API-Version' => '2.1',
-        'X-Powered-By' => 'HelixPHP'
+        'X-Powered-By' => 'PivotPHP'
     ],
 
     // Configurações avançadas
@@ -340,7 +340,7 @@ class SecurityMiddleware
             ],
             'customHeaders' => [
                 'X-Environment' => 'production',
-                'Server' => 'HelixPHP'  // Ocultar versão do servidor
+                'Server' => 'PivotPHP'  // Ocultar versão do servidor
             ]
         ]);
     }
@@ -437,7 +437,7 @@ $app->use(new ValidationMiddleware());     // 6. Validação
 namespace Tests\Middleware;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Middleware\Security\SecurityMiddleware;
+use PivotPHP\Core\Middleware\Security\SecurityMiddleware;
 
 class SecurityMiddlewareTest extends TestCase
 {
@@ -508,7 +508,7 @@ class SecurityMiddlewareTest extends TestCase
 namespace Tests\Integration;
 
 use Tests\TestCase;
-use Helix\Middleware\Security\SecurityMiddleware;
+use PivotPHP\Core\Middleware\Security\SecurityMiddleware;
 
 class SecurityMiddlewareIntegrationTest extends TestCase
 {
@@ -552,9 +552,9 @@ class SecurityMiddlewareIntegrationTest extends TestCase
 ```php
 <?php
 
-use Helix\Core\Application;
-use Helix\Middleware\Security\SecurityMiddleware;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Middleware\Security\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
 
 $app = new Application();
 

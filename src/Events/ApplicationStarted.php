@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Events;
+namespace PivotPHP\Core\Events;
 
 /**
  * Application Started Event

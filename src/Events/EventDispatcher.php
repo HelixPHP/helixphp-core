@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Events;
+namespace PivotPHP\Core\Events;
 
 /**
- * Sistema de eventos para Helix-PHP
+ * Sistema de eventos para PivotPHP
  */
 class EventDispatcher
 {

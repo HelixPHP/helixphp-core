@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests;
+namespace PivotPHP\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Core\Application;
-use Helix\Routing\Router;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Routing\Router;
 
 class ApplicationTest extends TestCase
 {

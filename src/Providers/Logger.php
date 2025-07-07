@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;

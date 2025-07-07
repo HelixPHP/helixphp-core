@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Routing;
+namespace PivotPHP\Core\Routing;
 
 use InvalidArgumentException;
 

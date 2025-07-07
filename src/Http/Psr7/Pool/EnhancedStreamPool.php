@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Pool;
+namespace PivotPHP\Core\Http\Psr7\Pool;
 
-use Helix\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Stream;
 
 /**
  * Enhanced Stream Pool with Size-Based Optimization
@@ -12,7 +12,7 @@ use Helix\Http\Psr7\Stream;
  * Optimizes stream pooling by categorizing streams by buffer size
  * and implementing LRU eviction for better memory management.
  *
- * @package Helix\Http\Psr7\Pool
+ * @package PivotPHP\Core\Http\Psr7\Pool
  * @since 2.2.0
  */
 class EnhancedStreamPool
@@ -241,7 +241,7 @@ class EnhancedStreamPool
             $totalMemory += $categoryMemory;
         }
 
-        return \Helix\Utils\Utils::formatBytes($totalMemory);
+        return \PivotPHP\Core\Utils\Utils::formatBytes($totalMemory);
     }
 
     /**

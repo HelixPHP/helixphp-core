@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Authentication;
+namespace PivotPHP\Core\Authentication;
 
 use Exception;
 use InvalidArgumentException;

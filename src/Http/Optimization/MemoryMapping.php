@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Optimization;
+namespace PivotPHP\Core\Http\Optimization;
 
 /**
  * Memory mapping implementation for efficient file operations

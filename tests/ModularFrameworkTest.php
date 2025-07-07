@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests;
+namespace PivotPHP\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 class ModularFrameworkTest extends TestCase
 {

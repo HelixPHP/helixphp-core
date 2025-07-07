@@ -1,6 +1,6 @@
 ---
 name: Feature Request
-about: Suggest an idea for HelixPHP
+about: Suggest an idea for PivotPHP
 title: '[FEATURE] '
 labels: enhancement
 assignees: CAFernandes

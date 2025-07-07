@@ -1,8 +1,8 @@
-# 📊 HelixPHP v1.0.0 - Performance Report
+# 📊 PivotPHP v1.0.0 - Performance Report
 
 > **Comprehensive performance analysis with real-world benchmarks**
 
-[![Version](https://img.shields.io/badge/Version-2.1.3-brightgreen.svg)](https://github.com/CAFernandes/helixphp-core/releases/tag/v1.0.0)
+[![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)](https://github.com/PivotPHP/pivotphp-core/releases/tag/v1.0.0)
 [![PHP Version](https://img.shields.io/badge/PHP-8.4.8-blue.svg)](https://php.net)
 [![Performance](https://img.shields.io/badge/Performance-Excellent-success.svg)](#benchmark-results)
 
@@ -10,7 +10,7 @@
 
 ## 🚀 Executive Summary
 
-HelixPHP v1.0.0 maintains exceptional performance while adding PHP 8.4 compatibility. Key highlights:
+PivotPHP v1.0.0 maintains exceptional performance while adding PHP 8.4 compatibility. Key highlights:
 
 - **2.58M ops/sec** - Response Object Creation (fastest operation)
 - **1.08M ops/sec** - JSON Encoding (small payloads)
@@ -154,11 +154,11 @@ v1.0.0  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
 
 ## 🎯 Performance Goals Achieved
 
-✅ **Sub-microsecond response creation** (0.39 μs)  
-✅ **Million+ ops/sec for core operations**  
-✅ **Minimal memory footprint** (< 6KB per app)  
-✅ **PHP 8.4 compatibility** without performance loss  
-✅ **Production-ready performance** at scale  
+✅ **Sub-microsecond response creation** (0.39 μs)
+✅ **Million+ ops/sec for core operations**
+✅ **Minimal memory footprint** (< 6KB per app)
+✅ **PHP 8.4 compatibility** without performance loss
+✅ **Production-ready performance** at scale
 
 ## 🔮 Future Optimizations
 
@@ -177,7 +177,7 @@ v1.0.0  | 18M ops/sec     | 2.1 KB     | 8.0 - 8.1
 
 ## 📈 Conclusion
 
-HelixPHP v1.0.0 delivers exceptional performance while maintaining code quality and adding PHP 8.4 support. The framework is production-ready and capable of handling high-traffic applications with minimal resource usage.
+PivotPHP v1.0.0 delivers exceptional performance while maintaining code quality and adding PHP 8.4 support. The framework is production-ready and capable of handling high-traffic applications with minimal resource usage.
 
 ### Key Takeaways
 - **Industry-leading performance** for PHP frameworks
@@ -187,5 +187,5 @@ HelixPHP v1.0.0 delivers exceptional performance while maintaining code quality 
 
 ---
 
-*Performance testing conducted on: July 6, 2025*  
+*Performance testing conducted on: July 6, 2025*
 *Full benchmark data available in: `/benchmarks/results/`*

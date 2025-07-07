@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Validation;
+namespace PivotPHP\Core\Tests\Validation;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Validation\Validator;
+use PivotPHP\Core\Validation\Validator;
 
 class ValidatorTest extends TestCase
 {

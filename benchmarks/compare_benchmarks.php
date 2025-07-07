@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\Utils;
 
 /**
  * Benchmark Comparison Tool

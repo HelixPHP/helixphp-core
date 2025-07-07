@@ -1,9 +1,9 @@
-# 📊 HelixPHP Framework - Performance Analysis v1.0.0
+# 📊 PivotPHP Framework - Performance Analysis v1.0.0
 
-[![Performance Status](https://img.shields.io/badge/Performance-Exceptional-green.svg)](https://github.com/CAFernandes/helixphp-core)
-[![Benchmarks](https://img.shields.io/badge/Benchmarks-Validated-blue.svg)](https://github.com/CAFernandes/helixphp-core)
-[![Memory Efficiency](https://img.shields.io/badge/Memory-1.7GB%20Saved-orange.svg)](https://github.com/CAFernandes/helixphp-core)
-[![ML Optimizations](https://img.shields.io/badge/ML%20Models-5%20Active-purple.svg)](https://github.com/CAFernandes/helixphp-core)
+[![Performance Status](https://img.shields.io/badge/Performance-Exceptional-green.svg)](https://github.com/CAFernandes/pivotphp-core)
+[![Benchmarks](https://img.shields.io/badge/Benchmarks-Validated-blue.svg)](https://github.com/CAFernandes/pivotphp-core)
+[![Memory Efficiency](https://img.shields.io/badge/Memory-1.7GB%20Saved-orange.svg)](https://github.com/CAFernandes/pivotphp-core)
+[![ML Optimizations](https://img.shields.io/badge/ML%20Models-5%20Active-purple.svg)](https://github.com/CAFernandes/pivotphp-core)
 
 > ⚡ **Ultra High Performance**: 52M+ ops/sec CORS • 13.9M+ ops/sec Zero-Copy • 1.7GB memory savings • ML-powered optimizations
 
@@ -11,7 +11,7 @@
 
 ## 🎯 Executive Summary
 
-HelixPHP Framework v1.0.0 delivers **revolutionary performance** through advanced optimizations:
+PivotPHP Framework v1.0.0 delivers **revolutionary performance** through advanced optimizations:
 
 | **Metric** | **Performance** | **Improvement** |
 |------------|----------------|-----------------|
@@ -158,13 +158,13 @@ Status: ✅ High Performance
 
 | Framework | Throughput | Memory | Features | Performance Factor |
 |-----------|------------|--------|----------|-------------------|
-| **HelixPHP v1.0.0** | **52M+ ops/sec** | **1.36 KB** | ✅ Full PSR + ML | **Baseline** |
+| **PivotPHP v1.0.0** | **52M+ ops/sec** | **1.36 KB** | ✅ Full PSR + ML | **Baseline** |
 | Laravel | ~10K ops/sec | ~15 MB | 🔶 Full-stack | **5,200x slower** |
 | Symfony | ~20K ops/sec | ~10 MB | 🔶 Enterprise | **2,600x slower** |
 | Slim | ~50K ops/sec | ~2 MB | 🔶 Micro | **1,000x slower** |
 | FastRoute | ~100K ops/sec | ~1 MB | 🔶 Router only | **500x slower** |
 
-**⚡ HelixPHP is 500x-5,200x faster than traditional PHP frameworks!**
+**⚡ PivotPHP is 500x-5,200x faster than traditional PHP frameworks!**
 
 ---
 
@@ -180,7 +180,7 @@ Status: ✅ High Performance
 ### **⚙️ Recommended Configuration**
 ```php
 <?php
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 $app = new Application([
     'cache_enabled' => true,
@@ -232,7 +232,7 @@ $app->run();
 
 ## ✅ Conclusion
 
-HelixPHP Framework v1.0.0 represents a **paradigm shift in PHP performance**, delivering:
+PivotPHP Framework v1.0.0 represents a **paradigm shift in PHP performance**, delivering:
 
 - 🏆 **Revolutionary Performance**: 52M+ ops/sec with ML optimizations
 - 🏆 **Real Memory Savings**: 1.7GB validated savings through Zero-Copy
@@ -240,7 +240,7 @@ HelixPHP Framework v1.0.0 represents a **paradigm shift in PHP performance**, de
 - 🏆 **Production Ready**: All optimizations validated in production environment
 - 🏆 **Standards Compliant**: 100% PSR-7/PSR-15 compatibility maintained
 
-**HelixPHP v1.0.0 sets the new standard for high-performance PHP frameworks.**
+**PivotPHP v1.0.0 sets the new standard for high-performance PHP frameworks.**
 
 ---
 
@@ -256,4 +256,4 @@ HelixPHP Framework v1.0.0 represents a **paradigm shift in PHP performance**, de
 
 *📊 Performance data based on scientific benchmarks and validated in production environment*
 *🔬 All metrics reproducible and independently verifiable*
-*⚡ HelixPHP v1.0.0 - Where performance meets innovation*
+*⚡ PivotPHP v1.0.0 - Where performance meets innovation*

@@ -8,11 +8,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Http\Psr7\Factory\ResponseFactory;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Http\Psr7\Factory\ResponseFactory;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -40,7 +40,7 @@ $responseFactory = new ResponseFactory();
 // Rota básica com resposta JSON otimizada
 $app->get('/', function (Request $req, Response $res) use ($responseFactory) {
     $data = [
-        'message' => 'High Performance HelixPHP!',
+        'message' => 'High Performance PivotPHP!',
         'version' => '2.1.0',
         'timestamp' => date('Y-m-d H:i:s'),
         'performance' => 'optimized'
@@ -155,7 +155,7 @@ $app->use(function (Request $req, Response $res, $next) {
 // INICIAR SERVIDOR
 // ================================
 
-echo "🚀 High Performance HelixPHP Server\n";
+echo "🚀 High Performance PivotPHP Server\n";
 echo "=====================================\n";
 echo "Otimizações ativas:\n";
 echo "✅ Optimized Response Factory (padrão)\n";

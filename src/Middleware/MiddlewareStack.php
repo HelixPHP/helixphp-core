@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Middleware;
+namespace PivotPHP\Core\Middleware;
 
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Utils\SerializationCache;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Utils\SerializationCache;
 
 /**
  * Classe para gerenciar e executar uma stack de middlewares com otimizações.

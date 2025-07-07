@@ -1,7 +1,7 @@
 <?php
 // Snippets para configuração rápida de autenticação
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
-use Helix\Helpers\JWTHelper;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Helpers\JWTHelper;
 
 echo "=== SNIPPETS DE AUTENTICAÇÃO EXPRESS PHP ===\n\n";
 

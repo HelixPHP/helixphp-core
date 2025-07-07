@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Logging;
+namespace PivotPHP\Core\Logging;
 
 /**
- * Sistema de logging para Helix-PHP
+ * Sistema de logging para PivotPHP
  */
 class Logger
 {

@@ -1,17 +1,17 @@
-# HelixPHP Microframework
+# PivotPHP Microframework
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
-[![GitHub Issues](https://img.shields.io/github/issues/HelixPHP/helixphp-core)](https://github.com/HelixPHP/helixphp-core/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/HelixPHP/helixphp-core)](https://github.com/HelixPHP/helixphp-core/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/PivotPHP/pivotphp-core)](https://github.com/PivotPHP/pivotphp-core/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/PivotPHP/pivotphp-core)](https://github.com/PivotPHP/pivotphp-core/stargazers)
 
 ---
 
-## 🚀 O que é o HelixPHP?
+## 🚀 O que é o PivotPHP?
 
-**HelixPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
+**PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
 
 - **Alta Performance**: 2.57M ops/sec em CORS, 2.27M ops/sec em Response, 757K ops/sec roteamento, cache integrado.
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
@@ -53,7 +53,7 @@ Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`bench
 ### Instalação
 
 ```bash
-composer require helixphp/core
+composer require pivotphp/core
 ```
 
 ### Exemplo Básico
@@ -62,8 +62,8 @@ composer require helixphp/core
 <?php
 require_once 'vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\{SecurityMiddleware, CorsMiddleware, AuthMiddleware};
 
 $app = new Application();
 
@@ -105,7 +105,7 @@ Principais links:
 
 ## 🤝 Como Contribuir
 
-Quer ajudar a evoluir o HelixPHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.
+Quer ajudar a evoluir o PivotPHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.
 
 ---
 

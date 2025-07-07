@@ -1,30 +1,30 @@
 <?php
 
-namespace Helix\Core;
+namespace PivotPHP\Core\Core;
 
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Routing\Router;
-use Helix\Middleware\MiddlewareStack;
-use Helix\Exceptions\HttpException;
-use Helix\Providers\Container;
-use Helix\Providers\ServiceProvider;
-use Helix\Providers\ContainerServiceProvider;
-use Helix\Providers\EventServiceProvider;
-use Helix\Providers\LoggingServiceProvider;
-use Helix\Providers\HookServiceProvider;
-use Helix\Providers\ExtensionServiceProvider;
-use Helix\Support\HookManager;
-use Helix\Events\ApplicationStarted;
-use Helix\Events\RequestReceived;
-use Helix\Events\ResponseSent;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Routing\Router;
+use PivotPHP\Core\Middleware\MiddlewareStack;
+use PivotPHP\Core\Exceptions\HttpException;
+use PivotPHP\Core\Providers\Container;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ContainerServiceProvider;
+use PivotPHP\Core\Providers\EventServiceProvider;
+use PivotPHP\Core\Providers\LoggingServiceProvider;
+use PivotPHP\Core\Providers\HookServiceProvider;
+use PivotPHP\Core\Providers\ExtensionServiceProvider;
+use PivotPHP\Core\Support\HookManager;
+use PivotPHP\Core\Events\ApplicationStarted;
+use PivotPHP\Core\Events\RequestReceived;
+use PivotPHP\Core\Events\ResponseSent;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
 /**
- * Classe principal da aplicação Helix-PHP.
+ * Classe principal da aplicação PivotPHP.
  *
  * Gerencia o ciclo de vida da aplicação, incluindo:
  * - Inicialização e configuração
@@ -735,7 +735,7 @@ class Application
     {
         if ($this->container->has('listeners')) {
             $listenerProvider = $this->container->get('listeners');
-            if ($listenerProvider instanceof \Helix\Providers\ListenerProvider) {
+            if ($listenerProvider instanceof \PivotPHP\Core\Providers\ListenerProvider) {
                 $listenerProvider->addListener($eventType, $listener);
                 // Rastrear listener
                 $this->registeredListeners[$eventType][] = $listener;
@@ -753,7 +753,7 @@ class Application
     {
         if ($this->container->has('listeners')) {
             $listenerProvider = $this->container->get('listeners');
-            if ($listenerProvider instanceof \Helix\Providers\ListenerProvider) {
+            if ($listenerProvider instanceof \PivotPHP\Core\Providers\ListenerProvider) {
                 foreach ($this->registeredListeners as $eventType => $listeners) {
                     foreach ($listeners as $listener) {
                         $listenerProvider->removeListener($eventType, $listener);
@@ -843,7 +843,7 @@ class Application
      */
     public function listen(int $port = 8000, string $host = 'localhost'): void
     {
-        echo "Helix-PHP v" . self::VERSION . " server started at http://{$host}:{$port}\n";
+        echo "PivotPHP v" . self::VERSION . " server started at http://{$host}:{$port}\n";
         echo "Press Ctrl+C to stop\n\n";
 
         // Processar requisição
@@ -953,7 +953,7 @@ class Application
     }
 
     /**
-     * Factory method para criar instância da aplicação (compatibilidade com ApiHelix).
+     * Factory method para criar instância da aplicação (compatibilidade com ApiPivot).
      *
      * @param string|null $basePath Caminho base da aplicação
      * @return self
@@ -1018,10 +1018,10 @@ class Application
     /**
      * Get extension manager instance
      */
-    public function extensions(): \Helix\Providers\ExtensionManager
+    public function extensions(): \PivotPHP\Core\Providers\ExtensionManager
     {
-        /** @var \Helix\Providers\ExtensionManager */
-        return $this->make(\Helix\Providers\ExtensionManager::class);
+        /** @var \PivotPHP\Core\Providers\ExtensionManager */
+        return $this->make(\PivotPHP\Core\Providers\ExtensionManager::class);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /**
- * Configuração Principal do HelixPHP
+ * Configuração Principal do PivotPHP
  *
  * Este arquivo centraliza todas as configurações do framework
  */
@@ -8,7 +8,7 @@
 return [
     // Informações da aplicação
     'app' => [
-        'name' => $_ENV['APP_NAME'] ?? 'HelixPHP Application',
+        'name' => $_ENV['APP_NAME'] ?? 'PivotPHP Application',
         'version' => '2.1.0',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
         'debug' => filter_var($_ENV['APP_DEBUG'] ?? ($_ENV['APP_ENV'] === 'development' ? true : false), FILTER_VALIDATE_BOOLEAN),
@@ -74,7 +74,7 @@ return [
                 'driver' => 'memory'
             ]
         ],
-        'prefix' => $_ENV['CACHE_PREFIX'] ?? 'express_php:',
+        'prefix' => $_ENV['CACHE_PREFIX'] ?? 'pivotphp:',
         'ttl' => $_ENV['CACHE_TTL'] ?? 3600
     ],
 
@@ -84,7 +84,7 @@ return [
         'lifetime' => $_ENV['SESSION_LIFETIME'] ?? 120, // minutos
         'path' => 'storage/sessions',
         'cookie' => [
-            'name' => $_ENV['SESSION_COOKIE'] ?? 'express_php_session',
+            'name' => $_ENV['SESSION_COOKIE'] ?? 'pivotphp_session',
             'secure' => filter_var($_ENV['SESSION_SECURE_COOKIE'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'http_only' => true,
             'same_site' => $_ENV['SESSION_SAME_SITE'] ?? 'lax'
@@ -104,7 +104,7 @@ return [
             ],
             'basic' => [
                 'driver' => 'basic',
-                'realm' => $_ENV['BASIC_AUTH_REALM'] ?? 'HelixPHP API'
+                'realm' => $_ENV['BASIC_AUTH_REALM'] ?? 'PivotPHP API'
             ],
             'bearer' => [
                 'driver' => 'bearer',
@@ -221,7 +221,7 @@ return [
         ],
         'from' => [
             'address' => $_ENV['MAIL_FROM_ADDRESS'] ?? 'hello@example.com',
-            'name' => $_ENV['MAIL_FROM_NAME'] ?? 'HelixPHP'
+            'name' => $_ENV['MAIL_FROM_NAME'] ?? 'PivotPHP'
         ]
     ],
 
@@ -265,13 +265,13 @@ return [
 
     // Providers de serviços (desabilitado temporariamente)
     'providers' => [
-        // 'Helix\\Providers\\AuthServiceProvider',
-        // 'Helix\\Providers\\CacheServiceProvider',
-        // 'Helix\\Providers\\DatabaseServiceProvider',
-        // 'Helix\\Providers\\LoggingServiceProvider',
-        // 'Helix\\Providers\\MailServiceProvider',
-        // 'Helix\\Providers\\SecurityServiceProvider',
-        // 'Helix\\Providers\\ValidationServiceProvider'
+        // 'PivotPHP\\Core\\Providers\\AuthServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\CacheServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\DatabaseServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\LoggingServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\MailServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\SecurityServiceProvider',
+        // 'PivotPHP\\Core\\Providers\\ValidationServiceProvider'
     ],
 
     // Extensions and Plugins Configuration
@@ -308,13 +308,13 @@ return [
 
     // Aliases
     'aliases' => [
-        'Auth' => 'Helix\\Facades\\Auth',
-        'Cache' => 'Helix\\Facades\\Cache',
-        'Config' => 'Helix\\Facades\\Config',
-        'Log' => 'Helix\\Facades\\Log',
-        'Request' => 'Helix\\Facades\\Request',
-        'Response' => 'Helix\\Facades\\Response',
-        'Security' => 'Helix\\Facades\\Security',
-        'Validator' => 'Helix\\Facades\\Validator'
+        'Auth' => 'PivotPHP\\Core\\Facades\\Auth',
+        'Cache' => 'PivotPHP\\Core\\Facades\\Cache',
+        'Config' => 'PivotPHP\\Core\\Facades\\Config',
+        'Log' => 'PivotPHP\\Core\\Facades\\Log',
+        'Request' => 'PivotPHP\\Core\\Facades\\Request',
+        'Response' => 'PivotPHP\\Core\\Facades\\Response',
+        'Security' => 'PivotPHP\\Core\\Facades\\Security',
+        'Validator' => 'PivotPHP\\Core\\Facades\\Validator'
     ]
 ];

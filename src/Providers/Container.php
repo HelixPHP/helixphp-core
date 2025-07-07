@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Container\ContainerExceptionInterface;
-use Helix\Exceptions\Container\ServiceNotFoundException;
-use Helix\Exceptions\Container\ContainerException;
+use PivotPHP\Core\Exceptions\Container\ServiceNotFoundException;
+use PivotPHP\Core\Exceptions\Container\ContainerException;
 
 /**
  * Simple PSR-11 compliant container implementation

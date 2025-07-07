@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Pool;
+namespace PivotPHP\Core\Http\Psr7\Pool;
 
 /**
  * Header Object Pool for Performance Optimization
@@ -10,7 +10,7 @@ namespace Helix\Http\Psr7\Pool;
  * Reduces header processing overhead by reusing normalized header objects
  * and caching common header name/value combinations.
  *
- * @package Helix\Http\Psr7\Pool
+ * @package PivotPHP\Core\Http\Psr7\Pool
  * @since 2.1.1
  */
 class HeaderPool

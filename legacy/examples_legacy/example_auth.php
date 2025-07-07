@@ -1,6 +1,6 @@
 <?php
 // =============================================================
-// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no HelixPHP Framework
+// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no PivotPHP Framework
 // Este exemplo NÃO é compatível com middlewares legados. Utilize apenas middlewares PSR-15.
 // =============================================================
 //
@@ -8,13 +8,13 @@
 // https://www.php-fig.org/psr/psr-15/
 // =============================================================
 
-// Exemplo de uso do middleware de autenticação automática do HelixPHP
+// Exemplo de uso do middleware de autenticação automática do PivotPHP
 
 require_once '../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 // Cria a aplicação
 $app = new Application();

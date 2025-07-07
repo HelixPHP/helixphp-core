@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -21,7 +21,7 @@ class LoggingServiceProvider extends ServiceProvider
             LoggerInterface::class,
             function () {
                 $logPath = $this->getLogPath();
-                return new \Helix\Providers\Logger($logPath);
+                return new \PivotPHP\Core\Providers\Logger($logPath);
             }
         );
 

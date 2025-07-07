@@ -1,4 +1,4 @@
-# 📊 HelixPHP Performance Evolution
+# 📊 PivotPHP Performance Evolution
 
 > **Comprehensive performance comparison across all versions**
 
@@ -162,7 +162,7 @@ With v1.0.0 performance improvements:
 
 ## 🏆 Conclusion
 
-HelixPHP has evolved from a solid framework (v1.0.0) to a performance powerhouse (v1.0.0), delivering:
+PivotPHP has evolved from a solid framework (v1.0.0) to a performance powerhouse (v1.0.0), delivering:
 
 - **Consistent sub-millisecond** response times
 - **Million+ operations per second** for core features

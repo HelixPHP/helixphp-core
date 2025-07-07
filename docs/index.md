@@ -1,6 +1,6 @@
-# 📚 Índice da Documentação HelixPHP
+# 📚 Índice da Documentação PivotPHP
 
-Bem-vindo ao guia completo do HelixPHP! Esta documentação foi criada para ser um guia prático para quem quer usar o framework na prática.
+Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser um guia prático para quem quer usar o framework na prática.
 
 ## 🚀 Para Começar
 

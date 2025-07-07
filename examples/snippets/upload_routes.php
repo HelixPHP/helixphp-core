@@ -1,6 +1,6 @@
 <?php
 
-use Helix\Routing\RouterInstance;
+use PivotPHP\Core\Routing\RouterInstance;
 
 // Sub-router especializado para upload de arquivos
 $uploadRouter = new RouterInstance('/upload');

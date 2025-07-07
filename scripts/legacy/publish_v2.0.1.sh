@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🚀 HelixPHP v1.0.0 - Snippet de Publicação
+# 🚀 PivotPHP v1.0.0 - Snippet de Publicação
 # Script consolidado para publicar a nova versão com documentação atualizada
 
 set -e
@@ -34,7 +34,7 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-title "HelixPHP v1.0.0 - Publicação Consolidada"
+title "PivotPHP v1.0.0 - Publicação Consolidada"
 
 echo -e "${BLUE}🎯 Objetivos desta versão:${NC}"
 echo "• Consolidar documentação de performance"
@@ -45,7 +45,7 @@ echo ""
 
 # Verificar se estamos no diretório correto
 if [ ! -f "composer.json" ] || [ ! -d "src" ]; then
-    error "Execute este script no diretório raiz do projeto HelixPHP"
+    error "Execute este script no diretório raiz do projeto PivotPHP"
     exit 1
 fi
 
@@ -174,7 +174,7 @@ git commit -m "chore: release v1.0.0
 - Predictive cache with ML learning"
 
 # Criar tag anotada
-git tag -a v1.0.0 -m "HelixPHP v1.0.0 - Performance & Documentation Release
+git tag -a v1.0.0 -m "PivotPHP v1.0.0 - Performance & Documentation Release
 
 🎯 Key Features:
 • Advanced optimizations with real production data
@@ -197,7 +197,7 @@ git tag -a v1.0.0 -m "HelixPHP v1.0.0 - Performance & Documentation Release
 • Implementation guides
 • Validated benchmark data
 
-This release establishes HelixPHP as a high-performance framework
+This release establishes PivotPHP as a high-performance framework
 suitable for production environments with enterprise-grade performance."
 
 # Push commits e tags
@@ -213,14 +213,14 @@ echo -e "${YELLOW}Para publicar no Packagist (se aplicável):${NC}"
 echo -e "${GREEN}"
 cat << 'EOF'
 # Se o projeto estiver conectado ao Packagist, a tag criará automaticamente uma nova versão
-# Caso contrário, acesse: https://packagist.org/packages/helixphp-core/microframework
+# Caso contrário, acesse: https://packagist.org/packages/pivotphp-core/microframework
 
 # Verificar se a versão apareceu
-curl -s https://packagist.org/packages/helixphp-core/microframework.json | \
+curl -s https://packagist.org/packages/pivotphp-core/microframework.json | \
   jq '.package.versions | keys | .[-1]'
 
 # Para projetos privados, usar:
-composer install helixphp-core/microframework:^2.0.1
+composer install pivotphp-core/microframework:^2.0.1
 EOF
 echo -e "${NC}"
 
@@ -239,7 +239,7 @@ echo "□ Push para repositório remoto"
 echo "□ Publicação no Packagist (se aplicável)"
 
 echo ""
-echo -e "${GREEN}🎉 HelixPHP v1.0.0 pronto para publicação!${NC}"
+echo -e "${GREEN}🎉 PivotPHP v1.0.0 pronto para publicação!${NC}"
 echo -e "${BLUE}📊 Principais melhorias: Performance +278%, Documentação consolidada, Otimizações ML${NC}"
 echo ""
 

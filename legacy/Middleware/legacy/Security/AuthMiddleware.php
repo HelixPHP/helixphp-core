@@ -1,12 +1,12 @@
 <?php
 
-namespace Helix\Middleware\Security;
+namespace PivotPHP\Core\Middleware\Security;
 
-use Helix\Middleware\Core\BaseMiddleware;
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Authentication\JWTHelper;
 
 /**
- * Middleware de autenticação automática para HelixPHP.
+ * Middleware de autenticação automática para PivotPHP.
  * Suporta JWT, Basic Auth, Bearer Token, API Key e outros métodos de autorização nativamente.
  */
 class AuthMiddleware extends BaseMiddleware

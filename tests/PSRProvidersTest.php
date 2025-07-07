@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Helix\Core\Application;
-use Helix\Providers\Container;
-use Helix\Providers\ServiceProvider;
-use Helix\Events\ApplicationStarted;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Providers\Container;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Events\ApplicationStarted;
 use Psr\Container\ContainerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;

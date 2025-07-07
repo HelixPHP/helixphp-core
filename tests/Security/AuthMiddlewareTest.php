@@ -3,13 +3,13 @@
 namespace Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
-use Helix\Authentication\JWTHelper;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Authentication\JWTHelper;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Helix\Http\Psr7\Response;
-use Helix\Http\Psr7\ServerRequest;
+use PivotPHP\Core\Http\Psr7\Response;
+use PivotPHP\Core\Http\Psr7\ServerRequest;
 use Tests\Security\MockResponse;
 use Tests\Security\DummyHandler;
 

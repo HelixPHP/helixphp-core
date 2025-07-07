@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Tests\Database;
+namespace PivotPHP\Core\Tests\Database;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Database\PDOConnection;
-use Helix\Exceptions\DatabaseException;
+use PivotPHP\Core\Database\PDOConnection;
+use PivotPHP\Core\Exceptions\DatabaseException;
 use PDO;
 
 class PDOConnectionTest extends TestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Helpers;
+namespace PivotPHP\Core\Tests\Helpers;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Utils\Utils;
 
 class UtilsTest extends TestCase
 {

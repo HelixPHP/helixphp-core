@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Pool;
+namespace PivotPHP\Core\Http\Psr7\Pool;
 
-use Helix\Http\Psr7\Cache\OperationsCache;
+use PivotPHP\Core\Http\Psr7\Cache\OperationsCache;
 
 /**
  * Pool Manager for coordinating all object pools and caches
  *
- * @package Helix\Http\Psr7\Pool
+ * @package PivotPHP\Core\Http\Psr7\Pool
  * @since 2.1.1
  */
 class PoolManager

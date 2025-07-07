@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# HelixPHP v1.0.0 - Validador de Documentação Atualizada
+# PivotPHP v1.0.0 - Validador de Documentação Atualizada
 # Verifica se a documentação está organizada corretamente com nova estrutura v1.0.0
 
-echo "📚 Validando estrutura de documentação do HelixPHP v1.0.0..."
+echo "📚 Validando estrutura de documentação do PivotPHP v1.0.0..."
 
 # Cores para output
 RED='\033[0;31m'

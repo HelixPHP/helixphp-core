@@ -1,4 +1,4 @@
-# HelixPHP Framework - Performance Benchmark
+# PivotPHP Framework - Performance Benchmark
 
 ## Test Environment
 - **Date**: 2025-07-06 14:39:52
@@ -37,7 +37,7 @@
 - **Total memory for 100 apps**: 378.62 KB
 
 ## Performance Summary
-HelixPHP demonstrates excellent performance characteristics:
+PivotPHP demonstrates excellent performance characteristics:
 
 - **Best Performance**: CORS Headers Generation with 2,570,039 operations/second
 - **Framework Overhead**: Minimal memory usage per application instance

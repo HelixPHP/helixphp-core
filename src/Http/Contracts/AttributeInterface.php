@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Http\Contracts;
+namespace PivotPHP\Core\Http\Contracts;
 
 /**
  * Interface para objetos que suportam atributos dinâmicos.

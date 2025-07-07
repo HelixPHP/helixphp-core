@@ -1,6 +1,6 @@
 <?php
 
-namespace Helix\Core;
+namespace PivotPHP\Core\Core;
 
 use Closure;
 use Exception;
@@ -12,7 +12,7 @@ use ReflectionParameter;
  * Container de Inversão de Controle (IoC) para gerenciamento de dependências.
  *
  * Permite registro, resolução automática e gerenciamento do ciclo de vida
- * de objetos e dependências no Helix-PHP.
+ * de objetos e dependências no PivotPHP.
  */
 class Container
 {

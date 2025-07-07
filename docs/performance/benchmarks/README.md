@@ -1,10 +1,10 @@
-# Benchmarks do HelixPHP
+# Benchmarks do PivotPHP
 
-Análise completa de performance, resultados de benchmarks e insights para otimização do HelixPHP Framework.
+Análise completa de performance, resultados de benchmarks e insights para otimização do PivotPHP Framework.
 
 ## Visão Geral dos Benchmarks
 
-O HelixPHP inclui uma suite completa de benchmarks que mede a performance de todos os componentes principais do framework, desde inicialização até processamento de requisições complexas.
+O PivotPHP inclui uma suite completa de benchmarks que mede a performance de todos os componentes principais do framework, desde inicialização até processamento de requisições complexas.
 
 ### Componentes Testados
 
@@ -127,13 +127,13 @@ Token validation: 117K ops/s
 
 | Framework | Requests/s | Memory (MB) | Time (ms) |
 |-----------|------------|-------------|-----------|
-| **HelixPHP** | **1,400** | **1.2** | **0.71** |
+| **PivotPHP** | **1,400** | **1.2** | **0.71** |
 | Slim 4 | 950 | 2.1 | 1.05 |
 | Laravel | 280 | 8.5 | 3.57 |
 | Symfony | 450 | 6.2 | 2.22 |
 | FastRoute | 1,100 | 1.8 | 0.91 |
 
-**Vantagens do HelixPHP (v1.0.0):**
+**Vantagens do PivotPHP (v1.0.0):**
 - ✅ **+47%** throughput vs. v1.0.0
 - ✅ **PHP 8.4** Compatibilidade total
 - ✅ **-15%** menor latência
@@ -326,7 +326,7 @@ php benchmarks/EnhancedAdvancedOptimizationsBenchmark.php
 ### Configuração do PHP
 
 ```ini
-; php.ini otimizado para HelixPHP v1.0.0 + PHP 8.4.8
+; php.ini otimizado para PivotPHP v1.0.0 + PHP 8.4.8
 opcache.enable=1
 opcache.enable_cli=0
 opcache.memory_consumption=256
@@ -445,7 +445,7 @@ if ($dashboard['performance_alerts']) {
 ```php
 <?php
 
-use Helix\Benchmarks\BenchmarkRunner;
+use PivotPHP\Core\Benchmarks\BenchmarkRunner;
 
 $benchmark = new BenchmarkRunner();
 
@@ -507,9 +507,9 @@ $app->use(function($req, $res, $next) {
 });
 ```
 
-Os benchmarks do HelixPHP v1.0.0 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
+Os benchmarks do PivotPHP v1.0.0 demonstram consistentemente alta performance e eficiência, com melhorias significativas quando executado em PHP 8.4.8. O framework é idealmente adequado para aplicações de alta demanda e ambientes de produção exigentes.
 
-### Destaques da Versão 2.1.3
+### Destaques da Versão 1.0.0
 
 - **🚀 PHP 8.4**: Compatibilidade total com PHP 8.4
 - **💾 Performance**: Mantém todos ganhos da v1.0.0

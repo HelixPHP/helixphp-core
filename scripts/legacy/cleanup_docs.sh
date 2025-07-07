@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 🧹 HelixPHP v1.0.0 - Documentation Cleanup Script
+# 🧹 PivotPHP v1.0.0 - Documentation Cleanup Script
 # Remove arquivos redundantes e consolida documentação
 
 set -e
@@ -34,11 +34,11 @@ error() {
     echo -e "${RED}❌ $1${NC}"
 }
 
-title "HelixPHP v1.0.0 - Documentation Cleanup"
+title "PivotPHP v1.0.0 - Documentation Cleanup"
 
 # Verificar se estamos no diretório correto
 if [ ! -f "composer.json" ] || [ ! -d "src" ]; then
-    error "Execute este script no diretório raiz do projeto HelixPHP"
+    error "Execute este script no diretório raiz do projeto PivotPHP"
     exit 1
 fi
 
@@ -228,4 +228,4 @@ echo ""
 warning "Revise o backup em $BACKUP_DIR antes de fazer commit"
 
 echo -e "\n${GREEN}🎉 Documentação limpa e organizada!${NC}"
-echo -e "${BLUE}HelixPHP v1.0.0 - Clear Documentation, Exceptional Performance${NC}"
+echo -e "${BLUE}PivotPHP v1.0.0 - Clear Documentation, Exceptional Performance${NC}"

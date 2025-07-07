@@ -1,4 +1,4 @@
-# Providers no HelixPHP
+# Providers no PivotPHP
 
 Os Service Providers são o ponto central para registrar e configurar serviços na aplicação. Eles implementam o padrão de Injeção de Dependências (PSR-11) e permitem organizar a inicialização de componentes.
 
@@ -14,7 +14,7 @@ Service Providers são classes que:
 
 ### Container PSR-11
 
-O HelixPHP usa um container que implementa PSR-11:
+O PivotPHP usa um container que implementa PSR-11:
 - **Injeção de dependências** automática
 - **Singleton** e instâncias temporárias
 - **Aliases** para facilitar acesso
@@ -27,7 +27,7 @@ O HelixPHP usa um container que implementa PSR-11:
 ```php
 <?php
 
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class DatabaseServiceProvider extends ServiceProvider
 {
@@ -139,7 +139,7 @@ class UserServiceProvider extends ServiceProvider
 ### No Constructor da Aplicação
 
 ```php
-use Helix\Core\Application;
+use PivotPHP\Core\Core\Application;
 
 $app = new Application(__DIR__);
 
@@ -568,4 +568,4 @@ class DebugServiceProvider extends ServiceProvider
 3. **Mantenha providers focados** em uma responsabilidade
 4. **Teste providers isoladamente**
 
-Os Service Providers são fundamentais para manter uma aplicação HelixPHP organizada, testável e performática. Use-os para centralizar a configuração de serviços e manter a separação de responsabilidades.
+Os Service Providers são fundamentais para manter uma aplicação PivotPHP organizada, testável e performática. Use-os para centralizar a configuração de serviços e manter a separação de responsabilidades.

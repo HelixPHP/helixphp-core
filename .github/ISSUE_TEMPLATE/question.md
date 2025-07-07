@@ -1,6 +1,6 @@
 ---
 name: Question
-about: Ask a question about HelixPHP
+about: Ask a question about PivotPHP
 title: '[QUESTION] '
 labels: question
 assignees: ''
@@ -22,6 +22,6 @@ Descreva as soluções que você já tentou.
 ```
 
 ## 🔗 Links Úteis
-- [Documentação](https://github.com/CAFernandes/helixphp-core/wiki)
-- [Exemplos](https://github.com/CAFernandes/helixphp-core/tree/main/examples)
-- [Guia de Autenticação](https://github.com/CAFernandes/helixphp-core/blob/main/docs/pt-br/AUTH_MIDDLEWARE.md)
+- [Documentação](https://github.com/CAFernandes/pivotphp-core/wiki)
+- [Exemplos](https://github.com/CAFernandes/pivotphp-core/tree/main/examples)
+- [Guia de Autenticação](https://github.com/CAFernandes/pivotphp-core/blob/main/docs/pt-br/AUTH_MIDDLEWARE.md)

@@ -1,6 +1,6 @@
-# 🤝 Contribuindo para o HelixPHP
+# 🤝 Contribuindo para o PivotPHP
 
-Obrigado pelo seu interesse em contribuir para o HelixPHP! Valorizamos contribuições da comunidade.
+Obrigado pelo seu interesse em contribuir para o PivotPHP! Valorizamos contribuições da comunidade.
 
 ## 🚀 Como Contribuir
 
@@ -8,8 +8,8 @@ Obrigado pelo seu interesse em contribuir para o HelixPHP! Valorizamos contribui
 
 ```bash
 # Fork o projeto no GitHub
-git clone https://github.com/seu-usuario/helixphp-core.git
-cd helixphp-core
+git clone https://github.com/seu-usuario/pivotphp-core.git
+cd pivotphp-core
 
 # Instalar dependências
 composer install
@@ -56,7 +56,7 @@ src/
 #### Template de Middleware
 ```php
 <?php
-namespace Helix\Middlewares\Core;
+namespace PivotPHP\Core\Middlewares\Core;
 
 class MeuMiddleware
 {
@@ -109,10 +109,10 @@ composer test
 #### Criar Novos Testes
 ```php
 <?php
-namespace Helix\Tests\Middlewares\Core;
+namespace PivotPHP\Core\Tests\Middlewares\Core;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Middlewares\Core\MeuMiddleware;
+use PivotPHP\Core\Middlewares\Core\MeuMiddleware;
 
 class MeuMiddlewareTest extends TestCase
 {
@@ -131,7 +131,7 @@ class MeuMiddlewareTest extends TestCase
 ### 🐛 Reportar Bugs
 - Use o template de issue no GitHub
 - Inclua exemplos de código para reproduzir
-- Especifique versões (PHP, HelixPHP)
+- Especifique versões (PHP, PivotPHP)
 
 ### ✨ Propor Novos Recursos
 - Abra uma issue para discussão
@@ -182,7 +182,7 @@ Contribuidores são listados em:
 
 When reporting bugs, please include:
 - PHP version
-- HelixPHP version
+- PivotPHP version
 - Steps to reproduce
 - Expected vs actual behavior
 - Error messages or logs
@@ -242,7 +242,7 @@ test: add middleware integration tests
 
 ## 📖 Development Resources
 
-- [HelixPHP Documentation](docs/en/README.md)
+- [PivotPHP Documentation](docs/en/README.md)
 - [Security Implementation Guide](docs/guides/SECURITY_IMPLEMENTATION.md)
 - [Migration Guide](docs/development/MIDDLEWARE_MIGRATION.md)
 
@@ -268,4 +268,4 @@ By contributing, you agree that your contributions will be licensed under the MI
 
 ---
 
-Thank you for helping make HelixPHP better! 🚀
+Thank you for helping make PivotPHP better! 🚀

@@ -1,8 +1,8 @@
 <?php
 
-namespace Helix\Tests\Http;
+namespace PivotPHP\Core\Tests\Http;
 
-use Helix\Http\Request;
+use PivotPHP\Core\Http\Request;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 

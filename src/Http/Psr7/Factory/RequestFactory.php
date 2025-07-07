@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
-use Helix\Http\Psr7\Request;
-use Helix\Http\Psr7\Uri;
-use Helix\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Request;
+use PivotPHP\Core\Http\Psr7\Uri;
+use PivotPHP\Core\Http\Psr7\Stream;
 
 /**
  * PSR-17 Request Factory implementation

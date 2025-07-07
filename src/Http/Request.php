@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Http;
+namespace PivotPHP\Core\Http;
 
-use Helix\Http\HeaderRequest;
-use Helix\Http\Contracts\AttributeInterface;
+use PivotPHP\Core\Http\HeaderRequest;
+use PivotPHP\Core\Http\Contracts\AttributeInterface;
 use InvalidArgumentException;
 use stdClass;
 use RuntimeException;

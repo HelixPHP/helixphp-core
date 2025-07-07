@@ -1,4 +1,4 @@
-# 🛡️ Middlewares do HelixPHP
+# 🛡️ Middlewares do PivotPHP
 
 Guia completo dos middlewares disponíveis no framework, suas configurações, uso prático e criação de middlewares customizados.
 
@@ -15,7 +15,7 @@ Guia completo dos middlewares disponíveis no framework, suas configurações, u
 
 ## 🔍 Visão Geral
 
-O HelixPHP oferece uma arquitetura de middleware robusta e otimizada, suportando tanto padrões legados quanto PSR-15. Todos os middlewares são altamente configuráveis e otimizados para performance.
+O PivotPHP oferece uma arquitetura de middleware robusta e otimizada, suportando tanto padrões legados quanto PSR-15. Todos os middlewares são altamente configuráveis e otimizados para performance.
 
 ### Arquitetura do Sistema
 
@@ -215,8 +215,8 @@ $app->use(new LoggingMiddleware([
 ### Configuração Recomendada para API
 
 ```php
-use Helix\Core\Application;
-use Helix\Http\Psr15\Middleware\{
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Psr15\Middleware\{
     SecurityMiddleware,
     CorsMiddleware,
     AuthMiddleware,
@@ -350,7 +350,7 @@ $app->group('/api/v1', function() use ($app) {
 
 namespace App\Middleware;
 
-use Helix\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
 
 class CustomMiddleware extends BaseMiddleware
 {
@@ -378,7 +378,7 @@ class CustomMiddleware extends BaseMiddleware
         $result = $next($request, $response);
 
         // Lógica após execução da rota
-        if ($response instanceof \Helix\Http\Response) {
+        if ($response instanceof \PivotPHP\Core\Http\Response) {
             $response->header('X-Custom-Header', 'processed');
         }
 
@@ -528,7 +528,7 @@ class AuditMiddleware extends BaseMiddleware
 
 ### Stack de Middleware Otimizado
 
-O HelixPHP otimiza automaticamente a execução de middleware através de:
+O PivotPHP otimiza automaticamente a execução de middleware através de:
 
 1. **Pipeline Compilation**: Middlewares são compilados em uma única função
 2. **Cache de Stack**: Stacks frequentes são cacheados
@@ -675,7 +675,7 @@ class CacheMiddleware extends BaseMiddleware
 
 ## 📚 Recursos Adicionais
 
-- **Performance**: Os middlewares do HelixPHP são otimizados para alta performance
+- **Performance**: Os middlewares do PivotPHP são otimizados para alta performance
 - **PSR Compliance**: Suporte completo a PSR-15 e PSR-7
 - **Testing**: Todos os middlewares incluem testes unitários abrangentes
 - **Documentation**: Cada middleware possui documentação detalhada e exemplos

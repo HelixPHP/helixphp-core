@@ -1,6 +1,6 @@
 <?php
 // =============================================================
-// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no HelixPHP Framework
+// EXEMPLO 100% PSR-15: Uso exclusivo de middlewares PSR-15 no PivotPHP Framework
 // Este exemplo NÃO é compatível com middlewares legados. Utilize apenas middlewares PSR-15.
 // =============================================================
 //
@@ -10,11 +10,11 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Authentication\JWTHelper;
-use Helix\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Authentication\JWTHelper;
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
 
 // Criar aplicação
 $app = new Application();
@@ -45,7 +45,7 @@ $users = [
 // ================================
 
 // Middleware de autenticação JWT (PSR-15)
-use Helix\Http\Psr15\Middleware\AuthMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
 $app->use(AuthMiddleware::jwt($JWT_SECRET));
 
 // Middleware de CORS (PSR-15)
@@ -91,7 +91,7 @@ function findUserByEmail($email, $users) {
 // Página inicial
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'API de Autenticação - HelixPHP',
+        'message' => 'API de Autenticação - PivotPHP',
         'version' => '2.0',
         'endpoints' => [
             'POST /auth/login' => 'Fazer login',
@@ -197,7 +197,7 @@ $app->get('/admin/dashboard', function(Request $req, Response $res) {
 // ================================
 
 if (php_sapi_name() === 'cli-server') {
-    echo "HelixPHP Auth Server rodando em http://localhost:8000\n";
+    echo "PivotPHP Auth Server rodando em http://localhost:8000\n";
     echo "\nCredenciais de teste:\n";
     echo "  admin@example.com : 123456 (admin)\n";
     echo "  user@example.com  : 123456 (user)\n";

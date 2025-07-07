@@ -1,6 +1,6 @@
-# 🚀 HelixPHP Performance Documentation
+# 🚀 PivotPHP Performance Documentation
 
-Este diretório contém toda a documentação relacionada à performance do HelixPHP Framework.
+Este diretório contém toda a documentação relacionada à performance do PivotPHP Framework.
 
 ## 📋 Índice
 
@@ -17,7 +17,7 @@ Este diretório contém toda a documentação relacionada à performance do Heli
 
 ## 🎯 Visão Geral
 
-O HelixPHP foi projetado desde o início com foco em alta performance, oferecendo:
+O PivotPHP foi projetado desde o início com foco em alta performance, oferecendo:
 
 - ⚡ **Resposta ultra-rápida**: Operações principais < 1μs
 - 🔧 **Otimizações avançadas**: Zero-copy operations, memory mapping, object pooling
@@ -95,7 +95,7 @@ Veja o [guia completo](../../benchmarks/DOCKER_BENCHMARKS.md) para mais detalhes
 
 | Framework | Req/sec | Latência | Memória |
 |-----------|---------|----------|---------|
-| **HelixPHP 2.1.3** | 1,400 | 0.71ms | 1.2MB |
+| **PivotPHP 1.0.0** | 1,400 | 0.71ms | 1.2MB |
 | Framework A | 800 | 1.25ms | 2.5MB |
 | Framework B | 600 | 1.67ms | 3.8MB |
 | Framework C | 450 | 2.22ms | 5.2MB |

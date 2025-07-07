@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Cache;
+namespace PivotPHP\Core\Http\Psr7\Cache;
 
 /**
  * Intelligent JSON Cache with Structure-Based Optimization
@@ -10,7 +10,7 @@ namespace Helix\Http\Psr7\Cache;
  * Optimizes JSON caching by analyzing data structures and creating
  * reusable templates for similar data patterns.
  *
- * @package Helix\Http\Psr7\Cache
+ * @package PivotPHP\Core\Http\Psr7\Cache
  * @since 2.2.0
  */
 class IntelligentJsonCache
@@ -340,7 +340,7 @@ class IntelligentJsonCache
                 'json_strings' => count(self::$jsonStringCache),
                 'fingerprints' => count(self::$structureFingerprints)
             ],
-            'memory_saved' => \Helix\Utils\Utils::formatBytes(self::$stats['memory_saved_bytes']),
+            'memory_saved' => \PivotPHP\Core\Utils\Utils::formatBytes(self::$stats['memory_saved_bytes']),
             'detailed_stats' => self::$stats
         ];
     }

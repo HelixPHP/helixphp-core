@@ -1,9 +1,9 @@
 <?php
 
-use Helix\Core\Application;
-use Helix\Events\ApplicationStarted;
-use Helix\Events\RequestReceived;
-use Helix\Events\ResponseSent;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Events\ApplicationStarted;
+use PivotPHP\Core\Events\RequestReceived;
+use PivotPHP\Core\Events\ResponseSent;
 
 require_once '../vendor/autoload.php';
 
@@ -33,7 +33,7 @@ $app->get('/', function ($request, $response) use ($app) {
     }
 
     return $response->json([
-        'message' => 'Hello from Helix-PHP with PSR Providers!',
+        'message' => 'Hello from PivotPHP with PSR Providers!',
         'version' => $app->version(),
         'providers' => [
             'container' => $app->has('container') ? 'PSR-11' : 'none',

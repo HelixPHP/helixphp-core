@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Http\Psr7\Message;
-use Helix\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Psr7\Message;
+use PivotPHP\Core\Http\Psr7\Stream;
 
 class OptimizationBenchmark
 {

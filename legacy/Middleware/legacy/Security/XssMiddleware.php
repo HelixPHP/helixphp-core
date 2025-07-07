@@ -1,11 +1,11 @@
 <?php
 
-namespace Helix\Middleware\Security;
+namespace PivotPHP\Core\Middleware\Security;
 
-use Helix\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
 
 /**
- * Middleware de proteção XSS para HelixPHP.
+ * Middleware de proteção XSS para PivotPHP.
  */
 class XssMiddleware extends BaseMiddleware
 {

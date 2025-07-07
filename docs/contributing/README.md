@@ -1,6 +1,6 @@
-# Como Contribuir com o HelixPHP
+# Como Contribuir com o PivotPHP
 
-Obrigado pelo interesse em contribuir com o HelixPHP! Este guia contém todas as informações necessárias para participar do desenvolvimento do framework.
+Obrigado pelo interesse em contribuir com o PivotPHP! Este guia contém todas as informações necessárias para participar do desenvolvimento do framework.
 
 ## 🚀 Formas de Contribuir
 
@@ -42,14 +42,14 @@ Obrigado pelo interesse em contribuir com o HelixPHP! Este guia contém todas as
 ```bash
 # 1. Fork do repositório no GitHub
 # 2. Clone seu fork
-git clone https://github.com/seu-usuario/helixphp-core.git
-cd helixphp-core
+git clone https://github.com/seu-usuario/pivotphp-core.git
+cd pivotphp-core
 
 # 3. Instalar dependências
 composer install
 
 # 4. Configurar remote upstream
-git remote add upstream https://github.com/helixphp-core/framework.git
+git remote add upstream https://github.com/pivotphp-core/framework.git
 
 # 5. Criar branch para desenvolvimento
 git checkout -b feature/minha-funcionalidade
@@ -58,7 +58,7 @@ git checkout -b feature/minha-funcionalidade
 ### Estrutura do Projeto
 
 ```
-helixphp-core/
+pivotphp-core/
 ├── src/                    # Código fonte do framework
 │   ├── Core/              # Classes principais
 │   ├── Http/              # HTTP components
@@ -83,7 +83,7 @@ helixphp-core/
 [Descrição clara e concisa do problema]
 
 ## Passos para Reproduzir
-1. Instalar HelixPHP v2.x.x
+1. Instalar PivotPHP v1.0.0
 2. Criar rota com '...'
 3. Executar '...'
 4. Ver erro
@@ -96,7 +96,7 @@ helixphp-core/
 
 ## Ambiente
 - PHP Version: 8.1.x
-- HelixPHP Version: 2.x.x
+- PivotPHP Version: 1.0.0
 - OS: Ubuntu 22.04
 - Servidor: Apache/Nginx/Built-in
 
@@ -168,7 +168,7 @@ $app = new Application();
 
 #### PSR Standards
 
-O HelixPHP segue as PSRs:
+O PivotPHP segue as PSRs:
 - **PSR-1**: Basic Coding Standard
 - **PSR-2**: Coding Style Guide (deprecated, use PSR-12)
 - **PSR-4**: Autoloading Standard
@@ -181,10 +181,10 @@ O HelixPHP segue as PSRs:
 
 declare(strict_types=1);
 
-namespace Helix\Middleware;
+namespace PivotPHP\Core\Middleware;
 
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 /**
  * Middleware de exemplo seguindo as convenções.
@@ -266,7 +266,7 @@ composer analyze
 namespace Tests\Http;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Request;
+use PivotPHP\Core\Http\Request;
 
 class RequestTest extends TestCase
 {
@@ -486,10 +486,10 @@ $result = $obj->exemplo('valor');
     "name": "vendor/express-extension",
     "type": "library",
     "require": {
-        "helixphp-core/framework": "^2.1"
+        "pivotphp-core/framework": "^2.1"
     },
     "extra": {
-        "helixphp-core": {
+        "pivotphp-core": {
             "providers": [
                 "Vendor\\Extension\\ServiceProvider"
             ]
@@ -505,7 +505,7 @@ $result = $obj->exemplo('valor');
 
 namespace Vendor\Extension;
 
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ServiceProvider;
 
 class ExtensionServiceProvider extends ServiceProvider
 {
@@ -565,7 +565,7 @@ Todos os contribuidores são reconhecidos:
 
 - **GitHub Issues**: Para bugs e feature requests
 - **GitHub Discussions**: Para discussões gerais
-- **Email**: contato@helixphp-core.com
+- **Email**: contato@pivotphp-core.com
 - **Discord**: [Link do servidor]
 
 ### Documentação Útil
@@ -597,4 +597,4 @@ Todos os contribuidores são reconhecidos:
 - Assédio público ou privado
 - Publicar informações privadas sem permissão
 
-Contribuir com o HelixPHP é uma excelente maneira de aprender, ensinar e construir algo incrível junto com a comunidade. Agradecemos sua participação! 🚀
+Contribuir com o PivotPHP é uma excelente maneira de aprender, ensinar e construir algo incrível junto com a comunidade. Agradecemos sua participação! 🚀

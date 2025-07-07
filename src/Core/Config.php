@@ -1,11 +1,11 @@
 <?php
 
-namespace Helix\Core;
+namespace PivotPHP\Core\Core;
 
-use Helix\Utils\Arr;
+use PivotPHP\Core\Utils\Arr;
 
 /**
- * Sistema de configuração centralizado do Helix-PHP.
+ * Sistema de configuração centralizado do PivotPHP.
  *
  * Gerencia configurações da aplicação com suporte a:
  * - Carregamento de arquivos de configuração

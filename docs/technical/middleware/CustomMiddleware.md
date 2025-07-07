@@ -1,6 +1,6 @@
 # 🔧 Criando Middlewares Customizados
 
-Guia completo para criação, implementação e otimização de middlewares personalizados no HelixPHP, incluindo padrões avançados, testing e boas práticas.
+Guia completo para criação, implementação e otimização de middlewares personalizados no PivotPHP, incluindo padrões avançados, testing e boas práticas.
 
 ## 📋 Índice
 
@@ -55,9 +55,9 @@ class CustomMiddleware
 
 namespace App\Middleware;
 
-use Helix\Middleware\Core\BaseMiddleware;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 class TimingMiddleware extends BaseMiddleware
 {
@@ -280,7 +280,7 @@ class RequestValidationMiddleware implements MiddlewareInterface
 
     private function createErrorResponse(array $errors): ResponseInterface
     {
-        $factory = new \Helix\Http\Psr7\Factory\ResponseFactory();
+        $factory = new \PivotPHP\Core\Http\Psr7\Factory\ResponseFactory();
         $response = $factory->createResponse(400);
 
         $errorData = [

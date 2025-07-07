@@ -3,16 +3,16 @@
 /**
  * Exemplo prático - Sistema de Extensões e Plugins
  *
- * Demonstra como criar e usar extensões/plugins no Helix-PHP v2.1.0
+ * Demonstra como criar e usar extensões/plugins no PivotPHP v2.1.0
  * com auto-discovery, hooks e sistema robusto de extensibilidade.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Providers\ServiceProvider;
-use Helix\Support\HookManager;
-use Helix\Events\Hook;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Support\HookManager;
+use PivotPHP\Core\Events\Hook;
 
 // =====================================
 // EXEMPLO 1: EXTENSÃO PERSONALIZADA
@@ -123,7 +123,7 @@ class SecurityEnhancementProvider extends ServiceProvider
 
 $app = new Application(__DIR__);
 
-echo "🚀 Helix-PHP Extension System Demo\n";
+echo "🚀 PivotPHP Extension System Demo\n";
 echo "=====================================\n\n";
 
 // =====================================
@@ -158,7 +158,7 @@ $app->addAction('app.request_processed', function ($context) {
 // Hook de filtro - modifica dados
 $app->addFilter('response.headers', function ($headers, $context) {
     echo "🔧 Hook Filter: Adding custom headers\n";
-    $headers['X-Powered-By'] = 'Helix-PHP-Extended';
+    $headers['X-Powered-By'] = 'PivotPHP-Extended';
     $headers['X-Extension-System'] = 'Active';
     return $headers;
 }, 5);
@@ -167,7 +167,7 @@ $app->addFilter('response.headers', function ($headers, $context) {
 $app->addFilter('response.data', function ($data, $context) {
     if (is_array($data)) {
         $data['_meta'] = [
-            'framework' => 'Helix-PHP',
+            'framework' => 'PivotPHP',
             'version' => Application::VERSION,
             'extensions_active' => true,
             'timestamp' => date('c')
@@ -197,7 +197,7 @@ $app->get('/', function ($req, $res) use ($app) {
 
     // Aplicar filtros
     $responseData = [
-        'message' => 'Helix-PHP Extension System',
+        'message' => 'PivotPHP Extension System',
         'status' => 'active',
         'features' => [
             'auto_discovery' => true,
@@ -356,4 +356,4 @@ echo <<<JSON
 }
 JSON;
 
-echo "\n\n✅ Sistema de extensões Helix-PHP demonstrado com sucesso!\n";
+echo "\n\n✅ Sistema de extensões PivotPHP demonstrado com sucesso!\n";

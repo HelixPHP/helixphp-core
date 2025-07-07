@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
-use Helix\Core\Application;
-use Helix\Providers\ServiceProvider;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Providers\ServiceProvider;
 use Psr\Container\ContainerInterface;
 use Composer\Autoload\ClassLoader;
 
@@ -356,7 +356,7 @@ class ExtensionManager
             return;
         }
 
-        /** @var \Helix\Core\Config $config */
+        /** @var \PivotPHP\Core\Core\Config $config */
         $config = $this->container->get('config');
 
         // Load from app.extensions config

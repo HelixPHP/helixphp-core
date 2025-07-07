@@ -1,18 +1,18 @@
 <?php
 /**
- * Exemplo de Documentação OpenAPI/Swagger - HelixPHP
+ * Exemplo de Documentação OpenAPI/Swagger - PivotPHP
  *
  * Este exemplo demonstra como gerar documentação OpenAPI automática
- * para suas APIs usando o sistema nativo do HelixPHP.
+ * para suas APIs usando o sistema nativo do PivotPHP.
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Utils\OpenApiExporter;
-use Helix\Routing\Router;
-use Helix\Http\Request;
-use Helix\Http\Response;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Utils\OpenApiExporter;
+use PivotPHP\Core\Routing\Router;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
 
 // Criar aplicação
 $app = new Application();
@@ -24,7 +24,7 @@ $app = new Application();
 // Rota básica com documentação
 $app->get('/', function(Request $req, Response $res) {
     $res->json([
-        'message' => 'API HelixPHP com documentação OpenAPI',
+        'message' => 'API PivotPHP com documentação OpenAPI',
         'version' => '2.0',
         'docs' => '/docs',
         'api_spec' => '/docs/openapi.json'
@@ -287,7 +287,7 @@ $app->get('/docs/openapi.json', function(Request $req, Response $res) {
 
     // Personalizar informações da API
     $docs['info'] = [
-        'title' => 'HelixPHP API',
+        'title' => 'PivotPHP API',
         'description' => 'API de exemplo demonstrando documentação OpenAPI automática',
         'version' => '1.0.0',
         'contact' => [
@@ -322,7 +322,7 @@ $app->get('/docs', function(Request $req, Response $res) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentação da API - HelixPHP</title>
+    <title>Documentação da API - PivotPHP</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5.10.3/swagger-ui.css" />
     <style>
         .swagger-ui .topbar { display: none; }
@@ -363,7 +363,7 @@ $app->get('/docs', function(Request $req, Response $res) {
 // EXECUTAR APLICAÇÃO
 // ================================
 
-echo "\n🚀 Iniciando servidor HelixPHP com documentação OpenAPI...\n";
+echo "\n🚀 Iniciando servidor PivotPHP com documentação OpenAPI...\n";
 echo "📚 Documentação disponível em: http://localhost:8080/docs\n";
 echo "📋 Especificação OpenAPI: http://localhost:8080/docs/openapi.json\n";
 echo "🔗 API de usuários: http://localhost:8080/api/users\n\n";

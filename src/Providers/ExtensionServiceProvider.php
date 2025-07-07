@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Helix\Providers;
+namespace PivotPHP\Core\Providers;
 
-use Helix\Core\Application;
-use Helix\Providers\ServiceProvider;
-use Helix\Providers\ExtensionManager;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ExtensionManager;
 
 /**
  * Extension Service Provider

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Helix\Http\Psr7\Factory;
+namespace PivotPHP\Core\Http\Psr7\Factory;
 
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\StreamInterface;
-use Helix\Http\Psr7\UploadedFile;
+use PivotPHP\Core\Http\Psr7\UploadedFile;
 
 /**
  * PSR-17 Uploaded File Factory implementation

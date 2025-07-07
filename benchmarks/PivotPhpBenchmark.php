@@ -1,8 +1,8 @@
 <?php
 /**
- * HelixPHP Framework - Benchmark Suite
+ * PivotPHP Framework - Benchmark Suite
  *
- * Comprehensive performance testing for HelixPHP Framework
+ * Comprehensive performance testing for PivotPHP Framework
  * Tests various aspects: routing, middleware, authentication, etc.
  */
 
@@ -10,17 +10,17 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
-use Helix\Core\Application;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Middleware\Security\CsrfMiddleware;
-use Helix\Middleware\Security\XssMiddleware;
-use Helix\Middleware\Security\CorsMiddleware;
-use Helix\Middleware\Core\RateLimitMiddleware;
-use Helix\Authentication\JWTHelper;
-use Helix\Utils\Utils;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Middleware\Security\CsrfMiddleware;
+use PivotPHP\Core\Middleware\Security\XssMiddleware;
+use PivotPHP\Core\Middleware\Security\CorsMiddleware;
+use PivotPHP\Core\Middleware\Core\RateLimitMiddleware;
+use PivotPHP\Core\Authentication\JWTHelper;
+use PivotPHP\Core\Utils\Utils;
 
-class HelixPhpBenchmark
+class PivotPhpBenchmark
 {
     private array $results = [];
     private int $iterations = 1000;
@@ -35,7 +35,7 @@ class HelixPhpBenchmark
      */
     public function runAll(): void
     {
-        echo "🚀 HelixPHP Framework - Performance Benchmark\n";
+        echo "🚀 PivotPHP Framework - Performance Benchmark\n";
         echo "================================================\n";
         echo "Iterations per test: " . number_format($this->iterations) . "\n";
         echo "PHP Version: " . PHP_VERSION . "\n";
@@ -434,7 +434,7 @@ class HelixPhpBenchmark
      */
     private function generateMarkdownSummary(): void
     {
-        $markdown = "# HelixPHP Framework - Performance Benchmark\n\n";
+        $markdown = "# PivotPHP Framework - Performance Benchmark\n\n";
         $markdown .= "## Test Environment\n";
         $markdown .= "- **Date**: " . date('Y-m-d H:i:s') . "\n";
         $markdown .= "- **PHP Version**: " . PHP_VERSION . "\n";
@@ -465,7 +465,7 @@ class HelixPhpBenchmark
         }
 
         $markdown .= "\n## Performance Summary\n";
-        $markdown .= "HelixPHP demonstrates excellent performance characteristics:\n\n";
+        $markdown .= "PivotPHP demonstrates excellent performance characteristics:\n\n";
 
         // Find best performing tests
         $sortedResults = $this->results;
@@ -493,6 +493,6 @@ class HelixPhpBenchmark
 // Run benchmarks if called directly
 if (basename(__FILE__) === basename($_SERVER['SCRIPT_NAME'])) {
     $iterations = (int)($argv[1] ?? 1000);
-    $benchmark = new HelixPhpBenchmark($iterations);
+    $benchmark = new PivotPhpBenchmark($iterations);
     $benchmark->runAll();
 }

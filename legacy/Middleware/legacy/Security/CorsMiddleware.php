@@ -1,11 +1,11 @@
 <?php
 
-namespace Helix\Middleware\Security;
+namespace PivotPHP\Core\Middleware\Security;
 
-use Helix\Middleware\Core\BaseMiddleware;
-use Helix\Http\Request;
-use Helix\Http\Response;
-use Helix\Utils\SerializationCache;
+use PivotPHP\Core\Middleware\Core\BaseMiddleware;
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Utils\SerializationCache;
 
 /**
  * Middleware CORS (Cross-Origin Resource Sharing) com otimizações de performance.

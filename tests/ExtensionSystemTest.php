@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Helix\Tests;
+namespace PivotPHP\Core\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Core\Application;
-use Helix\Providers\ServiceProvider;
-use Helix\Providers\ExtensionManager;
-use Helix\Support\HookManager;
-use Helix\Events\Hook;
+use PivotPHP\Core\Core\Application;
+use PivotPHP\Core\Providers\ServiceProvider;
+use PivotPHP\Core\Providers\ExtensionManager;
+use PivotPHP\Core\Support\HookManager;
+use PivotPHP\Core\Events\Hook;
 
 class ExtensionSystemTest extends TestCase
 {

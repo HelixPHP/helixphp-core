@@ -1,6 +1,6 @@
-# Scripts de Qualidade de Código - HelixPHP v1.0.0
+# Scripts de Qualidade de Código - PivotPHP v1.0.0
 
-Este diretório contém scripts para garantir a qualidade do código no HelixPHP v1.0.0.
+Este diretório contém scripts para garantir a qualidade do código no PivotPHP v1.0.0.
 
 ## 🚀 Script Principal de Validação
 

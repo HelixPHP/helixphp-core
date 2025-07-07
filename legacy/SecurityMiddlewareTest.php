@@ -1,10 +1,10 @@
 <?php
 
-namespace Helix\Tests\Security;
+namespace PivotPHP\Core\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Middleware\Security\SecurityMiddleware;
-use Helix\Http\Psr15\Middleware\SecurityHeadersMiddleware;
+use PivotPHP\Core\Middleware\Security\SecurityMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\SecurityHeadersMiddleware;
 
 class SecurityMiddlewareTest extends TestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Security;
+namespace PivotPHP\Core\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Http\Psr15\Middleware\CsrfMiddleware;
+use PivotPHP\Core\Http\Psr15\Middleware\CsrfMiddleware;
 
 class CsrfMiddlewareTest extends TestCase
 {

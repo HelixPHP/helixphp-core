@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Controller;
+namespace PivotPHP\Core\Tests\Controller;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Routing\Router;
+use PivotPHP\Core\Routing\Router;
 
 class RouterBasicTest extends TestCase
 {

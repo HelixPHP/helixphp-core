@@ -1,9 +1,9 @@
 <?php
 
-namespace Helix\Tests\Support;
+namespace PivotPHP\Core\Tests\Support;
 
 use PHPUnit\Framework\TestCase;
-use Helix\Support\Str;
+use PivotPHP\Core\Support\Str;
 
 class StrTest extends TestCase
 {
@@ -52,20 +52,20 @@ class StrTest extends TestCase
 
     public function testStartsWith(): void
     {
-        $this->assertTrue(Str::startsWith('HelixPHP', 'Helix'));
-        $this->assertFalse(Str::startsWith('HelixPHP', 'PHP'));
+        $this->assertTrue(Str::startsWith('PivotPHP', 'Pivot'));
+        $this->assertFalse(Str::startsWith('PivotPHP', 'PHP'));
     }
 
     public function testEndsWith(): void
     {
-        $this->assertTrue(Str::endsWith('HelixPHP', 'PHP'));
-        $this->assertFalse(Str::endsWith('HelixPHP', 'Express'));
+        $this->assertTrue(Str::endsWith('PivotPHP', 'PHP'));
+        $this->assertFalse(Str::endsWith('PivotPHP', 'Express'));
     }
 
     public function testContains(): void
     {
-        $this->assertTrue(Str::contains('HelixPHP Framework', 'PHP'));
-        $this->assertFalse(Str::contains('HelixPHP Framework', 'Laravel'));
+        $this->assertTrue(Str::contains('PivotPHP Framework', 'PHP'));
+        $this->assertFalse(Str::contains('PivotPHP Framework', 'Laravel'));
     }
 
     public function testUcfirst(): void
