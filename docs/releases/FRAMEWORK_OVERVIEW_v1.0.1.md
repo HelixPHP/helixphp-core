@@ -1,10 +1,10 @@
-# PivotPHP Framework v1.0.0 - Complete Overview
+# PivotPHP Framework v1.0.1 - Complete Overview
 
 <div align="center">
 
 [![PHP Version](https://img.shields.io/badge/php-%3E%3D8.1-blue.svg)](https://www.php.net/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen.svg)](https://github.com/PivotPHP/pivotphp-core/releases)
+[![Version](https://img.shields.io/badge/version-1.0.1-brightgreen.svg)](https://github.com/PivotPHP/pivotphp-core/releases)
 [![PSR](https://img.shields.io/badge/PSR-7%20|%2011%20|%2012%20|%2015-orange.svg)](https://www.php-fig.org/psr/)
 
 **A lightweight, fast, and secure microframework for modern PHP applications**
@@ -13,14 +13,16 @@
 
 ## 🎯 What is PivotPHP?
 
-PivotPHP v1.0.0 is a high-performance microframework designed for rapid development of modern PHP applications. Born from the evolution of PivotPHP, PivotPHP brings enterprise-grade performance with developer-friendly simplicity.
+PivotPHP v1.0.1 is a high-performance microframework designed for rapid development of modern PHP applications. This minor release introduces advanced route validation with regex support while maintaining full backward compatibility.
 
-### Key Highlights
+### Key Highlights v1.0.1
+- **🆕 Regex Route Validation**: Advanced pattern matching with constraints
 - **🚀 High Performance**: 13.9M operations/second (278x improvement)
 - **🔒 Security First**: Built-in CORS, CSRF, XSS protection
 - **📋 PSR Compliant**: Full PSR-7, PSR-11, PSR-12, PSR-15 support
 - **🧪 Type Safe**: PHPStan Level 9 analysis
 - **⚡ Zero Dependencies**: Core framework with minimal footprint
+- **✅ Full Backward Compatibility**: All v1.0.0 code works without changes
 
 ## 🚀 Quick Start
 
@@ -44,10 +46,78 @@ use PivotPHP\Core\Core\Application;
 $app = new Application();
 
 $app->get('/', function ($req, $res) {
-    return $res->json(['message' => 'Hello PivotPHP v1.0.0!']);
+    return $res->json(['message' => 'Hello PivotPHP v1.0.1!']);
 });
 
 $app->run();
+```
+
+## 🆕 New in v1.0.1: Advanced Route Validation
+
+### Regex Constraints for Parameters
+
+```php
+// Numeric ID validation
+$app->get('/users/:id<\d+>', function ($req, $res) {
+    $id = $req->param('id'); // Guaranteed to be numeric
+    return $res->json(['user_id' => $id]);
+});
+
+// Date format validation
+$app->get('/posts/:year<\d{4}>/:month<\d{2}>/:day<\d{2}>', function ($req, $res) {
+    return $res->json([
+        'date' => sprintf('%s-%s-%s', 
+            $req->param('year'),
+            $req->param('month'),
+            $req->param('day')
+        )
+    ]);
+});
+
+// Using predefined shortcuts
+$app->get('/articles/:slug<slug>', handler);  // [a-z0-9-]+
+$app->get('/users/:uuid<uuid>', handler);     // UUID format
+$app->get('/codes/:code<alnum>', handler);    // Alphanumeric
+```
+
+### Full Regex Blocks
+
+```php
+// API versioning with regex
+$app->get('/api/{^v(\d+)$}/users', function ($req, $res) {
+    // Matches: /api/v1/users, /api/v2/users
+    // Version number is captured automatically
+});
+
+// File extensions validation
+$app->get('/download/{^(.+)\.(pdf|doc|txt)$}', function ($req, $res) {
+    // Matches: /download/report.pdf, /download/notes.txt
+    // Filename and extension captured separately
+});
+```
+
+### Available Shortcuts
+
+- `int` - Integers (`\d+`)
+- `slug` - URL-friendly slugs (`[a-z0-9-]+`)
+- `alpha` - Letters only (`[a-zA-Z]+`)
+- `alnum` - Alphanumeric (`[a-zA-Z0-9]+`)
+- `uuid` - UUID format
+- `date` - YYYY-MM-DD format
+- `year`, `month`, `day` - Date components
+
+### Backward Compatibility
+
+All existing route patterns continue to work:
+
+```php
+// Traditional parameters (still supported)
+$app->get('/users/:id', handler);
+$app->get('/posts/:category/:slug', handler);
+
+// New regex constraints (opt-in feature)
+$app->get('/users/:id<\d+>', handler);
+$app->get('/posts/:category<alpha>/:slug<slug>', handler);
 ```
 
 ## 🏗️ Architecture
@@ -72,7 +142,7 @@ $app->run();
 
 ## 📊 Performance
 
-### Benchmark Results v1.0.0
+### Benchmark Results v1.0.1
 
 | Operation | Ops/Second | Memory Usage | Latency (p99) |
 |-----------|------------|--------------|---------------|
@@ -84,7 +154,7 @@ $app->run();
 | Dynamic Routes | 8.7M | 34MB | 0.115μs |
 | Auth Validation | 4.1M | 56MB | 0.244μs |
 
-### Performance Improvements v1.0.0
+### Performance Improvements v1.0.1
 - **278x faster** route matching compared to v0.1.0
 - **95% less memory** usage for static routes
 - **Zero allocation** for common operations
@@ -570,6 +640,6 @@ PivotPHP is open-source software licensed under the [MIT license](LICENSE).
 
 ---
 
-**PivotPHP v1.0.0** - Built with ❤️ for modern PHP development.
+**PivotPHP v1.0.1** - Built with ❤️ for modern PHP development.
 
 *High Performance • Type Safe • PSR Compliant • Developer Friendly*

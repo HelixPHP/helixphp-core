@@ -92,7 +92,8 @@ class RouteCacheNonGreedyTest extends TestCase
 
         // Verifica que funciona corretamente
         $this->assertMatchesRegularExpression($compiled['pattern'], '/test/hello/data/123');
-        $this->assertDoesNotMatchRegularExpression($compiled['pattern'], '/test/hi/data/123'); // 'hi' tem apenas 2 chars
+        // 'hi' tem apenas 2 caracteres, deve falhar na validação {3,5}
+        $this->assertDoesNotMatchRegularExpression($compiled['pattern'], '/test/hi/data/123');
     }
 
     /**

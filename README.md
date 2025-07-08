@@ -11,13 +11,14 @@
 
 ## 🚀 O que é o PivotPHP?
 
-**PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Foco em produtividade, arquitetura desacoplada e extensibilidade real.
+**PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
 
 - **Alta Performance**: 2.57M ops/sec em CORS, 2.27M ops/sec em Response, 757K ops/sec roteamento, cache integrado.
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
 - **Qualidade**: 270+ testes, PHPStan Level 9, PSR-12, cobertura completa.
+- **🆕 v1.0.1**: Suporte a validação avançada de rotas com regex e constraints.
 
 ---
 
@@ -85,7 +86,44 @@ $app->post('/api/users', function($req, $res) {
     $res->status(201)->json(['user' => $user]);
 });
 
+// Rotas com validação regex
+$app->get('/api/users/:id<\d+>', function($req, $res) {
+    // Aceita apenas IDs numéricos
+    $res->json(['user_id' => $req->param('id')]);
+});
+
+$app->get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<slug>', function($req, $res) {
+    // Validação de data e slug na rota
+    $res->json([
+        'year' => $req->param('year'),
+        'month' => $req->param('month'),
+        'slug' => $req->param('slug')
+    ]);
+});
+
 $app->run();
+```
+
+### 📖 Documentação OpenAPI/Swagger
+
+O PivotPHP inclui suporte integrado para geração automática de documentação OpenAPI:
+
+```php
+use PivotPHP\Core\Services\OpenApiExporter;
+
+// Gerar documentação OpenAPI
+$openapi = new OpenApiExporter($app);
+$spec = $openapi->export();
+
+// Servir documentação em endpoint
+$app->get('/api/docs', function($req, $res) use ($openapi) {
+    $res->json($openapi->export());
+});
+
+// Servir UI do Swagger
+$app->get('/api/docs/ui', function($req, $res) {
+    $res->html($openapi->getSwaggerUI());
+});
 ```
 
 ---

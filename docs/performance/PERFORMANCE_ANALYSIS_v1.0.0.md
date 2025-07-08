@@ -5,7 +5,7 @@
 [![Memory Efficiency](https://img.shields.io/badge/Memory-1.7GB%20Saved-orange.svg)](https://github.com/CAFernandes/pivotphp-core)
 [![ML Optimizations](https://img.shields.io/badge/ML%20Models-5%20Active-purple.svg)](https://github.com/CAFernandes/pivotphp-core)
 
-> ⚡ **Ultra High Performance**: 8,673 req/sec peak throughput • 0.11ms avg latency • 5.7MB memory footprint • Production-tested
+> ⚡ **Ultra High Performance**: 8,673 req/sec peak throughput • 0.11ms avg latency • 5.7MB memory footprint • Otimizado para estudos e validação de conceitos
 
 ---
 

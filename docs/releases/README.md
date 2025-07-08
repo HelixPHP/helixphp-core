@@ -1,10 +1,28 @@
 # 📋 PivotPHP Framework - Release Documentation
 
-Este diretório contém a documentação completa da versão v1.0.0 do PivotPHP Framework, incluindo recursos, melhorias de performance e informações técnicas.
+Este diretório contém a documentação completa de todas as versões do PivotPHP Framework, incluindo recursos, melhorias de performance e informações técnicas.
 
 ## 📚 Versão Atual
 
-### 🚀 v1.0.0 (Versão Estável) - 06/07/2025
+### 🆕 v1.0.1 - 08/07/2025
+**[FRAMEWORK_OVERVIEW_v1.0.1.md](FRAMEWORK_OVERVIEW_v1.0.1.md)**
+
+**Destaques:**
+- ✅ **Regex Route Validation**: Suporte completo a validação com regex
+- ✅ **Route Constraints**: Constraints predefinidas e customizadas
+- ✅ **Performance Mantida**: Mesma performance da v1.0.0
+- ✅ **Retrocompatibilidade**: 100% compatível com v1.0.0
+- ✅ **PHPStan Level 9**: Zero erros detectados
+
+**Novos recursos:**
+- Sistema avançado de validação de rotas com regex
+- Shortcuts para padrões comuns (int, slug, uuid, date, etc.)
+- Blocos regex completos para controle total
+- Melhor organização do código de roteamento
+
+## 📈 Histórico de Versões
+
+### 🚀 v1.0.0 - 06/07/2025
 **[FRAMEWORK_OVERVIEW_v1.0.0.md](FRAMEWORK_OVERVIEW_v1.0.0.md)**
 
 **Destaques:**
@@ -96,6 +114,6 @@ Para dúvidas sobre a versão v1.0.0:
 
 ---
 
-**Última atualização:** 06/07/2025
-**Versão atual:** v1.0.0
-**Status:** Estável e pronto para produção
+**Última atualização:** 08/07/2025
+**Versão atual:** v1.0.1
+**Status:** Ideal para validação de conceitos e estudos

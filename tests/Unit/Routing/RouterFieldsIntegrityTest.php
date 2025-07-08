@@ -99,7 +99,11 @@ class RouterFieldsIntegrityTest extends TestCase
         foreach ($preCompiledRoutes as $routeKey => $route) {
             $this->assertArrayHasKey('pattern', $route, "PreCompiled route {$routeKey} deve ter 'pattern'");
             $this->assertArrayHasKey('parameters', $route, "PreCompiled route {$routeKey} deve ter 'parameters'");
-            $this->assertArrayHasKey('has_parameters', $route, "PreCompiled route {$routeKey} deve ter 'has_parameters'");
+            $this->assertArrayHasKey(
+                'has_parameters',
+                $route,
+                "PreCompiled route {$routeKey} deve ter 'has_parameters'"
+            );
 
             if ($route['has_parameters']) {
                 $this->assertNotNull($route['pattern'], "Rota com parâmetros deve ter pattern não-null");

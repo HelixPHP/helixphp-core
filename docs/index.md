@@ -8,6 +8,7 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 - [**API Básica**](implementations/usage_basic.md) - Sua primeira API em 5 minutos
 - [**API com Middlewares**](implementations/usage_with_middleware.md) - Usando segurança, CORS e autenticação
 - [**Middleware Customizado**](implementations/usage_with_custom_middleware.md) - Criando suas próprias extensões
+- [**Rotas com Regex**](implementations/usage_regex_routes.md) - Validação avançada com regex e constraints
 
 ## 🔧 Referência Técnica
 
@@ -50,9 +51,7 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 
 ### 🚀 Histórico de Versões
 - [**Documentação de Releases**](releases/README.md) - Índice completo de versões
-- [**v1.0.0 (Atual)**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - PHP 8.4 compatibility fixes
-- [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - PHP 8.4.8 + JIT optimizations
-- [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - Advanced ML optimizations
+- [**v1.0.1 (Atual)**](releases/FRAMEWORK_OVERVIEW_v1.0.1.md) - Regex route validation support
 - [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - Core rewrite and PSR compliance
 
 ## 🧪 Testes

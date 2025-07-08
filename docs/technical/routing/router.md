@@ -89,6 +89,150 @@ Router::get('/search/:category', function($req, $res) {
 });
 ```
 
+### Rotas com Constraints e Regex
+
+O PivotPHP suporta constraints (restrições) em parâmetros de rotas usando regex, permitindo validação de padrões diretamente no roteamento.
+
+#### Sintaxe de Constraints
+
+```php
+// Sintaxe básica: :parametro<constraint>
+Router::get('/users/:id<\d+>', function($req, $res) {
+    // Aceita apenas IDs numéricos: /users/123
+    $id = $req->param('id');
+    return $res->json(['user_id' => $id]);
+});
+
+// Constraint com padrão específico
+Router::get('/posts/:year<\d{4}>/:month<\d{2}>', function($req, $res) {
+    // Aceita: /posts/2025/07
+    // Rejeita: /posts/25/7
+    $year = $req->param('year');
+    $month = $req->param('month');
+    return $res->json(['year' => $year, 'month' => $month]);
+});
+```
+
+#### Shortcuts de Constraints
+
+O framework oferece atalhos predefinidos para padrões comuns:
+
+```php
+// Inteiros
+Router::get('/api/v:version<int>', handler); // Aceita: /api/v1, /api/v123
+
+// Slugs
+Router::get('/posts/:slug<slug>', handler); // Aceita: /posts/meu-artigo-legal
+
+// Alfanuméricos
+Router::get('/codes/:code<alnum>', handler); // Aceita: /codes/ABC123
+
+// UUIDs
+Router::get('/users/:uuid<uuid>', handler); // Aceita formato UUID válido
+
+// Datas
+Router::get('/events/:date<date>', handler); // Aceita: /events/2025-07-08
+```
+
+**Shortcuts disponíveis:**
+- `int` - Números inteiros (`\d+`)
+- `slug` - Slugs URL-friendly (`[a-z0-9-]+`)
+- `alpha` - Apenas letras (`[a-zA-Z]+`)
+- `alnum` - Alfanumérico (`[a-zA-Z0-9]+`)
+- `uuid` - UUID válido
+- `date` - Formato YYYY-MM-DD
+- `year` - Ano 4 dígitos (`\d{4}`)
+- `month` - Mês 2 dígitos (`\d{2}`)
+- `day` - Dia 2 dígitos (`\d{2}`)
+
+#### Regex Customizado
+
+Para padrões mais complexos, use regex completo:
+
+```php
+// Email simples
+Router::post('/subscribe/:email<[^@]+@[^@]+\.[^@]+>', function($req, $res) {
+    $email = $req->param('email');
+    // Validação básica de email na rota
+});
+
+// SKU personalizado
+Router::get('/products/:sku<[A-Z]{3}-\d{4}>', function($req, $res) {
+    // Aceita: /products/ABC-1234
+    $sku = $req->param('sku');
+});
+
+// Código hexadecimal
+Router::get('/colors/:hex<[0-9a-fA-F]{6}>', function($req, $res) {
+    // Aceita: /colors/FF0000
+    $hex = $req->param('hex');
+});
+```
+
+### Blocos Regex Completos
+
+Para controle total sobre partes da rota, use blocos regex entre chaves `{}`:
+
+```php
+// Versionamento de API com regex
+Router::get('/api/{^v(\d+)$}/users', function($req, $res) {
+    // Aceita: /api/v1/users, /api/v2/users
+    // O número da versão é capturado automaticamente
+});
+
+// Arquivos com extensões específicas
+Router::get('/download/{^(.+)\.(pdf|doc|txt)$}', function($req, $res) {
+    // Aceita: /download/documento.pdf, /download/arquivo.txt
+    // Captura nome do arquivo e extensão separadamente
+});
+
+// Padrões complexos de data
+Router::get('/archive/{^(\d{4})/(\d{2})/(.+)$}', function($req, $res) {
+    // Aceita: /archive/2025/07/meu-post
+    // Captura ano, mês e slug separadamente
+});
+```
+
+#### Combinando Constraints e Blocos Regex
+
+```php
+// Mix de sintaxes
+Router::get('/files/{^(docs|images)$}/:name<[a-z0-9-]+>/{^\.(pdf|jpg)$}', 
+    function($req, $res) {
+        // Aceita: /files/docs/relatorio-anual.pdf
+        // Aceita: /files/images/foto-perfil.jpg
+        $name = $req->param('name');
+    }
+);
+
+// Validação complexa de paths
+Router::get('/app/:module<alpha>/{^/(.+\.js)$}', function($req, $res) {
+    // Aceita: /app/admin/controllers/user.js
+    $module = $req->param('module');
+});
+```
+
+### Melhores Práticas para Regex em Rotas
+
+1. **Use shortcuts quando possível** - São mais legíveis e otimizados
+2. **Evite regex muito complexo** - Pode impactar performance
+3. **Teste seus padrões** - Use ferramentas de teste de regex
+4. **Documente padrões customizados** - Facilita manutenção
+
+```php
+// ❌ Evite - Muito complexo para rota
+Router::get('/:email<^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$>', ...);
+
+// ✅ Prefira - Validação básica na rota, completa no handler
+Router::get('/:email<[^@]+@[^@]+>', function($req, $res) {
+    $email = $req->param('email');
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return $res->status(400)->json(['error' => 'Invalid email']);
+    }
+    // ...
+});
+```
+
 ### Rotas com Controladores
 
 ```php
