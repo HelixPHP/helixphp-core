@@ -62,6 +62,32 @@ class RouteCache
     private static ?string $lastDataHash = null;
 
     /**
+     * Mapeamento de shortcuts para constraints regex
+     */
+    private const CONSTRAINT_SHORTCUTS = [
+        'int' => '\d+',
+        'slug' => '[a-z0-9-]+',
+        'alpha' => '[a-zA-Z]+',
+        'alnum' => '[a-zA-Z0-9]+',
+        'uuid' => '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+        'date' => '\d{4}-\d{2}-\d{2}',
+        'year' => '\d{4}',
+        'month' => '\d{2}',
+        'day' => '\d{2}'
+    ];
+
+    /**
+     * Padrões regex perigosos para detecção de ReDoS
+     */
+    private const DANGEROUS_PATTERNS = [
+        '(\w+)*\w*',
+        '(.+)+',
+        '(a*)*',
+        '(a|a)*',
+        '(a+)+b'
+    ];
+
+    /**
      * Obtém uma rota do cache
      */
     public static function get(string $key): ?array
@@ -128,7 +154,7 @@ class RouteCache
     }
 
     /**
-     * Compila pattern de rota para regex otimizada (versão melhorada)
+     * Compila pattern de rota para regex otimizada (versão melhorada com suporte a constraints)
      */
     public static function compilePattern(string $path): array
     {
@@ -150,7 +176,7 @@ class RouteCache
         }
 
         // Verifica se é rota estática (sem parâmetros) - otimização especial
-        if (strpos($path, ':') === false) {
+        if (strpos($path, ':') === false && strpos($path, '{') === false) {
             $result = [
                 'pattern' => null, // Rotas estáticas não precisam de regex
                 'parameters' => []
@@ -163,22 +189,55 @@ class RouteCache
         // Compilar pattern apenas para rotas dinâmicas
         $pattern = $path;
         $parameters = [];
+        $position = 0;
 
-        // Encontra parâmetros na rota (:param) - otimização melhorada
-        if (preg_match_all('/\/:([^\/]+)/', $pattern, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $parameters[] = $match[1];
-            }
+        // Primeiro, processa regex completo entre chaves {}
+        $pattern = preg_replace_callback(
+            '/\{([^\}]+)\}/',
+            function ($matches) use (&$position) {
+                $position++;
+                return $matches[1]; // Retorna o regex sem as chaves
+            },
+            $pattern
+        );
+
+        // Depois, processa parâmetros com constraints (:param<constraint>)
+        $pattern = preg_replace_callback(
+            '/:([a-zA-Z_][a-zA-Z0-9_]*)(?:<([^>]+)>)?/',
+            function ($matches) use (&$parameters, &$position) {
+                $paramName = $matches[1];
+                $constraint = $matches[2] ?? '[^/]+'; // Constraint padrão
+
+                // Resolve shortcuts de constraints
+                $constraint = self::resolveConstraintShortcut($constraint);
+
+                // Valida segurança do regex
+                if (!self::isRegexSafe($constraint)) {
+                    throw new \InvalidArgumentException(
+                        "Unsafe regex pattern detected in route parameter '{$paramName}': {$constraint}"
+                    );
+                }
+
+                $parameters[] = [
+                    'name' => $paramName,
+                    'position' => $position++,
+                    'constraint' => $constraint
+                ];
+
+                return '(' . $constraint . ')';
+            },
+            $pattern
+        );
+
+        // Garante que pattern não é null
+        if ($pattern === null) {
+            $pattern = '';
         }
 
-        // Converte parâmetros para regex otimizada - apenas uma vez
-        if (!empty($parameters)) {
-            $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
-            $pattern = rtrim($pattern ?? '', '/');
-            $compiledPattern = '#^' . $pattern . '/?$#';
-        } else {
-            $compiledPattern = null; // Não deveria acontecer, mas fallback
-        }
+        // Remove barras duplicadas e prepara o pattern final
+        $pattern = preg_replace('#/+#', '/', $pattern);
+        $pattern = rtrim($pattern ?? '', '/');
+        $compiledPattern = '#^' . $pattern . '/?$#';
 
         $result = [
             'pattern' => $compiledPattern,
@@ -186,14 +245,62 @@ class RouteCache
         ];
 
         // Cache results em múltiplos lugares para acesso rápido
-        if ($compiledPattern !== null) {
-            self::setPattern($path, $compiledPattern);
-        }
+        self::setPattern($path, $compiledPattern);
         self::setParameters($path, $parameters);
         self::$fastParameterCache[$path] = $result;
         self::$routeTypeCache['dynamic'][$path] = true;
 
         return $result;
+    }
+
+    /**
+     * Resolve shortcuts de constraints para regex completo
+     */
+    private static function resolveConstraintShortcut(string $constraint): string
+    {
+        return self::CONSTRAINT_SHORTCUTS[$constraint] ?? $constraint;
+    }
+
+    /**
+     * Verifica se um pattern regex é seguro contra ReDoS
+     */
+    private static function isRegexSafe(string $pattern): bool
+    {
+        // Verifica comprimento máximo
+        if (strlen($pattern) > 200) {
+            return false;
+        }
+
+        // Verifica padrões perigosos conhecidos
+        foreach (self::DANGEROUS_PATTERNS as $dangerous) {
+            if (strpos($pattern, $dangerous) !== false) {
+                return false;
+            }
+        }
+
+        // Verifica nested quantifiers perigosos
+        // Procura por quantifiers repetidos como (x+)+ ou (x*)*
+        if (preg_match('/\([^)]*[\*\+]\)[*+]/', $pattern)) {
+            return false;
+        }
+
+        // Verifica backtracking excessivo
+        if (preg_match('/\([^)]*\|[^)]*\)[\*\+]/', $pattern) && substr_count($pattern, '|') > 5) {
+            return false;
+        }
+
+        // Verifica alternations excessivas
+        if (substr_count($pattern, '|') > 10) {
+            return false;
+        }
+
+        // Tenta compilar o regex para verificar se é válido
+        try {
+            @preg_match('#' . $pattern . '#', '');
+            return preg_last_error() === PREG_NO_ERROR;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -207,7 +314,7 @@ class RouteCache
         if (isset(self::$routeTypeCache['dynamic'][$path])) {
             return false;
         }
-        return strpos($path, ':') === false;
+        return strpos($path, ':') === false && strpos($path, '{') === false;
     }
 
     /**
@@ -393,7 +500,16 @@ class RouteCache
                 'routes_memory' => self::$memoryUsageCache['routes_memory'] ?? 0,
                 'patterns_memory' => self::$memoryUsageCache['patterns_memory'] ?? 0,
                 'parameters_memory' => self::$memoryUsageCache['parameters_memory'] ?? 0
-            ]
+            ],
+            'constraint_shortcuts' => self::CONSTRAINT_SHORTCUTS
         ];
+    }
+
+    /**
+     * Obtém lista de shortcuts disponíveis para constraints
+     */
+    public static function getAvailableShortcuts(): array
+    {
+        return self::CONSTRAINT_SHORTCUTS;
     }
 }
