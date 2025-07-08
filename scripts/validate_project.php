@@ -51,7 +51,7 @@ class ProjectValidator
             'docs/releases/',
             'docs/technical/',
             'docs/performance/',
-            'docs/implementions/',
+            'docs/implementations/',
             'docs/testing/',
             'docs/contributing/'
             // 'benchmarks/',  // Benchmarks movidos para outro projeto
@@ -74,7 +74,7 @@ class ProjectValidator
             'docs/index.md',
             'docs/releases/README.md',
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'docs/implementions/usage_basic.md',
+            'docs/implementations/usage_basic.md',
             'docs/technical/application.md',
             'docs/technical/http/request.md',
             'docs/technical/http/response.md',
@@ -283,7 +283,7 @@ class ProjectValidator
         // Documentação técnica principal
         $technicalDocs = [
             'docs/index.md' => 'Índice principal da documentação',
-            'docs/implementions/usage_basic.md' => 'Guia básico de uso',
+            'docs/implementations/usage_basic.md' => 'Guia básico de uso',
             'docs/technical/application.md' => 'Documentação da Application',
             'docs/technical/http/request.md' => 'Documentação de Request',
             'docs/technical/http/response.md' => 'Documentação de Response',

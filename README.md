@@ -95,9 +95,9 @@ $app->run();
 Acesse o [Índice da Documentação](docs/index.md) para navegar por todos os guias técnicos, exemplos, referências de API, middlewares, autenticação, performance e mais.
 
 Principais links:
-- [Guia de Implementação Básica](docs/implementions/usage_basic.md)
-- [Guia com Middlewares Prontos](docs/implementions/usage_with_middleware.md)
-- [Guia de Middleware Customizado](docs/implementions/usage_with_custom_middleware.md)
+- [Guia de Implementação Básica](docs/implementations/usage_basic.md)
+- [Guia com Middlewares Prontos](docs/implementations/usage_with_middleware.md)
+- [Guia de Middleware Customizado](docs/implementations/usage_with_custom_middleware.md)
 - [Referência Técnica](docs/techinical/application.md)
 - [Performance e Benchmarks](docs/performance/benchmarks/)
 

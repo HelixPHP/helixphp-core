@@ -549,7 +549,7 @@ composer phpstan
 - **JWT Auth**: Built-in authentication system
 
 ### Learning Resources
-- [Quick Start Guide](../implementions/usage_basic.md)
+- [Quick Start Guide](../implementations/usage_basic.md)
 - [Middleware Development](../technical/middleware/README.md)
 - [Authentication Guide](../technical/authentication/usage_native.md)
 - [Performance Optimization](../performance/README.md)

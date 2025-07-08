@@ -396,7 +396,7 @@ Critérios para aprovação:
 ```
 docs/
 ├── index.md                  # Índice principal
-├── implementions/           # Guias práticos
+├── implementations/           # Guias práticos
 ├── techinical/             # Documentação técnica
 │   ├── application.md
 │   ├── http/
@@ -570,7 +570,7 @@ Todos os contribuidores são reconhecidos:
 
 ### Documentação Útil
 
-- [Guia de Implementação Básica](../implementions/usage_basic.md)
+- [Guia de Implementação Básica](../implementations/usage_basic.md)
 - [Documentação da API](../technical/application.md)
 - [Guias de Teste](../testing/api_testing.md)
 

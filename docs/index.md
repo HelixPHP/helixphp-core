@@ -5,9 +5,9 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 ## 🚀 Para Começar
 
 ### 📖 Implementação Rápida
-- [**API Básica**](implementions/usage_basic.md) - Sua primeira API em 5 minutos
-- [**API com Middlewares**](implementions/usage_with_middleware.md) - Usando segurança, CORS e autenticação
-- [**Middleware Customizado**](implementions/usage_with_custom_middleware.md) - Criando suas próprias extensões
+- [**API Básica**](implementations/usage_basic.md) - Sua primeira API em 5 minutos
+- [**API com Middlewares**](implementations/usage_with_middleware.md) - Usando segurança, CORS e autenticação
+- [**Middleware Customizado**](implementations/usage_with_custom_middleware.md) - Criando suas próprias extensões
 
 ## 🔧 Referência Técnica
 
@@ -73,17 +73,17 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 ## 🎯 Fluxo de Aprendizado Recomendado
 
 ### 👶 Iniciante
-1. [API Básica](implementions/usage_basic.md)
+1. [API Básica](implementations/usage_basic.md)
 2. [Application](techinical/application.md)
 3. [Request](techinical/http/request.md) [Response](techinical/http/response.md)
 
 ### 🚀 Intermediário
-1. [API com Middlewares](implementions/usage_with_middleware.md)
+1. [API com Middlewares](implementations/usage_with_middleware.md)
 2. [Autenticação](techinical/authentication/usage_native.md)
 3. [Testando sua API](testing/api_testing.md)
 
 ### 🔥 Avançado
-1. [Middleware Customizado](implementions/usage_with_custom_middleware.md)
+1. [Middleware Customizado](implementations/usage_with_custom_middleware.md)
 2. [Criando Extensões](techinical/providers/extension.md)
 3. [Performance](performance/PerformanceMonitor.md)
 4. [Releases e Versões](releases/README.md)

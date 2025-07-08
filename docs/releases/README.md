@@ -84,7 +84,7 @@ $app->run();
 - **[Documentação Principal](../index.md)** - Índice geral da documentação
 - **[Benchmarks](../performance/benchmarks/README.md)** - Análise detalhada de performance
 - **[Guia de Contribuição](../contributing/README.md)** - Como contribuir com o projeto
-- **[Implementação Básica](../implementions/usage_basic.md)** - Como começar
+- **[Implementação Básica](../implementations/usage_basic.md)** - Como começar
 
 ## 📞 Suporte
 
