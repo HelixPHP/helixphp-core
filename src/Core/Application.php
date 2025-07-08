@@ -834,24 +834,6 @@ class Application
         return $this;
     }
 
-    /**
-     * Inicia o servidor de desenvolvimento.
-     *
-     * @param  int    $port Porta do servidor
-     * @param  string $host Host do servidor
-     * @return void
-     */
-    public function listen(int $port = 8000, string $host = 'localhost'): void
-    {
-        echo "PivotPHP v" . self::VERSION . " server started at http://{$host}:{$port}\n";
-        echo "Press Ctrl+C to stop\n\n";
-
-        // Processar requisição
-        $response = $this->handle();
-
-        // Delegar toda a lógica de emissão para o Response
-        $response->emit();
-    }
 
     /**
      * Executa a aplicação e envia a resposta.

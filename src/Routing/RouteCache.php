@@ -201,6 +201,11 @@ class RouteCache
             $pattern
         );
 
+        // Garante que pattern não é null após primeira transformação
+        if ($pattern === null) {
+            $pattern = '';
+        }
+
         // Depois, processa parâmetros com constraints (:param<constraint>)
         $pattern = preg_replace_callback(
             '/:([a-zA-Z_][a-zA-Z0-9_]*)(?:<([^>]+)>)?/',

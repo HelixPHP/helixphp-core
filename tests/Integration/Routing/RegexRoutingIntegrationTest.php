@@ -179,7 +179,7 @@ class RegexRoutingIntegrationTest extends TestCase
         ];
 
         foreach ($validEmails as $email) {
-            $route = Router::identify('GET', '/contact/' . urlencode($email));
+            $route = Router::identify('GET', '/contact/' . $email);
             $this->assertNotNull($route, "Failed for email: {$email}");
         }
 
@@ -192,7 +192,7 @@ class RegexRoutingIntegrationTest extends TestCase
         ];
 
         foreach ($invalidEmails as $email) {
-            $route = Router::identify('GET', '/contact/' . urlencode($email));
+            $route = Router::identify('GET', '/contact/' . $email);
             $this->assertNull($route, "Should not match email: {$email}");
         }
     }

@@ -474,7 +474,7 @@ server {
 | `group(string $prefix, callable $callback)` | Create route group |
 | `bind(string $key, $value)` | Bind service to container |
 | `make(string $key)` | Resolve service from container |
-| `run()` | Start the application |
+| `run()` | Execute the application |
 
 ### Request Methods
 
