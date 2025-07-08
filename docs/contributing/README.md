@@ -397,7 +397,7 @@ Critérios para aprovação:
 docs/
 ├── index.md                  # Índice principal
 ├── implementations/           # Guias práticos
-├── techinical/             # Documentação técnica
+├── technical/             # Documentação técnica
 │   ├── application.md
 │   ├── http/
 │   ├── routing/

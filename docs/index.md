@@ -12,33 +12,33 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 ## 🔧 Referência Técnica
 
 ### 📡 Core da Aplicação
-- [**Application**](techinical/application.md) - O coração do framework
-- [**Request**](techinical/http/request.md) - Manipulando requisições HTTP
-- [**Response**](techinical/http/response.md) - Criando respostas poderosas
-- [**Router**](techinical/routing/router.md) - Sistema de roteamento avançado
-- [**OpenAPI/Swagger**](techinical/http/openapi_documentation.md) - Documentação automática da API
+- [**Application**](technical/application.md) - O coração do framework
+- [**Request**](technical/http/request.md) - Manipulando requisições HTTP
+- [**Response**](technical/http/response.md) - Criando respostas poderosas
+- [**Router**](technical/routing/router.md) - Sistema de roteamento avançado
+- [**OpenAPI/Swagger**](technical/http/openapi_documentation.md) - Documentação automática da API
 
 ### 🛡️ Segurança e Middlewares
-- [**Visão Geral**](techinical/middleware/README.md) - Todos os middlewares disponíveis
-- [**SecurityMiddleware**](techinical/middleware/SecurityMiddleware.md) - Proteção XSS, CSRF, Headers
-- [**CorsMiddleware**](techinical/middleware/CorsMiddleware.md) - Cross-Origin Resource Sharing
-- [**AuthMiddleware**](techinical/middleware/AuthMiddleware.md) - JWT, Basic, Bearer, API Key
-- [**RateLimitMiddleware**](techinical/middleware/RateLimitMiddleware.md) - Controle de taxa
-- [**ValidationMiddleware**](techinical/middleware/ValidationMiddleware.md) - Validação de dados
-- [**Middleware Customizado**](techinical/middleware/CustomMiddleware.md) - Crie o seu próprio
+- [**Visão Geral**](technical/middleware/README.md) - Todos os middlewares disponíveis
+- [**SecurityMiddleware**](technical/middleware/SecurityMiddleware.md) - Proteção XSS, CSRF, Headers
+- [**CorsMiddleware**](technical/middleware/CorsMiddleware.md) - Cross-Origin Resource Sharing
+- [**AuthMiddleware**](technical/middleware/AuthMiddleware.md) - JWT, Basic, Bearer, API Key
+- [**RateLimitMiddleware**](technical/middleware/RateLimitMiddleware.md) - Controle de taxa
+- [**ValidationMiddleware**](technical/middleware/ValidationMiddleware.md) - Validação de dados
+- [**Middleware Customizado**](technical/middleware/CustomMiddleware.md) - Crie o seu próprio
 
 ### 🔐 Autenticação
-- [**Uso Nativo**](techinical/authentication/usage_native.md) - JWT, Basic, Bearer prontos para usar
-- [**Autenticação Customizada**](techinical/authentication/usage_custom.md) - Implemente seu próprio sistema
+- [**Uso Nativo**](technical/authentication/usage_native.md) - JWT, Basic, Bearer prontos para usar
+- [**Autenticação Customizada**](technical/authentication/usage_custom.md) - Implemente seu próprio sistema
 
 ### ⚠️ Tratamento de Erros
-- [**Sistema de Erros**](techinical/exceptions/ErrorHandling.md) - Como o framework trata erros
-- [**Exceptions Personalizadas**](techinical/exceptions/CustomExceptions.md) - Crie suas próprias exceções
+- [**Sistema de Erros**](technical/exceptions/ErrorHandling.md) - Como o framework trata erros
+- [**Exceptions Personalizadas**](technical/exceptions/CustomExceptions.md) - Crie suas próprias exceções
 
 ### 🧩 Extensibilidade
-- [**Providers**](techinical/providers/usage.md) - Injeção de dependências
-- [**Criando Extensões**](techinical/providers/extension.md) - Desenvolva plugins
-- [**Sistema de Extensões**](techinical/extesions/README.md) - Arquitetura de plugins
+- [**Providers**](technical/providers/usage.md) - Injeção de dependências
+- [**Criando Extensões**](technical/providers/extension.md) - Desenvolva plugins
+- [**Sistema de Extensões**](technical/extesions/README.md) - Arquitetura de plugins
 
 ## ⚡ Performance
 
@@ -74,17 +74,17 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 
 ### 👶 Iniciante
 1. [API Básica](implementations/usage_basic.md)
-2. [Application](techinical/application.md)
-3. [Request](techinical/http/request.md) [Response](techinical/http/response.md)
+2. [Application](technical/application.md)
+3. [Request](technical/http/request.md) [Response](technical/http/response.md)
 
 ### 🚀 Intermediário
 1. [API com Middlewares](implementations/usage_with_middleware.md)
-2. [Autenticação](techinical/authentication/usage_native.md)
+2. [Autenticação](technical/authentication/usage_native.md)
 3. [Testando sua API](testing/api_testing.md)
 
 ### 🔥 Avançado
 1. [Middleware Customizado](implementations/usage_with_custom_middleware.md)
-2. [Criando Extensões](techinical/providers/extension.md)
+2. [Criando Extensões](technical/providers/extension.md)
 3. [Performance](performance/PerformanceMonitor.md)
 4. [Releases e Versões](releases/README.md)
 

@@ -546,7 +546,11 @@ class Router
 
         // Pattern matching para rotas com parâmetros
         foreach ($groupRoutes[$method] as $route) {
-            if (isset($route['pattern']) && preg_match($route['pattern'], $path)) {
+            if (isset($route['pattern']) && preg_match($route['pattern'], $path, $matches)) {
+                // Extrai os parâmetros correspondentes se houver
+                if (!empty($route['parameters']) && count($matches) > 1) {
+                    $route['matched_params'] = self::extractMatchedParameters($route['parameters'], $matches);
+                }
                 return self::enrichRouteWithGroupMiddlewares($route, $prefix);
             }
         }

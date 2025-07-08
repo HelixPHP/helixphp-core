@@ -95,8 +95,8 @@ class RouteCacheRegexTest extends TestCase
     {
         $compiled = RouteCache::compilePattern('/archive/{^(\d{4})/(\d{2})/(.+)$}');
 
-        // O regex completo é inserido diretamente
-        $this->assertEquals('#^/archive/^(\d{4})/(\d{2})/(.+)$/?$#', $compiled['pattern']);
+        // As âncoras ^ e $ devem ser removidas do regex fornecido
+        $this->assertEquals('#^/archive/(\d{4})/(\d{2})/(.+)/?$#', $compiled['pattern']);
     }
 
     /**

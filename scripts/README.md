@@ -66,7 +66,7 @@ Validação da estrutura de documentação v1.0.0:
 
 **Validações incluídas:**
 - Nova estrutura de releases (docs/releases/)
-- Documentação técnica organizada (docs/techinical/)
+- Documentação técnica organizada (docs/technical/)
 - Guias de implementação (docs/implementations/)
 - Documentação de performance e benchmarks
 - Arquivos movidos e redundantes removidos

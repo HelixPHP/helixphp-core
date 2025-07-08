@@ -16,7 +16,7 @@ All scripts have been updated to reflect the PivotPHP branding:
 - All PHP namespace references updated to PivotPHP\Core\
 
 ### Directory Structure
-- Fixed typo: "techinical" → "technical"
+- Fixed typo: "technical" → "technical"
 
 ### Scripts Updated
 - ✅ pre-commit
