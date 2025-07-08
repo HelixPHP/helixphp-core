@@ -193,21 +193,51 @@ class RouteCache
 
         // Primeiro, processa apenas blocos regex que representam padrões completos
         // Identificamos estes pelos parênteses que contêm grupos de captura ou pelo ^ inicial
+        // Process each {} block individually to avoid greedy matching across multiple blocks
         $pattern = preg_replace_callback(
-            '/\{((?:\^.*|.*\(.*)\$?)\}/',
-            function ($matches) use (&$position) {
-                $regex = $matches[1];
-                // Remove apenas âncoras no início e fim da string completa
-                if ($regex !== '' && $regex[0] === '^') {
-                    $regex = substr($regex, 1);
+            '/\{([^{}]+(?:\{[^{}]*\}[^{}]*)*)\}/',
+            function ($matches) use (&$position, &$parameters) {
+                $content = $matches[1];
+
+                // Only process if it's a full regex block (contains ^ or capture groups)
+                if (strpos($content, '^') !== false || strpos($content, '(') !== false) {
+                    // Remove anchors that represent pattern boundaries
+                    $regex = $content;
+
+                    // Remove leading ^ only if it's at the very beginning
+                    if ($regex !== '' && $regex[0] === '^') {
+                        $regex = substr($regex, 1);
+                    }
+
+                    // Remove trailing $ only if it doesn't appear to be part of regex logic
+                    // Keep $ if the pattern contains file extensions that need end-of-string matching
+                    if ($regex !== '' && substr($regex, -1) === '$') {
+                        // Don't remove $ if pattern contains file extensions like (.+\.json)
+                        if (!preg_match('/\.[a-z]{2,4}\)?\$/', $regex)) {
+                            $regex = substr($regex, 0, -1);
+                        }
+                    }
+
+                    // Count capture groups in the regex and create parameter entries
+                    preg_match_all('/\([^?]/', $regex, $groups);
+                    $groupCount = count($groups[0]);
+
+                    // Create anonymous parameter entries for each capture group
+                    for ($i = 0; $i < $groupCount; $i++) {
+                        $parameters[] = [
+                            'name' => '_anonymous_' . ($position + $i),
+                            'position' => $position + $i,
+                            'constraint' => $regex,
+                            'type' => 'anonymous'
+                        ];
+                    }
+
+                    $position += $groupCount;
+                    return $regex;
                 }
-                if ($regex !== '' && $regex[strlen($regex) - 1] === '$') {
-                    $regex = substr($regex, 0, -1);
-                }
-                // Conta grupos de captura no regex
-                preg_match_all('/\([^?]/', $regex, $groups);
-                $position += count($groups[0]);
-                return $regex;
+
+                // If not a regex block, return unchanged (keep braces)
+                return $matches[0];
             },
             $pattern
         );
@@ -499,8 +529,9 @@ class RouteCache
             $cachedRoute = array_merge(
                 $route,
                 [
-                    'compiled_pattern' => $compiled['pattern'],
-                    'parameters' => $compiled['parameters']
+                    'pattern' => $compiled['pattern'],
+                    'parameters' => $compiled['parameters'],
+                    'has_parameters' => !empty($compiled['parameters'])
                 ]
             );
 
