@@ -402,7 +402,10 @@ class Router
         $dynamicRoutes = [];
 
         foreach (self::$routesByMethod[$method] as $route) {
-            if (!$route['has_parameters']) {
+            // Verifica se a rota tem parâmetros usando verificação defensiva
+            $hasParameters = isset($route['has_parameters']) ? $route['has_parameters'] : !empty($route['parameters']);
+            
+            if (!$hasParameters) {
                 $staticRoutes[] = $route;
             } else {
                 $dynamicRoutes[] = $route;
@@ -419,14 +422,17 @@ class Router
 
         // 6. OTIMIZAÇÃO PARA PARÂMETROS: Pattern matching melhorado
         foreach ($dynamicRoutes as $route) {
-            if (isset($route['pattern']) && $route['pattern'] !== null) {
+            // Verifica se o pattern está disponível e é válido
+            $pattern = $route['pattern'] ?? null;
+            if ($pattern !== null && $pattern !== '') {
                 // Verifica se o pattern é válido antes de usar
-                if (@preg_match($route['pattern'], $path, $matches)) {
+                if (@preg_match($pattern, $path, $matches)) {
                     // Cache o resultado para próximas consultas
                     $routeWithParams = $route;
-                    if (!empty($route['parameters']) && count($matches) > 1) {
+                    $parameters = $route['parameters'] ?? [];
+                    if (!empty($parameters) && count($matches) > 1) {
                         $routeWithParams['matched_params'] = self::extractMatchedParameters(
-                            $route['parameters'],
+                            $parameters,
                             $matches
                         );
                     }
