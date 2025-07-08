@@ -38,7 +38,7 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 ### 🧩 Extensibilidade
 - [**Providers**](technical/providers/usage.md) - Injeção de dependências
 - [**Criando Extensões**](technical/providers/extension.md) - Desenvolva plugins
-- [**Sistema de Extensões**](technical/extesions/README.md) - Arquitetura de plugins
+- [**Sistema de Extensões**](technical/extensions/README.md) - Arquitetura de plugins
 
 ## ⚡ Performance
 
