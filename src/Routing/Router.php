@@ -387,8 +387,12 @@ class Router
             return null;
         }
 
-        // Tenta fazer match do pattern
-        if (@preg_match($pattern, $path, $matches)) {
+        // Tenta validar e fazer match do pattern
+        if (preg_match($pattern, '') === false) {
+            throw new InvalidArgumentException("Invalid regex pattern: $pattern");
+        }
+
+        if (preg_match($pattern, $path, $matches)) {
             // Extrai os parâmetros correspondentes se houver
             $parameters = $route['parameters'] ?? [];
             if (!empty($parameters) && count($matches) > 1) {
