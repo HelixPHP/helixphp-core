@@ -348,6 +348,32 @@ class Router
     }
 
     /**
+     * Extrai parâmetros correspondentes de uma rota com base nos matches do regex
+     * @param array $parameters Array de informações dos parâmetros da rota
+     * @param array $matches Array de matches do preg_match
+     * @return array Array associativo com os parâmetros extraídos
+     */
+    private static function extractMatchedParameters(array $parameters, array $matches): array
+    {
+        $params = [];
+
+        // Começa do índice 1 pois o índice 0 contém o match completo
+        for ($i = 1; $i < count($matches); $i++) {
+            if (isset($parameters[$i - 1])) {
+                $paramInfo = $parameters[$i - 1];
+                // Verifica se é um array com informações do parâmetro ou apenas o nome
+                if (is_array($paramInfo) && isset($paramInfo['name'])) {
+                    $params[$paramInfo['name']] = $matches[$i];
+                } else {
+                    $params[$paramInfo] = $matches[$i];
+                }
+            }
+        }
+
+        return $params;
+    }
+
+    /**
      * Identificação otimizada global (versão melhorada).
      */
     private static function identifyOptimized(string $method, string $path): ?array
@@ -399,19 +425,10 @@ class Router
                     // Cache o resultado para próximas consultas
                     $routeWithParams = $route;
                     if (!empty($route['parameters']) && count($matches) > 1) {
-                        $params = [];
-                        for ($i = 1; $i < count($matches); $i++) {
-                            if (isset($route['parameters'][$i - 1])) {
-                                $paramInfo = $route['parameters'][$i - 1];
-                                // Verifica se é um array com informações do parâmetro ou apenas o nome
-                                if (is_array($paramInfo) && isset($paramInfo['name'])) {
-                                    $params[$paramInfo['name']] = $matches[$i];
-                                } else {
-                                    $params[$paramInfo] = $matches[$i];
-                                }
-                            }
-                        }
-                        $routeWithParams['matched_params'] = $params;
+                        $routeWithParams['matched_params'] = self::extractMatchedParameters(
+                            $route['parameters'],
+                            $matches
+                        );
                     }
 
                     // Cache para próximas consultas idênticas
@@ -455,18 +472,7 @@ class Router
                 if (preg_match($route['pattern'], $path, $matches)) {
                     // Adiciona os parâmetros correspondentes
                     if (!empty($route['parameters']) && is_array($route['parameters']) && count($matches) > 1) {
-                        $params = [];
-                        for ($i = 1; $i < count($matches); $i++) {
-                            if (isset($route['parameters'][$i - 1])) {
-                                $paramInfo = $route['parameters'][$i - 1];
-                                if (is_array($paramInfo) && isset($paramInfo['name'])) {
-                                    $params[$paramInfo['name']] = $matches[$i];
-                                } else {
-                                    $params[$paramInfo] = $matches[$i];
-                                }
-                            }
-                        }
-                        $route['matched_params'] = $params;
+                        $route['matched_params'] = self::extractMatchedParameters($route['parameters'], $matches);
                     }
                     return $route;
                 }
