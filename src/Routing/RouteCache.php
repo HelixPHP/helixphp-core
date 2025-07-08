@@ -62,6 +62,32 @@ class RouteCache
     private static ?string $lastDataHash = null;
 
     /**
+     * Mapeamento de shortcuts para constraints regex
+     */
+    private const CONSTRAINT_SHORTCUTS = [
+        'int' => '\d+',
+        'slug' => '[a-z0-9-]+',
+        'alpha' => '[a-zA-Z]+',
+        'alnum' => '[a-zA-Z0-9]+',
+        'uuid' => '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+        'date' => '\d{4}-\d{2}-\d{2}',
+        'year' => '\d{4}',
+        'month' => '\d{2}',
+        'day' => '\d{2}'
+    ];
+
+    /**
+     * Padrões regex perigosos para detecção de ReDoS
+     */
+    private const DANGEROUS_PATTERNS = [
+        '(\w+)*\w*',
+        '(.+)+',
+        '(a*)*',
+        '(a|a)*',
+        '(a+)+b'
+    ];
+
+    /**
      * Obtém uma rota do cache
      */
     public static function get(string $key): ?array
@@ -128,11 +154,44 @@ class RouteCache
     }
 
     /**
-     * Compila pattern de rota para regex otimizada (versão melhorada)
+     * Compila pattern de rota para regex otimizada (versão melhorada com suporte a constraints)
      */
     public static function compilePattern(string $path): array
     {
-        // Verifica cache rápido primeiro
+        // Try to get from cache first
+        $cached = self::getFromCache($path);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        // Check if it's a static route (optimization)
+        if (self::isStaticPath($path)) {
+            return self::cacheStaticRoute($path);
+        }
+
+        // Compile dynamic route
+        $pattern = $path;
+        $parameters = [];
+        $position = 0;
+
+        // Process regex blocks
+        $pattern = self::processRegexBlocks($pattern, $parameters, $position);
+
+        // Process named parameters
+        $pattern = self::processNamedParameters($pattern, $parameters, $position);
+
+        // Escape dots and finalize pattern
+        $compiledPattern = self::finalizePattern($pattern);
+
+        // Cache and return result
+        return self::cacheDynamicRoute($path, $compiledPattern, $parameters);
+    }
+
+    /**
+     * Get compiled pattern from cache if available
+     */
+    private static function getFromCache(string $path): ?array
+    {
         if (isset(self::$fastParameterCache[$path])) {
             return self::$fastParameterCache[$path];
         }
@@ -149,51 +208,318 @@ class RouteCache
             return $result;
         }
 
-        // Verifica se é rota estática (sem parâmetros) - otimização especial
-        if (strpos($path, ':') === false) {
-            $result = [
-                'pattern' => null, // Rotas estáticas não precisam de regex
-                'parameters' => []
-            ];
-            self::$fastParameterCache[$path] = $result;
-            self::$routeTypeCache['static'][$path] = true;
-            return $result;
+        return null;
+    }
+
+    /**
+     * Check if the path is static (no parameters)
+     */
+    private static function isStaticPath(string $path): bool
+    {
+        return strpos($path, ':') === false && strpos($path, '{') === false;
+    }
+
+    /**
+     * Cache static route data
+     */
+    private static function cacheStaticRoute(string $path): array
+    {
+        $result = [
+            'pattern' => null, // Static routes don't need regex
+            'parameters' => []
+        ];
+        self::$fastParameterCache[$path] = $result;
+        self::$routeTypeCache['static'][$path] = true;
+        return $result;
+    }
+
+    /**
+     * Process regex blocks like {^pattern$}
+     *
+     * This method handles brace-delimited regex blocks in route patterns.
+     * The regex pattern `/\{([^{}]+(?:\{[^{}]*\}[^{}]*)*)\}/` works as follows:
+     *
+     * - `\{` - Match opening brace literally
+     * - `(` - Start capture group
+     * - `[^{}]+` - Match one or more non-brace characters (main content)
+     * - `(?:` - Start non-capturing group for nested braces
+     * - `\{[^{}]*\}` - Match a complete inner brace pair with non-brace content
+     * - `[^{}]*` - Followed by any non-brace characters
+     * - `)*` - The non-capturing group can repeat zero or more times
+     * - `)` - End capture group
+     * - `\}` - Match closing brace literally
+     *
+     * Supported patterns:
+     * - Simple: `{^v(\d+)$}` → Matches version numbers
+     * - With alternation: `{^(images|videos)$}` → Matches specific values
+     * - File extensions: `{^(.+)\.(pdf|doc|txt)$}` → Matches files with extensions
+     *
+     * Limitations:
+     * - Does not handle deeply nested braces (more than 2 levels)
+     * - Assumes balanced braces within the pattern
+     * - Best suited for simple regex patterns with basic grouping
+     *
+     * @param string|null $pattern The route pattern containing regex blocks
+     * @param array $parameters Array to store parameter information
+     * @param int $position Current position counter for parameters
+     * @return string|null The processed pattern with regex blocks expanded
+     */
+    private static function processRegexBlocks(?string $pattern, array &$parameters, int &$position): ?string
+    {
+        if ($pattern === null) {
+            return '';
         }
 
-        // Compilar pattern apenas para rotas dinâmicas
-        $pattern = $path;
-        $parameters = [];
+        return preg_replace_callback(
+            '/\{([^{}]+(?:\{[^{}]*\}[^{}]*)*)\}/',
+            function ($matches) use (&$position, &$parameters) {
+                return self::processRegexBlock($matches[1], $parameters, $position);
+            },
+            $pattern
+        );
+    }
 
-        // Encontra parâmetros na rota (:param) - otimização melhorada
-        if (preg_match_all('/\/:([^\/]+)/', $pattern, $matches, PREG_SET_ORDER)) {
-            foreach ($matches as $match) {
-                $parameters[] = $match[1];
+    /**
+     * Process a single regex block
+     *
+     * This method processes the content inside a regex block after it has been
+     * extracted by processRegexBlocks. It handles:
+     * - Anchor removal (^ and $ characters)
+     * - Capture group detection and parameter registration
+     * - Position tracking for parameter extraction
+     *
+     * Alternative simpler approach for future consideration:
+     * ```php
+     * // For simple use cases, consider using a more restrictive pattern:
+     * // '/\{([^{}]+)\}/' - Matches only non-nested braces
+     * // This would be more robust but less flexible
+     * ```
+     *
+     * @param string $content The content inside the braces
+     * @param array $parameters Parameter array to update
+     * @param int $position Current position for parameter tracking
+     * @return string The processed regex content
+     */
+    private static function processRegexBlock(string $content, array &$parameters, int &$position): string
+    {
+        // Only process if it's a full regex block (contains ^ or capture groups)
+        if (strpos($content, '^') === false && strpos($content, '(') === false) {
+            return '{' . $content . '}'; // Return unchanged
+        }
+
+        // Remove anchors
+        $regex = self::removeRegexAnchors($content);
+
+        // Count and register capture groups
+        $groupCount = self::countCaptureGroups($regex);
+        self::registerAnonymousParameters($parameters, $position, $regex, $groupCount);
+
+        $position += $groupCount;
+        return $regex;
+    }
+
+    /**
+     * Remove regex anchors appropriately
+     */
+    private static function removeRegexAnchors(string $regex): string
+    {
+        // Remove leading ^ only if it's at the very beginning
+        if ($regex !== '' && $regex[0] === '^') {
+            $regex = substr($regex, 1);
+        }
+
+        // Remove trailing $ only if it doesn't appear to be part of regex logic
+        if ($regex !== '' && substr($regex, -1) === '$') {
+            // Don't remove $ if pattern contains file extensions like (.+\.json)
+            if (!preg_match('/\.[a-z]{2,4}\)?\$/', $regex)) {
+                $regex = substr($regex, 0, -1);
             }
         }
 
-        // Converte parâmetros para regex otimizada - apenas uma vez
-        if (!empty($parameters)) {
-            $pattern = preg_replace('/\/:([^\/]+)/', '/([^/]+)', $pattern);
-            $pattern = rtrim($pattern ?? '', '/');
-            $compiledPattern = '#^' . $pattern . '/?$#';
-        } else {
-            $compiledPattern = null; // Não deveria acontecer, mas fallback
+        return $regex;
+    }
+
+    /**
+     * Count capture groups in regex
+     */
+    private static function countCaptureGroups(string $regex): int
+    {
+        preg_match_all('/\([^?]/', $regex, $groups);
+        return count($groups[0]);
+    }
+
+    /**
+     * Register anonymous parameters from regex blocks
+     */
+    private static function registerAnonymousParameters(
+        array &$parameters,
+        int $position,
+        string $regex,
+        int $count
+    ): void {
+        for ($i = 0; $i < $count; $i++) {
+            $parameters[] = [
+                'name' => '_anonymous_' . ($position + $i),
+                'position' => $position + $i,
+                'constraint' => $regex,
+                'type' => 'anonymous'
+            ];
+        }
+    }
+
+    /**
+     * Process named parameters like :param<constraint>
+     */
+    private static function processNamedParameters(?string $pattern, array &$parameters, int &$position): ?string
+    {
+        if ($pattern === null) {
+            return '';
         }
 
+        return preg_replace_callback(
+            '/:([a-zA-Z_][a-zA-Z0-9_]*)(?:<([^>]+)>)?/',
+            function ($matches) use (&$parameters, &$position) {
+                return self::processNamedParameter($matches, $parameters, $position);
+            },
+            $pattern
+        );
+    }
+
+    /**
+     * Process a single named parameter
+     */
+    private static function processNamedParameter(array $matches, array &$parameters, int &$position): string
+    {
+        $paramName = $matches[1];
+        $constraint = $matches[2] ?? '[^/]+'; // Default constraint
+
+        // Resolve constraint shortcuts
+        $constraint = self::resolveConstraintShortcut($constraint);
+
+        // Validate regex safety
+        if (!self::isRegexSafe($constraint)) {
+            throw new \InvalidArgumentException(
+                "Unsafe regex pattern detected in route parameter '{$paramName}': {$constraint}"
+            );
+        }
+
+        $parameters[] = [
+            'name' => $paramName,
+            'position' => $position++,
+            'constraint' => $constraint
+        ];
+
+        return '(' . $constraint . ')';
+    }
+
+    /**
+     * Finalize the pattern for use
+     */
+    private static function finalizePattern(?string $pattern): string
+    {
+        if ($pattern === null) {
+            $pattern = '';
+        }
+
+        // Escape dots outside of capture groups
+        $pattern = self::escapeDots($pattern);
+
+        // Remove duplicate slashes
+        if ($pattern !== '' && $pattern !== null) {
+            $normalizedPattern = preg_replace('#/+#', '/', $pattern);
+            $pattern = $normalizedPattern !== null ? $normalizedPattern : $pattern;
+        }
+
+        // Trim trailing slash and add regex delimiters
+        $pattern = rtrim($pattern ?? '', '/');
+        return '#^' . $pattern . '/?$#';
+    }
+
+    /**
+     * Escape dots that are outside capture groups
+     */
+    private static function escapeDots(?string $pattern): ?string
+    {
+        if ($pattern === null) {
+            return null;
+        }
+
+        return preg_replace_callback(
+            '/(\\.)(?![^(]*\\))/',
+            function ($matches) {
+                return '\\' . $matches[1];
+            },
+            $pattern
+        );
+    }
+
+    /**
+     * Cache dynamic route data
+     */
+    private static function cacheDynamicRoute(string $path, string $compiledPattern, array $parameters): array
+    {
         $result = [
             'pattern' => $compiledPattern,
             'parameters' => $parameters
         ];
 
-        // Cache results em múltiplos lugares para acesso rápido
-        if ($compiledPattern !== null) {
-            self::setPattern($path, $compiledPattern);
-        }
+        // Cache in multiple places for fast access
+        self::setPattern($path, $compiledPattern);
         self::setParameters($path, $parameters);
         self::$fastParameterCache[$path] = $result;
         self::$routeTypeCache['dynamic'][$path] = true;
 
         return $result;
+    }
+
+    /**
+     * Resolve shortcuts de constraints para regex completo
+     */
+    private static function resolveConstraintShortcut(string $constraint): string
+    {
+        return self::CONSTRAINT_SHORTCUTS[$constraint] ?? $constraint;
+    }
+
+    /**
+     * Verifica se um pattern regex é seguro contra ReDoS
+     */
+    private static function isRegexSafe(string $pattern): bool
+    {
+        // Verifica comprimento máximo
+        if (strlen($pattern) > 200) {
+            return false;
+        }
+
+        // Verifica padrões perigosos conhecidos
+        foreach (self::DANGEROUS_PATTERNS as $dangerous) {
+            if (strpos($pattern, $dangerous) !== false) {
+                return false;
+            }
+        }
+
+        // Verifica nested quantifiers perigosos
+        // Procura por quantifiers repetidos como (x+)+ ou (x*)*
+        if (preg_match('/\([^)]*[\*\+]\)[*+]/', $pattern)) {
+            return false;
+        }
+
+        // Verifica backtracking excessivo
+        if (preg_match('/\([^)]*\|[^)]*\)[\*\+]/', $pattern) && substr_count($pattern, '|') > 5) {
+            return false;
+        }
+
+        // Verifica alternations excessivas
+        if (substr_count($pattern, '|') > 10) {
+            return false;
+        }
+
+        // Tenta compilar o regex para verificar se é válido
+        try {
+            @preg_match('#' . $pattern . '#', '');
+            return preg_last_error() === PREG_NO_ERROR;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -207,7 +533,7 @@ class RouteCache
         if (isset(self::$routeTypeCache['dynamic'][$path])) {
             return false;
         }
-        return strpos($path, ':') === false;
+        return strpos($path, ':') === false && strpos($path, '{') === false;
     }
 
     /**
@@ -364,8 +690,9 @@ class RouteCache
             $cachedRoute = array_merge(
                 $route,
                 [
-                    'compiled_pattern' => $compiled['pattern'],
-                    'parameters' => $compiled['parameters']
+                    'pattern' => $compiled['pattern'],
+                    'parameters' => $compiled['parameters'],
+                    'has_parameters' => !empty($compiled['parameters'])
                 ]
             );
 
@@ -393,7 +720,16 @@ class RouteCache
                 'routes_memory' => self::$memoryUsageCache['routes_memory'] ?? 0,
                 'patterns_memory' => self::$memoryUsageCache['patterns_memory'] ?? 0,
                 'parameters_memory' => self::$memoryUsageCache['parameters_memory'] ?? 0
-            ]
+            ],
+            'constraint_shortcuts' => self::CONSTRAINT_SHORTCUTS
         ];
+    }
+
+    /**
+     * Obtém lista de shortcuts disponíveis para constraints
+     */
+    public static function getAvailableShortcuts(): array
+    {
+        return self::CONSTRAINT_SHORTCUTS;
     }
 }

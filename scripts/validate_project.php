@@ -27,7 +27,7 @@ class ProjectValidator
         $this->validateTests();
         $this->validateDocumentation();
         $this->validateReleases();
-        $this->validateBenchmarks();
+        // $this->validateBenchmarks(); // Benchmarks movidos para outro projeto
 
         // Testes funcionais
         $this->validateAuthentication();
@@ -51,11 +51,11 @@ class ProjectValidator
             'docs/releases/',
             'docs/technical/',
             'docs/performance/',
-            'docs/implementions/',
+            'docs/implementations/',
             'docs/testing/',
-            'docs/contributing/',
-            'benchmarks/',
-            'benchmarks/reports/'
+            'docs/contributing/'
+            // 'benchmarks/',  // Benchmarks movidos para outro projeto
+            // 'benchmarks/reports/'
         ];
 
         foreach ($requiredDirs as $dir) {
@@ -74,7 +74,7 @@ class ProjectValidator
             'docs/index.md',
             'docs/releases/README.md',
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'docs/implementions/usage_basic.md',
+            'docs/implementations/usage_basic.md',
             'docs/technical/application.md',
             'docs/technical/http/request.md',
             'docs/technical/http/response.md',
@@ -82,7 +82,7 @@ class ProjectValidator
             'docs/technical/middleware/README.md',
             'docs/technical/authentication/usage_native.md',
             'docs/performance/PerformanceMonitor.md',
-            'docs/performance/benchmarks/README.md',
+            // 'docs/performance/benchmarks/README.md',  // Benchmarks movidos para outro projeto
             'docs/testing/api_testing.md',
             'docs/contributing/README.md',
             'scripts/validate-docs.sh',
@@ -149,18 +149,18 @@ class ProjectValidator
     {
         echo "🛡️ Validando middlewares...\n";
 
-        // Verificar SecurityHeaderMiddleware (PSR-15)
-        if (class_exists('PivotPHP\\Core\\Http\\Psr15\\Middleware\\SecurityHeaderMiddleware')) {
-            $this->passed[] = "SecurityHeaderMiddleware carregado";
+        // Verificar SecurityHeadersMiddleware (PSR-15)
+        if (class_exists('PivotPHP\\Core\\Http\\Psr15\\Middleware\\SecurityHeadersMiddleware')) {
+            $this->passed[] = "SecurityHeadersMiddleware carregado";
 
             try {
                 $security = new \PivotPHP\Core\Http\Psr15\Middleware\SecurityHeadersMiddleware();
-                $this->passed[] = "SecurityHeaderMiddleware pode ser instanciado";
+                $this->passed[] = "SecurityHeadersMiddleware pode ser instanciado";
             } catch (Exception $e) {
-                $this->errors[] = "Erro ao instanciar SecurityHeaderMiddleware: " . $e->getMessage();
+                $this->errors[] = "Erro ao instanciar SecurityHeadersMiddleware: " . $e->getMessage();
             }
         } else {
-            $this->warnings[] = "SecurityHeaderMiddleware não encontrado";
+            $this->warnings[] = "SecurityHeadersMiddleware não encontrado";
         }
 
         // Verificar JWTHelper
@@ -283,7 +283,7 @@ class ProjectValidator
         // Documentação técnica principal
         $technicalDocs = [
             'docs/index.md' => 'Índice principal da documentação',
-            'docs/implementions/usage_basic.md' => 'Guia básico de uso',
+            'docs/implementations/usage_basic.md' => 'Guia básico de uso',
             'docs/technical/application.md' => 'Documentação da Application',
             'docs/technical/http/request.md' => 'Documentação de Request',
             'docs/technical/http/response.md' => 'Documentação de Response',

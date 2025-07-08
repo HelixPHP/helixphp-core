@@ -29,8 +29,8 @@ $app->get('/', function($req, $res) {
     return $res->json(['message' => 'Hello World!']);
 });
 
-// Inicializar e executar
-$app->listen(3000);
+// Executar a aplicação
+$app->run();
 ```
 
 ### Configuração Avançada
@@ -179,15 +179,19 @@ $request = new Request('GET', '/api/users');
 $response = $app->handle($request);
 ```
 
-#### `listen(int $port, string $host = '0.0.0.0')`
-Inicia o servidor na porta especificada.
+#### `run()`
+Executa a aplicação processando a requisição atual.
 
 ```php
-// Servidor padrão
-$app->listen(3000);
+// Processar e enviar resposta
+$app->run();
+```
 
-// Configuração customizada
-$app->listen(8080, 'localhost');
+Para desenvolvimento, use o servidor embutido do PHP:
+
+```bash
+# Iniciar servidor de desenvolvimento
+php -S localhost:8000 -t public
 ```
 
 ## Propriedades Importantes
@@ -257,7 +261,7 @@ $app->boot(); // Carrega config, registra providers, etc.
 ### 4. Processamento de Requisições
 
 ```php
-$app->listen(3000); // Inicia servidor e processa requisições
+$app->run(); // Processa requisição e envia resposta
 ```
 
 ## Padrões e Boas Práticas

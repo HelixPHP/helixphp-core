@@ -5,7 +5,7 @@
 [![Memory Efficiency](https://img.shields.io/badge/Memory-1.7GB%20Saved-orange.svg)](https://github.com/CAFernandes/pivotphp-core)
 [![ML Optimizations](https://img.shields.io/badge/ML%20Models-5%20Active-purple.svg)](https://github.com/CAFernandes/pivotphp-core)
 
-> ⚡ **Ultra High Performance**: 52M+ ops/sec CORS • 13.9M+ ops/sec Zero-Copy • 1.7GB memory savings • ML-powered optimizations
+> ⚡ **Ultra High Performance**: 8,673 req/sec peak throughput • 0.11ms avg latency • 5.7MB memory footprint • Otimizado para estudos e validação de conceitos
 
 ---
 
@@ -13,13 +13,13 @@
 
 PivotPHP Framework v1.0.0 delivers **revolutionary performance** through advanced optimizations:
 
-| **Metric** | **Performance** | **Improvement** |
+| **Metric** | **Performance** | **Description** |
 |------------|----------------|-----------------|
-| **CORS Operations** | 52,428,800 ops/sec | **Base Performance** |
-| **Zero-Copy Strings** | 13,904,538 ops/sec | **+27,800%** |
-| **Route Tracking** | 6,927,364 ops/sec | **+13,800%** |
-| **Memory Saved** | 1,714.9 MB | **Real Savings** |
-| **ML Models** | 5 Active | **Predictive Cache** |
+| **Peak Throughput** | 8,673 req/sec | **Light endpoints** |
+| **Normal API** | 5,112 req/sec | **Typical workloads** |
+| **Heavy Processing** | 439 req/sec | **CPU-intensive** |
+| **Average Latency** | 0.11ms | **Sub-millisecond** |
+| **Memory Usage** | 5.7MB | **Consistent footprint** |
 
 ---
 

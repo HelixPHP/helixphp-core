@@ -77,7 +77,7 @@ validate_directory "docs" "Diretório principal docs/"
 validate_directory "docs/releases" "Diretório de releases"
 validate_directory "docs/technical" "Diretório técnico"
 validate_directory "docs/performance" "Diretório de performance"
-validate_directory "docs/implementions" "Diretório de implementações"
+validate_directory "docs/implementations" "Diretório de implementações"
 validate_directory "docs/testing" "Diretório de testes"
 validate_directory "docs/contributing" "Diretório de contribuição"
 
@@ -121,7 +121,7 @@ fi
 echo ""
 print_status "Validando documentação de implementações..."
 
-validate_file "docs/implementions/usage_basic.md" "Guia básico de uso" 5000
+validate_file "docs/implementations/usage_basic.md" "Guia básico de uso" 5000
 
 echo ""
 print_status "Validando documentação de performance..."
@@ -225,7 +225,7 @@ if [ $ERRORS -eq 0 ]; then
     echo "   • Releases: docs/releases/"
     echo "   • Técnico: docs/technical/"
     echo "   • Performance: docs/performance/"
-    echo "   • Implementações: docs/implementions/"
+    echo "   • Implementações: docs/implementations/"
     echo "   • Testes: docs/testing/"
     echo "   • Contribuição: docs/contributing/"
 

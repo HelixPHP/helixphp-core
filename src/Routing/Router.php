@@ -208,12 +208,18 @@ class Router
         // OTIMIZAÇÃO: processamento de path
         $path = self::optimizePathProcessing($path);
 
+        // Pre-compila pattern e parâmetros ANTES de criar routeData
+        $compiled = RouteCache::compilePattern($path);
+
         $routeData = [
             'method' => $method,
             'path' => $path,
             'middlewares' => array_merge(self::getGroupMiddlewaresForPath($path), $middlewares),
             'handler' => $handler,
-            'metadata' => self::sanitizeForJson($metadata)
+            'metadata' => self::sanitizeForJson($metadata),
+            'pattern' => $compiled['pattern'],
+            'parameters' => $compiled['parameters'],
+            'has_parameters' => !empty($compiled['parameters'])
         ];
 
         // Armazena na lista tradicional (compatibilidade)
@@ -222,9 +228,6 @@ class Router
         // === OTIMIZAÇÕES INTEGRADAS ===
 
         $key = self::createRouteKey($method, $path);
-
-        // Pre-compila pattern e parâmetros
-        $compiled = RouteCache::compilePattern($path);
 
         $optimizedRoute = [
             'method' => $method,
@@ -345,6 +348,63 @@ class Router
     }
 
     /**
+     * Extrai parâmetros correspondentes de uma rota com base nos matches do regex
+     * @param array $parameters Array de informações dos parâmetros da rota
+     * @param array $matches Array de matches do preg_match
+     * @return array Array associativo com os parâmetros extraídos
+     */
+    private static function extractMatchedParameters(array $parameters, array $matches): array
+    {
+        $params = [];
+
+        // Começa do índice 1 pois o índice 0 contém o match completo
+        for ($i = 1; $i < count($matches); $i++) {
+            if (isset($parameters[$i - 1])) {
+                $paramInfo = $parameters[$i - 1];
+                // Verifica se é um array com informações do parâmetro ou apenas o nome
+                if (is_array($paramInfo) && isset($paramInfo['name'])) {
+                    $params[$paramInfo['name']] = $matches[$i];
+                } else {
+                    $params[$paramInfo] = $matches[$i];
+                }
+            }
+        }
+
+        return $params;
+    }
+
+    /**
+     * Tenta fazer match de uma rota com pattern contra um path
+     * @param array $route A rota a ser testada
+     * @param string $path O path a ser testado
+     * @return array|null A rota com parâmetros extraídos ou null se não houver match
+     */
+    private static function matchRoutePattern(array $route, string $path): ?array
+    {
+        // Verifica se o pattern está disponível e é válido
+        $pattern = $route['pattern'] ?? null;
+        if ($pattern === null || $pattern === '') {
+            return null;
+        }
+
+        // Tenta validar e fazer match do pattern
+        if (preg_match($pattern, '') === false) {
+            throw new InvalidArgumentException("Invalid regex pattern: $pattern");
+        }
+
+        if (preg_match($pattern, $path, $matches)) {
+            // Extrai os parâmetros correspondentes se houver
+            $parameters = $route['parameters'] ?? [];
+            if (!empty($parameters) && count($matches) > 1) {
+                $route['matched_params'] = self::extractMatchedParameters($parameters, $matches);
+            }
+            return $route;
+        }
+
+        return null;
+    }
+
+    /**
      * Identificação otimizada global (versão melhorada).
      */
     private static function identifyOptimized(string $method, string $path): ?array
@@ -373,7 +433,10 @@ class Router
         $dynamicRoutes = [];
 
         foreach (self::$routesByMethod[$method] as $route) {
-            if (!$route['has_parameters']) {
+            // Verifica se a rota tem parâmetros usando verificação defensiva
+            $hasParameters = isset($route['has_parameters']) ? $route['has_parameters'] : !empty($route['parameters']);
+
+            if (!$hasParameters) {
                 $staticRoutes[] = $route;
             } else {
                 $dynamicRoutes[] = $route;
@@ -390,25 +453,11 @@ class Router
 
         // 6. OTIMIZAÇÃO PARA PARÂMETROS: Pattern matching melhorado
         foreach ($dynamicRoutes as $route) {
-            if (isset($route['pattern']) && $route['pattern'] !== null) {
-                // Verifica se o pattern é válido antes de usar
-                if (@preg_match($route['pattern'], $path, $matches)) {
-                    // Cache o resultado para próximas consultas
-                    $routeWithParams = $route;
-                    if (!empty($route['parameters']) && count($matches) > 1) {
-                        $params = [];
-                        for ($i = 1; $i < count($matches); $i++) {
-                            if (isset($route['parameters'][$i - 1])) {
-                                $params[$route['parameters'][$i - 1]] = $matches[$i];
-                            }
-                        }
-                        $routeWithParams['matched_params'] = $params;
-                    }
-
-                    // Cache para próximas consultas idênticas
-                    self::$exactMatchCache[$exactKey] = $routeWithParams;
-                    return $routeWithParams;
-                }
+            $matchedRoute = self::matchRoutePattern($route, $path);
+            if ($matchedRoute !== null) {
+                // Cache para próximas consultas idênticas
+                self::$exactMatchCache[$exactKey] = $matchedRoute;
+                return $matchedRoute;
             }
         }
 
@@ -441,19 +490,27 @@ class Router
 
         // 2. Tenta encontrar rota dinâmica (com parâmetros)
         foreach ($routes as $route) {
-            $routePath = is_string($route['path']) ? $route['path'] : '';
-            $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $routePath);
-            if ($pattern === null) {
-                $pattern = $routePath;
-            }
-            $pattern = rtrim($pattern, '/');
-            $pattern = '#^' . $pattern . '/?$#';
-            if ($routePath === self::DEFAULT_PATH) {
-                if ($path === self::DEFAULT_PATH) {
-                    return $route;
+            // Usa o pattern pré-compilado se disponível
+            if (isset($route['pattern']) && $route['pattern'] !== null && is_string($route['pattern'])) {
+                $matchedRoute = self::matchRoutePattern($route, $path);
+                if ($matchedRoute !== null) {
+                    return $matchedRoute;
                 }
-            } elseif (preg_match($pattern, $path)) {
-                return $route;
+            } else {
+                // Fallback para rotas sem pattern pré-compilado (compatibilidade)
+                $routePath = is_string($route['path']) ? $route['path'] : '';
+                if ($routePath === self::DEFAULT_PATH) {
+                    if ($path === self::DEFAULT_PATH) {
+                        return $route;
+                    }
+                } else {
+                    // Apenas rotas estáticas simples
+                    if (strpos($routePath, ':') === false && strpos($routePath, '{') === false) {
+                        if ($routePath === $path) {
+                            return $route;
+                        }
+                    }
+                }
             }
         }
         return null;
@@ -509,8 +566,9 @@ class Router
 
         // Pattern matching para rotas com parâmetros
         foreach ($groupRoutes[$method] as $route) {
-            if (isset($route['pattern']) && preg_match($route['pattern'], $path)) {
-                return self::enrichRouteWithGroupMiddlewares($route, $prefix);
+            $matchedRoute = self::matchRoutePattern($route, $path);
+            if ($matchedRoute !== null) {
+                return self::enrichRouteWithGroupMiddlewares($matchedRoute, $prefix);
             }
         }
 

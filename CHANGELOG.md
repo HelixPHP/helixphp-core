@@ -5,6 +5,50 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-07-08
+
+### 🆕 **Regex Route Validation Support**
+
+> 📖 **See complete overview:** [docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md](docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md)
+
+#### Added
+- **Regex Constraints**: Advanced pattern matching for route parameters
+- **Predefined Shortcuts**: Common patterns (int, slug, uuid, date, etc.)
+- **Full Regex Blocks**: Complete control over route segments
+- **Non-greedy Pattern Matching**: Improved regex processing
+- **Backward Compatibility**: All v1.0.0 routes continue to work
+
+#### Changed
+- Refactored `RouteCache::compilePattern()` into 12 focused helper methods
+- Improved route compilation performance with better regex handling
+- Enhanced parameter extraction logic with shared helper method
+- Updated documentation positioning (ideal for concept validation and studies)
+- Added comprehensive documentation for regex block pattern limitations
+- Created dedicated test suite for regex block validation
+
+#### Fixed
+- Route pattern compilation preserving URL-encoded characters
+- Regex anchors being duplicated in full regex blocks
+- Greedy regex pattern spanning multiple blocks
+- PHPStan warnings about type comparisons
+- PSR-12 code style violations
+
+#### Examples
+```php
+// Numeric validation
+$app->get('/users/:id<\\d+>', handler);
+
+// Using shortcuts
+$app->get('/posts/:slug<slug>', handler);
+$app->get('/items/:uuid<uuid>', handler);
+
+// Date validation
+$app->get('/archive/:year<\\d{4}>/:month<\\d{2}>', handler);
+
+// Full regex blocks
+$app->get('/api/{^v(\\d+)$}/users', handler);
+```
+
 ## [1.0.0] - 2025-07-07
 
 ### 🚀 **Initial Stable Release**
@@ -45,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ✅ **PSR-12**: 100% code style compliance
 - ✅ **270+ Tests**: Comprehensive test coverage
 - ✅ **PHP 8.1+**: Modern PHP version support
-- ✅ **Production Ready**: Battle-tested in enterprise environments
+- ✅ **Performance Validated**: Optimized for high-performance applications
 
 #### Technical Stack
 - **PHP**: 8.1+ with full 8.4 compatibility
@@ -91,7 +135,7 @@ For questions, issues, or contributions:
 
 ---
 
-**Current Version**: v1.0.0  
-**Release Date**: July 7, 2025  
-**Stability**: Stable  
+**Current Version**: v1.0.1  
+**Release Date**: July 8, 2025  
+**Status**: Ideal for concept validation and studies  
 **Minimum PHP**: 8.1

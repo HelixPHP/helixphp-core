@@ -54,7 +54,7 @@ print_status "Verificando scripts de benchmark..."
 # Scripts essenciais
 BENCHMARK_SCRIPTS=(
     "benchmarks/run_benchmark.sh"
-    "benchmarks/ExpressPhpBenchmark.php"
+    # "benchmarks/ExpressPhpBenchmark.php" # Arquivo não existe mais
     "benchmarks/ComprehensivePerformanceAnalysis.php"
     "benchmarks/EnhancedAdvancedOptimizationsBenchmark.php"
     "benchmarks/generate_comprehensive_report.php"

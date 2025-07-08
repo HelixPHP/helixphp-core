@@ -139,8 +139,8 @@ else
     # 1. Validação da estrutura de documentação
     run_validation "./scripts/validate-docs.sh" "Validação da Estrutura de Documentação"
 
-    # 2. Validação dos benchmarks
-    run_validation "./scripts/validate_benchmarks.sh" "Validação dos Benchmarks"
+    # 2. Validação dos benchmarks - REMOVIDO (benchmarks migrados para outro projeto)
+    # run_validation "./scripts/validate_benchmarks.sh" "Validação dos Benchmarks"
 
     # 3. Validação completa do projeto (PHP)
     print_status "Executando: Validação Completa do Projeto (PHP)"
