@@ -374,6 +374,33 @@ class Router
     }
 
     /**
+     * Tenta fazer match de uma rota com pattern contra um path
+     * @param array $route A rota a ser testada
+     * @param string $path O path a ser testado
+     * @return array|null A rota com parâmetros extraídos ou null se não houver match
+     */
+    private static function matchRoutePattern(array $route, string $path): ?array
+    {
+        // Verifica se o pattern está disponível e é válido
+        $pattern = $route['pattern'] ?? null;
+        if ($pattern === null || $pattern === '') {
+            return null;
+        }
+
+        // Tenta fazer match do pattern
+        if (@preg_match($pattern, $path, $matches)) {
+            // Extrai os parâmetros correspondentes se houver
+            $parameters = $route['parameters'] ?? [];
+            if (!empty($parameters) && count($matches) > 1) {
+                $route['matched_params'] = self::extractMatchedParameters($parameters, $matches);
+            }
+            return $route;
+        }
+
+        return null;
+    }
+
+    /**
      * Identificação otimizada global (versão melhorada).
      */
     private static function identifyOptimized(string $method, string $path): ?array
@@ -422,25 +449,11 @@ class Router
 
         // 6. OTIMIZAÇÃO PARA PARÂMETROS: Pattern matching melhorado
         foreach ($dynamicRoutes as $route) {
-            // Verifica se o pattern está disponível e é válido
-            $pattern = $route['pattern'] ?? null;
-            if ($pattern !== null && $pattern !== '') {
-                // Verifica se o pattern é válido antes de usar
-                if (@preg_match($pattern, $path, $matches)) {
-                    // Cache o resultado para próximas consultas
-                    $routeWithParams = $route;
-                    $parameters = $route['parameters'] ?? [];
-                    if (!empty($parameters) && count($matches) > 1) {
-                        $routeWithParams['matched_params'] = self::extractMatchedParameters(
-                            $parameters,
-                            $matches
-                        );
-                    }
-
-                    // Cache para próximas consultas idênticas
-                    self::$exactMatchCache[$exactKey] = $routeWithParams;
-                    return $routeWithParams;
-                }
+            $matchedRoute = self::matchRoutePattern($route, $path);
+            if ($matchedRoute !== null) {
+                // Cache para próximas consultas idênticas
+                self::$exactMatchCache[$exactKey] = $matchedRoute;
+                return $matchedRoute;
             }
         }
 
@@ -475,12 +488,9 @@ class Router
         foreach ($routes as $route) {
             // Usa o pattern pré-compilado se disponível
             if (isset($route['pattern']) && $route['pattern'] !== null && is_string($route['pattern'])) {
-                if (preg_match($route['pattern'], $path, $matches)) {
-                    // Adiciona os parâmetros correspondentes
-                    if (!empty($route['parameters']) && is_array($route['parameters']) && count($matches) > 1) {
-                        $route['matched_params'] = self::extractMatchedParameters($route['parameters'], $matches);
-                    }
-                    return $route;
+                $matchedRoute = self::matchRoutePattern($route, $path);
+                if ($matchedRoute !== null) {
+                    return $matchedRoute;
                 }
             } else {
                 // Fallback para rotas sem pattern pré-compilado (compatibilidade)
@@ -552,12 +562,9 @@ class Router
 
         // Pattern matching para rotas com parâmetros
         foreach ($groupRoutes[$method] as $route) {
-            if (isset($route['pattern']) && preg_match($route['pattern'], $path, $matches)) {
-                // Extrai os parâmetros correspondentes se houver
-                if (!empty($route['parameters']) && count($matches) > 1) {
-                    $route['matched_params'] = self::extractMatchedParameters($route['parameters'], $matches);
-                }
-                return self::enrichRouteWithGroupMiddlewares($route, $prefix);
+            $matchedRoute = self::matchRoutePattern($route, $path);
+            if ($matchedRoute !== null) {
+                return self::enrichRouteWithGroupMiddlewares($matchedRoute, $prefix);
             }
         }
 
