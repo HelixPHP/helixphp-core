@@ -198,10 +198,10 @@ class RouteCache
             function ($matches) use (&$position) {
                 $regex = $matches[1];
                 // Remove apenas âncoras no início e fim da string completa
-                if (strlen($regex) > 0 && $regex[0] === '^') {
+                if ($regex !== '' && $regex[0] === '^') {
                     $regex = substr($regex, 1);
                 }
-                if (strlen($regex) > 0 && $regex[strlen($regex) - 1] === '$') {
+                if ($regex !== '' && $regex[strlen($regex) - 1] === '$') {
                     $regex = substr($regex, 0, -1);
                 }
                 // Conta grupos de captura no regex
