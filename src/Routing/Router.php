@@ -404,7 +404,7 @@ class Router
         foreach (self::$routesByMethod[$method] as $route) {
             // Verifica se a rota tem parâmetros usando verificação defensiva
             $hasParameters = isset($route['has_parameters']) ? $route['has_parameters'] : !empty($route['parameters']);
-            
+
             if (!$hasParameters) {
                 $staticRoutes[] = $route;
             } else {

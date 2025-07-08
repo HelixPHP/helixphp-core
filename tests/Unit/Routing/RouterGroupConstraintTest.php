@@ -23,19 +23,31 @@ class RouterGroupConstraintTest extends TestCase
     public function testGroupRoutesWithConstraints(): void
     {
         // Registra rotas no grupo /api
-        Router::group('/api', function () {
-            Router::get('/users/:id<\d+>', function () {
-                return 'user by id';
-            });
-            
-            Router::get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<[a-z0-9-]+>', function () {
-                return 'post by date and slug';
-            });
-            
-            Router::get('/products/:sku<[A-Z]{3}-\d{4}>', function () {
-                return 'product by sku';
-            });
-        });
+        Router::group(
+            '/api',
+            function () {
+                Router::get(
+                    '/users/:id<\d+>',
+                    function () {
+                        return 'user by id';
+                    }
+                );
+
+                Router::get(
+                    '/posts/:year<\d{4}>/:month<\d{2}>/:slug<[a-z0-9-]+>',
+                    function () {
+                        return 'post by date and slug';
+                    }
+                );
+
+                Router::get(
+                    '/products/:sku<[A-Z]{3}-\d{4}>',
+                    function () {
+                        return 'product by sku';
+                    }
+                );
+            }
+        );
 
         // Testa rota com constraint de dígitos
         $route1 = Router::identifyByGroup('GET', '/api/users/123');
@@ -75,13 +87,22 @@ class RouterGroupConstraintTest extends TestCase
     public function testNestedGroupsWithConstraints(): void
     {
         // Grupos aninhados
-        Router::group('/v1', function () {
-            Router::group('/v1/admin', function () {
-                Router::get('/v1/admin/users/:id<\d+>/edit', function () {
-                    return 'edit user';
-                });
-            });
-        });
+        Router::group(
+            '/v1',
+            function () {
+                Router::group(
+                    '/v1/admin',
+                    function () {
+                        Router::get(
+                            '/v1/admin/users/:id<\d+>/edit',
+                            function () {
+                                return 'edit user';
+                            }
+                        );
+                    }
+                );
+            }
+        );
 
         $route = Router::identifyByGroup('GET', '/v1/admin/users/456/edit');
         $this->assertNotNull($route);
@@ -95,21 +116,27 @@ class RouterGroupConstraintTest extends TestCase
      */
     public function testGroupIdentificationUsesCompiledPatterns(): void
     {
-        Router::group('/test', function () {
-            Router::get('/test/item/:id<\d+>', function () {
-                return 'item';
-            });
-        });
+        Router::group(
+            '/test',
+            function () {
+                Router::get(
+                    '/test/item/:id<\d+>',
+                    function () {
+                        return 'item';
+                    }
+                );
+            }
+        );
 
         // Verifica que a rota tem os campos compilados
         $routes = Router::getRoutes();
         $lastRoute = end($routes);
-        
+
         $this->assertArrayHasKey('pattern', $lastRoute);
         $this->assertArrayHasKey('parameters', $lastRoute);
         $this->assertArrayHasKey('has_parameters', $lastRoute);
         $this->assertTrue($lastRoute['has_parameters']);
-        
+
         // Verifica que identifyByGroup funciona
         $identified = Router::identifyByGroup('GET', '/test/item/999');
         $this->assertNotNull($identified);

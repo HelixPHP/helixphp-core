@@ -24,9 +24,24 @@ class RouterFieldsIntegrityTest extends TestCase
     public function testRoutesByMethodHaveRequiredFields(): void
     {
         // Registra várias rotas
-        Router::get('/static', function () { return 'static'; });
-        Router::get('/users/:id<\d+>', function () { return 'user'; });
-        Router::post('/posts/:year<\d{4}>/:slug<[a-z0-9-]+>', function () { return 'post'; });
+        Router::get(
+            '/static',
+            function () {
+                return 'static';
+            }
+        );
+        Router::get(
+            '/users/:id<\d+>',
+            function () {
+                return 'user';
+            }
+        );
+        Router::post(
+            '/posts/:year<\d{4}>/:slug<[a-z0-9-]+>',
+            function () {
+                return 'post';
+            }
+        );
 
         // Usa reflexão para acessar $routesByMethod
         $reflection = new ReflectionClass(Router::class);
@@ -45,7 +60,7 @@ class RouterFieldsIntegrityTest extends TestCase
             $this->assertArrayHasKey('method', $route, "Route {$routeKey} deve ter campo 'method'");
             $this->assertArrayHasKey('path', $route, "Route {$routeKey} deve ter campo 'path'");
             $this->assertArrayHasKey('handler', $route, "Route {$routeKey} deve ter campo 'handler'");
-            
+
             $this->assertIsArray($route['parameters'], "Campo 'parameters' deve ser array");
             $this->assertIsBool($route['has_parameters'], "Campo 'has_parameters' deve ser boolean");
         }
@@ -55,7 +70,7 @@ class RouterFieldsIntegrityTest extends TestCase
             $this->assertArrayHasKey('pattern', $route, "Route {$routeKey} deve ter campo 'pattern'");
             $this->assertArrayHasKey('parameters', $route, "Route {$routeKey} deve ter campo 'parameters'");
             $this->assertArrayHasKey('has_parameters', $route, "Route {$routeKey} deve ter campo 'has_parameters'");
-            
+
             $this->assertIsArray($route['parameters'], "Campo 'parameters' deve ser array");
             $this->assertIsBool($route['has_parameters'], "Campo 'has_parameters' deve ser boolean");
         }
@@ -66,9 +81,12 @@ class RouterFieldsIntegrityTest extends TestCase
      */
     public function testPreCompiledRoutesHaveRequiredFields(): void
     {
-        Router::get('/api/users/:id<\d+>/posts/:slug<[a-z0-9-]+>', function () {
-            return 'user posts';
-        });
+        Router::get(
+            '/api/users/:id<\d+>/posts/:slug<[a-z0-9-]+>',
+            function () {
+                return 'user posts';
+            }
+        );
 
         // Usa reflexão para acessar $preCompiledRoutes
         $reflection = new ReflectionClass(Router::class);
@@ -82,7 +100,7 @@ class RouterFieldsIntegrityTest extends TestCase
             $this->assertArrayHasKey('pattern', $route, "PreCompiled route {$routeKey} deve ter 'pattern'");
             $this->assertArrayHasKey('parameters', $route, "PreCompiled route {$routeKey} deve ter 'parameters'");
             $this->assertArrayHasKey('has_parameters', $route, "PreCompiled route {$routeKey} deve ter 'has_parameters'");
-            
+
             if ($route['has_parameters']) {
                 $this->assertNotNull($route['pattern'], "Rota com parâmetros deve ter pattern não-null");
                 $this->assertNotEmpty($route['parameters'], "Rota com parâmetros deve ter parameters não-vazio");
@@ -95,13 +113,16 @@ class RouterFieldsIntegrityTest extends TestCase
      */
     public function testDynamicRouteIdentificationWorks(): void
     {
-        Router::get('/complex/:category<[a-z]+>/items/:id<\d+>/details', function () {
-            return 'complex route';
-        });
+        Router::get(
+            '/complex/:category<[a-z]+>/items/:id<\d+>/details',
+            function () {
+                return 'complex route';
+            }
+        );
 
         // Força o uso do identifyOptimized
         $identified = Router::identify('GET', '/complex/electronics/items/123/details');
-        
+
         $this->assertNotNull($identified, 'Rota dinâmica complexa deve ser identificada');
         $this->assertArrayHasKey('matched_params', $identified);
         $this->assertEquals('electronics', $identified['matched_params']['category']);
@@ -113,12 +134,15 @@ class RouterFieldsIntegrityTest extends TestCase
      */
     public function testStaticRouteIdentificationWorks(): void
     {
-        Router::get('/static/path/without/params', function () {
-            return 'static route';
-        });
+        Router::get(
+            '/static/path/without/params',
+            function () {
+                return 'static route';
+            }
+        );
 
         $identified = Router::identify('GET', '/static/path/without/params');
-        
+
         $this->assertNotNull($identified, 'Rota estática deve ser identificada');
         $this->assertEquals('/static/path/without/params', $identified['path']);
     }
