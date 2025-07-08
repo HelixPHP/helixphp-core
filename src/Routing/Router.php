@@ -399,7 +399,13 @@ class Router
                         $params = [];
                         for ($i = 1; $i < count($matches); $i++) {
                             if (isset($route['parameters'][$i - 1])) {
-                                $params[$route['parameters'][$i - 1]] = $matches[$i];
+                                $paramInfo = $route['parameters'][$i - 1];
+                                // Verifica se é um array com informações do parâmetro ou apenas o nome
+                                if (is_array($paramInfo) && isset($paramInfo['name'])) {
+                                    $params[$paramInfo['name']] = $matches[$i];
+                                } else {
+                                    $params[$paramInfo] = $matches[$i];
+                                }
                             }
                         }
                         $routeWithParams['matched_params'] = $params;
@@ -442,18 +448,43 @@ class Router
         // 2. Tenta encontrar rota dinâmica (com parâmetros)
         foreach ($routes as $route) {
             $routePath = is_string($route['path']) ? $route['path'] : '';
-            $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $routePath);
-            if ($pattern === null) {
-                $pattern = $routePath;
-            }
-            $pattern = rtrim($pattern, '/');
-            $pattern = '#^' . $pattern . '/?$#';
-            if ($routePath === self::DEFAULT_PATH) {
-                if ($path === self::DEFAULT_PATH) {
+
+            // Se a rota tem constraints, usa o padrão compilado
+            if (strpos($routePath, '<') !== false || strpos($routePath, '{') !== false) {
+                $compiled = RouteCache::compilePattern($routePath);
+                if ($compiled['pattern'] && preg_match($compiled['pattern'], $path, $matches)) {
+                    // Adiciona os parâmetros correspondentes
+                    if (!empty($compiled['parameters']) && count($matches) > 1) {
+                        $params = [];
+                        for ($i = 1; $i < count($matches); $i++) {
+                            if (isset($compiled['parameters'][$i - 1])) {
+                                $paramInfo = $compiled['parameters'][$i - 1];
+                                if (is_array($paramInfo) && isset($paramInfo['name'])) {
+                                    $params[$paramInfo['name']] = $matches[$i];
+                                } else {
+                                    $params[$paramInfo] = $matches[$i];
+                                }
+                            }
+                        }
+                        $route['matched_params'] = $params;
+                    }
                     return $route;
                 }
-            } elseif (preg_match($pattern, $path)) {
-                return $route;
+            } else {
+                // Rota sem constraints, usa padrão simples
+                $pattern = preg_replace('/\/(:[^\/]+)/', '/([^/]+)', $routePath);
+                if ($pattern === null) {
+                    $pattern = $routePath;
+                }
+                $pattern = rtrim($pattern, '/');
+                $pattern = '#^' . $pattern . '/?$#';
+                if ($routePath === self::DEFAULT_PATH) {
+                    if ($path === self::DEFAULT_PATH) {
+                        return $route;
+                    }
+                } elseif (preg_match($pattern, $path)) {
+                    return $route;
+                }
             }
         }
         return null;

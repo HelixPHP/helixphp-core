@@ -12,13 +12,13 @@ class RegexRoutingIntegrationTest extends TestCase
 {
     protected function setUp(): void
     {
-        Router::reset();
+        Router::clear();
         RouteCache::clear();
     }
 
     protected function tearDown(): void
     {
-        Router::reset();
+        Router::clear();
         RouteCache::clear();
     }
 

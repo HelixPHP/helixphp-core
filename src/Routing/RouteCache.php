@@ -191,12 +191,16 @@ class RouteCache
         $parameters = [];
         $position = 0;
 
-        // Primeiro, processa regex completo entre chaves {}
+        // Primeiro, processa regex completo entre chaves {} que começam com ^
+        // Usa um contador para balancear chaves internas
         $pattern = preg_replace_callback(
-            '/\{([^\}]+)\}/',
+            '/\{(\^(?:[^{}]|\{[^}]*\})*\$?)\}/',
             function ($matches) use (&$position) {
-                $position++;
-                return $matches[1]; // Retorna o regex sem as chaves
+                $regex = $matches[1];
+                // Conta grupos de captura no regex
+                preg_match_all('/\([^?]/', $regex, $groups);
+                $position += count($groups[0]);
+                return $regex;
             },
             $pattern
         );
@@ -239,8 +243,20 @@ class RouteCache
             $pattern = '';
         }
 
+        // Escapa apenas o ponto literal (.) que está fora dos grupos de captura
+        // Isso é necessário para padrões como /files/:name.:ext
+        $pattern = preg_replace_callback(
+            '/(\.)(?![^(]*\))/',
+            function ($matches) {
+                return '\\' . $matches[1];
+            },
+            $pattern
+        );
+
         // Remove barras duplicadas e prepara o pattern final
-        $pattern = preg_replace('#/+#', '/', $pattern);
+        if ($pattern !== null) {
+            $pattern = preg_replace('#/+#', '/', $pattern);
+        }
         $pattern = rtrim($pattern ?? '', '/');
         $compiledPattern = '#^' . $pattern . '/?$#';
 
