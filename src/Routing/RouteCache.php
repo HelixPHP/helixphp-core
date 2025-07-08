@@ -235,6 +235,34 @@ class RouteCache
 
     /**
      * Process regex blocks like {^pattern$}
+     *
+     * This method handles brace-delimited regex blocks in route patterns.
+     * The regex pattern `/\{([^{}]+(?:\{[^{}]*\}[^{}]*)*)\}/` works as follows:
+     *
+     * - `\{` - Match opening brace literally
+     * - `(` - Start capture group
+     * - `[^{}]+` - Match one or more non-brace characters (main content)
+     * - `(?:` - Start non-capturing group for nested braces
+     * - `\{[^{}]*\}` - Match a complete inner brace pair with non-brace content
+     * - `[^{}]*` - Followed by any non-brace characters
+     * - `)*` - The non-capturing group can repeat zero or more times
+     * - `)` - End capture group
+     * - `\}` - Match closing brace literally
+     *
+     * Supported patterns:
+     * - Simple: `{^v(\d+)$}` → Matches version numbers
+     * - With alternation: `{^(images|videos)$}` → Matches specific values
+     * - File extensions: `{^(.+)\.(pdf|doc|txt)$}` → Matches files with extensions
+     *
+     * Limitations:
+     * - Does not handle deeply nested braces (more than 2 levels)
+     * - Assumes balanced braces within the pattern
+     * - Best suited for simple regex patterns with basic grouping
+     *
+     * @param string|null $pattern The route pattern containing regex blocks
+     * @param array $parameters Array to store parameter information
+     * @param int $position Current position counter for parameters
+     * @return string|null The processed pattern with regex blocks expanded
      */
     private static function processRegexBlocks(?string $pattern, array &$parameters, int &$position): ?string
     {
@@ -253,6 +281,24 @@ class RouteCache
 
     /**
      * Process a single regex block
+     *
+     * This method processes the content inside a regex block after it has been
+     * extracted by processRegexBlocks. It handles:
+     * - Anchor removal (^ and $ characters)
+     * - Capture group detection and parameter registration
+     * - Position tracking for parameter extraction
+     *
+     * Alternative simpler approach for future consideration:
+     * ```php
+     * // For simple use cases, consider using a more restrictive pattern:
+     * // '/\{([^{}]+)\}/' - Matches only non-nested braces
+     * // This would be more robust but less flexible
+     * ```
+     *
+     * @param string $content The content inside the braces
+     * @param array $parameters Parameter array to update
+     * @param int $position Current position for parameter tracking
+     * @return string The processed regex content
      */
     private static function processRegexBlock(string $content, array &$parameters, int &$position): string
     {

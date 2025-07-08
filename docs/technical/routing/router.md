@@ -193,6 +193,22 @@ Router::get('/archive/{^(\d{4})/(\d{2})/(.+)$}', function($req, $res) {
 });
 ```
 
+#### Limitações dos Blocos Regex
+
+Os blocos regex são processados por um padrão que suporta:
+- ✅ Padrões simples com grupos de captura
+- ✅ Alternância básica `(option1|option2)`
+- ✅ Quantificadores `{n}`, `+`, `*`, `?`
+- ✅ Classes de caracteres `[A-Z]`, `\d`, `\w`
+- ✅ Um nível de agrupamento interno
+
+Limitações conhecidas:
+- ❌ Múltiplos níveis de chaves aninhadas
+- ❌ Padrões extremamente complexos com recursão
+- ❌ Chaves desbalanceadas
+
+Para casos simples e médios, o sistema funciona perfeitamente. Para padrões muito complexos, considere simplificar a lógica ou usar validação adicional no handler.
+
 #### Combinando Constraints e Blocos Regex
 
 ```php

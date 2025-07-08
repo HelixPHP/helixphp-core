@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved route compilation performance with better regex handling
 - Enhanced parameter extraction logic with shared helper method
 - Updated documentation positioning (ideal for concept validation and studies)
+- Added comprehensive documentation for regex block pattern limitations
+- Created dedicated test suite for regex block validation
 
 #### Fixed
 - Route pattern compilation preserving URL-encoded characters
