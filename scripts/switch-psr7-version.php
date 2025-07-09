@@ -139,26 +139,21 @@ foreach ($files as $file) {
                 $content = $newContent;
                 $modified = true;
                 
-                // Add PHPDoc return type if needed
-                if (!preg_match('/@return\s+\S+/', $content)) {
-                    $docPattern = '/(\s*\/\*\*[^*]*\*\/\s*public\s+function\s+' . preg_quote($method, '/') . ')/';
-                    $docReplacement = '$1';
-                    
-                    // Find the method and add @return to its docblock
-                    $content = preg_replace_callback(
-                        '/(\s*\/\*\*)((?:(?!\*\/).)*?)(\*\/\s*public\s+function\s+' . preg_quote($method, '/') . '\s*\([^)]*\))/s',
-                        function ($matches) use ($returnType) {
-                            $docblock = $matches[1] . $matches[2];
-                            if (!preg_match('/@return/', $docblock)) {
-                                // Add @return before the closing */
-                                $phpDocType = str_replace(['|null', 'mixed'], ['|null', 'mixed'], $returnType);
-                                $docblock = $matches[1] . $matches[2] . "\n     * @return " . $phpDocType . "\n     ";
-                            }
-                            return $docblock . $matches[3];
-                        },
-                        $content
-                    );
-                }
+                // Add PHPDoc return type if needed for this specific method
+                $content = preg_replace_callback(
+                    '/(\s*\/\*\*)((?:(?!\*\/).)*?)(\*\/\s*public\s+function\s+' . preg_quote($method, '/') . '\s*\([^)]*\))/s',
+                    function ($matches) use ($returnType) {
+                        $docblock = $matches[1] . $matches[2];
+                        // Only check for @return in this specific method's docblock
+                        if (!preg_match('/@return/', $docblock)) {
+                            // Add @return before the closing */
+                            $phpDocType = str_replace(['|null', 'mixed'], ['|null', 'mixed'], $returnType);
+                            $docblock = $matches[1] . $matches[2] . "\n     * @return " . $phpDocType . "\n     ";
+                        }
+                        return $docblock . $matches[3];
+                    },
+                    $content
+                );
             }
         } else {
             // Add return types for v2.x
