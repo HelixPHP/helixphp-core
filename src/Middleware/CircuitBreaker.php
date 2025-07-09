@@ -121,7 +121,7 @@ class CircuitBreaker
         if ($path === '') {
             return 'default';
         }
-        
+
         $parts = explode('/', $path);
 
         // Group by first two segments (e.g., /api/users/* becomes api_users)
