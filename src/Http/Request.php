@@ -7,6 +7,7 @@ use PivotPHP\Core\Http\Contracts\AttributeInterface;
 use PivotPHP\Core\Http\Psr7\ServerRequest;
 use PivotPHP\Core\Http\Psr7\Stream;
 use PivotPHP\Core\Http\Psr7\Uri;
+use PivotPHP\Core\Http\Pool\Psr7Pool;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -18,7 +19,7 @@ use RuntimeException;
 /**
  * Classe Request híbrida que implementa PSR-7 mantendo compatibilidade Express.js
  *
- * Esta classe oferece suporte completo a PSR-7 (ServerRequestInterface) 
+ * Esta classe oferece suporte completo a PSR-7 (ServerRequestInterface)
  * enquanto mantém todos os métodos de conveniência do estilo Express.js
  * para total compatibilidade com código existente.
  *
@@ -27,9 +28,9 @@ use RuntimeException;
 class Request implements ServerRequestInterface, AttributeInterface
 {
     /**
-     * Instância PSR-7 interna
+     * Instância PSR-7 interna (lazy loaded)
      */
-    private ServerRequestInterface $psr7Request;
+    private ?ServerRequestInterface $psr7Request = null;
 
     /**
      * Método HTTP.
@@ -81,6 +82,32 @@ class Request implements ServerRequestInterface, AttributeInterface
     private array $attributes = [];
 
     /**
+     * Cache para php://input (evita múltiplas leituras)
+     */
+    private static ?string $cachedInput = null;
+
+    /**
+     * Obtém o input cached para evitar múltiplas leituras de php://input
+     */
+    private function getCachedInput(): string
+    {
+        if (self::$cachedInput === null) {
+            self::$cachedInput = file_get_contents('php://input') ?: '';
+        }
+        return self::$cachedInput;
+    }
+
+    /**
+     * Retorna objetos PSR-7 ao pool quando não precisamos mais deles
+     */
+    public function __destruct()
+    {
+        if ($this->psr7Request !== null) {
+            Psr7Pool::returnServerRequest($this->psr7Request);
+        }
+    }
+
+    /**
      * Construtor da classe Request.
      *
      * @param string $method       Método HTTP.
@@ -100,23 +127,34 @@ class Request implements ServerRequestInterface, AttributeInterface
         $this->body = new stdClass();
         $this->headers = new HeaderRequest();
         $this->files = $_FILES;
-        
-        // Inicializar PSR-7 request interno
-        $this->initializePsr7Request();
-        
+
+        // PSR-7 request será inicializado apenas quando necessário (lazy loading)
+
         $this->parseRoute();
     }
 
     /**
-     * Inicializa o request PSR-7 interno
+     * Obtém a instância PSR-7 interna (lazy loading)
+     */
+    private function getPsr7Request(): ServerRequestInterface
+    {
+        if ($this->psr7Request === null) {
+            $this->initializePsr7Request();
+        }
+        assert($this->psr7Request !== null); // Para PHPStan
+        return $this->psr7Request;
+    }
+
+    /**
+     * Inicializa o request PSR-7 interno (chamado apenas quando necessário)
      */
     private function initializePsr7Request(): void
     {
-        $uri = new Uri($this->pathCallable);
-        $body = Stream::createFromString(file_get_contents('php://input') ?: '');
+        $uri = Psr7Pool::getUri($this->pathCallable);
+        $body = Psr7Pool::getStream($this->getCachedInput());
         $headers = $this->convertHeadersToPsr7Format($_SERVER);
-        
-        $this->psr7Request = new ServerRequest(
+
+        $this->psr7Request = Psr7Pool::getServerRequest(
             $this->method,
             $uri,
             $body,
@@ -124,24 +162,29 @@ class Request implements ServerRequestInterface, AttributeInterface
             '1.1',
             $_SERVER
         );
-        
+
         // Configurar query params
         $this->psr7Request = $this->psr7Request->withQueryParams($_GET);
-        
+
         // Configurar parsed body
         if (in_array($this->method, ['POST', 'PUT', 'PATCH'])) {
-            $input = file_get_contents('php://input');
-            if ($input !== false) {
+            $input = $this->getCachedInput();
+            if ($input !== '') {
                 $decoded = json_decode($input, true);
                 $this->psr7Request = $this->psr7Request->withParsedBody($decoded ?: $_POST);
             }
         }
-        
+
         // Configurar cookies
         $this->psr7Request = $this->psr7Request->withCookieParams($_COOKIE);
-        
+
         // Configurar uploaded files
         $this->psr7Request = $this->psr7Request->withUploadedFiles($this->normalizeFiles($_FILES));
+
+        // Sincronizar atributos locais com PSR-7
+        foreach ($this->attributes as $name => $value) {
+            $this->psr7Request = $this->psr7Request->withAttribute($name, $value);
+        }
     }
 
     /**
@@ -150,7 +193,7 @@ class Request implements ServerRequestInterface, AttributeInterface
     private function convertHeadersToPsr7Format(array $server): array
     {
         $headers = [];
-        
+
         foreach ($server as $key => $value) {
             if (strpos($key, 'HTTP_') === 0) {
                 $name = substr($key, 5);
@@ -163,7 +206,7 @@ class Request implements ServerRequestInterface, AttributeInterface
                 $headers[$name] = [$value];
             }
         }
-        
+
         return $headers;
     }
 
@@ -193,13 +236,15 @@ class Request implements ServerRequestInterface, AttributeInterface
         $normalized = [];
 
         foreach (array_keys($file['name']) as $key) {
-            $normalized[$key] = $this->createUploadedFile([
-                'name' => $file['name'][$key],
-                'type' => $file['type'][$key],
-                'tmp_name' => $file['tmp_name'][$key],
-                'error' => $file['error'][$key],
-                'size' => $file['size'][$key],
-            ]);
+            $normalized[$key] = $this->createUploadedFile(
+                [
+                    'name' => $file['name'][$key],
+                    'type' => $file['type'][$key],
+                    'tmp_name' => $file['tmp_name'][$key],
+                    'error' => $file['error'][$key],
+                    'size' => $file['size'][$key],
+                ]
+            );
         }
 
         return $normalized;
@@ -216,7 +261,7 @@ class Request implements ServerRequestInterface, AttributeInterface
 
         // Para testes, criar um stream vazio se o arquivo não existir
         if (!file_exists($file['tmp_name'])) {
-            $stream = Stream::createFromString('');
+            $stream = Psr7Pool::getStream('');
         } else {
             $stream = Stream::createFromFile($file['tmp_name']);
         }
@@ -260,7 +305,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         }
 
         $this->attributes[$name] = $value;
-        $this->psr7Request = $this->psr7Request->withAttribute($name, $value);
+        if ($this->psr7Request !== null) {
+            $this->psr7Request = $this->psr7Request->withAttribute($name, $value);
+        }
     }
 
     /**
@@ -281,7 +328,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         }
 
         unset($this->attributes[$name]);
-        $this->psr7Request = $this->psr7Request->withoutAttribute($name);
+        if ($this->psr7Request !== null) {
+            $this->psr7Request = $this->psr7Request->withoutAttribute($name);
+        }
     }
 
     /**
@@ -413,80 +462,94 @@ class Request implements ServerRequestInterface, AttributeInterface
 
     public function getServerParams(): array
     {
-        return $this->psr7Request->getServerParams();
+        return $this->getPsr7Request()->getServerParams();
     }
 
     public function getCookieParams(): array
     {
-        return $this->psr7Request->getCookieParams();
+        return $this->getPsr7Request()->getCookieParams();
     }
 
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withCookieParams($cookies);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getQueryParams(): array
     {
-        return $this->psr7Request->getQueryParams();
+        return $this->getPsr7Request()->getQueryParams();
     }
 
     public function withQueryParams(array $query): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withQueryParams($query);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getUploadedFiles(): array
     {
-        return $this->psr7Request->getUploadedFiles();
+        return $this->getPsr7Request()->getUploadedFiles();
     }
 
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withUploadedFiles($uploadedFiles);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getParsedBody()
     {
-        return $this->psr7Request->getParsedBody();
+        return $this->getPsr7Request()->getParsedBody();
     }
 
     public function withParsedBody($data): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withParsedBody($data);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getAttributes(): array
     {
-        return $this->psr7Request->getAttributes();
+        // Combine local attributes with PSR-7 attributes
+        $psr7Attributes = $this->getPsr7Request()->getAttributes();
+        return array_merge($psr7Attributes, $this->attributes);
     }
 
     public function getAttribute($name, $default = null)
     {
-        return $this->psr7Request->getAttribute($name, $default);
+        // Check local attributes first for better performance
+        if (array_key_exists($name, $this->attributes)) {
+            return $this->attributes[$name];
+        }
+
+        // Fallback to PSR-7 if needed
+        return $this->getPsr7Request()->getAttribute($name, $default);
     }
 
     public function withAttribute($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withAttribute($name, $value);
         $clone->attributes[$name] = $value;
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function withoutAttribute($name): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withoutAttribute($name);
         unset($clone->attributes[$name]);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
@@ -496,38 +559,41 @@ class Request implements ServerRequestInterface, AttributeInterface
 
     public function getRequestTarget(): string
     {
-        return $this->psr7Request->getRequestTarget();
+        return $this->getPsr7Request()->getRequestTarget();
     }
 
     public function withRequestTarget($requestTarget): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withRequestTarget($requestTarget);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getMethod(): string
     {
-        return $this->psr7Request->getMethod();
+        return $this->getPsr7Request()->getMethod();
     }
 
     public function withMethod($method): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withMethod($method);
         $clone->method = strtoupper($method);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getUri(): UriInterface
     {
-        return $this->psr7Request->getUri();
+        return $this->getPsr7Request()->getUri();
     }
 
     public function withUri(UriInterface $uri, $preserveHost = false): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withUri($uri, $preserveHost);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
@@ -537,66 +603,71 @@ class Request implements ServerRequestInterface, AttributeInterface
 
     public function getProtocolVersion(): string
     {
-        return $this->psr7Request->getProtocolVersion();
+        return $this->getPsr7Request()->getProtocolVersion();
     }
 
     public function withProtocolVersion($version): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withProtocolVersion($version);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getHeaders(): array
     {
-        return $this->psr7Request->getHeaders();
+        return $this->getPsr7Request()->getHeaders();
     }
 
     public function hasHeader($name): bool
     {
-        return $this->psr7Request->hasHeader($name);
+        return $this->getPsr7Request()->hasHeader($name);
     }
 
     public function getHeader($name): array
     {
-        return $this->psr7Request->getHeader($name);
+        return $this->getPsr7Request()->getHeader($name);
     }
 
     public function getHeaderLine($name): string
     {
-        return $this->psr7Request->getHeaderLine($name);
+        return $this->getPsr7Request()->getHeaderLine($name);
     }
 
     public function withHeader($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withHeader($name, $value);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function withAddedHeader($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withAddedHeader($name, $value);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function withoutHeader($name): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withoutHeader($name);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
     public function getBody(): StreamInterface
     {
-        return $this->psr7Request->getBody();
+        return $this->getPsr7Request()->getBody();
     }
 
     public function withBody(StreamInterface $body): ServerRequestInterface
     {
         $clone = clone $this;
-        $clone->psr7Request = $this->psr7Request->withBody($body);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Request = null;
         return $clone;
     }
 
@@ -630,11 +701,11 @@ class Request implements ServerRequestInterface, AttributeInterface
         }
         preg_match_all('/\/:([^\/]+)/', $this->path, $params);
         $params = $params[1];
-        
+
         if (count($params) > count($values)) {
             throw new InvalidArgumentException('Number of parameters does not match the number of values');
         }
-        
+
         if (!empty($params)) {
             $paramsArray = array_combine($params, array_slice($values, 0, count($params)));
             if ($paramsArray !== false) {
@@ -643,8 +714,10 @@ class Request implements ServerRequestInterface, AttributeInterface
                         $value = (int)$value;
                     }
                     $this->params->{$key} = $value;
-                    // Sincronizar com PSR-7
-                    $this->psr7Request = $this->psr7Request->withAttribute($key, $value);
+                    // Sincronizar com PSR-7 apenas se já foi inicializado
+                    if ($this->psr7Request !== null) {
+                        $this->psr7Request = $this->psr7Request->withAttribute($key, $value);
+                    }
                 }
             }
         }
@@ -775,7 +848,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         }
 
         $this->attributes[$name] = $value;
-        $this->psr7Request = $this->psr7Request->withAttribute($name, $value);
+        if ($this->psr7Request !== null) {
+            $this->psr7Request = $this->psr7Request->withAttribute($name, $value);
+        }
         return $this;
     }
 
@@ -787,7 +862,9 @@ class Request implements ServerRequestInterface, AttributeInterface
     public function removeAttribute(string $name): self
     {
         unset($this->attributes[$name]);
-        $this->psr7Request = $this->psr7Request->withoutAttribute($name);
+        if ($this->psr7Request !== null) {
+            $this->psr7Request = $this->psr7Request->withoutAttribute($name);
+        }
         return $this;
     }
 

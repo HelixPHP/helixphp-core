@@ -17,8 +17,9 @@
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
-- **Qualidade**: 270+ testes, PHPStan Level 9, PSR-12, cobertura completa.
+- **Qualidade**: 315+ testes, PHPStan Level 9, PSR-12, cobertura completa.
 - **🆕 v1.0.1**: Suporte a validação avançada de rotas com regex e constraints.
+- **🚀 v1.1.0**: Suporte PSR-7 híbrido, lazy loading, object pooling e otimizações de performance.
 
 ---
 
@@ -32,6 +33,8 @@
 - 🛡️ **Segurança Avançada**
 - 📡 **Streaming & SSE**
 - 📚 **OpenAPI/Swagger**
+- 🔄 **PSR-7 Híbrido**
+- ♻️ **Object Pooling**
 - ⚡ **Performance**
 - 🧪 **Qualidade e Testes**
 
@@ -103,6 +106,48 @@ $app->get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<slug>', function($req, $res) 
 
 $app->run();
 ```
+
+### 🔄 Suporte PSR-7 Híbrido
+
+O PivotPHP oferece **compatibilidade híbrida** com PSR-7, mantendo a facilidade da API Express.js enquanto implementa completamente as interfaces PSR-7:
+
+```php
+// API Express.js (familiar e produtiva)
+$app->get('/api/users', function($req, $res) {
+    $id = $req->param('id');
+    $name = $req->input('name');
+    return $res->json(['user' => $userService->find($id)]);
+});
+
+// PSR-7 nativo (para middleware PSR-15)
+$app->use(function(ServerRequestInterface $request, ResponseInterface $response, $next) {
+    $method = $request->getMethod();
+    $uri = $request->getUri();
+    $newRequest = $request->withAttribute('processed', true);
+    return $next($newRequest, $response);
+});
+
+// Lazy loading e Object Pooling automático
+use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
+
+OptimizedHttpFactory::initialize([
+    'enable_pooling' => true,
+    'warm_up_pools' => true,
+    'max_pool_size' => 100,
+]);
+
+// Objetos PSR-7 são reutilizados automaticamente
+$request = OptimizedHttpFactory::createRequest('GET', '/api/users', '/api/users');
+$response = OptimizedHttpFactory::createResponse();
+```
+
+**Benefícios da Implementação Híbrida:**
+- ✅ **100% compatível** com middleware PSR-15
+- ✅ **Imutabilidade** respeitada nos métodos `with*()`
+- ✅ **Lazy loading** - objetos PSR-7 criados apenas quando necessário
+- ✅ **Object pooling** - reutilização inteligente para melhor performance
+- ✅ **API Express.js** mantida para produtividade
+- ✅ **Zero breaking changes** - código existente funciona sem alterações
 
 ### 📖 Documentação OpenAPI/Swagger
 

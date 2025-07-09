@@ -4,6 +4,7 @@ namespace PivotPHP\Core\Http;
 
 use PivotPHP\Core\Http\Psr7\Response as Psr7Response;
 use PivotPHP\Core\Http\Psr7\Stream;
+use PivotPHP\Core\Http\Pool\Psr7Pool;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
@@ -11,16 +12,16 @@ use InvalidArgumentException;
 /**
  * Classe Response híbrida que implementa PSR-7 mantendo compatibilidade Express.js
  *
- * Esta classe oferece suporte completo a PSR-7 (ResponseInterface) 
+ * Esta classe oferece suporte completo a PSR-7 (ResponseInterface)
  * enquanto mantém todos os métodos de conveniência do estilo Express.js
  * para total compatibilidade com código existente.
  */
 class Response implements ResponseInterface
 {
     /**
-     * Instância PSR-7 interna
+     * Instância PSR-7 interna (lazy loaded)
      */
-    private ResponseInterface $psr7Response;
+    private ?ResponseInterface $psr7Response = null;
 
     /**
      * Código de status HTTP.
@@ -69,12 +70,32 @@ class Response implements ResponseInterface
      */
     public function __construct()
     {
-        // Inicializar PSR-7 response interno
-        $this->psr7Response = new Psr7Response(
-            $this->statusCode,
-            $this->headers,
-            Stream::createFromString($this->body)
-        );
+        // PSR-7 response será inicializado apenas quando necessário (lazy loading)
+    }
+
+    /**
+     * Obtém a instância PSR-7 interna (lazy loading)
+     */
+    private function getPsr7Response(): ResponseInterface
+    {
+        if ($this->psr7Response === null) {
+            $this->psr7Response = Psr7Pool::getResponse(
+                $this->statusCode,
+                $this->headers,
+                Psr7Pool::getStream($this->body)
+            );
+        }
+        return $this->psr7Response;
+    }
+
+    /**
+     * Retorna objetos PSR-7 ao pool quando não precisamos mais deles
+     */
+    public function __destruct()
+    {
+        if ($this->psr7Response !== null) {
+            Psr7Pool::returnResponse($this->psr7Response);
+        }
     }
 
     // =============================================================================
@@ -87,7 +108,9 @@ class Response implements ResponseInterface
     public function status(int $code): self
     {
         $this->statusCode = $code;
-        $this->psr7Response = $this->psr7Response->withStatus($code);
+        if ($this->psr7Response !== null) {
+            $this->psr7Response = $this->psr7Response->withStatus($code);
+        }
 
         // Só define o status code se os headers ainda não foram enviados
         if (!headers_sent()) {
@@ -103,7 +126,9 @@ class Response implements ResponseInterface
     public function header(string $name, string $value): self
     {
         $this->headers[$name] = $value;
-        $this->psr7Response = $this->psr7Response->withHeader($name, $value);
+        if ($this->psr7Response !== null) {
+            $this->psr7Response = $this->psr7Response->withHeader($name, $value);
+        }
 
         // Só envia o header se os headers ainda não foram enviados
         if (!headers_sent()) {
@@ -123,7 +148,7 @@ class Response implements ResponseInterface
         if ($this->testMode) {
             return $this->headers;
         }
-        return $this->psr7Response->getHeaders();
+        return $this->getPsr7Response()->getHeaders();
     }
 
     /**
@@ -160,7 +185,7 @@ class Response implements ResponseInterface
         if ($this->testMode) {
             return $this->body;
         }
-        return $this->psr7Response->getBody();
+        return $this->getPsr7Response()->getBody();
     }
 
     /**
@@ -196,7 +221,9 @@ class Response implements ResponseInterface
         }
 
         $this->body = $encoded;
-        $this->psr7Response = $this->psr7Response->withBody(Stream::createFromString($encoded));
+        if ($this->psr7Response !== null) {
+            $this->psr7Response = $this->psr7Response->withBody(Psr7Pool::getStream($encoded));
+        }
 
         // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
         if (!$this->testMode && !$this->disableAutoEmit) {
@@ -212,9 +239,15 @@ class Response implements ResponseInterface
     public function text(mixed $text): self
     {
         $this->header('Content-Type', 'text/plain; charset=utf-8');
-        $textString = is_string($text) ? $text : (string)$text;
+        $textString = is_string($text) ? $text : (
+            is_scalar($text) || (is_object($text) && method_exists($text, '__toString'))
+                ? (string)$text
+                : (json_encode($text) ?: '')
+        );
         $this->body = $textString;
-        $this->psr7Response = $this->psr7Response->withBody(Stream::createFromString($textString));
+        if ($this->psr7Response !== null) {
+            $this->psr7Response = $this->psr7Response->withBody(Psr7Pool::getStream($textString));
+        }
 
         // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
         if (!$this->testMode && !$this->disableAutoEmit) {
@@ -230,9 +263,15 @@ class Response implements ResponseInterface
     public function html(mixed $html): self
     {
         $this->header('Content-Type', 'text/html; charset=utf-8');
-        $htmlString = is_string($html) ? $html : (string)$html;
+        $htmlString = is_string($html) ? $html : (
+            is_scalar($html) || (is_object($html) && method_exists($html, '__toString'))
+                ? (string)$html
+                : (json_encode($html) ?: '')
+        );
         $this->body = $htmlString;
-        $this->psr7Response = $this->psr7Response->withBody(Stream::createFromString($htmlString));
+        if ($this->psr7Response !== null) {
+            $this->psr7Response = $this->psr7Response->withBody(Psr7Pool::getStream($htmlString));
+        }
 
         // Só faz echo se não estiver em modo teste e emissão automática estiver habilitada
         if (!$this->testMode && !$this->disableAutoEmit) {
@@ -343,14 +382,15 @@ class Response implements ResponseInterface
 
     public function getReasonPhrase(): string
     {
-        return $this->psr7Response->getReasonPhrase();
+        return $this->getPsr7Response()->getReasonPhrase();
     }
 
     public function withStatus($code, $reasonPhrase = ''): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withStatus($code, $reasonPhrase);
         $clone->statusCode = $code;
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
@@ -360,59 +400,64 @@ class Response implements ResponseInterface
 
     public function getProtocolVersion(): string
     {
-        return $this->psr7Response->getProtocolVersion();
+        return $this->getPsr7Response()->getProtocolVersion();
     }
 
     public function withProtocolVersion($version): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withProtocolVersion($version);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
     public function hasHeader($name): bool
     {
-        return $this->psr7Response->hasHeader($name);
+        return $this->getPsr7Response()->hasHeader($name);
     }
 
     public function getHeader($name): array
     {
-        return $this->psr7Response->getHeader($name);
+        return $this->getPsr7Response()->getHeader($name);
     }
 
     public function getHeaderLine($name): string
     {
-        return $this->psr7Response->getHeaderLine($name);
+        return $this->getPsr7Response()->getHeaderLine($name);
     }
 
     public function withHeader($name, $value): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withHeader($name, $value);
         $clone->headers[$name] = is_array($value) ? implode(', ', $value) : $value;
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
     public function withAddedHeader($name, $value): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withAddedHeader($name, $value);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
     public function withoutHeader($name): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withoutHeader($name);
         unset($clone->headers[$name]);
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
     public function withBody(StreamInterface $body): ResponseInterface
     {
         $clone = clone $this;
-        $clone->psr7Response = $this->psr7Response->withBody($body);
         $clone->body = (string)$body;
+        // Forçar re-criação do PSR-7 na próxima chamada para garantir imutabilidade
+        $clone->psr7Response = null;
         return $clone;
     }
 
