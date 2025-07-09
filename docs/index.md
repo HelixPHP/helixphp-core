@@ -32,9 +32,10 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 - [**Uso Nativo**](technical/authentication/usage_native.md) - JWT, Basic, Bearer prontos para usar
 - [**Autenticação Customizada**](technical/authentication/usage_custom.md) - Implemente seu próprio sistema
 
-### ⚠️ Tratamento de Erros
+### ⚠️ Tratamento de Erros e Debug
 - [**Sistema de Erros**](technical/exceptions/ErrorHandling.md) - Como o framework trata erros
 - [**Exceptions Personalizadas**](technical/exceptions/CustomExceptions.md) - Crie suas próprias exceções
+- [**Modo Debug**](technical/debugging/debug-mode.md) - Configuração e uso do modo debug
 
 ### 🧩 Extensibilidade
 - [**Providers**](technical/providers/usage.md) - Injeção de dependências
@@ -79,7 +80,8 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 ### 🚀 Intermediário
 1. [API com Middlewares](implementations/usage_with_middleware.md)
 2. [Autenticação](technical/authentication/usage_native.md)
-3. [Testando sua API](testing/api_testing.md)
+3. [Modo Debug](technical/debugging/debug-mode.md)
+4. [Testando sua API](testing/api_testing.md)
 
 ### 🔥 Avançado
 1. [Middleware Customizado](implementations/usage_with_custom_middleware.md)
