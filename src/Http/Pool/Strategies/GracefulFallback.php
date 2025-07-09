@@ -13,11 +13,6 @@ use PivotPHP\Core\Http\Pool\Psr7Pool;
 class GracefulFallback implements OverflowStrategy
 {
     /**
-     * Configuration
-     */
-    private array $config;
-
-    /**
      * Metrics
      */
     private array $metrics = [
@@ -29,9 +24,10 @@ class GracefulFallback implements OverflowStrategy
     /**
      * Constructor
      */
-    public function __construct(array $config)
+    public function __construct(array $config = [])
     {
-        $this->config = $config;
+        // Configuration not used in GracefulFallback - intentionally ignored
+        unset($config); // Suppress unused parameter warning
     }
 
     /**
@@ -111,12 +107,12 @@ class GracefulFallback implements OverflowStrategy
      */
     private function createFallbackResponse(array $params): mixed
     {
-        return Psr7Pool::borrowResponse(
+        return Psr7Pool::getResponse(
             $params[0] ?? 200,
             $params[1] ?? [],
             $params[2] ?? null,
             $params[3] ?? '1.1',
-            $params[4] ?? null
+            $params[4] ?? ''
         );
     }
 

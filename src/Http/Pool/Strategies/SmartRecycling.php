@@ -10,11 +10,6 @@ namespace PivotPHP\Core\Http\Pool\Strategies;
 class SmartRecycling implements OverflowStrategy
 {
     /**
-     * Configuration
-     */
-    private array $config;
-
-    /**
      * Recycling candidates
      */
     private array $recycleCandidates = [];
@@ -37,9 +32,10 @@ class SmartRecycling implements OverflowStrategy
     /**
      * Constructor
      */
-    public function __construct(array $config)
+    public function __construct(array $config = [])
     {
-        $this->config = $config;
+        // Configuration not used in SmartRecycling - intentionally ignored
+        unset($config); // Suppress unused parameter warning
     }
 
     /**
@@ -329,14 +325,13 @@ class SmartRecycling implements OverflowStrategy
 
         $now = microtime(true);
         $totalAge = 0;
-        $count = 0;
+        $count = count($this->objectLifecycles);
 
         foreach ($this->objectLifecycles as $lifecycle) {
             $totalAge += $now - $lifecycle['created_at'];
-            $count++;
         }
 
-        return $count > 0 ? $totalAge / $count : 0.0;
+        return $totalAge / $count;
     }
 
     /**
@@ -378,5 +373,13 @@ class SmartRecycling implements OverflowStrategy
                 unset($this->objectLifecycles[$id]);
             }
         }
+    }
+
+    /**
+     * Get recycling candidates
+     */
+    public function getRecycleCandidates(): array
+    {
+        return $this->recycleCandidates;
     }
 }

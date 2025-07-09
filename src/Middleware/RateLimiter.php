@@ -228,13 +228,13 @@ class RateLimiter
         $bucket['last_refill'] = $now;
 
         // Check if token available
-        if ($bucket['tokens'] < 1) {
+        if ((float) $bucket['tokens'] < 1) {
             $this->setInStorage($storageKey, $bucket);
             return false;
         }
 
         // Consume token
-        $bucket['tokens']--;
+        $bucket['tokens'] = (float) $bucket['tokens'] - 1;
         $this->setInStorage($storageKey, $bucket);
 
         return true;
@@ -365,7 +365,7 @@ class RateLimiter
 
         $count = $this->getFromStorage($storageKey, 0);
         $count = is_numeric($count) ? (int) $count : 0;
-        return max(0, $this->config['max_requests'] - $count);
+        return (int) max(0, $this->config['max_requests'] - $count);
     }
 
     /**
@@ -380,9 +380,9 @@ class RateLimiter
         $history = $this->getFromStorage($storageKey, []);
         if (is_array($history)) {
             $history = array_filter($history, fn($timestamp) => $timestamp > $windowStart);
-            return max(0, $this->config['max_requests'] - count($history));
+            return (int) max(0, $this->config['max_requests'] - count($history));
         }
-        return $this->config['max_requests'];
+        return (int) $this->config['max_requests'];
     }
 
     /**
@@ -410,9 +410,9 @@ class RateLimiter
 
         if (is_array($bucket) && isset($bucket['volume'])) {
             $volume = is_numeric($bucket['volume']) ? (float) $bucket['volume'] : 0;
-            return max(0, $this->config['max_requests'] - (int) ceil($volume));
+            return (int) max(0, $this->config['max_requests'] - (int) ceil($volume));
         }
-        return $this->config['max_requests'];
+        return (int) $this->config['max_requests'];
     }
 
     /**

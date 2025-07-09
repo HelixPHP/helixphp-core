@@ -193,7 +193,8 @@ class TrafficClassifier
             return max(0, min(100, $priority));
         }
 
-        return match (strtolower((string) $priority)) {
+        $priorityString = is_string($priority) ? $priority : (is_numeric($priority) ? (string) $priority : 'normal');
+        return match (strtolower($priorityString)) {
             'system' => self::PRIORITY_SYSTEM,
             'critical' => self::PRIORITY_CRITICAL,
             'high' => self::PRIORITY_HIGH,
@@ -301,7 +302,7 @@ class TrafficClassifier
      */
     private function matchesHeader(Request $request, string $name, string $value): bool
     {
-        $headerValue = $request->getHeaders()->get($name);
+        $headerValue = $request->getHeadersObject()->get($name);
 
         if ($headerValue === null) {
             return false;

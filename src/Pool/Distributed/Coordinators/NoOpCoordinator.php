@@ -13,16 +13,12 @@ namespace PivotPHP\Core\Pool\Distributed\Coordinators;
 class NoOpCoordinator implements CoordinatorInterface
 {
     /**
-     * Configuration
-     */
-    private array $config;
-
-    /**
      * Constructor
      */
-    public function __construct(array $config)
+    public function __construct(array $config = [])
     {
-        $this->config = $config;
+        // Configuration not used in NoOpCoordinator - intentionally ignored
+        unset($config); // Suppress unused parameter warning
     }
 
     /**
@@ -153,4 +149,3 @@ class NoOpCoordinator implements CoordinatorInterface
         return 0;
     }
 }
-

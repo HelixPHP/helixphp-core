@@ -214,7 +214,6 @@ class HighPerformanceMode
         self::initializeMemoryManagement();
 
         if ($app !== null) {
-            self::$app = $app;
             self::initializeTrafficManagement($app);
             self::initializeProtection($app);
             self::initializeMonitoring($app);
@@ -340,7 +339,7 @@ class HighPerformanceMode
                     $requestId = uniqid('req_', true);
 
                 // Start monitoring
-                    self::$monitor->startRequest(
+                    self::$monitor?->startRequest(
                         $requestId,
                         [
                             'path' => $request->pathCallable,
@@ -353,12 +352,12 @@ class HighPerformanceMode
                         $result = $next($request, $response);
 
                         // End monitoring
-                        self::$monitor->endRequest($requestId, $response->getStatusCode());
+                        self::$monitor?->endRequest($requestId, $response->getStatusCode());
 
                         return $result;
                     } catch (\Throwable $e) {
                         // Record error
-                        self::$monitor->recordError(
+                        self::$monitor?->recordError(
                             'exception',
                             [
                                 'message' => $e->getMessage(),
@@ -366,7 +365,7 @@ class HighPerformanceMode
                             ]
                         );
 
-                        self::$monitor->endRequest($requestId, 500);
+                        self::$monitor?->endRequest($requestId, 500);
 
                         throw $e;
                     }
@@ -375,10 +374,12 @@ class HighPerformanceMode
         }
 
         // Schedule periodic tasks
-        self::schedulePeriodicTask(
-            self::$currentConfig['monitoring']['export_interval'],
-            [self::$monitor, 'export']
-        );
+        if (self::$monitor) {
+            self::schedulePeriodicTask(
+                self::$currentConfig['monitoring']['export_interval'],
+                [self::$monitor, 'export']
+            );
+        }
     }
 
     /**
