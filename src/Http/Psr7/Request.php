@@ -43,8 +43,10 @@ class Request extends Message implements RequestInterface
 
     /**
      * {@inheritdoc}
+
+     * @return string
      */
-    public function getRequestTarget(): string
+    public function getRequestTarget()
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -65,7 +67,7 @@ class Request extends Message implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function withRequestTarget(string $requestTarget): RequestInterface
+    public function withRequestTarget(string $requestTarget)
     {
         if (preg_match('#\s#', $requestTarget)) {
             throw new \InvalidArgumentException(
@@ -86,7 +88,7 @@ class Request extends Message implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function getMethod(): string
+    public function getMethod()
     {
         return $this->method;
     }
@@ -94,7 +96,7 @@ class Request extends Message implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function withMethod(string $method): RequestInterface
+    public function withMethod(string $method)
     {
         if (!is_string($method) || $method === '') {
             throw new \InvalidArgumentException('Method must be a non-empty string');
@@ -114,7 +116,7 @@ class Request extends Message implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function getUri(): UriInterface
+    public function getUri()
     {
         return $this->uri;
     }
@@ -122,7 +124,7 @@ class Request extends Message implements RequestInterface
     /**
      * {@inheritdoc}
      */
-    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
+    public function withUri(UriInterface $uri, bool $preserveHost = false)
     {
         if ($uri === $this->uri) {
             return $this;

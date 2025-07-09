@@ -70,8 +70,10 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * Retrieve server parameters.
+
+     * @return array
      */
-    public function getServerParams(): array
+    public function getServerParams()
     {
         return $this->serverParams;
     }
@@ -79,7 +81,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve cookies.
      */
-    public function getCookieParams(): array
+    public function getCookieParams()
     {
         return $this->cookieParams;
     }
@@ -87,7 +89,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Return an instance with the specified cookies.
      */
-    public function withCookieParams(array $cookies): ServerRequestInterface
+    public function withCookieParams(array $cookies)
     {
         $clone = clone $this;
         $clone->cookieParams = $cookies;
@@ -97,7 +99,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve query string arguments.
      */
-    public function getQueryParams(): array
+    public function getQueryParams()
     {
         return $this->queryParams;
     }
@@ -105,7 +107,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Return an instance with the specified query string arguments.
      */
-    public function withQueryParams(array $query): ServerRequestInterface
+    public function withQueryParams(array $query)
     {
         $clone = clone $this;
         $clone->queryParams = $query;
@@ -115,7 +117,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve normalized file upload data.
      */
-    public function getUploadedFiles(): array
+    public function getUploadedFiles()
     {
         return $this->uploadedFiles;
     }
@@ -123,7 +125,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Create a new instance with the specified uploaded files.
      */
-    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
+    public function withUploadedFiles(array $uploadedFiles)
     {
         $clone = clone $this;
         $clone->uploadedFiles = $uploadedFiles;
@@ -133,7 +135,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve any parameters provided in the request body.
      */
-    public function getParsedBody(): array|object|null
+    public function getParsedBody()
     {
         if (!is_array($this->parsedBody) && !is_object($this->parsedBody) && $this->parsedBody !== null) {
             return null;
@@ -144,7 +146,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Return an instance with the specified body parameters.
      */
-    public function withParsedBody($data): ServerRequestInterface
+    public function withParsedBody($data)
     {
         $clone = clone $this;
         $clone->parsedBody = $data;
@@ -154,7 +156,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve attributes derived from the request.
      */
-    public function getAttributes(): array
+    public function getAttributes()
     {
         return $this->attributes;
     }
@@ -170,7 +172,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Return an instance with the specified derived request attribute.
      */
-    public function withAttribute($name, $value): ServerRequestInterface
+    public function withAttribute($name, $value)
     {
         $clone = clone $this;
         $clone->attributes[$name] = $value;
@@ -180,7 +182,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Return an instance that removes the specified derived request attribute.
      */
-    public function withoutAttribute($name): ServerRequestInterface
+    public function withoutAttribute($name)
     {
         $clone = clone $this;
         unset($clone->attributes[$name]);

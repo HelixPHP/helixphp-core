@@ -63,7 +63,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getScheme(): string
+    public function getScheme()
     {
         return $this->scheme;
     }
@@ -71,7 +71,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getAuthority(): string
+    public function getAuthority()
     {
         $authority = $this->host;
         if ($this->userInfo !== '') {
@@ -88,7 +88,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getUserInfo(): string
+    public function getUserInfo()
     {
         return $this->userInfo;
     }
@@ -96,7 +96,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getHost(): string
+    public function getHost()
     {
         return $this->host;
     }
@@ -104,7 +104,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getPort(): ?int
+    public function getPort()
     {
         return $this->port;
     }
@@ -112,7 +112,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getPath(): string
+    public function getPath()
     {
         return $this->path;
     }
@@ -120,7 +120,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getQuery(): string
+    public function getQuery()
     {
         return $this->query;
     }
@@ -128,7 +128,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function getFragment(): string
+    public function getFragment()
     {
         return $this->fragment;
     }
@@ -136,7 +136,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withScheme(string $scheme): UriInterface
+    public function withScheme(string $scheme)
     {
         $scheme = strtolower($scheme);
         if ($this->scheme === $scheme) {
@@ -153,7 +153,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withUserInfo(string $user, ?string $password = null): UriInterface
+    public function withUserInfo(string $user, ?string $password = null)
     {
         $info = $user;
         if ($password !== null && $password !== '') {
@@ -173,7 +173,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withHost(string $host): UriInterface
+    public function withHost(string $host)
     {
         $host = strtolower($host);
         if ($this->host === $host) {
@@ -189,7 +189,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withPort(?int $port): UriInterface
+    public function withPort(?int $port)
     {
         if ($port !== null && ($port < 1 || $port > 65535)) {
             throw new \InvalidArgumentException(
@@ -211,7 +211,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withPath(string $path): UriInterface
+    public function withPath(string $path)
     {
         $path = $this->filterPath($path);
 
@@ -228,7 +228,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withQuery(string $query): UriInterface
+    public function withQuery(string $query)
     {
         $query = $this->filterQueryAndFragment($query);
 
@@ -245,7 +245,7 @@ class Uri implements UriInterface
     /**
      * {@inheritdoc}
      */
-    public function withFragment(string $fragment): UriInterface
+    public function withFragment(string $fragment)
     {
         $fragment = $this->filterQueryAndFragment($fragment);
 
@@ -261,8 +261,10 @@ class Uri implements UriInterface
 
     /**
      * {@inheritdoc}
+
+     * @return string
      */
-    public function __toString(): string
+    public function __toString()
     {
         $uri = '';
 
