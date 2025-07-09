@@ -194,11 +194,28 @@ class OptimizedHttpFactory
     }
 
     /**
+     * Enable pooling
+     */
+    public static function enablePooling(): void
+    {
+        self::$config['enable_pooling'] = true;
+    }
+
+    /**
+     * Disable pooling
+     */
+    public static function disablePooling(): void
+    {
+        self::$config['enable_pooling'] = false;
+        Psr7Pool::clearPools();
+    }
+
+    /**
      * Limpa todos os pools
      */
     public static function clearPools(): void
     {
-        Psr7Pool::clearAll();
+        Psr7Pool::clearPools();
     }
 
     /**

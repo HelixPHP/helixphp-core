@@ -153,6 +153,40 @@ class Psr7Pool
     }
 
     /**
+     * Borrow request from pool (alias for getServerRequest)
+     */
+    public static function borrowRequest(): ServerRequestInterface
+    {
+        $uri = self::getUri('');
+        $body = self::getStream('');
+        return self::getServerRequest('GET', $uri, $body);
+    }
+
+    /**
+     * Borrow response from pool (alias for getResponse)
+     */
+    public static function borrowResponse(): ResponseInterface
+    {
+        return self::getResponse();
+    }
+
+    /**
+     * Borrow URI from pool (alias for getUri)
+     */
+    public static function borrowUri(): UriInterface
+    {
+        return self::getUri('');
+    }
+
+    /**
+     * Borrow stream from pool (alias for getStream)
+     */
+    public static function borrowStream(): StreamInterface
+    {
+        return self::getStream('');
+    }
+
+    /**
      * Retorna ServerRequest para o pool
      */
     public static function returnServerRequest(ServerRequestInterface $request): void
@@ -323,6 +357,14 @@ class Psr7Pool
         $total = $created + $reused;
 
         return $total > 0 ? ($reused / $total) * 100 : 0;
+    }
+
+    /**
+     * Clear pools (alias for clearAll)
+     */
+    public static function clearPools(): void
+    {
+        self::clearAll();
     }
 
     /**

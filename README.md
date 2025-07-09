@@ -19,7 +19,7 @@
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
 - **Qualidade**: 315+ testes, PHPStan Level 9, PSR-12, cobertura completa.
 - **🆕 v1.0.1**: Suporte a validação avançada de rotas com regex e constraints.
-- **🚀 v1.1.0**: Suporte PSR-7 híbrido, lazy loading, object pooling e otimizações de performance.
+- **🚀 v1.0.1**: Suporte PSR-7 híbrido, lazy loading, object pooling e otimizações de performance.
 
 ---
 
