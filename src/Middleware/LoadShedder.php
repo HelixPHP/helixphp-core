@@ -355,14 +355,14 @@ class LoadShedder
 
         $config = $this->config['shed_response'];
 
-        return $response
+        $response = $response
             ->status($config['status'])
             ->json($config['body'])
             ->header('X-Load-Shed', 'true')
             ->header('X-Load-Shed-Reason', $this->config['shed_strategy']);
 
         foreach ($config['headers'] as $name => $value) {
-            $response->header($name, (string) $value);
+            $response = $response->header($name, (string) $value);
         }
 
         return $response;

@@ -117,12 +117,17 @@ class CircuitBreaker
         $path = $request->path ?? $request->getPathCallable();
 
         // Normalize path to circuit name
-        $parts = explode('/', trim($path, '/'));
+        $path = trim($path, '/');
+        if ($path === '') {
+            return 'default';
+        }
+        
+        $parts = explode('/', $path);
 
         // Group by first two segments (e.g., /api/users/* becomes api_users)
         $circuitParts = array_slice($parts, 0, 2);
 
-        return implode('_', $circuitParts) ?: 'default';
+        return implode('_', $circuitParts);
     }
 
     /**

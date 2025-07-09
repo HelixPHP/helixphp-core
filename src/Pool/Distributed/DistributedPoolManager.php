@@ -45,7 +45,7 @@ class DistributedPoolManager
     /**
      * Local pool
      */
-    private DynamicPool $localPool;
+    private ?DynamicPool $localPool = null;
 
     /**
      * State
@@ -172,7 +172,7 @@ class DistributedPoolManager
         return [
             'memory_limit' => ini_get('memory_limit'),
             'cpu_cores' => $this->getCPUCores(),
-            'pool_config' => isset($this->localPool) ? $this->localPool->getStats()['config'] : [],
+            'pool_config' => $this->localPool?->getStats()['config'] ?? [],
         ];
     }
 
@@ -483,7 +483,7 @@ class DistributedPoolManager
             'id' => $this->instanceId,
             'last_seen' => time(),
             'metrics' => $this->metrics,
-            'pool_stats' => $this->localPool ? $this->localPool->getStats() : [],
+            'pool_stats' => $this->localPool?->getStats() ?? [],
             'health' => $this->getHealthStatus(),
         ];
 
@@ -518,7 +518,7 @@ class DistributedPoolManager
     private function getHealthStatus(): array
     {
         $memoryUsage = memory_get_usage(true) / $this->parseMemoryLimit(ini_get('memory_limit'));
-        $poolStats = $this->localPool ? $this->localPool->getStats() : [];
+        $poolStats = $this->localPool?->getStats() ?? [];
 
         $score = 1.0;
 

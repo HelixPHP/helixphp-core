@@ -374,12 +374,10 @@ class HighPerformanceMode
         }
 
         // Schedule periodic tasks
-        if (self::$monitor) {
-            self::schedulePeriodicTask(
-                self::$currentConfig['monitoring']['export_interval'],
-                [self::$monitor, 'export']
-            );
-        }
+        self::schedulePeriodicTask(
+            self::$currentConfig['monitoring']['export_interval'],
+            [self::$monitor, 'export']
+        );
     }
 
     /**
