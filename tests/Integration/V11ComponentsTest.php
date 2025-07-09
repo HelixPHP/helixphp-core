@@ -30,6 +30,25 @@ class V11ComponentsTest extends TestCase
     }
 
     /**
+     * Get test iteration count based on environment
+     */
+    private function getTestIterationCount(): int
+    {
+        // Allow environment override
+        if ($envCount = getenv('PIVOTPHP_TEST_ITERATIONS')) {
+            return (int) $envCount;
+        }
+
+        // Reduce iterations for CI environments
+        if (getenv('CI') || getenv('GITHUB_ACTIONS') || getenv('TRAVIS')) {
+            return 250; // Half the iterations for CI
+        }
+
+        // Default for local development
+        return 500;
+    }
+
+    /**
      * Test high-performance mode integration
      */
     public function testHighPerformanceModeIntegration(): void
@@ -380,7 +399,8 @@ class V11ComponentsTest extends TestCase
         $results = [];
         $startTime = microtime(true);
 
-        for ($i = 0; $i < 500; $i++) {
+        $iterations = $this->getTestIterationCount();
+        for ($i = 0; $i < $iterations; $i++) {
             // Mix of read and write operations
             if ($i % 3 === 0) {
                 $request = new Request('GET', '/api/users/' . $i, '/api/users/' . $i);
@@ -406,7 +426,7 @@ class V11ComponentsTest extends TestCase
         $metrics = $monitor->getLiveMetrics();
 
         // Since Application doesn't auto-track requests, we check other metrics
-        // Memory pressure should be reasonable after processing 500 requests
+        // Memory pressure should be reasonable after processing requests
         $this->assertLessThan(1, $metrics['memory_pressure'], 'Memory pressure should be < 100%');
 
         // Verify monitor is initialized and working

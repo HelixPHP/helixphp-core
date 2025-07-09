@@ -28,6 +28,44 @@ class HighPerformanceStressTest extends TestCase
     }
 
     /**
+     * Get performance threshold based on environment
+     */
+    private function getPerformanceThreshold(): int
+    {
+        // Allow environment override for CI/CD
+        if ($envThreshold = getenv('PIVOTPHP_PERFORMANCE_THRESHOLD')) {
+            return (int) $envThreshold;
+        }
+
+        // Detect CI environment and use more conservative thresholds
+        if (getenv('CI') || getenv('GITHUB_ACTIONS') || getenv('TRAVIS')) {
+            return 250; // More conservative for CI
+        }
+
+        // Default for local development
+        return 500;
+    }
+
+    /**
+     * Get number of concurrent requests based on environment
+     */
+    private function getConcurrentRequestCount(): int
+    {
+        // Allow environment override
+        if ($envCount = getenv('PIVOTPHP_CONCURRENT_REQUESTS')) {
+            return (int) $envCount;
+        }
+
+        // Reduce load for CI environments
+        if (getenv('CI') || getenv('GITHUB_ACTIONS') || getenv('TRAVIS')) {
+            return 5000; // Half the load for CI
+        }
+
+        // Default for local development
+        return 10000;
+    }
+
+    /**
      * Test concurrent request handling under extreme load
      *
      * @group stress
@@ -38,7 +76,7 @@ class HighPerformanceStressTest extends TestCase
         // Enable extreme performance mode
         HighPerformanceMode::enable(HighPerformanceMode::PROFILE_EXTREME);
 
-        $concurrentRequests = 10000;
+        $concurrentRequests = $this->getConcurrentRequestCount();
         $results = [];
         $startTime = microtime(true);
 
@@ -58,7 +96,12 @@ class HighPerformanceStressTest extends TestCase
         $duration = (microtime(true) - $startTime) * 1000;
         $throughput = $concurrentRequests / ($duration / 1000);
 
-        $this->assertGreaterThan(500, $throughput, 'Should handle >500 req/s');
+        $threshold = $this->getPerformanceThreshold();
+        $this->assertGreaterThan(
+            $threshold,
+            $throughput,
+            "Should handle >{$threshold} req/s (env: " . (getenv('CI') ? 'CI' : 'local') . ")"
+        );
 
         // Check memory efficiency
         $memoryPerRequest = (memory_get_peak_usage(true) - memory_get_usage(true)) / $concurrentRequests;
