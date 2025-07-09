@@ -70,6 +70,8 @@ class ServerRequest extends Request implements ServerRequestInterface
 
     /**
      * Retrieve server parameters.
+
+     * @return array
      */
     public function getServerParams(): array
     {
@@ -162,7 +164,7 @@ class ServerRequest extends Request implements ServerRequestInterface
     /**
      * Retrieve a single derived request attribute.
      */
-    public function getAttribute($name, $default = null)
+    public function getAttribute($name, $default = null): mixed
     {
         return $this->attributes[$name] ?? $default;
     }

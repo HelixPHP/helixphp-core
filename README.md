@@ -141,6 +141,37 @@ Principais links:
 
 ---
 
+## 🔄 Compatibilidade PSR-7
+
+O PivotPHP oferece suporte duplo para PSR-7, permitindo uso com projetos modernos (v2.x) e compatibilidade com ReactPHP (v1.x).
+
+### Verificar versão atual
+```bash
+php scripts/switch-psr7-version.php --check
+```
+
+### Alternar entre versões
+```bash
+# Mudar para PSR-7 v1.x (compatível com ReactPHP)
+php scripts/switch-psr7-version.php 1
+
+# Mudar para PSR-7 v2.x (padrão moderno)
+php scripts/switch-psr7-version.php 2
+```
+
+### Após alternar versões
+```bash
+# Atualizar dependências
+composer update
+
+# Validar o projeto
+./scripts/validate_all.sh
+```
+
+Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.
+
+---
+
 ## 🤝 Como Contribuir
 
 Quer ajudar a evoluir o PivotPHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.

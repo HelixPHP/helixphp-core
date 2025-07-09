@@ -261,6 +261,8 @@ class Uri implements UriInterface
 
     /**
      * {@inheritdoc}
+
+     * @return string
      */
     public function __toString(): string
     {

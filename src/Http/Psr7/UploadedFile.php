@@ -85,6 +85,7 @@ class UploadedFile implements UploadedFileInterface
 
     /**
      * {@inheritdoc}
+     * @return void
      */
     public function moveTo(string $targetPath): void
     {

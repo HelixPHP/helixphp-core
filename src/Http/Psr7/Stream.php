@@ -199,6 +199,7 @@ class Stream implements StreamInterface
 
     /**
      * {@inheritdoc}
+     * @return void
      */
     public function seek(int $offset, int $whence = SEEK_SET): void
     {
@@ -219,6 +220,7 @@ class Stream implements StreamInterface
 
     /**
      * {@inheritdoc}
+     * @return void
      */
     public function rewind(): void
     {
@@ -314,7 +316,7 @@ class Stream implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function getMetadata(?string $key = null)
+    public function getMetadata(?string $key = null): mixed
     {
         if (!isset($this->stream)) {
             return $key ? null : [];

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2025-07-08
 
-### 🆕 **Regex Route Validation Support**
+### 🆕 **Regex Route Validation Support & PSR-7 Compatibility**
 
 > 📖 **See complete overview:** [docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md](docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md)
 
@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Full Regex Blocks**: Complete control over route segments
 - **Non-greedy Pattern Matching**: Improved regex processing
 - **Backward Compatibility**: All v1.0.0 routes continue to work
+- **PSR-7 Dual Version Support**: Full compatibility with both PSR-7 v1.x and v2.x
+  - Automatic version detection via `Psr7VersionDetector`
+  - Script to switch between versions: `scripts/switch-psr7-version.php`
+  - Enables ReactPHP integration with PSR-7 v1.x
+  - Maintains type safety with PSR-7 v2.x
 
 #### Changed
 - Refactored `RouteCache::compilePattern()` into 12 focused helper methods
@@ -25,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated documentation positioning (ideal for concept validation and studies)
 - Added comprehensive documentation for regex block pattern limitations
 - Created dedicated test suite for regex block validation
+- Updated composer.json to support `"psr/http-message": "^1.1|^2.0"`
 
 #### Fixed
 - Route pattern compilation preserving URL-encoded characters

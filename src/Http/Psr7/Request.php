@@ -43,6 +43,8 @@ class Request extends Message implements RequestInterface
 
     /**
      * {@inheritdoc}
+
+     * @return string
      */
     public function getRequestTarget(): string
     {

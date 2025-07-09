@@ -17,6 +17,10 @@ PivotPHP v1.0.1 is a high-performance microframework designed for rapid developm
 
 ### Key Highlights v1.0.1
 - **🆕 Regex Route Validation**: Advanced pattern matching with constraints
+- **🔄 PSR-7 Dual Version Support**: Full compatibility with both v1.x and v2.x
+  - Automatic version detection
+  - Script to switch between versions
+  - Enables ReactPHP integration
 - **🚀 High Performance**: 13.9M operations/second (278x improvement)
 - **🔒 Security First**: Built-in CORS, CSRF, XSS protection
 - **📋 PSR Compliant**: Full PSR-7, PSR-11, PSR-12, PSR-15 support
