@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
+[![Latest Stable Version](https://poser.pugx.org/pivotphp/core/v/stable)](https://packagist.org/packages/pivotphp/core)
+[![Total Downloads](https://poser.pugx.org/pivotphp/core/downloads)](https://packagist.org/packages/pivotphp/core)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
 [![GitHub Issues](https://img.shields.io/github/issues/PivotPHP/pivotphp-core)](https://github.com/PivotPHP/pivotphp-core/issues)
@@ -186,6 +188,116 @@ Principais links:
 
 ---
 
+## 🧩 Extensões Oficiais
+
+O PivotPHP possui um ecossistema rico de extensões que adicionam funcionalidades poderosas ao framework:
+
+### 🗄️ Cycle ORM Extension
+```bash
+composer require pivotphp/cycle-orm
+```
+
+Integração completa com Cycle ORM para gerenciamento de banco de dados:
+- Migrações automáticas
+- Repositórios com query builder
+- Relacionamentos (HasOne, HasMany, BelongsTo, ManyToMany)
+- Suporte a transações
+- Múltiplas conexões de banco
+
+```php
+use PivotPHP\CycleORM\CycleServiceProvider;
+
+$app->register(new CycleServiceProvider([
+    'dbal' => [
+        'databases' => [
+            'default' => ['connection' => 'mysql://user:pass@localhost/db']
+        ]
+    ]
+]));
+
+// Usar em rotas
+$app->get('/users', function($req, $res) use ($container) {
+    $users = $container->get('orm')
+        ->getRepository(User::class)
+        ->findAll();
+    $res->json($users);
+});
+```
+
+### ⚡ ReactPHP Extension
+```bash
+composer require pivotphp/reactphp
+```
+
+Runtime assíncrono para aplicações de longa duração:
+- Servidor HTTP contínuo sem reinicializações
+- Suporte a WebSocket (em breve)
+- Operações I/O assíncronas
+- Arquitetura orientada a eventos
+- Timers e tarefas periódicas
+
+```php
+use PivotPHP\ReactPHP\ReactServiceProvider;
+
+$app->register(new ReactServiceProvider([
+    'server' => [
+        'host' => '0.0.0.0',
+        'port' => 8080
+    ]
+]));
+
+// Executar servidor assíncrono
+$app->runAsync(); // Em vez de $app->run()
+```
+
+### 🌐 Extensões da Comunidade
+
+A comunidade PivotPHP está crescendo! Estamos animados para ver as extensões que serão criadas.
+
+**Extensões Planejadas:**
+- Gerador de documentação OpenAPI/Swagger
+- Sistema de filas para jobs em background
+- Cache avançado com múltiplos drivers
+- Abstração para envio de emails
+- Servidor WebSocket
+- Suporte GraphQL
+
+### 🔧 Criando Sua Própria Extensão
+
+```php
+namespace MeuProjeto\Providers;
+
+use PivotPHP\Core\Providers\ServiceProvider;
+
+class MinhaExtensaoServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Registrar serviços
+        $this->container->singleton('meu.servico', function() {
+            return new MeuServico();
+        });
+    }
+
+    public function boot(): void
+    {
+        // Lógica de inicialização
+        $this->app->get('/minha-rota', function($req, $res) {
+            $res->json(['extensao' => 'ativa']);
+        });
+    }
+}
+```
+
+**Diretrizes para Extensões:**
+1. Seguir convenção de nome: `pivotphp-{nome}`
+2. Fornecer ServiceProvider estendendo `ServiceProvider`
+3. Incluir testes de integração
+4. Documentar no `/docs/extensions/`
+5. Publicar no Packagist com tag `pivotphp-extension`
+
+---
+
 ## 🔄 Compatibilidade PSR-7
 
 O PivotPHP oferece suporte duplo para PSR-7, permitindo uso com projetos modernos (v2.x) e compatibilidade com ReactPHP (v1.x).
@@ -216,6 +328,14 @@ composer update
 Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.
 
 ---
+
+## 🤝 Comunidade
+
+Junte-se à nossa comunidade crescente de desenvolvedores:
+
+- **Discord**: [Entre no nosso servidor](https://discord.gg/DMtxsP7z) - Obtenha ajuda, compartilhe ideias e conecte-se com outros desenvolvedores
+- **GitHub Discussions**: [Inicie uma discussão](https://github.com/PivotPHP/pivotphp-core/discussions) - Compartilhe feedback e ideias
+- **Twitter**: [@PivotPHP](https://twitter.com/pivotphp) - Siga para atualizações e anúncios
 
 ## 🤝 Como Contribuir
 

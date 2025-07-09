@@ -977,6 +977,7 @@ class Router
         self::$groupStats = [];
         self::$groupMiddlewares = [];
         self::$current_group_prefix = '';
+        self::$preCompiledRoutes = [];
 
         // Limpa cache do RouteCache também
         RouteCache::clear();

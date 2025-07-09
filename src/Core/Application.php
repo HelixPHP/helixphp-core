@@ -87,7 +87,7 @@ class Application
         HookServiceProvider::class,
         ExtensionServiceProvider::class,
     ];
-    
+
     /**
      * Middleware aliases mapping
      *
@@ -411,25 +411,29 @@ class Application
         if (is_string($middleware) && isset($this->middlewareAliases[$middleware])) {
             $middleware = $this->middlewareAliases[$middleware];
         }
-        
+
         // If middleware is a string class name, resolve it
         if (is_string($middleware) && class_exists($middleware)) {
-            $middlewareInstance = $this->container->has($middleware) 
-                ? $this->container->get($middleware) 
+            $middlewareInstance = $this->container->has($middleware)
+                ? $this->container->get($middleware)
                 : new $middleware();
-            
+
             // Convert to callable format expected by MiddlewareStack
-            $callable = function($request, $response, $next) use ($middlewareInstance) {
-                return $middlewareInstance->handle($request, $response, $next);
-            };
-            
+            if (is_object($middlewareInstance) && method_exists($middlewareInstance, 'handle')) {
+                $callable = function ($request, $response, $next) use ($middlewareInstance) {
+                    return $middlewareInstance->handle($request, $response, $next);
+                };
+            } else {
+                throw new \InvalidArgumentException('Middleware must have a handle method');
+            }
+
             $this->middlewares->add($callable);
         } elseif (is_callable($middleware)) {
             $this->middlewares->add($middleware);
         } else {
             // Try to make it callable
             if (is_object($middleware) && method_exists($middleware, 'handle')) {
-                $callable = function($request, $response, $next) use ($middleware) {
+                $callable = function ($request, $response, $next) use ($middleware) {
                     return $middleware->handle($request, $response, $next);
                 };
                 $this->middlewares->add($callable);
@@ -437,7 +441,7 @@ class Application
                 throw new \InvalidArgumentException('Middleware must be callable or have a handle method');
             }
         }
-        
+
         return $this;
     }
 

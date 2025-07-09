@@ -1,16 +1,23 @@
 #!/bin/bash
 
-# PivotPHP v1.0.0 - Validador Principal do Projeto
+# PivotPHP - Validador Principal do Projeto
 # Executa todos os scripts de validação em sequência
+
+# Obter versão do arquivo VERSION
+if [ -f "VERSION" ]; then
+    VERSION=$(cat VERSION | tr -d '\n')
+else
+    VERSION="unknown"
+fi
 
 # Parse argumentos
 PRE_COMMIT_MODE=false
 if [[ "$1" == "--pre-commit" ]]; then
     PRE_COMMIT_MODE=true
-    echo "🔍 PivotPHP v1.0.0 - Validação Pre-commit"
+    echo "🔍 PivotPHP v$VERSION - Validação Pre-commit"
     echo "============================================="
 else
-    echo "🚀 PivotPHP v1.0.0 - Validação Completa do Projeto"
+    echo "🚀 PivotPHP v$VERSION - Validação Completa do Projeto"
     echo "======================================================="
 fi
 echo ""
@@ -133,7 +140,7 @@ if [ "$PRE_COMMIT_MODE" = true ]; then
     fi
 
 else
-    print_status "Iniciando validação completa do projeto PivotPHP v1.0.0..."
+    print_status "Iniciando validação completa do projeto PivotPHP v$VERSION..."
     echo ""
 
     # 1. Validação da estrutura de documentação
@@ -180,9 +187,9 @@ fi
 echo ""
 echo "=========================================="
 if [ "$PRE_COMMIT_MODE" = true ]; then
-    echo "📊 RELATÓRIO PRE-COMMIT v1.0.0"
+    echo "📊 RELATÓRIO PRE-COMMIT v$VERSION"
 else
-    echo "📊 RELATÓRIO FINAL DE VALIDAÇÃO v1.0.0"
+    echo "📊 RELATÓRIO FINAL DE VALIDAÇÃO v$VERSION"
 fi
 echo "=========================================="
 echo ""
@@ -213,7 +220,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
         echo "   • Sintaxe PHP"
         echo "   • Estrutura básica do projeto"
     else
-        echo "✅ O projeto PivotPHP v1.0.0 está pronto para:"
+        echo "✅ O projeto PivotPHP v$VERSION está pronto para:"
         echo "   • Execução em produção"
         echo "   • Publicação no Packagist"
         echo "   • Distribuição para desenvolvedores"
@@ -222,7 +229,7 @@ if [ $FAILED_TESTS -eq 0 ]; then
         echo "🚀 Próximos passos recomendados:"
         echo "   1. Execute benchmarks finais: ./benchmarks/run_benchmark.sh -f"
         echo "   2. Execute testes unitários: composer test"
-        echo "   3. Crie tag de release: git tag -a v1.0.0 -m 'Release v1.0.0'"
+        echo "   3. Crie tag de release: git tag -a v$VERSION -m 'Release v$VERSION'"
         echo "   4. Publique: git push origin main --tags"
     fi
 

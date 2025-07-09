@@ -143,7 +143,13 @@ class PriorityQueuing implements OverflowStrategy
 
         while (!$this->queue->isEmpty()) {
             $item = $this->queue->extract();
+            if (!is_array($item) || !isset($item['data'])) {
+                continue;
+            }
             $request = $item['data'];
+            if (!is_array($request) || !isset($request['queued_at'], $request['timeout'])) {
+                continue;
+            }
 
             // Check timeout
             if ($now - $request['queued_at'] > $request['timeout']) {

@@ -71,13 +71,15 @@ class ElasticExpansion implements OverflowStrategy
         // Create new object with elastic marker
         $object = $this->createElasticObject($type, $params);
 
-        // Track elastic object
-        $id = spl_object_id($object);
-        $this->elasticObjects[$id] = [
-            'type' => $type,
-            'created_at' => microtime(true),
-            'ttl' => $this->calculateTTL(),
-        ];
+        // Track elastic object if it's an object
+        if (is_object($object)) {
+            $id = spl_object_id($object);
+            $this->elasticObjects[$id] = [
+                'type' => $type,
+                'created_at' => microtime(true),
+                'ttl' => $this->calculateTTL(),
+            ];
+        }
 
         return $object;
     }
@@ -113,6 +115,9 @@ class ElasticExpansion implements OverflowStrategy
      */
     public function returnElastic(mixed $object): void
     {
+        if (!is_object($object)) {
+            return;
+        }
         $id = spl_object_id($object);
 
         if (isset($this->elasticObjects[$id])) {

@@ -431,7 +431,7 @@ class CircuitBreaker
     /**
      * Get circuit status
      */
-    public function getCircuitStatus(string $name = null): array
+    public function getCircuitStatus(?string $name = null): array
     {
         if ($name !== null) {
             return isset($this->circuits[$name])

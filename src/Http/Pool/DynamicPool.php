@@ -50,6 +50,11 @@ class DynamicPool
     ];
 
     /**
+     * Pool metrics tracker
+     */
+    private ?PoolMetrics $metrics = null;
+
+    /**
      * Scaling state
      */
     private array $scalingState = [
@@ -64,11 +69,6 @@ class DynamicPool
      * Overflow strategies
      */
     private array $overflowStrategies = [];
-
-    /**
-     * Metrics collector
-     */
-    private ?PoolMetrics $metrics = null;
 
     /**
      * Constructor
@@ -128,7 +128,7 @@ class DynamicPool
     public function borrow(string $type, array $params = []): mixed
     {
         $this->stats['borrowed']++;
-        $this->metrics->recordBorrow($type);
+        $this->metrics?->recordBorrow($type);
 
         // Check if auto-scaling needed
         if ($this->config['auto_scale']) {
@@ -152,7 +152,7 @@ class DynamicPool
     public function return(string $type, mixed $object): void
     {
         $this->stats['returned']++;
-        $this->metrics->recordReturn($type);
+        $this->metrics?->recordReturn($type);
 
         $currentSize = $this->scalingState[$type]['current_size'];
         $maxSize = $this->getEffectiveMaxSize($type);
@@ -224,7 +224,7 @@ class DynamicPool
         $this->scalingState[$type]['last_scale_time'] = time();
         $this->stats['expanded']++;
 
-        $this->metrics->recordExpansion($type, $currentSize, $newSize);
+        $this->metrics?->recordExpansion($type, $currentSize, $newSize);
     }
 
     /**
@@ -277,7 +277,7 @@ class DynamicPool
         $this->scalingState[$type]['last_scale_time'] = time();
         $this->stats['shrunk']++;
 
-        $this->metrics->recordShrink($type, $currentSize, $newSize);
+        $this->metrics?->recordShrink($type, $currentSize, $newSize);
     }
 
     /**
@@ -308,7 +308,7 @@ class DynamicPool
     {
         $this->scalingState['in_emergency'] = true;
         $this->stats['emergency_activations']++;
-        $this->metrics->recordEmergencyActivation();
+        $this->metrics?->recordEmergencyActivation();
 
         // Adjust all pool limits temporarily
         foreach ($this->scalingState as $type => &$state) {
@@ -455,7 +455,7 @@ class DynamicPool
             'scaling_state' => $this->scalingState,
             'pool_sizes' => $poolSizes,
             'pool_usage' => $poolUsage,
-            'metrics' => $this->metrics->getMetrics(),
+            'metrics' => $this->metrics?->getMetrics() ?? [],
             'config' => $this->config,
         ];
     }

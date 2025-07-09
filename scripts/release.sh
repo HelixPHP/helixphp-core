@@ -57,7 +57,14 @@ VERSION=$1
 RELEASE_TYPE=${2:-"release"}
 CURRENT_BRANCH=$(git branch --show-current)
 
-title "PivotPHP Release Manager v1.0.0"
+# Obter versão atual do arquivo VERSION
+if [ -f "VERSION" ]; then
+    CURRENT_VERSION=$(cat VERSION | tr -d '\n')
+else
+    CURRENT_VERSION="unknown"
+fi
+
+title "PivotPHP Release Manager (Current: v$CURRENT_VERSION)"
 echo ""
 
 info "Versão a ser criada: $VERSION"

@@ -95,7 +95,7 @@ class GracefulFallback implements OverflowStrategy
         // Use PSR-7 factory directly without pooling
         $uri = Psr7Pool::getUri($params[1] ?? '/');
         $body = Psr7Pool::getStream('');
-        
+
         return Psr7Pool::getServerRequest(
             $params[0] ?? 'GET',
             $uri,
@@ -111,7 +111,7 @@ class GracefulFallback implements OverflowStrategy
      */
     private function createFallbackResponse(array $params): mixed
     {
-        return Psr7Pool::createResponse(
+        return Psr7Pool::borrowResponse(
             $params[0] ?? 200,
             $params[1] ?? [],
             $params[2] ?? null,
@@ -125,7 +125,7 @@ class GracefulFallback implements OverflowStrategy
      */
     private function createFallbackUri(array $params): mixed
     {
-        return Psr7Pool::createUri($params[0] ?? '');
+        return Psr7Pool::borrowUri();
     }
 
     /**
@@ -133,7 +133,7 @@ class GracefulFallback implements OverflowStrategy
      */
     private function createFallbackStream(array $params): mixed
     {
-        return Psr7Pool::createStream($params[0] ?? '');
+        return Psr7Pool::borrowStream();
     }
 
     /**

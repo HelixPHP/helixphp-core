@@ -24,7 +24,7 @@ class RequestTest extends TestCase
 
         $this->assertEquals('GET', $request->method);
         $this->assertEquals('/users/:id', $request->path);
-        $this->assertEquals('/users/123/', $request->pathCallable);
+        $this->assertEquals('/users/123', $request->pathCallable);
         $this->assertIsObject($request->params);
         $this->assertIsObject($request->query);
         // Para GET, o body é um array vazio conforme o código
@@ -43,8 +43,9 @@ class RequestTest extends TestCase
 
     public function testPathCallableSlashNormalization(): void
     {
+        // pathCallable should be preserved as-is for proper route matching
         $request = new Request('GET', '/users', '/users');
-        $this->assertEquals('/users/', $request->pathCallable);
+        $this->assertEquals('/users', $request->pathCallable);
 
         $request = new Request('GET', '/users/', '/users/');
         $this->assertEquals('/users/', $request->pathCallable);
@@ -147,14 +148,14 @@ class RequestTest extends TestCase
 
         $this->assertEquals('GET', $request->method);
         $this->assertEquals('/api/v1/users/:userId/posts/:postId/comments', $request->path);
-        $this->assertEquals('/api/v1/users/123/posts/456/comments/', $request->pathCallable);
+        $this->assertEquals('/api/v1/users/123/posts/456/comments', $request->pathCallable);
     }
 
     public function testSpecialCharactersInPath(): void
     {
         $request = new Request('GET', '/search', '/search');
 
-        $this->assertEquals('/search/', $request->pathCallable);
+        $this->assertEquals('/search', $request->pathCallable);
     }
 
     public function testRequestWithArrayParameters(): void

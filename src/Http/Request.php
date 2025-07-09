@@ -119,9 +119,8 @@ class Request implements ServerRequestInterface, AttributeInterface
         $this->method = strtoupper($method);
         $this->path = $path;
         $this->pathCallable = $pathCallable;
-        if (!str_ends_with($pathCallable, '/')) {
-            $this->pathCallable .= '/';
-        }
+        // Don't add trailing slash - it breaks route matching
+        // Routes should handle trailing slashes in their patterns if needed
         $this->params = new stdClass();
         $this->query = new stdClass();
         $this->body = new stdClass();
@@ -821,6 +820,30 @@ class Request implements ServerRequestInterface, AttributeInterface
     public function getParam(string $key, mixed $default = null): mixed
     {
         return $this->params->{$key} ?? $default;
+    }
+
+    /**
+     * Get the client IP address
+     *
+     * @return string
+     */
+    public function getIp(): string
+    {
+        // Check for IP behind proxy
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            return trim($ips[0]);
+        }
+
+        if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+            return $_SERVER['HTTP_X_REAL_IP'];
+        }
+
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        }
+
+        return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
 
     public function getQuerys(): stdClass
