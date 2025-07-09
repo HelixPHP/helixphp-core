@@ -1,6 +1,15 @@
 # Guia do Objeto Request
 
-O objeto `Request` representa a requisição HTTP recebida. Ele fornece acesso a parâmetros de rota, query string, corpo da requisição, cabeçalhos e arquivos.
+O objeto `Request` representa a requisição HTTP recebida com **suporte híbrido PSR-7**. Ele fornece acesso a parâmetros de rota, query string, corpo da requisição, cabeçalhos e arquivos, mantendo compatibilidade total com Express.js e implementando completamente a interface PSR-7 `ServerRequestInterface`.
+
+## 🔄 Compatibilidade Híbrida
+
+O Request PivotPHP oferece:
+- ✅ **API Express.js** completa para facilidade de uso
+- ✅ **Interface PSR-7** completa para compatibilidade com middleware PSR-15
+- ✅ **Lazy Loading** para performance otimizada
+- ✅ **Object Pooling** para melhor utilização de memória
+- ✅ **Imutabilidade** respeitando padrões PSR-7
 
 ## Estrutura do Request
 
@@ -34,6 +43,77 @@ $app->get('/profile', function($req, $res) {
         'timestamp' => $req->timestamp
     ]);
 });
+```
+
+## 🔄 Usando PSR-7 (ServerRequestInterface)
+
+O Request implementa completamente a interface PSR-7, permitindo uso com middleware PSR-15:
+
+```php
+use Psr\Http\Message\ServerRequestInterface;
+
+function myMiddleware(ServerRequestInterface $request, $response, $next) {
+    // Métodos PSR-7 padrão
+    $method = $request->getMethod();
+    $uri = $request->getUri();
+    $headers = $request->getHeaders();
+    $body = $request->getBody();
+    
+    // Atributos PSR-7 (imutável)
+    $newRequest = $request->withAttribute('middleware_processed', true);
+    $user = $newRequest->getAttribute('user');
+    
+    return $next($newRequest, $response);
+}
+
+// Usar com middleware PSR-15
+$app->use(myMiddleware);
+```
+
+### Imutabilidade PSR-7
+
+Métodos `with*()` retornam **nova instância** respeitando imutabilidade:
+
+```php
+$request1 = new Request('GET', '/api/users', '/api/users');
+$request2 = $request1->withAttribute('user_id', 123);
+$request3 = $request2->withHeader('X-Custom', 'value');
+
+// $request1, $request2, $request3 são objetos DIFERENTES
+// Imutabilidade garantida - nenhum objeto original é modificado
+```
+
+### Lazy Loading PSR-7
+
+O objeto PSR-7 interno é criado apenas quando necessário:
+
+```php
+$request = new Request('GET', '/api/users', '/api/users');
+// ✅ Rápido - sem PSR-7 criado ainda
+
+$request->param('id');     // ✅ Express.js - sem PSR-7
+$request->ip();           // ✅ Express.js - sem PSR-7
+
+$request->getMethod();    // ✅ PSR-7 criado agora (lazy loading)
+$request->getHeaders();   // ✅ Reutiliza PSR-7 já criado
+```
+
+### Object Pooling
+
+Use a factory otimizada para melhor performance:
+
+```php
+use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
+
+// Configurar pooling
+OptimizedHttpFactory::initialize([
+    'enable_pooling' => true,
+    'warm_up_pools' => true,
+]);
+
+// Criar requests com pooling
+$request = OptimizedHttpFactory::createRequest('GET', '/api/users', '/api/users');
+// Objetos PSR-7 internos são reutilizados automaticamente
 ```
 
 ## Acessando Parâmetros de Rota

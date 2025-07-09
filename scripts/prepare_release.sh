@@ -1,9 +1,17 @@
 #!/bin/bash
 
-# Script de preparação para publicação do PivotPHP v1.0.0
+# Script de preparação para publicação do PivotPHP
 # Este script limpa, valida e prepara o projeto para release
 
 set -e
+
+# Obter versão do arquivo VERSION
+if [ -f "VERSION" ]; then
+    VERSION=$(cat VERSION | tr -d '\n')
+else
+    echo "Arquivo VERSION não encontrado!"
+    exit 1
+fi
 
 # Cores
 GREEN='\033[0;32m'
@@ -19,7 +27,7 @@ success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-title "PivotPHP v1.0.0 - Release Preparation"
+title "PivotPHP v$VERSION - Release Preparation"
 echo ""
 
 # Verificar se estamos na raiz do projeto

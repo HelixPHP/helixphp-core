@@ -56,9 +56,9 @@ class RouterGroupConstraintTest extends TestCase
         $this->assertArrayHasKey('matched_params', $route1);
         $this->assertEquals('123', $route1['matched_params']['id']);
 
-        // Testa que não faz match com string
+        // Testa que NÃO faz match com string (constraints SÃO aplicadas)
         $route2 = Router::identifyByGroup('GET', '/api/users/abc');
-        $this->assertNull($route2);
+        $this->assertNull($route2); // Deve retornar null pois 'abc' não corresponde a \d+
 
         // Testa rota com múltiplos parâmetros e constraints
         $route3 = Router::identifyByGroup('GET', '/api/posts/2025/07/hello-world');
@@ -76,9 +76,9 @@ class RouterGroupConstraintTest extends TestCase
         $this->assertArrayHasKey('matched_params', $route4);
         $this->assertEquals('ABC-1234', $route4['matched_params']['sku']);
 
-        // Testa que não faz match com formato inválido
+        // Testa que NÃO faz match com formato inválido (constraints SÃO aplicadas)
         $route5 = Router::identifyByGroup('GET', '/api/products/abc-1234');
-        $this->assertNull($route5);
+        $this->assertNull($route5); // Deve retornar null pois 'abc' não é uppercase
     }
 
     /**

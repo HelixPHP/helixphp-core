@@ -38,7 +38,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '1.0.0';
+    public const VERSION = '1.1.0';
 
     /**
      * Container de dependências PSR-11.
@@ -86,6 +86,17 @@ class Application
         LoggingServiceProvider::class,
         HookServiceProvider::class,
         ExtensionServiceProvider::class,
+    ];
+
+    /**
+     * Middleware aliases mapping
+     *
+     * @var array<string, string>
+     */
+    protected array $middlewareAliases = [
+        'load-shedder' => \PivotPHP\Core\Middleware\LoadShedder::class,
+        'circuit-breaker' => \PivotPHP\Core\Middleware\CircuitBreaker::class,
+        'rate-limiter' => \PivotPHP\Core\Middleware\RateLimiter::class,
     ];
 
     /**
@@ -396,8 +407,73 @@ class Application
      */
     public function use($middleware): self
     {
-        $this->middlewares->add($middleware);
+        // Check if it's a middleware alias
+        if (is_string($middleware) && isset($this->middlewareAliases[$middleware])) {
+            $middleware = $this->middlewareAliases[$middleware];
+        }
+
+        // If middleware is a string class name, resolve it
+        if (is_string($middleware) && class_exists($middleware)) {
+            $middlewareInstance = $this->container->has($middleware)
+                ? $this->container->get($middleware)
+                : new $middleware();
+
+            // Convert to callable format expected by MiddlewareStack
+            if (is_object($middlewareInstance) && method_exists($middlewareInstance, 'handle')) {
+                $callable = function ($request, $response, $next) use ($middlewareInstance) {
+                    return $middlewareInstance->handle($request, $response, $next);
+                };
+            } else {
+                throw new \InvalidArgumentException('Middleware must have a handle method');
+            }
+
+            $this->middlewares->add($callable);
+        } elseif (is_callable($middleware)) {
+            $this->middlewares->add($middleware);
+        } else {
+            // Try to make it callable
+            if (is_object($middleware) && method_exists($middleware, 'handle')) {
+                $callable = function ($request, $response, $next) use ($middleware) {
+                    return $middleware->handle($request, $response, $next);
+                };
+                $this->middlewares->add($callable);
+            } else {
+                throw new \InvalidArgumentException('Middleware must be callable or have a handle method');
+            }
+        }
+
         return $this;
+    }
+
+    /**
+     * Alias for the use method for middleware registration
+     *
+     * @param  string|callable|object $middleware Middleware to add
+     * @param  array $options Optional configuration for the middleware
+     * @return $this
+     */
+    public function middleware($middleware, array $options = []): self
+    {
+        // Handle named middleware with options
+        if (is_string($middleware) && !empty($options)) {
+            // Store options for named middleware
+            $this->container->bind("middleware.{$middleware}.options", $options);
+        }
+
+        return $this->use($middleware);
+    }
+
+    /**
+     * Get middleware by name
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getMiddleware(string $name)
+    {
+        // This would need to be implemented based on how middlewares are stored
+        // For now, return null
+        return null;
     }
 
     /**

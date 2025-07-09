@@ -1,9 +1,16 @@
 #!/bin/bash
 
-# PivotPHP v1.0.0 - Validador de Documentação
-# Valida a nova estrutura de documentação v1.0.0
+# PivotPHP - Validador de Documentação
+# Valida a estrutura de documentação
 
-echo "📚 Validando estrutura de documentação PivotPHP v1.0.0..."
+# Obter versão do arquivo VERSION
+if [ -f "VERSION" ]; then
+    VERSION=$(cat VERSION | tr -d '\n')
+else
+    VERSION="unknown"
+fi
+
+echo "📚 Validando estrutura de documentação PivotPHP v$VERSION..."
 echo "============================================================="
 echo ""
 

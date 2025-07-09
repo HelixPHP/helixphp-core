@@ -2,6 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue.svg)](https://php.net)
+[![Latest Stable Version](https://poser.pugx.org/pivotphp/core/v/stable)](https://packagist.org/packages/pivotphp/core)
+[![Total Downloads](https://poser.pugx.org/pivotphp/core/downloads)](https://packagist.org/packages/pivotphp/core)
 [![PHPStan Level](https://img.shields.io/badge/PHPStan-Level%209-brightgreen.svg)](https://phpstan.org/)
 [![PSR-12](https://img.shields.io/badge/PSR--12%20%2F%20PSR--15-compliant-brightgreen)](https://www.php-fig.org/psr/psr-12/)
 [![GitHub Issues](https://img.shields.io/github/issues/PivotPHP/pivotphp-core)](https://github.com/PivotPHP/pivotphp-core/issues)
@@ -17,8 +19,9 @@
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
-- **Qualidade**: 270+ testes, PHPStan Level 9, PSR-12, cobertura completa.
+- **Qualidade**: 315+ testes, PHPStan Level 9, PSR-12, cobertura completa.
 - **🆕 v1.0.1**: Suporte a validação avançada de rotas com regex e constraints.
+- **🚀 v1.0.1**: Suporte PSR-7 híbrido, lazy loading, object pooling e otimizações de performance.
 
 ---
 
@@ -32,6 +35,8 @@
 - 🛡️ **Segurança Avançada**
 - 📡 **Streaming & SSE**
 - 📚 **OpenAPI/Swagger**
+- 🔄 **PSR-7 Híbrido**
+- ♻️ **Object Pooling**
 - ⚡ **Performance**
 - 🧪 **Qualidade e Testes**
 
@@ -104,6 +109,48 @@ $app->get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<slug>', function($req, $res) 
 $app->run();
 ```
 
+### 🔄 Suporte PSR-7 Híbrido
+
+O PivotPHP oferece **compatibilidade híbrida** com PSR-7, mantendo a facilidade da API Express.js enquanto implementa completamente as interfaces PSR-7:
+
+```php
+// API Express.js (familiar e produtiva)
+$app->get('/api/users', function($req, $res) {
+    $id = $req->param('id');
+    $name = $req->input('name');
+    return $res->json(['user' => $userService->find($id)]);
+});
+
+// PSR-7 nativo (para middleware PSR-15)
+$app->use(function(ServerRequestInterface $request, ResponseInterface $response, $next) {
+    $method = $request->getMethod();
+    $uri = $request->getUri();
+    $newRequest = $request->withAttribute('processed', true);
+    return $next($newRequest, $response);
+});
+
+// Lazy loading e Object Pooling automático
+use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
+
+OptimizedHttpFactory::initialize([
+    'enable_pooling' => true,
+    'warm_up_pools' => true,
+    'max_pool_size' => 100,
+]);
+
+// Objetos PSR-7 são reutilizados automaticamente
+$request = OptimizedHttpFactory::createRequest('GET', '/api/users', '/api/users');
+$response = OptimizedHttpFactory::createResponse();
+```
+
+**Benefícios da Implementação Híbrida:**
+- ✅ **100% compatível** com middleware PSR-15
+- ✅ **Imutabilidade** respeitada nos métodos `with*()`
+- ✅ **Lazy loading** - objetos PSR-7 criados apenas quando necessário
+- ✅ **Object pooling** - reutilização inteligente para melhor performance
+- ✅ **API Express.js** mantida para produtividade
+- ✅ **Zero breaking changes** - código existente funciona sem alterações
+
 ### 📖 Documentação OpenAPI/Swagger
 
 O PivotPHP inclui suporte integrado para geração automática de documentação OpenAPI:
@@ -141,6 +188,116 @@ Principais links:
 
 ---
 
+## 🧩 Extensões Oficiais
+
+O PivotPHP possui um ecossistema rico de extensões que adicionam funcionalidades poderosas ao framework:
+
+### 🗄️ Cycle ORM Extension
+```bash
+composer require pivotphp/cycle-orm
+```
+
+Integração completa com Cycle ORM para gerenciamento de banco de dados:
+- Migrações automáticas
+- Repositórios com query builder
+- Relacionamentos (HasOne, HasMany, BelongsTo, ManyToMany)
+- Suporte a transações
+- Múltiplas conexões de banco
+
+```php
+use PivotPHP\CycleORM\CycleServiceProvider;
+
+$app->register(new CycleServiceProvider([
+    'dbal' => [
+        'databases' => [
+            'default' => ['connection' => 'mysql://user:pass@localhost/db']
+        ]
+    ]
+]));
+
+// Usar em rotas
+$app->get('/users', function($req, $res) use ($container) {
+    $users = $container->get('orm')
+        ->getRepository(User::class)
+        ->findAll();
+    $res->json($users);
+});
+```
+
+### ⚡ ReactPHP Extension
+```bash
+composer require pivotphp/reactphp
+```
+
+Runtime assíncrono para aplicações de longa duração:
+- Servidor HTTP contínuo sem reinicializações
+- Suporte a WebSocket (em breve)
+- Operações I/O assíncronas
+- Arquitetura orientada a eventos
+- Timers e tarefas periódicas
+
+```php
+use PivotPHP\ReactPHP\ReactServiceProvider;
+
+$app->register(new ReactServiceProvider([
+    'server' => [
+        'host' => '0.0.0.0',
+        'port' => 8080
+    ]
+]));
+
+// Executar servidor assíncrono
+$app->runAsync(); // Em vez de $app->run()
+```
+
+### 🌐 Extensões da Comunidade
+
+A comunidade PivotPHP está crescendo! Estamos animados para ver as extensões que serão criadas.
+
+**Extensões Planejadas:**
+- Gerador de documentação OpenAPI/Swagger
+- Sistema de filas para jobs em background
+- Cache avançado com múltiplos drivers
+- Abstração para envio de emails
+- Servidor WebSocket
+- Suporte GraphQL
+
+### 🔧 Criando Sua Própria Extensão
+
+```php
+namespace MeuProjeto\Providers;
+
+use PivotPHP\Core\Providers\ServiceProvider;
+
+class MinhaExtensaoServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
+        // Registrar serviços
+        $this->container->singleton('meu.servico', function() {
+            return new MeuServico();
+        });
+    }
+
+    public function boot(): void
+    {
+        // Lógica de inicialização
+        $this->app->get('/minha-rota', function($req, $res) {
+            $res->json(['extensao' => 'ativa']);
+        });
+    }
+}
+```
+
+**Diretrizes para Extensões:**
+1. Seguir convenção de nome: `pivotphp-{nome}`
+2. Fornecer ServiceProvider estendendo `ServiceProvider`
+3. Incluir testes de integração
+4. Documentar no `/docs/extensions/`
+5. Publicar no Packagist com tag `pivotphp-extension`
+
+---
+
 ## 🔄 Compatibilidade PSR-7
 
 O PivotPHP oferece suporte duplo para PSR-7, permitindo uso com projetos modernos (v2.x) e compatibilidade com ReactPHP (v1.x).
@@ -171,6 +328,14 @@ composer update
 Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.
 
 ---
+
+## 🤝 Comunidade
+
+Junte-se à nossa comunidade crescente de desenvolvedores:
+
+- **Discord**: [Entre no nosso servidor](https://discord.gg/DMtxsP7z) - Obtenha ajuda, compartilhe ideias e conecte-se com outros desenvolvedores
+- **GitHub Discussions**: [Inicie uma discussão](https://github.com/PivotPHP/pivotphp-core/discussions) - Compartilhe feedback e ideias
+- **Twitter**: [@PivotPHP](https://twitter.com/pivotphp) - Siga para atualizações e anúncios
 
 ## 🤝 Como Contribuir
 

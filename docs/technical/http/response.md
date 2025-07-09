@@ -1,6 +1,16 @@
 # Guia do Objeto Response
 
-O objeto `Response` é responsável por construir e enviar respostas HTTP. Ele oferece métodos para definir status, cabeçalhos e enviar dados em diferentes formatos.
+O objeto `Response` é responsável por construir e enviar respostas HTTP com **suporte híbrido PSR-7**. Ele oferece métodos para definir status, cabeçalhos e enviar dados em diferentes formatos, mantendo compatibilidade total com Express.js e implementando completamente a interface PSR-7 `ResponseInterface`.
+
+## 🔄 Compatibilidade Híbrida
+
+O Response PivotPHP oferece:
+- ✅ **API Express.js** completa para facilidade de uso
+- ✅ **Interface PSR-7** completa para compatibilidade com middleware PSR-15
+- ✅ **Lazy Loading** para performance otimizada
+- ✅ **Object Pooling** para melhor utilização de memória
+- ✅ **Imutabilidade** respeitando padrões PSR-7
+- ✅ **Streaming** para respostas em tempo real
 
 ## Estrutura do Response
 
@@ -11,6 +21,74 @@ O objeto `Response` é responsável por construir e enviar respostas HTTP. Ele o
 - **body**: Corpo da resposta
 - **isStreaming**: Indica se está em modo streaming
 - **testMode**: Modo de teste (não faz output direto)
+
+## 🔄 Usando PSR-7 (ResponseInterface)
+
+O Response implementa completamente a interface PSR-7:
+
+```php
+use Psr\Http\Message\ResponseInterface;
+
+function myMiddleware($request, ResponseInterface $response, $next) {
+    // Métodos PSR-7 padrão
+    $status = $response->getStatusCode();
+    $headers = $response->getHeaders();
+    $body = $response->getBody();
+    
+    // Métodos PSR-7 (imutável)
+    $newResponse = $response->withStatus(200)
+                            ->withHeader('X-Custom', 'value')
+                            ->withBody($stream);
+    
+    return $next($request, $newResponse);
+}
+```
+
+### Imutabilidade PSR-7
+
+Métodos `with*()` retornam **nova instância** respeitando imutabilidade:
+
+```php
+$response1 = new Response();
+$response2 = $response1->withStatus(404);
+$response3 = $response2->withHeader('Content-Type', 'application/json');
+
+// $response1, $response2, $response3 são objetos DIFERENTES
+// Imutabilidade garantida - nenhum objeto original é modificado
+```
+
+### Lazy Loading PSR-7
+
+O objeto PSR-7 interno é criado apenas quando necessário:
+
+```php
+$response = new Response();
+// ✅ Rápido - sem PSR-7 criado ainda
+
+$response->status(200);       // ✅ Express.js - sem PSR-7
+$response->json(['ok' => true]); // ✅ Express.js - sem PSR-7
+
+$response->getStatusCode();   // ✅ PSR-7 criado agora (lazy loading)
+$response->getHeaders();      // ✅ Reutiliza PSR-7 já criado
+```
+
+### Object Pooling
+
+Use a factory otimizada para melhor performance:
+
+```php
+use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
+
+// Configurar pooling
+OptimizedHttpFactory::initialize([
+    'enable_pooling' => true,
+    'warm_up_pools' => true,
+]);
+
+// Criar responses com pooling
+$response = OptimizedHttpFactory::createResponse();
+// Objetos PSR-7 internos são reutilizados automaticamente
+```
 
 ## Definindo Status HTTP
 

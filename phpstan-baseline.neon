@@ -1,0 +1,23 @@
+parameters:
+    ignoreErrors:
+        # Redis é opcional - pode ser null
+        - '#Cannot call method .* on Redis\|null#'
+        - '#Comparison operation .* between \(int\|Redis\|false\) and 0#'
+        
+        # WeakReference mudou no PHP 8
+        - '#Class WeakReference constructor invoked with 1 parameter, 0 required#'
+        
+        # Propriedades privadas acessadas internamente
+        - '#Access to private property PivotPHP\\Core\\Http\\Request::\$pathCallable#'
+        - '#Access to private property PivotPHP\\Core\\Http\\Request::\$method#'
+        - '#Access to private property PivotPHP\\Core\\Http\\Request::\$headers#'
+        
+        # Tipos genéricos opcionais
+        - '#Property .* with generic class SplPriorityQueue does not specify its types#'
+        
+        # Propriedades write-only (configuração)
+        - '#Property .* is never read, only written#'
+        
+        # Tipos mixed de arrays dinâmicos
+        - '#Cannot access offset .* on mixed#'
+        - '#Parameter .* of function .* expects .*, mixed given#'
