@@ -65,7 +65,7 @@ class RateLimiter
         // Set default key generator if not provided
         if (!$this->config['key_generator']) {
             $this->config['key_generator'] = function (Request $request) {
-                return $request->getIp() ?? 'unknown';
+                return $request->getIp();
             };
         }
     }
@@ -171,7 +171,11 @@ class RateLimiter
         $history = $this->getFromStorage($storageKey, []);
 
         // Remove old entries
-        $history = array_filter($history, fn($timestamp) => $timestamp > $windowStart);
+        if (is_array($history)) {
+            $history = array_filter($history, fn($timestamp) => $timestamp > $windowStart);
+        } else {
+            $history = [];
+        }
 
         // Check if limit exceeded
         if (count($history) >= $this->config['max_requests']) {
@@ -201,14 +205,25 @@ class RateLimiter
             ]
         );
 
+        // Ensure bucket is array
+        if (!is_array($bucket)) {
+            $bucket = [
+                'tokens' => $this->config['max_requests'],
+                'last_refill' => $now,
+            ];
+        }
+
         // Refill tokens
-        $elapsed = $now - $bucket['last_refill'];
+        $lastRefill = is_numeric($bucket['last_refill']) ? (float) $bucket['last_refill'] : $now;
+        $tokens = is_numeric($bucket['tokens']) ? (float) $bucket['tokens'] : 0;
+
+        $elapsed = $now - $lastRefill;
         $refillRate = $this->config['max_requests'] / $this->config['window_size'];
         $newTokens = $elapsed * $refillRate;
 
         $bucket['tokens'] = min(
             $this->config['max_requests'] + $this->config['burst_size'],
-            $bucket['tokens'] + $newTokens
+            $tokens + $newTokens
         );
         $bucket['last_refill'] = $now;
 
@@ -241,12 +256,21 @@ class RateLimiter
             ]
         );
 
+        // Ensure bucket is array
+        if (!is_array($bucket)) {
+            $bucket = [
+                'volume' => 0,
+                'last_leak' => $now,
+            ];
+        }
+
         // Leak water from bucket
-        $elapsed = $now - $bucket['last_leak'];
+        $elapsed = $now - (is_numeric($bucket['last_leak']) ? (float) $bucket['last_leak'] : $now);
         $leakRate = $this->config['max_requests'] / $this->config['window_size'];
         $leaked = $elapsed * $leakRate;
 
-        $bucket['volume'] = max(0, $bucket['volume'] - $leaked);
+        $volume = is_numeric($bucket['volume']) ? (float) $bucket['volume'] : 0;
+        $bucket['volume'] = max(0, $volume - $leaked);
         $bucket['last_leak'] = $now;
 
         // Check if bucket can accept more
@@ -340,6 +364,7 @@ class RateLimiter
         $storageKey = "fixed_window:{$key}:{$window}";
 
         $count = $this->getFromStorage($storageKey, 0);
+        $count = is_numeric($count) ? (int) $count : 0;
         return max(0, $this->config['max_requests'] - $count);
     }
 
@@ -353,9 +378,11 @@ class RateLimiter
         $storageKey = "sliding_window:{$key}";
 
         $history = $this->getFromStorage($storageKey, []);
-        $history = array_filter($history, fn($timestamp) => $timestamp > $windowStart);
-
-        return max(0, $this->config['max_requests'] - count($history));
+        if (is_array($history)) {
+            $history = array_filter($history, fn($timestamp) => $timestamp > $windowStart);
+            return max(0, $this->config['max_requests'] - count($history));
+        }
+        return $this->config['max_requests'];
     }
 
     /**
@@ -366,7 +393,11 @@ class RateLimiter
         $storageKey = "token_bucket:{$key}";
         $bucket = $this->getFromStorage($storageKey, ['tokens' => $this->config['max_requests']]);
 
-        return max(0, (int) floor($bucket['tokens']));
+        if (is_array($bucket) && isset($bucket['tokens'])) {
+            $tokens = is_numeric($bucket['tokens']) ? (float) $bucket['tokens'] : 0;
+            return max(0, (int) floor($tokens));
+        }
+        return $this->config['max_requests'];
     }
 
     /**
@@ -377,7 +408,11 @@ class RateLimiter
         $storageKey = "leaky_bucket:{$key}";
         $bucket = $this->getFromStorage($storageKey, ['volume' => 0]);
 
-        return max(0, $this->config['max_requests'] - (int) ceil($bucket['volume']));
+        if (is_array($bucket) && isset($bucket['volume'])) {
+            $volume = is_numeric($bucket['volume']) ? (float) $bucket['volume'] : 0;
+            return max(0, $this->config['max_requests'] - (int) ceil($volume));
+        }
+        return $this->config['max_requests'];
     }
 
     /**

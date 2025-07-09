@@ -187,7 +187,7 @@ class TrafficClassifier
     /**
      * Normalize priority value
      */
-    private function normalizePriority($priority): int
+    private function normalizePriority(mixed $priority): int
     {
         if (is_int($priority)) {
             return max(0, min(100, $priority));
@@ -278,8 +278,8 @@ class TrafficClassifier
     {
         return match ($condition['type']) {
             'path_pattern' => $this->matchesPathPattern($request, $condition['pattern']),
-            'path_exact' => $request->pathCallable === $condition['path'],
-            'method' => in_array($request->method, $condition['methods']),
+            'path_exact' => $request->getPathCallable() === $condition['path'],
+            'method' => in_array($request->getMethod(), $condition['methods']),
             'header' => $this->matchesHeader($request, $condition['name'], $condition['value']),
             'user_agent' => $this->matchesUserAgent($request, $condition['pattern']),
             'ip_range' => $this->matchesIpRange($request, $condition['ranges']),
@@ -293,7 +293,7 @@ class TrafficClassifier
      */
     private function matchesPathPattern(Request $request, string $pattern): bool
     {
-        return preg_match($pattern, $request->pathCallable) === 1;
+        return preg_match($pattern, $request->getPathCallable()) === 1;
     }
 
     /**
@@ -301,7 +301,7 @@ class TrafficClassifier
      */
     private function matchesHeader(Request $request, string $name, string $value): bool
     {
-        $headerValue = $request->headers->get($name);
+        $headerValue = $request->getHeaders()->get($name);
 
         if ($headerValue === null) {
             return false;

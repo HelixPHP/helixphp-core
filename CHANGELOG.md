@@ -31,9 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Automatic pool size adjustments based on memory pressure
   - Four pressure levels: LOW, MEDIUM, HIGH, CRITICAL
   - Emergency mode activation under critical conditions
-- **Distributed Pool Coordination**:
+- **Distributed Pool Coordination** (Extension-based):
   - `DistributedPoolManager` for multi-instance deployments
-  - Redis-based coordination (extensible to etcd/consul)
+  - Built-in `NoOpCoordinator` for single-instance operation
+  - Redis/etcd/Consul support via optional extensions
   - Leader election for pool rebalancing
   - Cross-instance object sharing
 - **Real-Time Performance Monitoring**:
@@ -93,8 +94,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Request Class**: Now extends PSR-7 ServerRequestInterface while maintaining Express.js methods
   - `getBody()` method renamed to `getBodyAsStdClass()` for legacy compatibility
   - Added PSR-7 methods: `getMethod()`, `getUri()`, `getHeaders()`, `getBody()`, etc.
+  - `getHeaders()` renamed to `getHeadersObject()` for Express.js style (returns HeaderRequest)
   - Immutable `with*()` methods for PSR-7 compliance
   - Lazy loading implementation for performance
+- **Distributed Pooling**: Now requires external extensions for coordination backends
+  - Redis support moved to `pivotphp/redis-pool` extension
+  - Built-in `NoOpCoordinator` for single-instance deployments
+  - Automatic fallback when extensions are not available
 - **Response Class**: Now extends PSR-7 ResponseInterface while maintaining Express.js methods
   - Added PSR-7 methods: `getStatusCode()`, `getHeaders()`, `getBody()`, etc.
   - Immutable `with*()` methods for PSR-7 compliance

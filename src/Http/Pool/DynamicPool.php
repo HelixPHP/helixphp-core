@@ -316,6 +316,7 @@ class DynamicPool
                 $state['emergency_limit'] = $this->config['emergency_limit'];
             }
         }
+        unset($state); // Unset reference to avoid issues
     }
 
     /**
@@ -420,7 +421,7 @@ class DynamicPool
     private function cleanStream(mixed $stream): mixed
     {
         // Rewind stream if possible
-        if (method_exists($stream, 'rewind')) {
+        if (is_object($stream) && method_exists($stream, 'rewind')) {
             $stream->rewind();
         }
         return $stream;
@@ -432,7 +433,7 @@ class DynamicPool
     private function destroyObject(string $type, mixed $object): void
     {
         // Type-specific cleanup if needed
-        if ($type === 'stream' && method_exists($object, 'close')) {
+        if ($type === 'stream' && is_object($object) && method_exists($object, 'close')) {
             $object->close();
         }
     }

@@ -6,7 +6,10 @@ namespace PivotPHP\Core\Pool\Distributed;
 
 use PivotPHP\Core\Http\Pool\DynamicPool;
 use PivotPHP\Core\Pool\Distributed\Coordinators\CoordinatorInterface;
-use PivotPHP\Core\Pool\Distributed\Coordinators\RedisCoordinator;
+use PivotPHP\Core\Pool\Distributed\Coordinators\NoOpCoordinator;
+
+// Redis and other coordinators will be loaded via extensions
+// use PivotPHP\Core\Pool\Distributed\Coordinators\RedisCoordinator;
 
 /**
  * Distributed pool management for multi-instance coordination
@@ -17,7 +20,7 @@ class DistributedPoolManager
      * Configuration
      */
     private array $config = [
-        'coordination' => 'redis',          // redis|etcd|consul
+        'coordination' => 'none',           // none|redis|etcd|consul (via extensions)
         'namespace' => 'pivotphp:pools',
         'sync_interval' => 5,               // seconds
         'leader_election' => true,
@@ -105,13 +108,34 @@ class DistributedPoolManager
     private function createCoordinator(): CoordinatorInterface
     {
         return match ($this->config['coordination']) {
-            'redis' => new RedisCoordinator($this->config),
+            'none' => new NoOpCoordinator($this->config),
+            'redis' => $this->createRedisCoordinator(),
             // 'etcd' => new EtcdCoordinator($this->config),
             // 'consul' => new ConsulCoordinator($this->config),
             default => throw new \InvalidArgumentException(
                 "Unknown coordination backend: {$this->config['coordination']}"
             ),
         };
+    }
+
+    /**
+     * Create Redis coordinator (requires extension)
+     */
+    private function createRedisCoordinator(): CoordinatorInterface
+    {
+        if (!extension_loaded('redis')) {
+            error_log('Redis extension not loaded - falling back to NoOpCoordinator');
+            return new NoOpCoordinator($this->config);
+        }
+
+        // Check if RedisCoordinator class exists (from extension)
+        $redisCoordinatorClass = 'PivotPHP\\Core\\Pool\\Distributed\\Coordinators\\RedisCoordinator';
+        if (!class_exists($redisCoordinatorClass)) {
+            error_log('RedisCoordinator class not found - install pivotphp/redis-pool extension');
+            return new NoOpCoordinator($this->config);
+        }
+
+        return new $redisCoordinatorClass($this->config);
     }
 
     /**
@@ -546,7 +570,8 @@ class DistributedPoolManager
     {
         // In real implementation, would deserialize actual objects
         // For now, return empty array
-        $count = unserialize(base64_decode($data));
+        $decoded = unserialize(base64_decode($data));
+        $count = is_int($decoded) ? $decoded : 0;
         return array_fill(0, $count, new \stdClass());
     }
 

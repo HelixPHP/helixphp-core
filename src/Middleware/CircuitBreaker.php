@@ -68,7 +68,7 @@ class CircuitBreaker
         $this->metrics['total_requests']++;
 
         // Check if path is excluded
-        if ($this->isExcluded($request->pathCallable)) {
+        if ($this->isExcluded($request->getPathCallable())) {
             return $next($request, $response);
         }
 
@@ -114,7 +114,7 @@ class CircuitBreaker
     {
         // Could be more sophisticated - by service, endpoint, etc.
         // For now, use path pattern
-        $path = $request->path ?? $request->pathCallable;
+        $path = $request->path ?? $request->getPathCallable();
 
         // Normalize path to circuit name
         $parts = explode('/', trim($path, '/'));

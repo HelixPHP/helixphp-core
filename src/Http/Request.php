@@ -846,6 +846,16 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
     }
 
+    /**
+     * Get headers as HeaderRequest object (Express.js style)
+     *
+     * @return HeaderRequest
+     */
+    public function getHeadersObject(): HeaderRequest
+    {
+        return $this->headers;
+    }
+
     public function getQuerys(): stdClass
     {
         return $this->query;

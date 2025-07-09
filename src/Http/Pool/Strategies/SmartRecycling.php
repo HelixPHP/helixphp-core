@@ -90,11 +90,15 @@ class SmartRecycling implements OverflowStrategy
      */
     public function trackObject(string $type, mixed $object, array $metadata = []): void
     {
+        if (!is_object($object)) {
+            return;
+        }
+
         $id = spl_object_id($object);
 
         $this->objectLifecycles[$id] = [
             'type' => $type,
-            'object' => new \WeakReference($object),
+            'object' => \WeakReference::create($object),
             'created_at' => microtime(true),
             'last_used' => microtime(true),
             'use_count' => 0,
@@ -108,6 +112,10 @@ class SmartRecycling implements OverflowStrategy
      */
     public function markUsed(mixed $object): void
     {
+        if (!is_object($object)) {
+            return;
+        }
+
         $id = spl_object_id($object);
 
         if (isset($this->objectLifecycles[$id])) {
@@ -274,7 +282,7 @@ class SmartRecycling implements OverflowStrategy
      */
     private function resetStream(mixed $stream, array $params): mixed
     {
-        if (method_exists($stream, 'rewind')) {
+        if (is_object($stream) && method_exists($stream, 'rewind')) {
             $stream->rewind();
         }
         return $stream;

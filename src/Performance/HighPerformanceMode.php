@@ -388,17 +388,23 @@ class HighPerformanceMode
     {
         $config = self::$currentConfig['distributed'];
 
-        self::$distributedManager = new DistributedPoolManager($config);
+        try {
+            self::$distributedManager = new DistributedPoolManager($config);
 
-        if (self::$pool) {
-            self::$distributedManager->setLocalPool(self::$pool);
+            if (self::$pool) {
+                self::$distributedManager->setLocalPool(self::$pool);
+            }
+
+            // Schedule sync tasks
+            self::schedulePeriodicTask(
+                $config['sync_interval'] ?? 5,
+                [self::$distributedManager, 'sync']
+            );
+        } catch (\Exception $e) {
+            error_log('Failed to initialize distributed pooling: ' . $e->getMessage());
+            // Distributed pooling is optional, continue without it
+            self::$distributedManager = null;
         }
-
-        // Schedule sync tasks
-        self::schedulePeriodicTask(
-            $config['sync_interval'] ?? 5,
-            [self::$distributedManager, 'sync']
-        );
     }
 
     /**

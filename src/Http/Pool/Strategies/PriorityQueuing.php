@@ -25,6 +25,7 @@ class PriorityQueuing implements OverflowStrategy
 
     /**
      * Priority queue
+     * @var \SplPriorityQueue<int, mixed>
      */
     private \SplPriorityQueue $queue;
 

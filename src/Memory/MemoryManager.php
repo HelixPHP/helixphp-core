@@ -379,7 +379,7 @@ class MemoryManager
         $this->metrics['pool_adjustments']++;
 
         // Update pool configuration
-        $stats = $this->pool->getStats();
+        $stats = $this->pool !== null ? $this->pool->getStats() : [];
         $currentConfig = $stats['config'];
 
         $newConfig = [
@@ -466,7 +466,7 @@ class MemoryManager
 
         $this->trackedObjects[$id] = [
             'type' => $type,
-            'object' => new \WeakReference($object),
+            'object' => \WeakReference::create($object),
             'created_at' => microtime(true),
             'metadata' => $metadata,
         ];

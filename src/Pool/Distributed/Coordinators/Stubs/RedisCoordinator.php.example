@@ -394,7 +394,8 @@ class RedisCoordinator implements CoordinatorInterface
         }
 
         try {
-            return $this->redis->del($key) > 0;
+            $result = $this->redis->del($key);
+            return is_int($result) && $result > 0;
         } catch (\Exception $e) {
             error_log("Failed to delete key: " . $e->getMessage());
             return false;
@@ -421,14 +422,16 @@ class RedisCoordinator implements CoordinatorInterface
         try {
             $key = self::PREFIX_GLOBAL . 'pool_size';
 
-            if ($delta > 0) {
-                $this->redis->incrBy($key, $delta);
-            } elseif ($delta < 0) {
-                $this->redis->decrBy($key, abs($delta));
-            }
+            if ($this->redis !== null) {
+                if ($delta > 0) {
+                    $this->redis->incrBy($key, $delta);
+                } elseif ($delta < 0) {
+                    $this->redis->decrBy($key, abs($delta));
+                }
 
-            // Set expiry to prevent stale data
-            $this->redis->expire($key, 300); // 5 minutes
+                // Set expiry to prevent stale data
+                $this->redis->expire($key, 300); // 5 minutes
+            }
         } catch (\Exception $e) {
             error_log("Failed to update global pool size: " . $e->getMessage());
         }
@@ -445,7 +448,8 @@ class RedisCoordinator implements CoordinatorInterface
 
         try {
             $queueKey = self::PREFIX_QUEUE . $key;
-            return (int) $this->redis->lLen($queueKey);
+            $length = $this->redis !== null ? $this->redis->lLen($queueKey) : 0;
+            return is_int($length) ? $length : 0;
         } catch (\Exception $e) {
             error_log("Failed to get queue length: " . $e->getMessage());
             return 0;
