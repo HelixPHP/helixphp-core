@@ -20,6 +20,11 @@ use InvalidArgumentException;
 class Response implements ResponseInterface
 {
     /**
+     * Flags para encoding JSON consistente
+     */
+    private const JSON_ENCODE_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+
+    /**
      * Instância PSR-7 interna (lazy loaded)
      */
     private ?ResponseInterface $psr7Response = null;
@@ -220,7 +225,7 @@ class Response implements ResponseInterface
             $encoded = $this->encodeWithPooling($sanitizedData);
         } else {
             // Usar encoding tradicional para dados pequenos
-            $encoded = json_encode($sanitizedData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $encoded = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
             if ($encoded === false) {
                 error_log('JSON encoding failed: ' . json_last_error_msg());
                 $encoded = '{}';
@@ -532,7 +537,7 @@ class Response implements ResponseInterface
         // Sanitizar dados para UTF-8 válido antes da codificação
         $sanitizedData = $this->sanitizeForJson($data);
 
-        $json = json_encode($sanitizedData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $json = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
         if ($json === false) {
             error_log('JSON encoding failed: ' . json_last_error_msg());
             $json = '{}';
@@ -630,7 +635,7 @@ class Response implements ResponseInterface
 
         // Converter dados para string
         if (is_array($data) || is_object($data)) {
-            $dataString = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $dataString = json_encode($data, self::JSON_ENCODE_FLAGS);
             if ($dataString === false) {
                 $dataString = '[json encoding failed]';
             }
@@ -798,12 +803,12 @@ class Response implements ResponseInterface
     private function encodeWithPooling(mixed $data): string
     {
         try {
-            return JsonBufferPool::encodeWithPool($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            return JsonBufferPool::encodeWithPool($data, self::JSON_ENCODE_FLAGS);
         } catch (\Throwable $e) {
             // Fallback para encoding tradicional em caso de erro
             error_log('JSON pooling failed, falling back to traditional encoding: ' . $e->getMessage());
 
-            $encoded = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $encoded = json_encode($data, self::JSON_ENCODE_FLAGS);
             if ($encoded === false) {
                 error_log('JSON encoding failed: ' . json_last_error_msg());
                 return '{}';
