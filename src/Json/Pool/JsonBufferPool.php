@@ -169,7 +169,7 @@ class JsonBufferPool
             if (preg_match('/^buffer_(\d+)$/', $key, $matches)) {
                 $capacity = (int)$matches[1];
                 $readableKey = self::formatCapacity($capacity);
-                
+
                 $poolSizes[$readableKey] = $poolSize;
                 $poolsByCapacity[$capacity] = [
                     'key' => $key,
@@ -262,29 +262,39 @@ class JsonBufferPool
         // Validate 'max_pool_size'
         if (isset($config['max_pool_size'])) {
             if (!is_int($config['max_pool_size']) || $config['max_pool_size'] <= 0) {
-                throw new \InvalidArgumentException("'max_pool_size' must be a positive integer, got: " . gettype($config['max_pool_size']));
+                throw new \InvalidArgumentException(
+                    "'max_pool_size' must be a positive integer, got: " . gettype($config['max_pool_size'])
+                );
             }
             if ($config['max_pool_size'] > 1000) {
-                throw new \InvalidArgumentException("'max_pool_size' cannot exceed 1000 for memory safety, got: {$config['max_pool_size']}");
+                throw new \InvalidArgumentException(
+                    "'max_pool_size' cannot exceed 1000 for memory safety, got: {$config['max_pool_size']}"
+                );
             }
         }
 
         // Validate 'default_capacity'
         if (isset($config['default_capacity'])) {
             if (!is_int($config['default_capacity']) || $config['default_capacity'] <= 0) {
-                throw new \InvalidArgumentException("'default_capacity' must be a positive integer, got: " . gettype($config['default_capacity']));
+                throw new \InvalidArgumentException(
+                    "'default_capacity' must be a positive integer, got: " . gettype($config['default_capacity'])
+                );
             }
             if ($config['default_capacity'] > 1024 * 1024) { // 1MB limit
-                throw new \InvalidArgumentException("'default_capacity' cannot exceed 1MB (1048576 bytes), got: {$config['default_capacity']}");
+                throw new \InvalidArgumentException(
+                    "'default_capacity' cannot exceed 1MB (1048576 bytes), got: {$config['default_capacity']}"
+                );
             }
         }
 
         // Validate 'size_categories'
         if (isset($config['size_categories'])) {
             if (!is_array($config['size_categories'])) {
-                throw new \InvalidArgumentException("'size_categories' must be an array, got: " . gettype($config['size_categories']));
+                throw new \InvalidArgumentException(
+                    "'size_categories' must be an array, got: " . gettype($config['size_categories'])
+                );
             }
-            
+
             if (empty($config['size_categories'])) {
                 throw new \InvalidArgumentException("'size_categories' cannot be empty");
             }
@@ -293,13 +303,17 @@ class JsonBufferPool
                 if (!is_string($name) || empty($name)) {
                     throw new \InvalidArgumentException("Size category names must be non-empty strings");
                 }
-                
+
                 if (!is_int($capacity) || $capacity <= 0) {
-                    throw new \InvalidArgumentException("Size category '{$name}' must have a positive integer capacity, got: " . gettype($capacity));
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have a positive integer capacity, got: " . gettype($capacity)
+                    );
                 }
-                
+
                 if ($capacity > 1024 * 1024) { // 1MB limit per category
-                    throw new \InvalidArgumentException("Size category '{$name}' capacity cannot exceed 1MB (1048576 bytes), got: {$capacity}");
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' capacity cannot exceed 1MB (1048576 bytes), got: {$capacity}"
+                    );
                 }
             }
 
@@ -307,16 +321,18 @@ class JsonBufferPool
             $capacities = array_values($config['size_categories']);
             $sortedCapacities = $capacities;
             sort($sortedCapacities);
-            
+
             if ($capacities !== $sortedCapacities) {
-                throw new \InvalidArgumentException("'size_categories' should be ordered from smallest to largest capacity for optimal selection");
+                throw new \InvalidArgumentException(
+                    "'size_categories' should be ordered from smallest to largest capacity for optimal selection"
+                );
             }
         }
 
         // Check for unknown configuration keys
         $validKeys = ['max_pool_size', 'default_capacity', 'size_categories'];
         $unknownKeys = array_diff(array_keys($config), $validKeys);
-        
+
         if (!empty($unknownKeys)) {
             throw new \InvalidArgumentException("Unknown configuration keys: " . implode(', ', $unknownKeys));
         }

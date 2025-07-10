@@ -21,7 +21,7 @@ class JsonBufferPoolStatisticsTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Clear pools and reset configuration after each test  
+        // Clear pools and reset configuration after each test
         JsonBufferPool::clearPools();
         JsonBufferPool::resetConfiguration();
     }
@@ -36,7 +36,7 @@ class JsonBufferPoolStatisticsTest extends TestCase
         // Verify all expected keys are present
         $expectedKeys = [
             'reuse_rate', 'total_operations', 'current_usage', 'peak_usage',
-            'total_buffers_pooled', 'active_pool_count', 'pool_sizes', 
+            'total_buffers_pooled', 'active_pool_count', 'pool_sizes',
             'pools_by_capacity', 'detailed_stats'
         ];
 

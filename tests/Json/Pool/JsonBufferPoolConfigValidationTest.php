@@ -22,7 +22,7 @@ class JsonBufferPoolConfigValidationTest extends TestCase
 
     protected function tearDown(): void
     {
-        // Clear pools and reset configuration after each test  
+        // Clear pools and reset configuration after each test
         JsonBufferPool::clearPools();
         JsonBufferPool::resetConfiguration();
     }
@@ -125,68 +125,82 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Size category names must be non-empty strings");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                123 => 1024  // Invalid numeric key
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    123 => 1024  // Invalid numeric key
+                ]
             ]
-        ]);
+        );
     }
 
     public function testSizeCategoriesEmptyNameInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Size category names must be non-empty strings");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                '' => 1024  // Empty string key
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    '' => 1024  // Empty string key
+                ]
             ]
-        ]);
+        );
     }
 
     public function testSizeCategoriesCapacityValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Size category 'small' must have a positive integer capacity, got: string");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                'small' => 'invalid'
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    'small' => 'invalid'
+                ]
             ]
-        ]);
+        );
     }
 
     public function testSizeCategoriesCapacityZeroInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Size category 'small' must have a positive integer capacity");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                'small' => 0
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    'small' => 0
+                ]
             ]
-        ]);
+        );
     }
 
     public function testSizeCategoriesCapacityUpperLimit(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Size category 'huge' capacity cannot exceed 1MB (1048576 bytes), got: 1048577");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                'huge' => 1048577
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    'huge' => 1048577
+                ]
             ]
-        ]);
+        );
     }
 
     public function testSizeCategoriesOrderValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("'size_categories' should be ordered from smallest to largest capacity for optimal selection");
-        JsonBufferPool::configure([
-            'size_categories' => [
-                'large' => 16384,
-                'small' => 1024,  // Out of order
-                'medium' => 4096
+        $this->expectExceptionMessage(
+            "'size_categories' should be ordered from smallest to largest capacity for optimal selection"
+        );
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    'large' => 16384,
+                    'small' => 1024,  // Out of order
+                    'medium' => 4096
+                ]
             ]
-        ]);
+        );
     }
 
     /**
@@ -196,11 +210,13 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Unknown configuration keys: unknown_key, another_unknown");
-        JsonBufferPool::configure([
-            'max_pool_size' => 50,
-            'unknown_key' => 'value',
-            'another_unknown' => 123
-        ]);
+        JsonBufferPool::configure(
+            [
+                'max_pool_size' => 50,
+                'unknown_key' => 'value',
+                'another_unknown' => 123
+            ]
+        );
     }
 
     /**
@@ -242,17 +258,19 @@ class JsonBufferPoolConfigValidationTest extends TestCase
         JsonBufferPool::configure(['max_pool_size' => 75]);
         $this->assertTrue(true);
 
-        // Configure only default_capacity  
+        // Configure only default_capacity
         JsonBufferPool::configure(['default_capacity' => 2048]);
         $this->assertTrue(true);
 
         // Configure only size_categories
-        JsonBufferPool::configure([
-            'size_categories' => [
-                'custom_small' => 512,
-                'custom_large' => 8192
+        JsonBufferPool::configure(
+            [
+                'size_categories' => [
+                    'custom_small' => 512,
+                    'custom_large' => 8192
+                ]
             ]
-        ]);
+        );
         $this->assertTrue(true);
     }
 
@@ -262,10 +280,12 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     public function testConfigurationMerging(): void
     {
         // Set initial config
-        JsonBufferPool::configure([
-            'max_pool_size' => 100,
-            'default_capacity' => 4096
-        ]);
+        JsonBufferPool::configure(
+            [
+                'max_pool_size' => 100,
+                'default_capacity' => 4096
+            ]
+        );
 
         // Update only one value
         JsonBufferPool::configure(['max_pool_size' => 200]);

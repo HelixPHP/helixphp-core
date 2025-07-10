@@ -187,7 +187,9 @@ class HighPerformanceStressTest extends TestCase
      */
     public function testCircuitBreakerUnderFailures(): void
     {
-        $this->markTestSkipped('Circuit breaker behavior is environment-dependent and will be tested in dedicated stress tests');
+        $this->markTestSkipped(
+            'Circuit breaker behavior is environment-dependent and will be tested in dedicated stress tests'
+        );
         $this->app->middleware('circuit-breaker');
 
         // Simulate service failures
@@ -249,7 +251,9 @@ class HighPerformanceStressTest extends TestCase
      */
     public function testLoadSheddingEffectiveness(): void
     {
-        $this->markTestSkipped('Load shedding behavior is environment-dependent and will be tested in dedicated stress tests');
+        $this->markTestSkipped(
+            'Load shedding behavior is environment-dependent and will be tested in dedicated stress tests'
+        );
         $this->app->middleware(
             'load-shedder',
             [
