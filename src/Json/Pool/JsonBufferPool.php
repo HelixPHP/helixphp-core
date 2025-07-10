@@ -156,19 +156,61 @@ class JsonBufferPool
         $totalOperations = (int)self::$stats['allocations'] + (int)self::$stats['reuses'];
         $reuseRate = $totalOperations > 0 ? ((int)self::$stats['reuses'] / $totalOperations) * 100 : 0;
 
+        // Map pool keys to readable format with capacity information
         $poolSizes = [];
+        $poolsByCapacity = [];
+        $totalBuffersInPools = 0;
+
         foreach (self::$pools as $key => $pool) {
-            $poolSizes[$key] = count($pool);
+            $poolSize = count($pool);
+            $totalBuffersInPools += $poolSize;
+
+            // Extract capacity from key (format: "buffer_{capacity}")
+            if (preg_match('/^buffer_(\d+)$/', $key, $matches)) {
+                $capacity = (int)$matches[1];
+                $readableKey = self::formatCapacity($capacity);
+                
+                $poolSizes[$readableKey] = $poolSize;
+                $poolsByCapacity[$capacity] = [
+                    'key' => $key,
+                    'capacity_bytes' => $capacity,
+                    'capacity_formatted' => $readableKey,
+                    'buffers_available' => $poolSize
+                ];
+            } else {
+                // Fallback for unexpected key format
+                $poolSizes[$key] = $poolSize;
+            }
         }
+
+        // Sort pools by capacity for better readability
+        ksort($poolsByCapacity);
 
         return [
             'reuse_rate' => round($reuseRate, 2),
             'total_operations' => $totalOperations,
             'current_usage' => self::$stats['current_usage'],
             'peak_usage' => self::$stats['peak_usage'],
-            'pool_sizes' => $poolSizes,
+            'total_buffers_pooled' => $totalBuffersInPools,
+            'active_pool_count' => count(self::$pools),
+            'pool_sizes' => $poolSizes,  // Legacy format for backward compatibility
+            'pools_by_capacity' => array_values($poolsByCapacity),  // Enhanced format
             'detailed_stats' => self::$stats
         ];
+    }
+
+    /**
+     * Format capacity in human-readable form
+     */
+    private static function formatCapacity(int $bytes): string
+    {
+        if ($bytes >= 1024 * 1024) {
+            return sprintf('%.1fMB (%d bytes)', $bytes / (1024 * 1024), $bytes);
+        } elseif ($bytes >= 1024) {
+            return sprintf('%.1fKB (%d bytes)', $bytes / 1024, $bytes);
+        } else {
+            return sprintf('%d bytes', $bytes);
+        }
     }
 
     /**
@@ -187,11 +229,97 @@ class JsonBufferPool
     }
 
     /**
+     * Reset configuration to defaults (useful for testing)
+     */
+    public static function resetConfiguration(): void
+    {
+        self::$config = [
+            'max_pool_size' => 50,
+            'default_capacity' => 4096,
+            'size_categories' => [
+                'small' => 1024,      // 1KB
+                'medium' => 4096,     // 4KB
+                'large' => 16384,     // 16KB
+                'xlarge' => 65536     // 64KB
+            ]
+        ];
+    }
+
+    /**
      * Configure pool settings
      */
     public static function configure(array $config): void
     {
+        self::validateConfiguration($config);
         self::$config = array_merge(self::$config, $config);
+    }
+
+    /**
+     * Validate configuration parameters
+     */
+    private static function validateConfiguration(array $config): void
+    {
+        // Validate 'max_pool_size'
+        if (isset($config['max_pool_size'])) {
+            if (!is_int($config['max_pool_size']) || $config['max_pool_size'] <= 0) {
+                throw new \InvalidArgumentException("'max_pool_size' must be a positive integer, got: " . gettype($config['max_pool_size']));
+            }
+            if ($config['max_pool_size'] > 1000) {
+                throw new \InvalidArgumentException("'max_pool_size' cannot exceed 1000 for memory safety, got: {$config['max_pool_size']}");
+            }
+        }
+
+        // Validate 'default_capacity'
+        if (isset($config['default_capacity'])) {
+            if (!is_int($config['default_capacity']) || $config['default_capacity'] <= 0) {
+                throw new \InvalidArgumentException("'default_capacity' must be a positive integer, got: " . gettype($config['default_capacity']));
+            }
+            if ($config['default_capacity'] > 1024 * 1024) { // 1MB limit
+                throw new \InvalidArgumentException("'default_capacity' cannot exceed 1MB (1048576 bytes), got: {$config['default_capacity']}");
+            }
+        }
+
+        // Validate 'size_categories'
+        if (isset($config['size_categories'])) {
+            if (!is_array($config['size_categories'])) {
+                throw new \InvalidArgumentException("'size_categories' must be an array, got: " . gettype($config['size_categories']));
+            }
+            
+            if (empty($config['size_categories'])) {
+                throw new \InvalidArgumentException("'size_categories' cannot be empty");
+            }
+
+            foreach ($config['size_categories'] as $name => $capacity) {
+                if (!is_string($name) || empty($name)) {
+                    throw new \InvalidArgumentException("Size category names must be non-empty strings");
+                }
+                
+                if (!is_int($capacity) || $capacity <= 0) {
+                    throw new \InvalidArgumentException("Size category '{$name}' must have a positive integer capacity, got: " . gettype($capacity));
+                }
+                
+                if ($capacity > 1024 * 1024) { // 1MB limit per category
+                    throw new \InvalidArgumentException("Size category '{$name}' capacity cannot exceed 1MB (1048576 bytes), got: {$capacity}");
+                }
+            }
+
+            // Validate categories are in ascending order for optimal selection
+            $capacities = array_values($config['size_categories']);
+            $sortedCapacities = $capacities;
+            sort($sortedCapacities);
+            
+            if ($capacities !== $sortedCapacities) {
+                throw new \InvalidArgumentException("'size_categories' should be ordered from smallest to largest capacity for optimal selection");
+            }
+        }
+
+        // Check for unknown configuration keys
+        $validKeys = ['max_pool_size', 'default_capacity', 'size_categories'];
+        $unknownKeys = array_diff(array_keys($config), $validKeys);
+        
+        if (!empty($unknownKeys)) {
+            throw new \InvalidArgumentException("Unknown configuration keys: " . implode(', ', $unknownKeys));
+        }
     }
 
     /**
