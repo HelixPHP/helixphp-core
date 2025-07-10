@@ -213,6 +213,47 @@ class JsonBufferPoolStatisticsTest extends TestCase
     }
 
     /**
+     * Test that pool_sizes are sorted by capacity for consistency
+     */
+    public function testPoolSizesSorting(): void
+    {
+        // Create buffers in reverse order to test sorting
+        $buffer16KB = JsonBufferPool::getBuffer(16384);
+        $buffer1KB = JsonBufferPool::getBuffer(1024);
+        $buffer8KB = JsonBufferPool::getBuffer(8192);
+        $buffer4KB = JsonBufferPool::getBuffer(4096);
+
+        JsonBufferPool::returnBuffer($buffer16KB);
+        JsonBufferPool::returnBuffer($buffer1KB);
+        JsonBufferPool::returnBuffer($buffer8KB);
+        JsonBufferPool::returnBuffer($buffer4KB);
+
+        $stats = JsonBufferPool::getStatistics();
+        $poolSizes = $stats['pool_sizes'];
+
+        // Get the keys (capacity strings) as an array
+        $capacityKeys = array_keys($poolSizes);
+
+        // Expected order: smallest to largest
+        $expectedOrder = [
+            '1.0KB (1024 bytes)',
+            '4.0KB (4096 bytes)',
+            '8.0KB (8192 bytes)',
+            '16.0KB (16384 bytes)'
+        ];
+
+        $this->assertEquals($expectedOrder, $capacityKeys, 'Pool sizes should be sorted by capacity');
+
+        // Also verify pools_by_capacity is sorted (already tested but good to be explicit)
+        $poolsByCapacity = $stats['pools_by_capacity'];
+        $capacities = array_column($poolsByCapacity, 'capacity_bytes');
+        $sortedCapacities = $capacities;
+        sort($sortedCapacities);
+
+        $this->assertEquals($sortedCapacities, $capacities, 'Pools by capacity should be sorted');
+    }
+
+    /**
      * Test statistics consistency between formats
      */
     public function testStatisticsConsistency(): void

@@ -186,6 +186,21 @@ class JsonBufferPool
         // Sort pools by capacity for better readability
         ksort($poolsByCapacity);
 
+        // Sort pool_sizes by extracting numeric capacity for consistent ordering
+        uksort(
+            $poolSizes,
+            function ($a, $b) {
+            // Extract numeric capacity from formatted strings like "1.0KB (1024 bytes)"
+                preg_match('/\((\d+) bytes\)/', $a, $matchesA);
+                preg_match('/\((\d+) bytes\)/', $b, $matchesB);
+
+                $capacityA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
+                $capacityB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
+
+                return $capacityA <=> $capacityB;
+            }
+        );
+
         return [
             'reuse_rate' => round($reuseRate, 2),
             'total_operations' => $totalOperations,
@@ -193,7 +208,7 @@ class JsonBufferPool
             'peak_usage' => self::$stats['peak_usage'],
             'total_buffers_pooled' => $totalBuffersInPools,
             'active_pool_count' => count(self::$pools),
-            'pool_sizes' => $poolSizes,  // Legacy format for backward compatibility
+            'pool_sizes' => $poolSizes,  // Legacy format sorted by capacity
             'pools_by_capacity' => array_values($poolsByCapacity),  // Enhanced format
             'detailed_stats' => self::$stats
         ];
