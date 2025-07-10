@@ -19,11 +19,24 @@ class JsonBuffer
     private int $capacity;
     private int $position = 0;
     private bool $finalized = false;
+    /** @var resource|null */
+    private $stream = null;
+    private bool $useStream = false;
+    private const STREAM_THRESHOLD = 8192; // 8KB threshold for stream usage
 
     public function __construct(int $initialCapacity = 4096)
     {
         $this->capacity = $initialCapacity;
         $this->buffer = '';
+        $this->useStream = $initialCapacity > self::STREAM_THRESHOLD;
+        
+        if ($this->useStream) {
+            $stream = fopen('php://memory', 'r+');
+            if ($stream === false) {
+                throw new \RuntimeException('Failed to open memory stream');
+            }
+            $this->stream = $stream;
+        }
     }
 
     /**
@@ -38,8 +51,14 @@ class JsonBuffer
             $this->expand($requiredLength);
         }
 
-        // Simple concatenation for cleaner buffer management
-        $this->buffer .= $data;
+        if ($this->useStream && $this->stream !== null) {
+            // Use stream for large buffers to avoid string reallocation
+            fwrite($this->stream, $data);
+        } else {
+            // Use string concatenation for small buffers
+            $this->buffer .= $data;
+        }
+        
         $this->position += $dataLength;
     }
 
@@ -62,6 +81,15 @@ class JsonBuffer
     public function finalize(): string
     {
         if (!$this->finalized) {
+            if ($this->useStream && $this->stream !== null) {
+                // Read all content from stream
+                rewind($this->stream);
+                $content = stream_get_contents($this->stream);
+                if ($content === false) {
+                    throw new \RuntimeException('Failed to read from stream');
+                }
+                $this->buffer = $content;
+            }
             $this->finalized = true;
         }
 
@@ -76,6 +104,22 @@ class JsonBuffer
         $this->position = 0;
         $this->finalized = false;
         $this->buffer = '';
+        
+        if ($this->useStream && $this->stream !== null) {
+            // Reset stream to beginning and truncate
+            rewind($this->stream);
+            ftruncate($this->stream, 0);
+        }
+    }
+
+    /**
+     * Clean up resources
+     */
+    public function __destruct()
+    {
+        if ($this->stream !== null) {
+            fclose($this->stream);
+        }
     }
 
     /**
@@ -123,8 +167,27 @@ class JsonBuffer
      */
     private function expand(int $requiredCapacity): void
     {
-        // With the new approach, expansion is handled automatically by string concatenation
-        // We just need to update the capacity tracking
-        $this->capacity = max($this->capacity * 2, $requiredCapacity);
+        $newCapacity = max($this->capacity * 2, $requiredCapacity);
+        
+        // Check if we need to migrate from string to stream
+        if (!$this->useStream && $newCapacity > self::STREAM_THRESHOLD) {
+            $this->useStream = true;
+            $stream = fopen('php://memory', 'r+');
+            if ($stream === false) {
+                throw new \RuntimeException('Failed to open memory stream for expansion');
+            }
+            $this->stream = $stream;
+            
+            // Copy existing buffer content to stream
+            if (!empty($this->buffer)) {
+                $bytesWritten = fwrite($this->stream, $this->buffer);
+                if ($bytesWritten === false) {
+                    throw new \RuntimeException('Failed to write to stream during migration');
+                }
+                $this->buffer = ''; // Clear string buffer to save memory
+            }
+        }
+        
+        $this->capacity = $newCapacity;
     }
 }
