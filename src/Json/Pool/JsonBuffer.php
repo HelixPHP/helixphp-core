@@ -23,7 +23,7 @@ class JsonBuffer
     public function __construct(int $initialCapacity = 4096)
     {
         $this->capacity = $initialCapacity;
-        $this->buffer = str_repeat(' ', $initialCapacity);
+        $this->buffer = '';
     }
 
     /**
@@ -38,8 +38,8 @@ class JsonBuffer
             $this->expand($requiredLength);
         }
 
-        // Use substr_replace for in-place modification
-        $this->buffer = substr_replace($this->buffer, $data, $this->position, $dataLength);
+        // Simple concatenation for cleaner buffer management
+        $this->buffer .= $data;
         $this->position += $dataLength;
     }
 
@@ -62,7 +62,6 @@ class JsonBuffer
     public function finalize(): string
     {
         if (!$this->finalized) {
-            $this->buffer = substr($this->buffer, 0, $this->position);
             $this->finalized = true;
         }
 
@@ -76,7 +75,7 @@ class JsonBuffer
     {
         $this->position = 0;
         $this->finalized = false;
-        // Don't reallocate, just reset position for performance
+        $this->buffer = '';
     }
 
     /**
@@ -124,11 +123,8 @@ class JsonBuffer
      */
     private function expand(int $requiredCapacity): void
     {
-        $newCapacity = max($this->capacity * 2, $requiredCapacity);
-        $newBuffer = str_repeat(' ', $newCapacity);
-        $newBuffer = substr_replace($newBuffer, $this->buffer, 0, $this->capacity);
-
-        $this->buffer = $newBuffer;
-        $this->capacity = $newCapacity;
+        // With the new approach, expansion is handled automatically by string concatenation
+        // We just need to update the capacity tracking
+        $this->capacity = max($this->capacity * 2, $requiredCapacity);
     }
 }
