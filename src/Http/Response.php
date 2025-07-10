@@ -5,6 +5,7 @@ namespace PivotPHP\Core\Http;
 use PivotPHP\Core\Http\Psr7\Response as Psr7Response;
 use PivotPHP\Core\Http\Psr7\Stream;
 use PivotPHP\Core\Http\Pool\Psr7Pool;
+use PivotPHP\Core\Json\Pool\JsonBufferPool;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
@@ -214,10 +215,16 @@ class Response implements ResponseInterface
         // Sanitizar dados para UTF-8 válido antes da codificação
         $sanitizedData = $this->sanitizeForJson($data);
 
-        $encoded = json_encode($sanitizedData);
-        if ($encoded === false) {
-            error_log('JSON encoding failed: ' . json_last_error_msg());
-            $encoded = '{}';
+        // Usar pooling para datasets médios e grandes
+        if ($this->shouldUseJsonPooling($sanitizedData)) {
+            $encoded = $this->encodeWithPooling($sanitizedData);
+        } else {
+            // Usar encoding tradicional para dados pequenos
+            $encoded = json_encode($sanitizedData);
+            if ($encoded === false) {
+                error_log('JSON encoding failed: ' . json_last_error_msg());
+                $encoded = '{}';
+            }
         }
 
         $this->body = $encoded;
@@ -759,5 +766,50 @@ class Response implements ResponseInterface
     {
         $this->sent = false;
         return $this;
+    }
+
+    /**
+     * Determina se deve usar pooling para JSON
+     */
+    private function shouldUseJsonPooling(mixed $data): bool
+    {
+        // Usar pooling para arrays/objetos médios e grandes
+        if (is_array($data)) {
+            $count = count($data);
+            return $count >= 10; // Arrays com 10+ elementos
+        }
+
+        if (is_object($data)) {
+            $vars = get_object_vars($data);
+            return $vars && count($vars) >= 5; // Objetos com 5+ propriedades
+        }
+
+        // Usar pooling para strings longas
+        if (is_string($data)) {
+            return strlen($data) > 1024; // Strings > 1KB
+        }
+
+        return false;
+    }
+
+    /**
+     * Codifica JSON usando pooling para melhor performance
+     */
+    private function encodeWithPooling(mixed $data): string
+    {
+        try {
+            return JsonBufferPool::encodeWithPool($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            // Fallback para encoding tradicional em caso de erro
+            error_log('JSON pooling failed, falling back to traditional encoding: ' . $e->getMessage());
+
+            $encoded = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            if ($encoded === false) {
+                error_log('JSON encoding failed: ' . json_last_error_msg());
+                return '{}';
+            }
+
+            return $encoded;
+        }
     }
 }

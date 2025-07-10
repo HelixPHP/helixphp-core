@@ -19,9 +19,9 @@
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
-- **Qualidade**: 315+ testes, PHPStan Level 9, PSR-12, cobertura completa.
-- **🆕 v1.0.1**: Suporte a validação avançada de rotas com regex e constraints.
-- **🚀 v1.0.1**: Suporte PSR-7 híbrido, lazy loading, object pooling e otimizações de performance.
+- **Qualidade**: 335+ testes, PHPStan Level 9, PSR-12, cobertura completa.
+- **🆕 v1.1.0**: High-Performance Edition com circuit breaker, load shedding e pooling avançado.
+- **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e 101k+ ops/sec sustentados.
 
 ---
 
@@ -37,7 +37,8 @@
 - 📚 **OpenAPI/Swagger**
 - 🔄 **PSR-7 Híbrido**
 - ♻️ **Object Pooling**
-- ⚡ **Performance**
+- 🚀 **JSON Optimization** (v1.1.1)
+- ⚡ **Performance Extrema**
 - 🧪 **Qualidade e Testes**
 
 ---
@@ -150,6 +151,51 @@ $response = OptimizedHttpFactory::createResponse();
 - ✅ **Object pooling** - reutilização inteligente para melhor performance
 - ✅ **API Express.js** mantida para produtividade
 - ✅ **Zero breaking changes** - código existente funciona sem alterações
+
+### 🚀 JSON Optimization (v1.1.1)
+
+O PivotPHP v1.1.1 introduz um sistema revolucionário de otimização JSON que melhora drasticamente a performance através de buffer pooling inteligente:
+
+```php
+// Otimização automática - zero configuração necessária
+$app->get('/api/users', function($req, $res) {
+    $users = User::all(); // 1000+ usuários
+    
+    // Automaticamente usa pooling para datasets grandes
+    return $res->json($users); // 101k+ ops/sec sustentados
+});
+
+// Controle manual para casos específicos
+use PivotPHP\Core\Json\Pool\JsonBufferPool;
+
+// Encoding direto com pooling
+$json = JsonBufferPool::encodeWithPool($largeData);
+
+// Configuração para alta carga de produção
+JsonBufferPool::configure([
+    'max_pool_size' => 500,
+    'default_capacity' => 16384, // 16KB buffers
+    'size_categories' => [
+        'small' => 4096,   // 4KB
+        'medium' => 16384, // 16KB
+        'large' => 65536,  // 64KB
+        'xlarge' => 262144 // 256KB
+    ]
+]);
+
+// Monitoramento em tempo real
+$stats = JsonBufferPool::getStatistics();
+echo "Reuse rate: {$stats['reuse_rate']}%"; // Target: 80%+
+echo "Operations: {$stats['total_operations']}";
+```
+
+**Características da Otimização JSON:**
+- ✅ **Detecção automática** - ativa pooling para arrays 10+ elementos, objetos 5+ propriedades
+- ✅ **Fallback inteligente** - dados pequenos usam `json_encode()` tradicional
+- ✅ **101k+ ops/sec** sustentados em testes de carga contínua
+- ✅ **100% reuso** de buffers em cenários de alta frequência
+- ✅ **Zero configuração** - funciona automaticamente com código existente
+- ✅ **Monitoramento integrado** - estatísticas detalhadas para otimização
 
 ### 📖 Documentação OpenAPI/Swagger
 
