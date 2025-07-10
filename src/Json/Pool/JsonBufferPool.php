@@ -137,8 +137,8 @@ class JsonBufferPool
         mixed $data,
         int $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
     ): string {
-        $estimatedSize = self::estimateJsonSize($data);
-        $buffer = self::getBuffer($estimatedSize);
+        $optimalCapacity = self::getOptimalCapacity($data);
+        $buffer = self::getBuffer($optimalCapacity);
 
         try {
             $buffer->appendJson($data, $flags);
