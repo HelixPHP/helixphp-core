@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Core;
+namespace PivotPHP\Core\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;

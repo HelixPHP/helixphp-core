@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Json\Pool;
+namespace PivotPHP\Core\Tests\Json\Pool;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Json\Pool\JsonBuffer;

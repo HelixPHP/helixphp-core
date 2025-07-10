@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Security;
+namespace PivotPHP\Core\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Http\Psr15\Middleware\XssMiddleware;
