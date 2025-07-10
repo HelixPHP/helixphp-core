@@ -15,6 +15,32 @@ namespace PivotPHP\Core\Json\Pool;
  */
 class JsonBufferPool
 {
+    // JSON Size Estimation Constants
+    private const STRING_OVERHEAD = 20;              // Quotes + escaping overhead
+    private const EMPTY_ARRAY_SIZE = 2;              // []
+    private const SMALL_ARRAY_SIZE = 512;            // Small array estimate (< 10 items)
+    private const MEDIUM_ARRAY_SIZE = 2048;          // Medium array estimate (< 100 items)
+    private const LARGE_ARRAY_SIZE = 8192;           // Large array estimate (< 1000 items)
+    private const XLARGE_ARRAY_SIZE = 32768;         // XLarge array estimate (>= 1000 items)
+
+    // Array size thresholds
+    private const SMALL_ARRAY_THRESHOLD = 10;        // Threshold for small array
+    private const MEDIUM_ARRAY_THRESHOLD = 100;      // Threshold for medium array
+    private const LARGE_ARRAY_THRESHOLD = 1000;     // Threshold for large array
+
+    // Object size estimation constants
+    private const OBJECT_PROPERTY_OVERHEAD = 50;     // Bytes per object property
+    private const OBJECT_BASE_SIZE = 100;            // Base size for objects
+
+    // Primitive type size constants
+    private const BOOLEAN_OR_NULL_SIZE = 10;         // Size for boolean/null values
+    private const NUMERIC_SIZE = 20;                 // Size for numeric values
+    private const DEFAULT_ESTIMATE = 100;            // Default fallback estimate
+
+    // Buffer capacity constants
+    private const MIN_LARGE_BUFFER_SIZE = 65536;     // Minimum size for very large buffers (64KB)
+    private const BUFFER_SIZE_MULTIPLIER = 2;        // Multiplier for buffer size calculation
+
     /**
      * Buffer pools organized by capacity
      */
@@ -188,41 +214,43 @@ class JsonBufferPool
     private static function estimateJsonSize(mixed $data): int
     {
         if (is_string($data)) {
-            return strlen($data) + 20; // quotes + escaping overhead
+            return strlen($data) + self::STRING_OVERHEAD;
         }
 
         if (is_array($data)) {
             $count = count($data);
             if ($count === 0) {
-                return 2; // []
+                return self::EMPTY_ARRAY_SIZE;
             }
 
             // Estimate based on array size
-            if ($count < 10) {
-                return 512; // small
-            } elseif ($count < 100) {
-                return 2048; // medium
-            } elseif ($count < 1000) {
-                return 8192; // large
+            if ($count < self::SMALL_ARRAY_THRESHOLD) {
+                return self::SMALL_ARRAY_SIZE;
+            } elseif ($count < self::MEDIUM_ARRAY_THRESHOLD) {
+                return self::MEDIUM_ARRAY_SIZE;
+            } elseif ($count < self::LARGE_ARRAY_THRESHOLD) {
+                return self::LARGE_ARRAY_SIZE;
             } else {
-                return 32768; // xlarge
+                return self::XLARGE_ARRAY_SIZE;
             }
         }
 
         if (is_object($data)) {
             $vars = get_object_vars($data);
-            return $vars ? count($vars) * 50 + 100 : 100;
+            return $vars
+                ? count($vars) * self::OBJECT_PROPERTY_OVERHEAD + self::OBJECT_BASE_SIZE
+                : self::OBJECT_BASE_SIZE;
         }
 
         if (is_bool($data) || is_null($data)) {
-            return 10;
+            return self::BOOLEAN_OR_NULL_SIZE;
         }
 
         if (is_numeric($data)) {
-            return 20;
+            return self::NUMERIC_SIZE;
         }
 
-        return 100; // default estimate
+        return self::DEFAULT_ESTIMATE;
     }
 
     /**
@@ -240,6 +268,6 @@ class JsonBufferPool
         }
 
         // For very large data, calculate based on estimate
-        return max($estimatedSize * 2, 65536);
+        return max($estimatedSize * self::BUFFER_SIZE_MULTIPLIER, self::MIN_LARGE_BUFFER_SIZE);
     }
 }

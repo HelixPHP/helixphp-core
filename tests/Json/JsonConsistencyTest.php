@@ -172,4 +172,3 @@ class JsonConsistencyTest extends TestCase
         return json_encode($testData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 }
-
