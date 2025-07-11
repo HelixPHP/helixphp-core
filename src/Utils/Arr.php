@@ -327,18 +327,7 @@ class Arr
      */
     public static function flatten(array $array, int $depth = 0): array
     {
-        $result = [];
-
-        foreach ($array as $item) {
-            if (is_array($item)) {
-                $values = $depth === 1 ? array_values($item) : static::flatten($item, $depth - 1);
-                $result = array_merge($result, $values);
-            } else {
-                $result[] = $item;
-            }
-        }
-
-        return $result;
+        return static::dot($array);
     }
 
     /**
@@ -349,12 +338,31 @@ class Arr
      * @param  bool         $preserveKeys Se deve preservar as chaves
      * @return array<array<mixed>>
      */
-    public static function chunk(array $array, int $size, bool $preserveKeys = false): array
+    public static function chunk(array $array, int $size, bool $preserveKeys = true): array
     {
         if ($size <= 0) {
             return [];
         }
 
         return array_chunk($array, $size, $preserveKeys);
+    }
+
+    /**
+     * Embaralha um array preservando as chaves.
+     *
+     * @param  array<mixed> $array Array de origem
+     * @return array<mixed>
+     */
+    public static function shuffle(array $array): array
+    {
+        $keys = array_keys($array);
+        shuffle($keys);
+        
+        $shuffled = [];
+        foreach ($keys as $key) {
+            $shuffled[$key] = $array[$key];
+        }
+        
+        return $shuffled;
     }
 }

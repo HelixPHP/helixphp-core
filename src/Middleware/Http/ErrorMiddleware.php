@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

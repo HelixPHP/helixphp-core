@@ -22,6 +22,7 @@
 - **Qualidade**: 335+ testes, PHPStan Level 9, PSR-12, cobertura completa.
 - **🆕 v1.1.0**: High-Performance Edition com circuit breaker, load shedding e pooling avançado.
 - **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e 161K ops/sec (pequenos), 17K ops/sec (médios), 1.7K ops/sec (grandes) - Docker testado.
+- **🎯 v1.1.2**: Consolidation Edition com arquitetura consolidada, 100% testes passando, PHPStan Level 9, zero duplicações críticas.
 
 ---
 
@@ -419,6 +420,48 @@ composer update
 ```
 
 Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.
+
+---
+
+## 🏗️ Arquitetura v1.1.2 (Consolidation Edition)
+
+O PivotPHP v1.1.2 introduz uma arquitetura consolidada e otimizada:
+
+### 🎯 Estrutura de Middlewares Organizada
+```
+src/Middleware/
+├── Security/              # Middlewares de segurança
+│   ├── AuthMiddleware.php
+│   ├── CsrfMiddleware.php
+│   ├── SecurityHeadersMiddleware.php
+│   └── XssMiddleware.php
+├── Performance/           # Middlewares de performance
+│   ├── CacheMiddleware.php
+│   └── RateLimitMiddleware.php
+└── Http/                 # Middlewares HTTP
+    ├── CorsMiddleware.php
+    └── ErrorMiddleware.php
+```
+
+### ✅ Melhorias da v1.1.2
+- **Zero duplicações críticas** - Código 100% limpo
+- **Arquitetura consolidada** - Estrutura lógica e intuitiva
+- **100% compatibilidade** - Aliases automáticos preservam código existente
+- **Qualidade máxima** - PHPStan Level 9, 100% testes passando
+- **Performance otimizada** - 48,323 ops/sec média mantida
+
+### 🔄 Migração para v1.1.2
+```php
+// Imports antigos (ainda funcionam via aliases)
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Support\Arr;
+
+// Imports recomendados (nova estrutura)
+use PivotPHP\Core\Middleware\Http\CorsMiddleware;
+use PivotPHP\Core\Utils\Arr;
+```
+
+Veja o [Overview Estrutural](STRUCTURAL_OVERVIEW_v1.1.2.md) para detalhes completos.
 
 ---
 

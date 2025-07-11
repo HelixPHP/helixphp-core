@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Memory;
 
-use PivotPHP\Core\Http\Pool\DynamicPool;
+use PivotPHP\Core\Http\Pool\DynamicPoolManager;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
 
 /**
@@ -96,7 +96,7 @@ class MemoryManager
     /**
      * Pool reference
      */
-    private ?DynamicPool $pool = null;
+    private ?DynamicPoolManager $pool = null;
 
     /**
      * Constructor
@@ -145,7 +145,7 @@ class MemoryManager
     /**
      * Set pool reference
      */
-    public function setPool(DynamicPool $pool): void
+    public function setPool(DynamicPoolManager $pool): void
     {
         $this->pool = $pool;
     }

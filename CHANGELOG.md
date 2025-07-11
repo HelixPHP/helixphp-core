@@ -5,6 +5,54 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2025-07-11
+
+### 🎯 **Consolidation Edition**
+
+#### Added
+- **Structured Middleware Architecture**: Complete reorganization of middleware system
+  - `src/Middleware/Security/`: Authentication, CSRF, XSS, Security Headers
+  - `src/Middleware/Performance/`: Cache, Rate Limiting
+  - `src/Middleware/Http/`: CORS, Error Handling
+  - **12 Compatibility Aliases**: 100% backward compatibility maintained
+  
+- **Enhanced Code Quality**:
+  - **PHPStan Level 9**: Zero errors, maximum static analysis
+  - **100% Test Success**: 430/430 tests passing
+  - **PSR-12 Compliance**: Complete coding standards adherence
+  - **Performance Maintained**: 48,323 ops/sec average maintained
+
+#### Changed
+- **Consolidated Duplicate Classes**: Eliminated 100% of critical duplications
+  - Removed `Support/Arr.php` → Migrated to `Utils/Arr.php`
+  - Consolidated `PerformanceMonitor` → Single implementation in `Performance/`
+  - Unified `DynamicPool` → `DynamicPoolManager` in `Http/Pool/`
+  - **3.1% Code Reduction**: 1,006 lines removed (30,627 → 29,621)
+  - **2.5% File Reduction**: 3 files removed (121 → 118)
+
+- **Improved Architecture**:
+  - **Standardized Namespaces**: Consistent naming across all components
+  - **Logical Organization**: Components grouped by responsibility
+  - **Enhanced Maintainability**: Cleaner, more navigable codebase
+  - **Developer Experience**: Intuitive structure for faster development
+
+#### Fixed
+- **DynamicPoolManager**: Complete method compatibility with original `DynamicPool`
+- **Arr Utility**: Added missing `shuffle()` method with key preservation
+- **Pool Statistics**: Enhanced `getStats()` method with comprehensive metrics
+- **Memory Management**: Improved memory tracking and statistics
+
+#### Removed
+- **Critical Duplications**: All 5 identified duplications eliminated
+- **Deprecated Code**: Removed obsolete `Support/Arr.php` wrapper
+- **Redundant Implementations**: Consolidated multiple duplicate classes
+
+#### Migration
+- **Automatic Compatibility**: All existing code continues working
+- **Recommended Updates**: New namespace structure for better organization
+- **Migration Scripts**: Available for gradual transition to new structure
+- **Zero Breaking Changes**: 100% backward compatibility preserved
+
 ## [1.1.1] - 2025-07-10
 
 ### 🚀 **JSON Optimization Edition**

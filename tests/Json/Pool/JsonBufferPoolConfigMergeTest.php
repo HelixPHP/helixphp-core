@@ -254,11 +254,14 @@ class JsonBufferPoolConfigMergeTest extends TestCase
         // Clear existing config first to test empty array validation
         $configProperty = $this->reflection->getProperty('config');
         $configProperty->setAccessible(true);
-        $configProperty->setValue(null, [
-            'max_pool_size' => 50,
-            'default_capacity' => 4096,
-            'size_categories' => []  // Start with empty
-        ]);
+        $configProperty->setValue(
+            null,
+            [
+                'max_pool_size' => 50,
+                'default_capacity' => 4096,
+                'size_categories' => []  // Start with empty
+            ]
+        );
 
         // Should fail validation when trying to configure with empty array
         $this->expectException(\InvalidArgumentException::class);

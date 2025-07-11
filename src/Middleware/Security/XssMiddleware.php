@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Security;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
