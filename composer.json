@@ -69,6 +69,7 @@
             "PivotPHP\\Core\\": "src/"
         },
         "files": [
+            "src/functions.php",
             "src/aliases.php"
         ]
     },
