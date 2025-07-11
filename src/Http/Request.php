@@ -114,8 +114,11 @@ class Request implements ServerRequestInterface, AttributeInterface
      * @param string $path         Padrão da rota.
      * @param string $pathCallable Caminho real da requisição.
      */
-    public function __construct(string $method, string $path, string $pathCallable)
-    {
+    public function __construct(
+        string $method,
+        string $path,
+        string $pathCallable
+    ) {
         $this->method = strtoupper($method);
         $this->path = $path;
         $this->pathCallable = $pathCallable;

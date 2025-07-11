@@ -61,8 +61,11 @@ class Logger
      * Registra uma mensagem de log
      * @param array<string, mixed> $context
      */
-    public function log(int $level, string $message, array $context = []): void
-    {
+    public function log(
+        int $level,
+        string $message,
+        array $context = []
+    ): void {
         if ($level > $this->level) {
             return;
         }

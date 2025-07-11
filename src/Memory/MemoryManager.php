@@ -460,8 +460,11 @@ class MemoryManager
     /**
      * Track object for lifecycle management
      */
-    public function trackObject(string $type, object $object, array $metadata = []): void
-    {
+    public function trackObject(
+        string $type,
+        object $object,
+        array $metadata = []
+    ): void {
         $id = spl_object_id($object);
 
         $this->trackedObjects[$id] = [

@@ -15,8 +15,11 @@ class StreamView
     /** @var resource|null */
     private $handle = null;
 
-    public function __construct(string $filePath, int $offset = 0, ?int $length = null)
-    {
+    public function __construct(
+        string $filePath,
+        int $offset = 0,
+        ?int $length = null
+    ) {
         $this->filePath = $filePath;
         $this->offset = $offset;
         $fileSize = filesize($filePath);

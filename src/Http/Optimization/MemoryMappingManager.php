@@ -51,8 +51,11 @@ class MemoryMappingManager
     /**
      * Create memory mapping for a file
      */
-    public static function createMapping(string $filePath, int $offset = 0, ?int $length = null): ?MemoryMapping
-    {
+    public static function createMapping(
+        string $filePath,
+        int $offset = 0,
+        ?int $length = null
+    ): ?MemoryMapping {
         if (!file_exists($filePath) || !is_readable($filePath)) {
             return null;
         }
@@ -96,8 +99,11 @@ class MemoryMappingManager
     /**
      * Get cached mapping if available
      */
-    public static function getMapping(string $filePath, int $offset = 0, ?int $length = null): ?MemoryMapping
-    {
+    public static function getMapping(
+        string $filePath,
+        int $offset = 0,
+        ?int $length = null
+    ): ?MemoryMapping {
         $fileSize = file_exists($filePath) ? filesize($filePath) : 0;
         $mappingId = md5($filePath . ':' . $offset . ':' . ($length ?? $fileSize));
 
@@ -114,8 +120,11 @@ class MemoryMappingManager
      * Stream large file efficiently using memory mapping
      * @param resource $output
      */
-    public static function streamFile(string $filePath, $output, ?int $chunkSize = null): int
-    {
+    public static function streamFile(
+        string $filePath,
+        $output,
+        ?int $chunkSize = null
+    ): int {
         $chunkSize = $chunkSize ?? self::$config['chunk_size'];
         $mapping = self::createMapping($filePath);
 
@@ -156,8 +165,11 @@ class MemoryMappingManager
      *
      * @param resource $output Output stream
      */
-    private static function fallbackStreamFile(string $filePath, $output, int $chunkSize): int
-    {
+    private static function fallbackStreamFile(
+        string $filePath,
+        $output,
+        int $chunkSize
+    ): int {
         $totalBytes = 0;
         $handle = fopen($filePath, 'rb');
 
@@ -182,8 +194,11 @@ class MemoryMappingManager
     /**
      * Read file section without loading entire file
      */
-    public static function readFileSection(string $filePath, int $offset, int $length): ?string
-    {
+    public static function readFileSection(
+        string $filePath,
+        int $offset,
+        int $length
+    ): ?string {
         $mapping = self::createMapping($filePath, $offset, $length);
 
         if (!$mapping) {
@@ -206,8 +221,11 @@ class MemoryMappingManager
     /**
      * Search in large file without loading into memory
      */
-    public static function searchInFile(string $filePath, string $needle, ?int $chunkSize = null): array
-    {
+    public static function searchInFile(
+        string $filePath,
+        string $needle,
+        ?int $chunkSize = null
+    ): array {
         $chunkSize = $chunkSize ?? self::$config['chunk_size'];
         $safeChunkSize = is_int($chunkSize) ? max(1, $chunkSize) : 8192;
         $mapping = self::createMapping($filePath);
@@ -245,8 +263,11 @@ class MemoryMappingManager
     /**
      * Fallback search for files that can't be memory mapped
      */
-    private static function fallbackSearchInFile(string $filePath, string $needle, int $chunkSize): array
-    {
+    private static function fallbackSearchInFile(
+        string $filePath,
+        string $needle,
+        int $chunkSize
+    ): array {
         $matches = [];
         $handle = fopen($filePath, 'rb');
 
@@ -284,8 +305,11 @@ class MemoryMappingManager
     /**
      * Process large file line by line without loading into memory
      */
-    public static function processFileLines(string $filePath, callable $processor, ?int $bufferSize = null): int
-    {
+    public static function processFileLines(
+        string $filePath,
+        callable $processor,
+        ?int $bufferSize = null
+    ): int {
         $bufferSize = $bufferSize ?? self::$config['chunk_size'];
         $mapping = self::createMapping($filePath);
         $linesProcessed = 0;

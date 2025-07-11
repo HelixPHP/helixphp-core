@@ -60,8 +60,11 @@ class CorsMiddleware extends AbstractMiddleware
     /**
      * Compatibilidade com middlewares legados: handle($request, $response, $next)
      */
-    public function handle(Request $request, Response $response, callable $next): void
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): void {
         throw new \BadMethodCallException('CorsMiddleware: use apenas como PSR-15 Middleware.');
     }
 

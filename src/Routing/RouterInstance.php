@@ -114,8 +114,11 @@ class RouterInstance
      * @param string        $path
      * @param mixed         ...$handlers
      */
-    public function match(array $methods, string $path, ...$handlers): void
-    {
+    public function match(
+        array $methods,
+        string $path,
+        ...$handlers
+    ): void {
         foreach ($methods as $method) {
             $this->add($method, $path, ...$handlers);
         }
@@ -139,8 +142,11 @@ class RouterInstance
      * @param string $path
      * @param mixed  ...$handlers
      */
-    private function add(string $method, string $path, ...$handlers): void
-    {
+    private function add(
+        string $method,
+        string $path,
+        ...$handlers
+    ): void {
         if (empty($path)) {
             $path = '/';
         }

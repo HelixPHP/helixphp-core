@@ -19,8 +19,11 @@ class Arr
      *                               encontrado
      * @return mixed
      */
-    public static function get(array $array, string $key, $default = null)
-    {
+    public static function get(
+        array $array,
+        string $key,
+        $default = null
+    ) {
         if (isset($array[$key])) {
             return $array[$key];
         }
@@ -351,8 +354,11 @@ class Arr
      * @param  bool         $preserveKeys Se deve preservar as chaves
      * @return array<array<mixed>>
      */
-    public static function chunk(array $array, int $size, bool $preserveKeys = true): array
-    {
+    public static function chunk(
+        array $array,
+        int $size,
+        bool $preserveKeys = true
+    ): array {
         if ($size <= 0) {
             return [];
         }

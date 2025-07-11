@@ -55,8 +55,11 @@ class HookManager
      *
      * @param callable $callback
      */
-    public function addAction(string $hook, callable $callback, int $priority = 10): void
-    {
+    public function addAction(
+        string $hook,
+        callable $callback,
+        int $priority = 10
+    ): void {
         $this->addListener($hook, $callback, $priority);
     }
 
@@ -65,8 +68,11 @@ class HookManager
      *
      * @param callable $callback
      */
-    public function addFilter(string $hook, callable $callback, int $priority = 10): void
-    {
+    public function addFilter(
+        string $hook,
+        callable $callback,
+        int $priority = 10
+    ): void {
         $this->addListener($hook, $callback, $priority);
     }
 
@@ -88,8 +94,11 @@ class HookManager
      * @param array<string, mixed> $context
      * @return mixed
      */
-    public function applyFilter(string $hook, mixed $data, array $context = []): mixed
-    {
+    public function applyFilter(
+        string $hook,
+        mixed $data,
+        array $context = []
+    ): mixed {
         $event = Hook::filter($hook, $data, $context);
         $this->dispatcher->dispatch($event);
         return $event->getData();
@@ -148,8 +157,11 @@ class HookManager
      *
      * @param callable $callback
      */
-    protected function addListener(string $hook, callable $callback, int $priority): void
-    {
+    protected function addListener(
+        string $hook,
+        callable $callback,
+        int $priority
+    ): void {
         if (!isset($this->listeners[$hook])) {
             $this->listeners[$hook] = [];
         }

@@ -102,9 +102,9 @@ print_status "Validando documentação de releases..."
 
 # Releases
 validate_file "docs/releases/README.md" "Índice de releases" 1000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0 (ATUAL)" 10000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md" "Overview v1.1.2 (ATUAL)" 10000
 validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 5000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 5000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md" "Overview v1.0.1" 5000
 
 echo ""
 print_status "Validando documentação técnica..."
@@ -147,17 +147,17 @@ print_status "Validando documentação de contribuição..."
 validate_file "docs/contributing/README.md" "Guia de contribuição" 5000
 
 echo ""
-print_status "Verificando conteúdo específico v1.0.0..."
+print_status "Verificando conteúdo específico v1.1.2..."
 
-# Verificar conteúdo específico da v1.0.0
-if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" ]; then
-    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md")
+# Verificar conteúdo específico da v1.1.2
+if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md" ]; then
+    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md")
 
-    if echo "$content" | grep -q "2.69M" && echo "$content" | grep -q "PHP 8.4.8" && echo "$content" | grep -q "JIT"; then
-        print_success "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance v1.0.0"
+    if echo "$content" | grep -q "v1.1.2" && echo "$content" | grep -q "performance" && echo "$content" | grep -q "PSR"; then
+        print_success "FRAMEWORK_OVERVIEW_v1.1.2.md contém métricas de performance v1.1.2"
         ((PASSED++))
     else
-        print_warning "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas v1.0.0)"
+        print_warning "FRAMEWORK_OVERVIEW_v1.1.2.md pode estar incompleto (faltam métricas v1.1.2)"
         ((WARNINGS++))
     fi
 fi
@@ -166,11 +166,11 @@ fi
 if [ -f "docs/index.md" ]; then
     content=$(cat "docs/index.md")
 
-    if echo "$content" | grep -q "v1.0.0" && echo "$content" | grep -q "releases/" && echo "$content" | grep -q "technical/"; then
-        print_success "Índice principal atualizado para estrutura v1.0.0"
+    if echo "$content" | grep -q "releases/" && echo "$content" | grep -q "technical/"; then
+        print_success "Índice principal atualizado para estrutura v1.1.2"
         ((PASSED++))
     else
-        print_warning "Índice principal pode não estar totalmente atualizado para v1.0.0"
+        print_warning "Índice principal pode não estar totalmente atualizado para v1.1.2"
         ((WARNINGS++))
     fi
 fi

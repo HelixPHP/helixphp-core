@@ -16,7 +16,7 @@ const YELLOW = "\033[1;33m";
 const BLUE = "\033[0;34m";
 const NC = "\033[0m"; // No Color
 
-function log(string $message): void {
+function logMessage(string $message): void {
     echo BLUE . "[" . date('Y-m-d H:i:s') . "]" . NC . " $message\n";
 }
 
@@ -231,7 +231,7 @@ function validateDocBlock(array $docBlock): array {
 }
 
 // Início do script
-log("🔍 Iniciando validação de documentação...");
+logMessage("🔍 Iniciando validação de documentação...");
 
 if (!is_dir($srcPath)) {
     error("Diretório src não encontrado: $srcPath");
@@ -239,7 +239,7 @@ if (!is_dir($srcPath)) {
 }
 
 $phpFiles = findPhpFiles($srcPath);
-log("📁 Encontrados " . count($phpFiles) . " arquivos PHP");
+logMessage("📁 Encontrados " . count($phpFiles) . " arquivos PHP");
 
 $totalClasses = 0;
 $classesWithDocBlock = 0;

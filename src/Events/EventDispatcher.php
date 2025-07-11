@@ -12,8 +12,11 @@ class EventDispatcher
     /**
      * Registra um listener para um evento
      */
-    public function listen(string $event, callable $listener, int $priority = 0): void
-    {
+    public function listen(
+        string $event,
+        callable $listener,
+        int $priority = 0
+    ): void {
         if (!isset($this->listeners[$event])) {
             $this->listeners[$event] = [];
         }

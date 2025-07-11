@@ -17,8 +17,11 @@ class ArrayView implements \ArrayAccess, \Iterator, \Countable
     private array $keys;
     private int $position = 0;
 
-    public function __construct(array &$source, int $offset, ?int $length = null)
-    {
+    public function __construct(
+        array &$source,
+        int $offset,
+        ?int $length = null
+    ) {
         $this->source = &$source;
         $this->offset = max(0, $offset);
         $this->length = $length ?? (count($source) - $this->offset);

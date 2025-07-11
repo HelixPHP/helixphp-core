@@ -80,7 +80,11 @@ class AdaptiveLearningCache
      * @param array $context Additional context for learning
      * @return mixed
      */
-    public static function get(string $key, ?callable $loader = null, array $context = [])
+    public static function get(
+        string $key,
+        ?callable $loader = null,
+        array $context = []
+    )
     {
         self::$globalStats['total_requests']++;
 
@@ -123,7 +127,12 @@ class AdaptiveLearningCache
      * @param array $context
      * @return void
      */
-    public static function set(string $key, $value, ?int $ttl = null, array $context = []): void
+    public static function set(
+        string $key,
+        $value,
+        ?int $ttl = null,
+        array $context = []
+    ): void
     {
         if ($ttl === null) {
             $ttl = self::calculateAdaptiveTTL($key, $context);
@@ -240,7 +249,11 @@ class AdaptiveLearningCache
      * @param bool $wasHit
      * @return void
      */
-    private static function updateLearningModel(string $key, array $context, bool $wasHit): void
+    private static function updateLearningModel(
+        string $key,
+        array $context,
+        bool $wasHit
+    ): void
     {
         if (!isset(self::$learningModels[$key])) {
             self::$learningModels[$key] = [
@@ -342,7 +355,11 @@ class AdaptiveLearningCache
      * @param float $prediction
      * @return bool
      */
-    private static function shouldCacheBasedOnLearning(string $key, array $context, float $prediction): bool
+    private static function shouldCacheBasedOnLearning(
+        string $key,
+        array $context,
+        float $prediction
+    ): bool
     {
         // Base decision on utility prediction
         if ($prediction < 0.3) {
@@ -523,7 +540,11 @@ class AdaptiveLearningCache
      * @param float $prediction
      * @return void
      */
-    private static function recordSuccessfulPrediction(string $key, bool $actualResult, float $prediction): void
+    private static function recordSuccessfulPrediction(
+        string $key,
+        bool $actualResult,
+        float $prediction
+    ): void
     {
         $accuracy = 1 - abs(($actualResult ? 1.0 : 0.0) - $prediction);
 

@@ -62,8 +62,11 @@ class OptimizedHttpFactory
     /**
      * Cria Request híbrido otimizado
      */
-    public static function createRequest(string $method, string $path, string $pathCallable): Request
-    {
+    public static function createRequest(
+        string $method,
+        string $path,
+        string $pathCallable
+    ): Request {
         self::ensureInitialized();
         return new Request($method, $path, $pathCallable);
     }

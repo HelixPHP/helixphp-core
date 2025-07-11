@@ -109,8 +109,11 @@ class LoadShedder
     /**
      * Handle the request
      */
-    public function handle(Request $request, Response $response, callable $next): Response
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
         $this->metrics['total_requests']++;
 
         // Check if should update shedding state
@@ -371,8 +374,11 @@ class LoadShedder
     /**
      * Accept the request
      */
-    private function acceptRequest(Request $request, Response $response, callable $next): Response
-    {
+    private function acceptRequest(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
         $requestId = uniqid('req_', true);
         $startTime = microtime(true);
 

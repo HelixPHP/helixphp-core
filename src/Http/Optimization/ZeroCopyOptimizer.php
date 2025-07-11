@@ -225,16 +225,22 @@ class ZeroCopyOptimizer
     /**
      * Create view of array slice without copying
      */
-    public static function createArrayView(array &$source, int $offset, ?int $length = null): ArrayView
-    {
+    public static function createArrayView(
+        array &$source,
+        int $offset,
+        ?int $length = null
+    ): ArrayView {
         return new ArrayView($source, $offset, $length);
     }
 
     /**
      * Stream data without loading into memory
      */
-    public static function createStreamView(string $filePath, int $offset = 0, ?int $length = null): StreamView
-    {
+    public static function createStreamView(
+        string $filePath,
+        int $offset = 0,
+        ?int $length = null
+    ): StreamView {
         return new StreamView($filePath, $offset, $length);
     }
 

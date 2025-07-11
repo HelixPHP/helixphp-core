@@ -208,8 +208,11 @@ class TrafficClassifier
     /**
      * Handle the request
      */
-    public function handle(Request $request, Response $response, callable $next): Response
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
         // Classify the request
         $classification = $this->classify($request);
 
@@ -300,8 +303,11 @@ class TrafficClassifier
     /**
      * Match header
      */
-    private function matchesHeader(Request $request, string $name, string $value): bool
-    {
+    private function matchesHeader(
+        Request $request,
+        string $name,
+        string $value
+    ): bool {
         $headerValue = $request->getHeadersObject()->get($name);
 
         if ($headerValue === null) {

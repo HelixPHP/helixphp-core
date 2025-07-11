@@ -501,8 +501,12 @@ class MiddlewarePipelineCompiler
     /**
      * Get cached middleware result
      */
-    private static function getCachedResult(array $step, Request $request, Response $response, callable $next): mixed
-    {
+    private static function getCachedResult(
+        array $step,
+        Request $request,
+        Response $response,
+        callable $next
+    ): mixed {
         // Placeholder for cached execution
         return $next($request, $response);
     }

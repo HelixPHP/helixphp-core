@@ -291,9 +291,9 @@ class ProjectValidator
         // Documentação de releases
         $releaseDocs = [
             'docs/releases/README.md' => 'Índice de releases',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1',
         ];
 
         foreach ($releaseDocs as $file => $description) {
@@ -483,9 +483,9 @@ class ProjectValidator
             // Verificar arquivos de release
             $releaseFiles = [
                 'docs/releases/README.md' => 'Índice de releases',
-                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
                 'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
-                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0'
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1'
             ];
 
             foreach ($releaseFiles as $file => $description) {
@@ -518,9 +518,12 @@ class ProjectValidator
                 }
             }
             
-            // Verificar se ainda existe v1.0.0 (para compatibilidade)
+            // Verificar se ainda existem versões anteriores (para compatibilidade)
             if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md')) {
                 $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.0.md mantido para compatibilidade";
+            }
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md')) {
+                $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.1.md mantido para compatibilidade";
             }
 
         } else {
@@ -530,8 +533,8 @@ class ProjectValidator
         // Verificar se arquivos foram movidos da raiz
         $movedFiles = [
             'FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'FRAMEWORK_OVERVIEW_v1.0.0.md'
+            'FRAMEWORK_OVERVIEW_v1.0.1.md',
+            'FRAMEWORK_OVERVIEW_v1.1.2.md'
         ];
 
         foreach ($movedFiles as $file) {

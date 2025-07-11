@@ -324,8 +324,11 @@ class Response implements ResponseInterface
     /**
      * Remove um cookie.
      */
-    public function clearCookie(string $name, string $path = '/', string $domain = ''): self
-    {
+    public function clearCookie(
+        string $name,
+        string $path = '/',
+        string $domain = ''
+    ): self {
         setcookie($name, '', time() - 3600, $path, $domain);
         return $this;
     }
@@ -615,8 +618,12 @@ class Response implements ResponseInterface
     /**
      * Envia dados como Server-Sent Events (SSE).
      */
-    public function sendEvent(mixed $data, ?string $event = null, ?string $id = null, ?int $retry = null): self
-    {
+    public function sendEvent(
+        mixed $data,
+        ?string $event = null,
+        ?string $id = null,
+        ?int $retry = null
+    ): self {
         if (!$this->isStreaming) {
             $this->startStream('text/event-stream');
         }

@@ -177,8 +177,11 @@ class Validator
     /**
      * Adiciona um erro
      */
-    private function addError(string $field, string $rule, array $params = []): void
-    {
+    private function addError(
+        string $field,
+        string $rule,
+        array $params = []
+    ): void {
         $message = $this->getMessage($field, $rule, $params);
 
         if (!isset($this->errors[$field])) {
@@ -191,8 +194,11 @@ class Validator
     /**
      * Obtém a mensagem de erro
      */
-    private function getMessage(string $field, string $rule, array $params = []): string
-    {
+    private function getMessage(
+        string $field,
+        string $rule,
+        array $params = []
+    ): string {
         $messageKey = "{$field}.{$rule}";
 
         if (isset($this->messages[$messageKey])) {
@@ -230,8 +236,11 @@ class Validator
     /**
      * Factory method para validação rápida
      */
-    public static function make(array $data, array $rules, array $messages = []): self
-    {
+    public static function make(
+        array $data,
+        array $rules,
+        array $messages = []
+    ): self {
         $validator = new self($rules, $messages);
         $validator->validate($data);
         return $validator;
