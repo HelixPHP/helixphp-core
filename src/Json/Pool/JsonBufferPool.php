@@ -24,9 +24,9 @@ class JsonBufferPool
     private const XLARGE_ARRAY_SIZE = 32768;         // XLarge array estimate (>= 1000 items)
 
     // Array size thresholds
-    private const SMALL_ARRAY_THRESHOLD = 10;        // Threshold for small array
-    private const MEDIUM_ARRAY_THRESHOLD = 100;      // Threshold for medium array
-    private const LARGE_ARRAY_THRESHOLD = 1000;     // Threshold for large array
+    public const SMALL_ARRAY_THRESHOLD = 10;        // Threshold for small array
+    public const MEDIUM_ARRAY_THRESHOLD = 100;      // Threshold for medium array
+    public const LARGE_ARRAY_THRESHOLD = 1000;     // Threshold for large array
 
     // Object size estimation constants
     private const OBJECT_PROPERTY_OVERHEAD = 50;     // Bytes per object property

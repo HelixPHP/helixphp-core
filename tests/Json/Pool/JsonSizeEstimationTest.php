@@ -173,8 +173,14 @@ class JsonSizeEstimationTest extends TestCase
         $this->assertLessThan(32768, 8192);     // LARGE < XLARGE
 
         // Test threshold constants are in ascending order
-        $this->assertLessThan(100, 10);         // SMALL < MEDIUM threshold
-        $this->assertLessThan(1000, 100);       // MEDIUM < LARGE threshold
+        $this->assertLessThan(
+            JsonBufferPool::MEDIUM_ARRAY_THRESHOLD,
+            JsonBufferPool::SMALL_ARRAY_THRESHOLD
+        ); // SMALL < MEDIUM threshold
+        $this->assertLessThan(
+            JsonBufferPool::LARGE_ARRAY_THRESHOLD,
+            JsonBufferPool::MEDIUM_ARRAY_THRESHOLD
+        ); // MEDIUM < LARGE threshold
 
         // Test overhead constants are reasonable
         $this->assertGreaterThan(0, 20);        // STRING_OVERHEAD > 0

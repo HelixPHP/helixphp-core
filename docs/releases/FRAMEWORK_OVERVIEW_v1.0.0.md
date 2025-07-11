@@ -550,7 +550,7 @@ composer phpstan
 ### Official Links
 - **GitHub**: https://github.com/PivotPHP/pivotphp-core
 - **Packagist**: https://packagist.org/packages/pivotphp/core
-- **Documentation**: https://docs.pivotphp.com
+- **Documentation**: https://pivotphp.github.io/website/docs/
 - **Community**: https://discord.gg/pivotphp
 
 ### Extensions

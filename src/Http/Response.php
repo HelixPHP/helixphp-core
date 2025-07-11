@@ -226,12 +226,12 @@ class Response implements ResponseInterface
         } else {
             // Usar encoding tradicional para dados pequenos
             $encoded = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
-        }
 
-        // Handle JSON encoding failures for both pooling and traditional paths
-        if ($encoded === false) {
-            error_log('JSON encoding failed: ' . json_last_error_msg());
-            $encoded = '{}';
+            // Handle JSON encoding failures for traditional path
+            if ($encoded === false) {
+                error_log('JSON encoding failed: ' . json_last_error_msg());
+                $encoded = '{}';
+            }
         }
 
         $this->body = $encoded;
@@ -802,7 +802,7 @@ class Response implements ResponseInterface
     /**
      * Codifica JSON usando pooling para melhor performance
      */
-    private function encodeWithPooling(mixed $data): string|false
+    private function encodeWithPooling(mixed $data): string
     {
         try {
             return JsonBufferPool::encodeWithPool($data, self::JSON_ENCODE_FLAGS);
@@ -810,8 +810,13 @@ class Response implements ResponseInterface
             // Fallback para encoding tradicional em caso de erro
             error_log('JSON pooling failed, falling back to traditional encoding: ' . $e->getMessage());
 
-            // Fallback to traditional encoding (let caller handle JSON encoding failures)
-            return json_encode($data, self::JSON_ENCODE_FLAGS);
+            // Fallback to traditional encoding (handle JSON encoding failures internally)
+            $encoded = json_encode($data, self::JSON_ENCODE_FLAGS);
+            if ($encoded === false) {
+                error_log('JSON fallback encoding failed: ' . json_last_error_msg());
+                return '{}';
+            }
+            return $encoded;
         }
     }
 }
