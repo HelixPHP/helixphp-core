@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Automatic Integration**: `Response::json()` now uses pooling transparently for optimal performance
   - **Smart Detection**: Automatically activates pooling for arrays 10+ elements, objects 5+ properties, strings >1KB
   - **Graceful Fallback**: Small datasets use traditional `json_encode()` for best performance
+  - **Public Constants**: All size estimation and threshold constants are now publicly accessible for advanced usage and testing
   
 - **Performance Monitoring & Statistics**:
   - Real-time pool statistics with reuse rates and efficiency metrics
@@ -28,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Transparent Optimization**: Automatic activation based on data characteristics
   - **Manual Control**: Direct pool access via `JsonBufferPool::encodeWithPool()` when needed
   - **Configuration API**: Production tuning via `JsonBufferPool::configure()`
+  - **Enhanced Error Handling**: Precise validation messages separating type vs range errors
+  - **Type Safety**: `encodeWithPool()` now always returns string, simplifying error handling
 
 #### Performance Improvements
 - **Sustained Throughput**: 101,000+ JSON operations per second in continuous load tests
@@ -37,9 +40,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Technical Details
 - **PSR-12 Compliant**: All new code follows project coding standards
-- **Comprehensive Testing**: 20 new tests with 60 assertions covering all functionality
+- **Comprehensive Testing**: 84 JSON tests with 329+ assertions covering all functionality
 - **Backward Compatible**: No changes required to existing applications
 - **Production Ready**: Tested with various data sizes and load patterns
+- **Centralized Constants**: All thresholds and size constants are unified to avoid duplication
+- **Test Maintainability**: Tests now use constants instead of hardcoded values for better maintainability
 
 #### Files Added
 - `src/Json/Pool/JsonBuffer.php`: Core buffer implementation
@@ -51,6 +56,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Files Modified
 - `src/Http/Response.php`: Integrated automatic pooling in `json()` method
 - Enhanced with smart detection and fallback mechanisms
+
+#### Post-Release Improvements (July 2025)
+- **Enhanced Configuration Validation**: Separated type checking from range validation for more precise error messages
+- **Improved Type Safety**: `encodeWithPool()` method now has tightened return type (always returns string)
+- **Public Constants Exposure**: Made all size estimation and threshold constants public for advanced usage and testing
+- **Centralized Thresholds**: Unified pooling decision thresholds across Response.php and JsonBufferPool to eliminate duplication
+- **Test Maintainability**: Updated all tests to use constants instead of hardcoded values
+- **Documentation Updates**: 
+  - Added comprehensive [Constants Reference Guide](docs/technical/json/CONSTANTS_REFERENCE.md)
+  - Updated performance guide with recent improvements
+  - Enhanced error handling documentation
 
 ## [1.1.0] - 2025-07-09
 

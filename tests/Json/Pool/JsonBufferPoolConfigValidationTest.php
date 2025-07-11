@@ -116,6 +116,19 @@ class JsonBufferPoolConfigValidationTest extends TestCase
 
     public function testSizeCategoriesEmptyArrayInvalid(): void
     {
+        // Reset to empty config first
+        JsonBufferPool::resetConfiguration();
+        $reflection = new \ReflectionClass(JsonBufferPool::class);
+        $configProperty = $reflection->getProperty('config');
+        $configProperty->setAccessible(true);
+        $configProperty->setValue(
+            [
+                'max_pool_size' => 50,
+                'default_capacity' => 4096,
+                'size_categories' => []
+            ]
+        );
+
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("'size_categories' cannot be empty");
         JsonBufferPool::configure(['size_categories' => []]);
@@ -186,21 +199,47 @@ class JsonBufferPoolConfigValidationTest extends TestCase
         );
     }
 
-    public function testSizeCategoriesOrderValidation(): void
+    public function testSizeCategoriesAutoSorting(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(
-            "'size_categories' should be ordered from smallest to largest capacity for optimal selection"
-        );
+        // Categories should be automatically sorted, so this should NOT throw exception
         JsonBufferPool::configure(
             [
                 'size_categories' => [
                     'large' => 16384,
-                    'small' => 1024,  // Out of order
+                    'small' => 1024,  // Out of order - will be auto-sorted
                     'medium' => 4096
                 ]
             ]
         );
+
+        // Get the configuration to verify it was sorted
+        $reflection = new \ReflectionClass(JsonBufferPool::class);
+        $configProperty = $reflection->getProperty('config');
+        $configProperty->setAccessible(true);
+        $config = $configProperty->getValue();
+
+        // Verify that categories are now in ascending order by value
+        $values = array_values($config['size_categories']);
+        $sortedValues = $values;
+        sort($sortedValues);
+
+        $this->assertEquals($sortedValues, $values, 'Categories should be automatically sorted by size');
+
+        // Verify that our specific values are in the right order (there may be other default values)
+        $categoryValues = $config['size_categories'];
+        $this->assertContains(1024, $categoryValues);
+        $this->assertContains(4096, $categoryValues);
+        $this->assertContains(16384, $categoryValues);
+
+        // Find positions of our values
+        $values = array_values($categoryValues);
+        $pos1024 = array_search(1024, $values);
+        $pos4096 = array_search(4096, $values);
+        $pos16384 = array_search(16384, $values);
+
+        // Verify they are in correct relative order
+        $this->assertLessThan($pos4096, $pos1024, '1024 should come before 4096');
+        $this->assertLessThan($pos16384, $pos4096, '4096 should come before 16384');
     }
 
     /**

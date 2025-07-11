@@ -35,7 +35,7 @@ For advanced use cases, you can interact with the pooling system directly:
 ```php
 use PivotPHP\Core\Json\Pool\JsonBufferPool;
 
-// Direct encoding with pooling
+// Direct encoding with pooling (always returns string)
 $json = JsonBufferPool::encodeWithPool($data);
 
 // Get a buffer for manual operations
@@ -45,6 +45,38 @@ $buffer->append(',');
 $buffer->appendJson(['another' => 'value']);
 $result = $buffer->finalize();
 JsonBufferPool::returnBuffer($buffer);
+```
+
+### Public Constants
+
+The system exposes public constants for advanced configuration and testing:
+
+```php
+// Size estimation constants
+JsonBufferPool::EMPTY_ARRAY_SIZE;           // 2
+JsonBufferPool::SMALL_ARRAY_SIZE;           // 512
+JsonBufferPool::MEDIUM_ARRAY_SIZE;          // 2048
+JsonBufferPool::LARGE_ARRAY_SIZE;           // 8192
+JsonBufferPool::XLARGE_ARRAY_SIZE;          // 32768
+
+// Threshold constants
+JsonBufferPool::SMALL_ARRAY_THRESHOLD;      // 10
+JsonBufferPool::MEDIUM_ARRAY_THRESHOLD;     // 100
+JsonBufferPool::LARGE_ARRAY_THRESHOLD;      // 1000
+
+// Pooling decision thresholds
+JsonBufferPool::POOLING_ARRAY_THRESHOLD;    // 10
+JsonBufferPool::POOLING_OBJECT_THRESHOLD;   // 5
+JsonBufferPool::POOLING_STRING_THRESHOLD;   // 1024
+
+// Type-specific constants
+JsonBufferPool::STRING_OVERHEAD;            // 20
+JsonBufferPool::OBJECT_PROPERTY_OVERHEAD;   // 50
+JsonBufferPool::OBJECT_BASE_SIZE;           // 100
+JsonBufferPool::BOOLEAN_OR_NULL_SIZE;       // 10
+JsonBufferPool::NUMERIC_SIZE;               // 20
+JsonBufferPool::DEFAULT_ESTIMATE;           // 100
+JsonBufferPool::MIN_LARGE_BUFFER_SIZE;      // 65536
 ```
 
 ## Configuration
@@ -62,6 +94,28 @@ JsonBufferPool::configure([
         'xlarge' => 131072         // 128KB
     ]
 ]);
+```
+
+### Configuration Validation
+
+The system provides comprehensive validation with precise error messages:
+
+```php
+try {
+    JsonBufferPool::configure([
+        'max_pool_size' => -1  // Invalid: negative value
+    ]);
+} catch (InvalidArgumentException $e) {
+    echo $e->getMessage(); // "'max_pool_size' must be a positive integer"
+}
+
+try {
+    JsonBufferPool::configure([
+        'max_pool_size' => 'invalid'  // Invalid: wrong type
+    ]);
+} catch (InvalidArgumentException $e) {
+    echo $e->getMessage(); // "'max_pool_size' must be an integer"
+}
 ```
 
 ## Performance Monitoring

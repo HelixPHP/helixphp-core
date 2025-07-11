@@ -265,7 +265,21 @@ class JsonBufferPool
      */
     public static function configure(array $config): void
     {
+        // Handle size_categories specially to allow partial updates
+        if (isset($config['size_categories']) && is_array($config['size_categories'])) {
+            $mergedCategories = array_merge(
+                self::$config['size_categories'] ?? [],
+                $config['size_categories']
+            );
+
+            // Sort categories by size to maintain order validation
+            asort($mergedCategories);
+            $config['size_categories'] = $mergedCategories;
+        }
+
+        // Validate after merging and sorting
         self::validateConfiguration($config);
+
         self::$config = array_merge(self::$config, $config);
     }
 

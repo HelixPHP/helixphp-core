@@ -380,6 +380,11 @@ $stats = JsonBufferPool::getStatistics();
 if ($stats['total_operations'] === 0) {
     echo "Pooling not being used - check data sizes\n";
 }
+
+// Check threshold values using public constants
+if (count($arrayData) < JsonBufferPool::POOLING_ARRAY_THRESHOLD) {
+    echo "Array too small for pooling: " . count($arrayData) . " < " . JsonBufferPool::POOLING_ARRAY_THRESHOLD . "\n";
+}
 ```
 
 **Solution:**
@@ -432,5 +437,24 @@ foreach ($stats['pool_sizes'] as $pool => $size) {
 5. **Implement health checks** - Monitor pool metrics in production
 6. **Test configuration changes** - Benchmark before deploying pool changes
 7. **Handle errors gracefully** - Always use try/finally for manual buffer management
+8. **Leverage public constants** - Use exposed constants for consistent configuration
+9. **Trust error handling** - The system provides precise validation messages
 
-The JSON optimization system in PivotPHP Core v1.1.1 provides significant performance improvements with minimal configuration required. Focus on monitoring and gradual optimization rather than complex initial setup.
+## Recent Improvements (v1.1.1+)
+
+### Enhanced Error Handling
+- **Separated validation checks**: Type vs range errors provide more precise messages
+- **Always-string return**: `encodeWithPool()` now always returns a string, simplifying error handling
+- **Better fallback**: Automatic fallback with internal error handling
+
+### Public Constants Access
+- **Testing support**: All size and threshold constants are now public
+- **Configuration consistency**: Use constants instead of hardcoded values
+- **Better debugging**: Access to internal thresholds for diagnostics
+
+### Centralized Thresholds
+- **No duplication**: Pooling decision thresholds are centralized
+- **Consistent behavior**: Response.php and JsonBufferPool use same constants
+- **Easy maintenance**: Single source of truth for threshold values
+
+The JSON optimization system in PivotPHP Core v1.1.1+ provides significant performance improvements with minimal configuration required. Focus on monitoring and gradual optimization rather than complex initial setup.
