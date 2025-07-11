@@ -212,8 +212,10 @@ class TestHttpClient
 
     private function createRealResponse(): object
     {
-        // Use actual PivotPHP Response class
-        return new \PivotPHP\Core\Http\Response();
+        // Use actual PivotPHP Response class with test mode enabled
+        $response = new \PivotPHP\Core\Http\Response();
+        $response->setTestMode(true); // Prevent output during tests
+        return $response;
     }
 
     private function executeRouterRequest($router, $request, $response, string $method, string $uri): object

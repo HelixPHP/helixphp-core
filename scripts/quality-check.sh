@@ -98,11 +98,11 @@ count_check $phpstan_result "critical"
 cp "$phpstan_output" "reports/quality/phpstan-results.txt"
 rm "$phpstan_output"
 
-# 2. Testes Unitários - CRÍTICO
-log "🧪 2. Testes Unitários e de Integração - CRÍTICO"
+# 2. Testes CI (sem integração para CI/CD) - CRÍTICO
+log "🧪 2. Testes CI (Unit + Core + Security, sem Integration) - CRÍTICO"
 
 test_output=$(mktemp)
-if composer test -- --exclude-group performance > "$test_output" 2>&1; then
+if composer test:ci > "$test_output" 2>&1; then
     test_result=0
     success "Testes - PASSOU"
     

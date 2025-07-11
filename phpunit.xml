@@ -44,6 +44,13 @@
       <exclude>tests/Stress</exclude>
     </testsuite>
     
+    <!-- CI/CD Tests (excluding integration and stress tests for clean output) -->
+    <testsuite name="CI">
+      <directory>tests</directory>
+      <exclude>tests/Integration</exclude>
+      <exclude>tests/Stress</exclude>
+    </testsuite>
+    
     <!-- Integration Tests -->
     <testsuite name="Integration">
       <directory>tests/Integration</directory>

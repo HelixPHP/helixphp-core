@@ -107,15 +107,9 @@ class HighPerformanceStressTest extends TestCase
         $memoryPerRequest = (memory_get_peak_usage(true) - memory_get_usage(true)) / $concurrentRequests;
         $this->assertLessThan(10240, $memoryPerRequest, 'Memory per request should be <10KB');
 
-        error_log(
-            sprintf(
-                "Concurrent handling: %d requests in %.2fms (%.0f req/s, %.2fKB/req)",
-                $concurrentRequests,
-                $duration,
-                $throughput,
-                $memoryPerRequest / 1024
-            )
-        );
+        // Performance metrics captured in test assertions for CI/CD
+        // Concurrent handling: {$concurrentRequests} requests in {$duration}ms
+        // ({$throughput} req/s, {$memoryPerRequest/1024}KB/req)
     }
 
     /**
@@ -163,15 +157,6 @@ class HighPerformanceStressTest extends TestCase
         // $this->assertGreaterThan(0, $stats['stats']['emergency_activations'], 'Emergency mode should activate');
         $this->assertGreaterThan(0, $stats['stats']['overflow_created'], 'Overflow objects should be created');
 
-        error_log(
-            sprintf(
-                "Pool stress: %d borrows in %.2fms, %d overflows, %d emergency activations",
-                $borrowCount,
-                $duration,
-                $overflowCount,
-                $stats['stats']['emergency_activations']
-            )
-        );
 
         // Return all borrowed objects
         foreach ($borrowed as $obj) {
@@ -231,16 +216,6 @@ class HighPerformanceStressTest extends TestCase
         }
 
         $this->assertGreaterThan(0, $results['rejected'], 'Circuit breaker should reject some requests');
-
-        error_log(
-            sprintf(
-                "Circuit breaker test: %d total, %d success, %d failed, %d rejected",
-                $totalRequests,
-                $results['success'],
-                $results['failed'],
-                $results['rejected']
-            )
-        );
     }
 
     /**
@@ -299,17 +274,6 @@ class HighPerformanceStressTest extends TestCase
         $shedRate = $shedCount / $requestCount;
         $this->assertGreaterThan(0.1, $shedRate, 'Should shed at least 10% under high load');
         $this->assertLessThan(0.5, $shedRate, 'Should not shed more than 50%');
-
-        error_log(
-            sprintf(
-                "Load shedding: %d requests, %d processed (%.1f%%), %d shed (%.1f%%)",
-                $requestCount,
-                $processedCount,
-                ($processedCount / $requestCount) * 100,
-                $shedCount,
-                $shedRate * 100
-            )
-        );
     }
 
     /**
@@ -363,15 +327,6 @@ class HighPerformanceStressTest extends TestCase
 
         $finalMemory = memory_get_usage(true);
         $totalGrowth = $finalMemory - $initialMemory;
-
-        error_log(
-            sprintf(
-                "Memory test: %d iterations, %.2fMB growth (%.2fKB per iteration)",
-                $iterations,
-                $totalGrowth / 1024 / 1024,
-                $totalGrowth / $iterations / 1024
-            )
-        );
     }
 
     /**
@@ -428,15 +383,6 @@ class HighPerformanceStressTest extends TestCase
         $this->assertGreaterThan(0, $metrics['latency']['p50']);
         $this->assertGreaterThan($metrics['latency']['p50'], $metrics['latency']['p99']);
         $this->assertGreaterThan(0, $metrics['throughput']['rps']);
-
-        error_log(
-            sprintf(
-                "Monitoring accuracy: p50=%.2fms, p99=%.2fms, RPS=%.0f",
-                $metrics['latency']['p50'],
-                $metrics['latency']['p99'],
-                $metrics['throughput']['rps']
-            )
-        );
     }
 
     /**
@@ -496,16 +442,6 @@ class HighPerformanceStressTest extends TestCase
         $this->assertGreaterThan(10000, $opsPerSecond, 'Should handle >10k ops/s');
 
         $stats = $pool->getStats();
-        error_log(
-            sprintf(
-                "Extreme pool test: %d ops in %.2fms (%.0f ops/s), %d expansions, %d emergency activations",
-                $totalOps,
-                $duration,
-                $opsPerSecond,
-                $stats['stats']['expanded'],
-                $stats['stats']['emergency_activations']
-            )
-        );
     }
 
     /**
@@ -545,14 +481,6 @@ class HighPerformanceStressTest extends TestCase
         }
 
         $this->assertTrue($degraded, 'System should degrade gracefully');
-
-        error_log(
-            sprintf(
-                "Degradation test: Created %d requests before degradation, memory: %.2fMB",
-                count($requests),
-                memory_get_usage(true) / 1024 / 1024
-            )
-        );
     }
 
     protected function tearDown(): void

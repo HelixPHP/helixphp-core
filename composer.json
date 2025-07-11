@@ -81,6 +81,7 @@
     },
     "scripts": {
         "test": "phpunit",
+        "test:ci": "vendor/bin/phpunit --testsuite=CI",
         "test:fast": "vendor/bin/phpunit --testsuite=Fast",
         "test:unit": "vendor/bin/phpunit --testsuite=Unit",
         "test:integration": "vendor/bin/phpunit --testsuite=Integration",
@@ -114,13 +115,18 @@
         ],
         "quality:check": [
             "@phpstan",
-            "@test:fast",
+            "@test:ci",
             "@cs:check"
         ],
         "quality:check:full": [
             "@phpstan",
             "@test",
             "@cs:check"
+        ],
+        "quality:ci": [
+            "@phpstan",
+            "@test:ci",
+            "@cs:check:summary"
         ],
         "quality:fix": [
             "@cs:fix",
@@ -130,6 +136,17 @@
         "fix:psr12-lines": "./scripts/fix-psr12-lines.sh",
         "precommit:install": "./scripts/setup-precommit.sh",
         "precommit:test": "./scripts/pre-commit",
+        "prepush:validate": [
+            "@phpstan",
+            "@test:unit",
+            "@test:integration",
+            "@cs:check:summary"
+        ],
+        "prepush:full": [
+            "@phpstan",
+            "@test",
+            "@cs:check"
+        ],
         "validate:docs": "./scripts/validate-docs.sh",
         "validate:project": "php scripts/validate_project.php",
         "examples:basic": "php examples/example_basic.php",

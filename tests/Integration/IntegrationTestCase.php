@@ -290,7 +290,7 @@ abstract class IntegrationTestCase extends TestCase
     {
         return match ($name) {
             'logging' => function ($req, $res, $next) {
-                error_log("Request: {$req->method()} {$req->uri()}");
+                // Logging middleware for tests (output suppressed for CI/CD)
                 return $next($req, $res);
             },
             'timing' => function ($req, $res, $next) {
