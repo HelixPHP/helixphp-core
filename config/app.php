@@ -11,7 +11,7 @@ return [
         'name' => $_ENV['APP_NAME'] ?? 'PivotPHP Application',
         'version' => '2.1.0',
         'environment' => $_ENV['APP_ENV'] ?? 'production',
-        'debug' => filter_var($_ENV['APP_DEBUG'] ?? ($_ENV['APP_ENV'] === 'development' ? true : false), FILTER_VALIDATE_BOOLEAN),
+        'debug' => filter_var($_ENV['APP_DEBUG'] ?? (($_ENV['APP_ENV'] ?? 'production') === 'development' ? true : false), FILTER_VALIDATE_BOOLEAN),
         'timezone' => $_ENV['APP_TIMEZONE'] ?? 'UTC',
         'locale' => $_ENV['APP_LOCALE'] ?? 'en'
     ],

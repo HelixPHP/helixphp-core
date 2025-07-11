@@ -418,14 +418,24 @@ class V11ComponentsTest extends TestCase
         }
 
         $duration = microtime(true) - $startTime;
-        $throughput = count($results) / $duration;
+
+        // Ensure duration is positive and meaningful
+        $this->assertGreaterThan(0, $duration, 'Test duration should be positive');
+
+        $throughput = $duration > 0 ? count($results) / $duration : 0;
 
         // Verify performance with environment-aware threshold
         $threshold = $this->getPerformanceThreshold();
+
+        // Skip performance assertion in very constrained environments
+        if ($duration < 0.001) { // Less than 1ms duration indicates timing issues
+            $this->markTestSkipped('Test duration too short for reliable throughput measurement');
+        }
+
         $this->assertGreaterThan(
             $threshold,
             $throughput,
-            sprintf('Should handle >%d req/s (actual: %.2f req/s)', $threshold, $throughput)
+            sprintf('Should handle >%d req/s (actual: %.2f req/s, duration: %.4fs)', $threshold, $throughput, $duration)
         );
 
         // Check monitoring data

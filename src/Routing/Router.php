@@ -186,7 +186,7 @@ class Router
     public static function add(
         string $method,
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -780,7 +780,7 @@ class Router
      */
     public static function get(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -792,7 +792,7 @@ class Router
      */
     public static function post(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -804,7 +804,7 @@ class Router
      */
     public static function put(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -816,7 +816,7 @@ class Router
      */
     public static function delete(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -828,7 +828,7 @@ class Router
      */
     public static function patch(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -840,7 +840,7 @@ class Router
      */
     public static function options(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -852,7 +852,7 @@ class Router
      */
     public static function head(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -864,7 +864,7 @@ class Router
      */
     public static function any(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {

@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts/quality-check.sh
-# Script de validação completa de qualidade para PivotPHP Core v1.1.2
+# Script de validação completa de qualidade para PivotPHP Core v1.1.3-dev
 
 set -e
 
@@ -63,12 +63,12 @@ fi
 # Criar diretório de relatórios
 mkdir -p reports/quality
 
-log "🔍 Iniciando validação completa de qualidade PivotPHP Core v1.1.2..."
+log "🔍 Iniciando validação completa de qualidade PivotPHP Core v1.1.3-dev..."
 log "📊 Critérios: 8 CRÍTICOS + 4 ALTOS + Métricas avançadas"
 
 echo ""
 echo "======================================="
-echo "   VALIDAÇÃO DE QUALIDADE v1.1.2"
+echo "   VALIDAÇÃO DE QUALIDADE v1.1.3-dev"
 echo "======================================="
 echo ""
 
@@ -460,7 +460,7 @@ count_check $examples_result
 # Relatório Final
 echo ""
 echo "========================================="
-echo "    RELATÓRIO DE QUALIDADE v1.1.2"
+echo "    RELATÓRIO DE QUALIDADE v1.1.3-dev"
 echo "========================================="
 echo ""
 
@@ -497,7 +497,7 @@ echo ""
 # Gerar relatório detalhado
 report_file="reports/quality/quality-report-$(date +%Y%m%d-%H%M%S).txt"
 cat > "$report_file" << EOF
-# Relatório de Qualidade PivotPHP Core v1.1.2
+# Relatório de Qualidade PivotPHP Core v1.1.3-dev
 Data: $(date)
 Executado por: $(whoami)
 Diretório: $(pwd)
@@ -542,7 +542,7 @@ echo "🎯 Decisão Final:"
 if [ $CRITICAL_FAILURES -eq 0 ]; then
     echo -e "${GREEN}🎉 APROVADO PARA ENTREGA${NC}"
     echo ""
-    echo "✨ PivotPHP Core v1.1.2 atende todos os critérios críticos!"
+    echo "✨ PivotPHP Core v1.1.3-dev atende todos os critérios críticos!"
     echo "📊 Taxa de sucesso: $success_rate%"
     echo "🚀 Pronto para produção!"
     echo ""
@@ -555,7 +555,7 @@ if [ $CRITICAL_FAILURES -eq 0 ]; then
 else
     echo -e "${RED}❌ REPROVADO PARA ENTREGA${NC}"
     echo ""
-    echo "🚨 PivotPHP Core v1.1.2 NÃO atende aos critérios críticos!"
+    echo "🚨 PivotPHP Core v1.1.3-dev NÃO atende aos critérios críticos!"
     echo "📊 Falhas críticas: $CRITICAL_FAILURES"
     echo "🛑 Entrega BLOQUEADA!"
     echo ""
