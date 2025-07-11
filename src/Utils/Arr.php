@@ -327,7 +327,20 @@ class Arr
      */
     public static function flatten(array $array, int $depth = 0): array
     {
-        return static::dot($array);
+        $result = [];
+        
+        foreach ($array as $key => $value) {
+            if (is_array($value) && ($depth > 1 || $depth === 0)) {
+                $flattened = static::flatten($value, $depth === 0 ? 0 : $depth - 1);
+                foreach ($flattened as $subKey => $subValue) {
+                    $result[$key . '.' . $subKey] = $subValue;
+                }
+            } else {
+                $result[$key] = $value;
+            }
+        }
+        
+        return $result;
     }
 
     /**
