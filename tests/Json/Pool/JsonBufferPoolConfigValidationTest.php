@@ -121,13 +121,11 @@ class JsonBufferPoolConfigValidationTest extends TestCase
         $reflection = new \ReflectionClass(JsonBufferPool::class);
         $configProperty = $reflection->getProperty('config');
         $configProperty->setAccessible(true);
-        $configProperty->setValue(
-            [
-                'max_pool_size' => 50,
-                'default_capacity' => 4096,
-                'size_categories' => []
-            ]
-        );
+        $configProperty->setValue(null, [
+            'max_pool_size' => 50,
+            'default_capacity' => 4096,
+            'size_categories' => []
+        ]);
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("'size_categories' cannot be empty");
