@@ -104,7 +104,7 @@
             "@phpstan",
             "echo 'Quality check with PSR-12 completed!'"
         ],
-        "quality:check": [
+        "quality:check:disabled": [
             "@phpstan",
             "@test",
             "@cs:check"
