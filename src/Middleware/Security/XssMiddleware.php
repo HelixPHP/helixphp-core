@@ -9,6 +9,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * XSS Protection Middleware
+ *
+ * Provides protection against Cross-Site Scripting (XSS) attacks by
+ * sanitizing request input and adding appropriate security headers.
+ *
+ * @package PivotPHP\Core\Middleware\Security
+ * @since 1.1.2
+ */
 class XssMiddleware implements MiddlewareInterface
 {
     private string $allowedTags;

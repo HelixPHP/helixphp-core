@@ -11,6 +11,15 @@ use Psr\Http\Message\ResponseInterface;
 use PivotPHP\Core\Http\Psr7\Response;
 use PivotPHP\Core\Http\Psr7\Stream;
 
+/**
+ * CSRF Protection Middleware
+ *
+ * Provides Cross-Site Request Forgery (CSRF) protection by validating
+ * tokens in form submissions and AJAX requests.
+ *
+ * @package PivotPHP\Core\Middleware\Security
+ * @since 1.1.2
+ */
 class CsrfMiddleware implements MiddlewareInterface
 {
     private string $fieldName;

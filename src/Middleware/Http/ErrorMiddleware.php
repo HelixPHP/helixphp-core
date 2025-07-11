@@ -12,6 +12,15 @@ use PivotPHP\Core\Http\Psr7\Response;
 use PivotPHP\Core\Http\Psr7\Stream;
 use Throwable;
 
+/**
+ * Error Handling Middleware
+ *
+ * Catches and handles exceptions that occur during request processing,
+ * providing appropriate error responses and logging.
+ *
+ * @package PivotPHP\Core\Middleware\Http
+ * @since 1.1.2
+ */
 class ErrorMiddleware implements MiddlewareInterface
 {
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

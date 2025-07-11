@@ -9,6 +9,15 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Cache Middleware
+ *
+ * Provides HTTP response caching to improve application performance
+ * by storing and serving cached responses for repeated requests.
+ *
+ * @package PivotPHP\Core\Middleware\Performance
+ * @since 1.1.2
+ */
 class CacheMiddleware implements MiddlewareInterface
 {
     private int $ttl;
