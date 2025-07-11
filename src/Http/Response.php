@@ -222,7 +222,7 @@ class Response implements ResponseInterface
 
         // Usar pooling para datasets médios e grandes
         if ($this->shouldUseJsonPooling($sanitizedData)) {
-            $encoded = $this->encodeWithPooling($sanitizedData);
+            $encoded = $this->encodeWithPooling($data, $sanitizedData);
         } else {
             // Usar encoding tradicional para dados pequenos
             $encoded = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
@@ -802,16 +802,16 @@ class Response implements ResponseInterface
     /**
      * Codifica JSON usando pooling para melhor performance
      */
-    private function encodeWithPooling(mixed $data): string
+    private function encodeWithPooling(mixed $data, mixed $sanitizedData): string
     {
         try {
-            return JsonBufferPool::encodeWithPool($data, self::JSON_ENCODE_FLAGS);
+            return JsonBufferPool::encodeWithPool($sanitizedData, self::JSON_ENCODE_FLAGS);
         } catch (\Throwable $e) {
             // Fallback para encoding tradicional em caso de erro
             error_log('JSON pooling failed, falling back to traditional encoding: ' . $e->getMessage());
 
             // Fallback to traditional encoding (handle JSON encoding failures internally)
-            $encoded = json_encode($data, self::JSON_ENCODE_FLAGS);
+            $encoded = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
             if ($encoded === false) {
                 error_log('JSON fallback encoding failed: ' . json_last_error_msg());
                 return '{}';
