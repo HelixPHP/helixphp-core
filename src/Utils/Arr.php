@@ -328,7 +328,7 @@ class Arr
     public static function flatten(array $array, int $depth = 0): array
     {
         $result = [];
-        
+
         foreach ($array as $key => $value) {
             if (is_array($value) && ($depth > 1 || $depth === 0)) {
                 $flattened = static::flatten($value, $depth === 0 ? 0 : $depth - 1);
@@ -339,7 +339,7 @@ class Arr
                 $result[$key] = $value;
             }
         }
-        
+
         return $result;
     }
 
@@ -370,12 +370,12 @@ class Arr
     {
         $keys = array_keys($array);
         shuffle($keys);
-        
+
         $shuffled = [];
         foreach ($keys as $key) {
             $shuffled[$key] = $array[$key];
         }
-        
+
         return $shuffled;
     }
 }

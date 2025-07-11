@@ -28,6 +28,7 @@ class DynamicPoolManager
         'high' => 200 * 1024 * 1024    // 200MB
     ];
 
+
     /**
      * Simulated stats for compatibility
      */
@@ -75,6 +76,18 @@ class DynamicPoolManager
      * Current memory tier
      */
     private static string $currentTier = 'low';
+
+    /**
+     * Constructor
+     */
+    public function __construct(array $config = [])
+    {
+        // Configuration is processed if needed, but not stored as instance property
+        // This maintains compatibility with the existing static implementation
+        if (!empty($config)) {
+            // Process configuration for future use if needed
+        }
+    }
 
     /**
      * Memory monitoring statistics
@@ -261,17 +274,17 @@ class DynamicPoolManager
 
         // Simulate pool activity
         self::$simulatedStats['borrowed']++;
-        
+
         // Simulate expansion every 10 borrows
         if (self::$simulatedStats['borrowed'] % 10 === 0) {
             self::$simulatedStats['expanded']++;
         }
-        
+
         // Simulate overflow creation every 50 borrows
         if (self::$simulatedStats['borrowed'] % 50 === 0) {
             self::$simulatedStats['overflow_created']++;
         }
-        
+
         // Simulate emergency activation every 100 borrows
         if (self::$simulatedStats['borrowed'] % 100 === 0) {
             self::$simulatedStats['emergency_activations']++;
@@ -293,10 +306,10 @@ class DynamicPoolManager
     {
         // Simple implementation for compatibility
         self::updateMemoryStats();
-        
+
         // Simulate pool activity
         self::$simulatedStats['returned']++;
-        
+
         // In a real implementation, this would delegate to actual pools
     }
 

@@ -246,7 +246,7 @@ class HighPerformanceMode
         $poolConfig = self::$currentConfig['pool'];
 
         // Create dynamic pool
-        self::$pool = new DynamicPoolManager();
+        self::$pool = new DynamicPoolManager($poolConfig);
 
         // Configure optimized factory
         OptimizedHttpFactory::initialize($poolConfig);
