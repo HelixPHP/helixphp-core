@@ -177,8 +177,11 @@ class Utils
      * @param  string|null $destination Pode ser 'null' para suprimir, 'stdout', 'stderr' ou caminho de arquivo
      * @return void
      */
-    public static function log(string $msg, string $level = 'info', ?string $destination = null): void
-    {
+    public static function log(
+        string $msg,
+        string $level = 'info',
+        ?string $destination = null
+    ): void {
         if ($destination === self::DEST_SUPPRESS) {
             // Não faz nada, suprime saída
             return;
@@ -306,8 +309,11 @@ class Utils
      * @param  string $suffix
      * @return string
      */
-    public static function truncate(string $string, int $length, string $suffix = '...'): string
-    {
+    public static function truncate(
+        string $string,
+        int $length,
+        string $suffix = '...'
+    ): string {
         if (strlen($string) <= $length) {
             return $string;
         }

@@ -26,4 +26,20 @@
             <property name="allowMultipleArguments" value="false"/>
         </properties>
     </rule>
+    
+    <!-- Method declaration formatting -->
+    <rule ref="PEAR.Functions.FunctionDeclaration"/>
+    <rule ref="PSR2.Methods.FunctionCallSignature">
+        <properties>
+            <property name="allowMultipleArguments" value="false"/>
+        </properties>
+    </rule>
+    
+    <!-- Function arguments formatting -->
+    <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration">
+        <properties>
+            <property name="indent" value="4"/>
+        </properties>
+    </rule>
 </ruleset>

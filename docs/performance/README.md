@@ -22,7 +22,7 @@ O PivotPHP foi projetado desde o início com foco em alta performance, oferecend
 - ⚡ **Resposta ultra-rápida**: Operações principais < 1μs
 - 🔧 **Otimizações avançadas**: Zero-copy operations, memory mapping, object pooling
 - 📊 **Métricas detalhadas**: Sistema completo de monitoramento e análise
-- 🚀 **Escalabilidade comprovada**: 2.5M+ operações por segundo
+- 🚀 **Escalabilidade comprovada**: 692K ops/sec (Status Codes), 548K ops/sec (Content Negotiation), 317K ops/sec (Request Parsing) - Docker v1.1.1
 
 ## 📈 Principais Métricas (v1.0.0)
 

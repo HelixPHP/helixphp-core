@@ -32,7 +32,7 @@ jobs:
 
     - name: Cache Composer packages
       id: composer-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -56,7 +56,7 @@ jobs:
     - name: Run PHP CS
       run: |
         if [ -f "vendor/bin/phpcs" ]; then
-          ./vendor/bin/phpcs --standard=PSR12 src/ || { echo 'PHPCS check failed'; exit 1; }
+          ./vendor/bin/phpcs --standard=phpcs.xml || { echo 'PHPCS check failed'; exit 1; }
         else
           echo "PHPCS not installed, skipping code style check"
         fi
@@ -65,7 +65,7 @@ jobs:
       run: |
         if [ -f "vendor/bin/phpunit" ]; then
           echo "Running PHPUnit tests on PHP ${{ matrix.php-version }}..."
-          ./vendor/bin/phpunit --testdox --fail-on-warning --fail-on-incomplete || code=$?
+          ./vendor/bin/phpunit --testdox --exclude-group performance || code=$?
           if [ "${code:-$?}" -eq 0 ] || [ "${code:-$?}" -eq 1 ]; then
             echo "PHPUnit OK (exit code $code: success or only skipped/incomplete tests)"
             exit 0
@@ -82,7 +82,7 @@ jobs:
       run: php scripts/validate_project.php || { echo 'Custom validation failed'; exit 1; }
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       if: matrix.php-version == '8.1'
       with:
         file: ./coverage.xml

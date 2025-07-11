@@ -44,8 +44,11 @@ class Hook implements StoppableEventInterface
      * @param mixed $data
      * @param array<string, mixed> $context
      */
-    public function __construct(string $name, mixed $data = null, array $context = [])
-    {
+    public function __construct(
+        string $name,
+        mixed $data = null,
+        array $context = []
+    ) {
         $this->name = $name;
         $this->data = $data;
         $this->context = $context;
@@ -132,8 +135,11 @@ class Hook implements StoppableEventInterface
      * @param mixed $data
      * @param array<string, mixed> $context
      */
-    public static function filter(string $name, mixed $data, array $context = []): self
-    {
+    public static function filter(
+        string $name,
+        mixed $data,
+        array $context = []
+    ): self {
         return new self($name, $data, $context);
     }
 

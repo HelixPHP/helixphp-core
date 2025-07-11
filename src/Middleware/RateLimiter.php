@@ -73,8 +73,11 @@ class RateLimiter
     /**
      * Handle the request
      */
-    public function handle(Request $request, Response $response, callable $next): Response
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
         $this->metrics['total_requests']++;
 
         // Generate rate limit key
@@ -298,8 +301,11 @@ class RateLimiter
     /**
      * Set in storage
      */
-    private function setInStorage(string $key, mixed $value, ?int $ttl = null): void
-    {
+    private function setInStorage(
+        string $key,
+        mixed $value,
+        ?int $ttl = null
+    ): void {
         // In-memory storage for now
         $this->storage[$key] = $value;
 

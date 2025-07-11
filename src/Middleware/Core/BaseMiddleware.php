@@ -41,8 +41,11 @@ abstract class BaseMiddleware implements MiddlewareInterface
      * @param  mixed  $default
      * @return mixed
      */
-    protected static function getHeader($request, string $header, $default = null)
-    {
+    protected static function getHeader(
+        $request,
+        string $header,
+        $default = null
+    ) {
         if ($request instanceof Request) {
             return $request->header($header) ?? $default;
         }
@@ -129,8 +132,11 @@ abstract class BaseMiddleware implements MiddlewareInterface
      * @param  string   $message
      * @return Response
      */
-    protected function respondWithSuccess(Response $response, $data = null, string $message = 'Success'): Response
-    {
+    protected function respondWithSuccess(
+        Response $response,
+        $data = null,
+        string $message = 'Success'
+    ): Response {
         $result = ['success' => true, 'message' => $message];
         if ($data !== null) {
             $result['data'] = $data;

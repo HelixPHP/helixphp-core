@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Pool\Distributed;
 
-use PivotPHP\Core\Http\Pool\DynamicPool;
+use PivotPHP\Core\Http\Pool\DynamicPoolManager;
 use PivotPHP\Core\Pool\Distributed\Coordinators\CoordinatorInterface;
 use PivotPHP\Core\Pool\Distributed\Coordinators\NoOpCoordinator;
 
@@ -45,7 +45,7 @@ class DistributedPoolManager
     /**
      * Local pool
      */
-    private ?DynamicPool $localPool = null;
+    private ?DynamicPoolManager $localPool = null;
 
     /**
      * State
@@ -141,7 +141,7 @@ class DistributedPoolManager
     /**
      * Set local pool
      */
-    public function setLocalPool(DynamicPool $pool): void
+    public function setLocalPool(DynamicPoolManager $pool): void
     {
         $this->localPool = $pool;
     }

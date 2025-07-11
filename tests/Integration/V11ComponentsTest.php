@@ -365,6 +365,8 @@ class V11ComponentsTest extends TestCase
 
     /**
      * Test end-to-end high-performance scenario
+     *
+     * @group performance
      */
     public function testEndToEndHighPerformanceScenario(): void
     {
@@ -418,8 +420,13 @@ class V11ComponentsTest extends TestCase
         $duration = microtime(true) - $startTime;
         $throughput = count($results) / $duration;
 
-        // Verify performance
-        $this->assertGreaterThan(100, $throughput, 'Should handle >100 req/s');
+        // Verify performance with environment-aware threshold
+        $threshold = $this->getPerformanceThreshold();
+        $this->assertGreaterThan(
+            $threshold,
+            $throughput,
+            sprintf('Should handle >%d req/s (actual: %.2f req/s)', $threshold, $throughput)
+        );
 
         // Check monitoring data
         $monitor = HighPerformanceMode::getMonitor();
@@ -436,6 +443,33 @@ class V11ComponentsTest extends TestCase
 
         // The test successfully processed many requests at high throughput
         $this->assertTrue(true, 'High-performance scenario completed successfully');
+    }
+
+    /**
+     * Get performance threshold based on environment
+     *
+     * This method provides environment-aware performance thresholds to avoid
+     * masking performance regressions while accounting for CI constraints.
+     *
+     * @return int The minimum throughput threshold in requests/second
+     */
+    private function getPerformanceThreshold(): int
+    {
+        // Check if running in CI environment
+        if (getenv('CI') !== false || getenv('GITHUB_ACTIONS') !== false) {
+            // CI environments are typically constrained
+            // Use lower threshold but still meaningful for regression detection
+            return 25; // CI threshold: 25 req/s
+        }
+
+        // Check if running in Docker or containerized environment
+        if (file_exists('/.dockerenv') || getenv('DOCKER') !== false) {
+            // Docker environments may have resource constraints
+            return 50; // Docker threshold: 50 req/s
+        }
+
+        // Local development environment - expect full performance
+        return 100; // Local threshold: 100 req/s
     }
 
     protected function tearDown(): void

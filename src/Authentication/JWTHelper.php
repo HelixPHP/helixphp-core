@@ -22,8 +22,11 @@ class JWTHelper
      *                                       - audience: string (audiência do token)
      * @return string Token JWT
      */
-    public static function encode(array $payload, string $secret, array $options = []): string
-    {
+    public static function encode(
+        array $payload,
+        string $secret,
+        array $options = []
+    ): string {
         $options = array_merge(
             [
                 'algorithm' => 'HS256',
@@ -71,8 +74,11 @@ class JWTHelper
      * @return array<string, mixed> Payload decodificado
      * @throws Exception Se o token for inválido
      */
-    public static function decode(string $token, string $secret, array $options = []): array
-    {
+    public static function decode(
+        string $token,
+        string $secret,
+        array $options = []
+    ): array {
         $options = array_merge(
             [
                 'algorithm' => 'HS256',
@@ -108,8 +114,11 @@ class JWTHelper
      * @param  array<string, mixed> $options Opções de decodificação
      * @return bool True se válido
      */
-    public static function isValid(string $token, string $secret, array $options = []): bool
-    {
+    public static function isValid(
+        string $token,
+        string $secret,
+        array $options = []
+    ): bool {
         try {
             self::decode($token, $secret, $options);
             return true;
@@ -195,8 +204,11 @@ class JWTHelper
      *
      * @return array<string, mixed>
      */
-    private static function decodeHS256(string $token, string $secret, int $leeway = 0): array
-    {
+    private static function decodeHS256(
+        string $token,
+        string $secret,
+        int $leeway = 0
+    ): array {
         $parts = explode('.', $token);
         if (count($parts) !== 3) {
             throw new Exception('Invalid JWT format');
@@ -271,8 +283,11 @@ class JWTHelper
      *                           dias)
      * @return string Token de refresh
      */
-    public static function createRefreshToken($userId, string $secret, int $expiresIn = 2592000): string
-    {
+    public static function createRefreshToken(
+        $userId,
+        string $secret,
+        int $expiresIn = 2592000
+    ): string {
         return self::encode(
             [
                 'user_id' => $userId,

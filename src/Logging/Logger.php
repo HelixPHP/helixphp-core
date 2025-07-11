@@ -61,8 +61,11 @@ class Logger
      * Registra uma mensagem de log
      * @param array<string, mixed> $context
      */
-    public function log(int $level, string $message, array $context = []): void
-    {
+    public function log(
+        int $level,
+        string $message,
+        array $context = []
+    ): void {
         if ($level > $this->level) {
             return;
         }
@@ -90,43 +93,77 @@ class Logger
         $this->log(self::EMERGENCY, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log an alert message
+     *
+     * @param array<string, mixed> $context
+     */
     public function alert(string $message, array $context = []): void
     {
         $this->log(self::ALERT, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log a critical error message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function critical(string $message, array $context = []): void
     {
         $this->log(self::CRITICAL, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log an error message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function error(string $message, array $context = []): void
     {
         $this->log(self::ERROR, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log a warning message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function warning(string $message, array $context = []): void
     {
         $this->log(self::WARNING, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log a notice message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function notice(string $message, array $context = []): void
     {
         $this->log(self::NOTICE, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log an informational message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function info(string $message, array $context = []): void
     {
         $this->log(self::INFO, $message, $context);
     }
 
-    /** @param array<string, mixed> $context */
+    /**
+     * Log a debug message
+     *
+     * @param string $message The log message
+     * @param array<string, mixed> $context Additional context data
+     */
     public function debug(string $message, array $context = []): void
     {
         $this->log(self::DEBUG, $message, $context);

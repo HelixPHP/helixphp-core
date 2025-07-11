@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Security;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -11,6 +11,15 @@ use Psr\Http\Message\ResponseInterface;
 use PivotPHP\Core\Http\Psr7\Response;
 use PivotPHP\Core\Http\Psr7\Stream;
 
+/**
+ * CSRF Protection Middleware
+ *
+ * Provides Cross-Site Request Forgery (CSRF) protection by validating
+ * tokens in form submissions and AJAX requests.
+ *
+ * @package PivotPHP\Core\Middleware\Security
+ * @since 1.1.2
+ */
 class CsrfMiddleware implements MiddlewareInterface
 {
     private string $fieldName;
@@ -20,6 +29,9 @@ class CsrfMiddleware implements MiddlewareInterface
         $this->fieldName = $fieldName;
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (strtoupper($request->getMethod()) === 'POST') {
@@ -42,6 +54,9 @@ class CsrfMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
+    /**
+     * Get token
+     */
     public static function getToken(string $fieldName = '_csrf_token'): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -53,6 +68,9 @@ class CsrfMiddleware implements MiddlewareInterface
         return $_SESSION[$fieldName];
     }
 
+    /**
+     * HiddenField method
+     */
     public static function hiddenField(string $fieldName = '_csrf_token'): string
     {
         $token = self::getToken($fieldName);
@@ -64,6 +82,9 @@ class CsrfMiddleware implements MiddlewareInterface
             '">';
     }
 
+    /**
+     * MetaTag method
+     */
     public static function metaTag(string $fieldName = '_csrf_token'): string
     {
         $token = self::getToken($fieldName);

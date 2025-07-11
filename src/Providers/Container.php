@@ -95,8 +95,11 @@ class Container implements ContainerInterface
     /**
      * Bind a concrete implementation to the container
      */
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = true): void
-    {
+    public function bind(
+        string $abstract,
+        mixed $concrete = null,
+        bool $shared = true
+    ): void {
         $concrete = $concrete ?? $abstract;
 
         if (is_callable($concrete)) {

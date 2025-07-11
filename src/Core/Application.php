@@ -38,7 +38,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '1.1.1';
+    public const VERSION = '1.1.2';
 
     /**
      * Container de dependências PSR-11.
@@ -606,8 +606,11 @@ class Application
      * @param  Response             $response Resposta
      * @return Response
      */
-    protected function callRouteHandler(array $route, Request $request, Response $response): Response
-    {
+    protected function callRouteHandler(
+        array $route,
+        Request $request,
+        Response $response
+    ): Response {
         $handler = $route['handler'];
 
         if (is_callable($handler)) {
@@ -622,8 +625,11 @@ class Application
     /**
      * Bind a service to the container
      */
-    public function bind(string $abstract, mixed $concrete = null, bool $shared = false): self
-    {
+    public function bind(
+        string $abstract,
+        mixed $concrete = null,
+        bool $shared = false
+    ): self {
         $this->container->bind($abstract, $concrete, $shared);
         return $this;
     }
@@ -689,8 +695,12 @@ class Application
      * @param  int    $line    Linha do erro
      * @return bool
      */
-    public function handleError(int $level, string $message, string $file, int $line): bool
-    {
+    public function handleError(
+        int $level,
+        string $message,
+        string $file,
+        int $line
+    ): bool {
         if (error_reporting() & $level) {
             throw new \ErrorException($message, 0, $level, $file, $line);
         }
@@ -707,8 +717,11 @@ class Application
      * @param  Response|null $response Resposta (opcional)
      * @return Response
      */
-    public function handleException(Throwable $e, ?Request $request = null, ?Response $response = null): Response
-    {
+    public function handleException(
+        Throwable $e,
+        ?Request $request = null,
+        ?Response $response = null
+    ): Response {
         $response = $response ?: new Response();
         $debug = $this->config->get('app.debug', false);
 
@@ -1094,8 +1107,11 @@ class Application
     /**
      * Register an extension manually
      */
-    public function registerExtension(string $name, string $provider, array $config = []): self
-    {
+    public function registerExtension(
+        string $name,
+        string $provider,
+        array $config = []
+    ): self {
         $this->extensions()->registerExtension($name, $provider, $config);
         return $this;
     }
@@ -1103,8 +1119,11 @@ class Application
     /**
      * Add an action hook
      */
-    public function addAction(string $hook, callable $callback, int $priority = 10): self
-    {
+    public function addAction(
+        string $hook,
+        callable $callback,
+        int $priority = 10
+    ): self {
         $this->hooks()->addAction($hook, $callback, $priority);
         return $this;
     }
@@ -1112,8 +1131,11 @@ class Application
     /**
      * Add a filter hook
      */
-    public function addFilter(string $hook, callable $callback, int $priority = 10): self
-    {
+    public function addFilter(
+        string $hook,
+        callable $callback,
+        int $priority = 10
+    ): self {
         $this->hooks()->addFilter($hook, $callback, $priority);
         return $this;
     }
@@ -1134,8 +1156,11 @@ class Application
      * @param array<string, mixed> $context
      * @return mixed
      */
-    public function applyFilter(string $hook, mixed $data, array $context = []): mixed
-    {
+    public function applyFilter(
+        string $hook,
+        mixed $data,
+        array $context = []
+    ): mixed {
         return $this->hooks()->applyFilter($hook, $data, $context);
     }
 

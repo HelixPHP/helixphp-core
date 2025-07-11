@@ -7,6 +7,10 @@ namespace PivotPHP\Core\Logging;
  */
 interface LogHandlerInterface
 {
-    /** @param array<string, mixed> $record */
+    /**
+     * Handle a log record
+     *
+     * @param array<string, mixed> $record The log record to handle
+     */
     public function handle(array $record): void;
 }

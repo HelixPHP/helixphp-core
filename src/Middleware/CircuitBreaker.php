@@ -63,8 +63,11 @@ class CircuitBreaker
     /**
      * Handle the request
      */
-    public function handle(Request $request, Response $response, callable $next): Response
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): Response {
         $this->metrics['total_requests']++;
 
         // Check if path is excluded

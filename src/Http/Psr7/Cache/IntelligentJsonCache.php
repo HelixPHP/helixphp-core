@@ -207,7 +207,11 @@ class IntelligentJsonCache
     /**
      * Create template from JSON and data
      */
-    private static function createTemplate(string $structureKey, array $data, string $json): void
+    private static function createTemplate(
+        string $structureKey,
+        array $data,
+        string $json
+    ): void
     {
         if (count(self::$structureTemplates) >= self::MAX_TEMPLATE_CACHE) {
             self::evictOldTemplates();
@@ -268,7 +272,11 @@ class IntelligentJsonCache
     /**
      * Populate placeholders recursively
      */
-    private static function populatePlaceholders(mixed $data, string &$json, string $path): void
+    private static function populatePlaceholders(
+        mixed $data,
+        string &$json,
+        string $path
+    ): void
     {
         if (is_array($data)) {
             foreach ($data as $key => $value) {

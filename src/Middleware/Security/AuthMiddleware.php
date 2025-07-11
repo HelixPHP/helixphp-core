@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Security;
 
 use PivotPHP\Core\Http\Psr15\AbstractMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -17,6 +17,9 @@ class AuthMiddleware extends AbstractMiddleware
     private array $config;
     private array $publicPaths;
 
+    /**
+     * __construct method
+     */
     public function __construct(array $config = [], array $publicPaths = [])
     {
         $this->config = array_merge(
@@ -60,6 +63,9 @@ class AuthMiddleware extends AbstractMiddleware
         );
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $authMethods = $this->config['authMethods'] ?? ['jwt'];

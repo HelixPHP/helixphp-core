@@ -264,8 +264,11 @@ class RouteCache
      * @param int $position Current position counter for parameters
      * @return string|null The processed pattern with regex blocks expanded
      */
-    private static function processRegexBlocks(?string $pattern, array &$parameters, int &$position): ?string
-    {
+    private static function processRegexBlocks(
+        ?string $pattern,
+        array &$parameters,
+        int &$position
+    ): ?string {
         if ($pattern === null) {
             return '';
         }
@@ -300,8 +303,11 @@ class RouteCache
      * @param int $position Current position for parameter tracking
      * @return string The processed regex content
      */
-    private static function processRegexBlock(string $content, array &$parameters, int &$position): string
-    {
+    private static function processRegexBlock(
+        string $content,
+        array &$parameters,
+        int &$position
+    ): string {
         // Only process if it's a full regex block (contains ^ or capture groups)
         if (strpos($content, '^') === false && strpos($content, '(') === false) {
             return '{' . $content . '}'; // Return unchanged
@@ -370,8 +376,11 @@ class RouteCache
     /**
      * Process named parameters like :param<constraint>
      */
-    private static function processNamedParameters(?string $pattern, array &$parameters, int &$position): ?string
-    {
+    private static function processNamedParameters(
+        ?string $pattern,
+        array &$parameters,
+        int &$position
+    ): ?string {
         if ($pattern === null) {
             return '';
         }
@@ -388,8 +397,11 @@ class RouteCache
     /**
      * Process a single named parameter
      */
-    private static function processNamedParameter(array $matches, array &$parameters, int &$position): string
-    {
+    private static function processNamedParameter(
+        array $matches,
+        array &$parameters,
+        int &$position
+    ): string {
         $paramName = $matches[1];
         $constraint = $matches[2] ?? '[^/]+'; // Default constraint
 
@@ -456,8 +468,11 @@ class RouteCache
     /**
      * Cache dynamic route data
      */
-    private static function cacheDynamicRoute(string $path, string $compiledPattern, array $parameters): array
-    {
+    private static function cacheDynamicRoute(
+        string $path,
+        string $compiledPattern,
+        array $parameters
+    ): array {
         $result = [
             'pattern' => $compiledPattern,
             'parameters' => $parameters

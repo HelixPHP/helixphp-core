@@ -97,8 +97,11 @@ class PerformanceMonitor
     /**
      * End monitoring a request
      */
-    public function endRequest(string $requestId, int $statusCode, array $metadata = []): void
-    {
+    public function endRequest(
+        string $requestId,
+        int $statusCode,
+        array $metadata = []
+    ): void {
         if (!isset($this->activeRequests[$requestId])) {
             return;
         }
@@ -215,8 +218,11 @@ class PerformanceMonitor
     /**
      * Record custom metric
      */
-    public function recordMetric(string $name, float $value, array $tags = []): void
-    {
+    public function recordMetric(
+        string $name,
+        float $value,
+        array $tags = []
+    ): void {
         if (!isset($this->metrics['custom'][$name])) {
             $this->metrics['custom'][$name] = [];
         }

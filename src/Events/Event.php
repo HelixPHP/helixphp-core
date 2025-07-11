@@ -11,6 +11,9 @@ class Event
     private array $data;
     private bool $propagationStopped = false;
 
+    /**
+     * __construct method
+     */
     public function __construct(string $name, array $data = [])
     {
         $this->name = $name;

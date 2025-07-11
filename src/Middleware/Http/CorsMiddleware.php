@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Http;
 
 use PivotPHP\Core\Http\Psr15\AbstractMiddleware;
 use PivotPHP\Core\Http\Psr7\Request;
@@ -33,6 +33,9 @@ class CorsMiddleware extends AbstractMiddleware
         );
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $method = $request->getMethod();
@@ -60,8 +63,11 @@ class CorsMiddleware extends AbstractMiddleware
     /**
      * Compatibilidade com middlewares legados: handle($request, $response, $next)
      */
-    public function handle(Request $request, Response $response, callable $next): void
-    {
+    public function handle(
+        Request $request,
+        Response $response,
+        callable $next
+    ): void {
         throw new \BadMethodCallException('CorsMiddleware: use apenas como PSR-15 Middleware.');
     }
 

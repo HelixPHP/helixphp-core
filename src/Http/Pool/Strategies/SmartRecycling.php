@@ -84,8 +84,11 @@ class SmartRecycling implements OverflowStrategy
     /**
      * Track object for potential recycling
      */
-    public function trackObject(string $type, mixed $object, array $metadata = []): void
-    {
+    public function trackObject(
+        string $type,
+        mixed $object,
+        array $metadata = []
+    ): void {
         if (!is_object($object)) {
             return;
         }
@@ -234,8 +237,11 @@ class SmartRecycling implements OverflowStrategy
     /**
      * Reset object for reuse
      */
-    private function resetObject(string $type, mixed $object, array $params): mixed
-    {
+    private function resetObject(
+        string $type,
+        mixed $object,
+        array $params
+    ): mixed {
         // Type-specific reset logic
         return match ($type) {
             'request' => $this->resetRequest($object, $params),

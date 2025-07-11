@@ -324,8 +324,11 @@ class Response implements ResponseInterface
     /**
      * Remove um cookie.
      */
-    public function clearCookie(string $name, string $path = '/', string $domain = ''): self
-    {
+    public function clearCookie(
+        string $name,
+        string $path = '/',
+        string $domain = ''
+    ): self {
         setcookie($name, '', time() - 3600, $path, $domain);
         return $this;
     }
@@ -394,11 +397,17 @@ class Response implements ResponseInterface
     // MÉTODOS PSR-7 (ResponseInterface)
     // =============================================================================
 
+    /**
+     * Get reasonPhrase
+     */
     public function getReasonPhrase(): string
     {
         return $this->getPsr7Response()->getReasonPhrase();
     }
 
+    /**
+     * Return instance with status
+     */
     public function withStatus($code, $reasonPhrase = ''): ResponseInterface
     {
         $clone = clone $this;
@@ -412,11 +421,17 @@ class Response implements ResponseInterface
     // MÉTODOS PSR-7 (MessageInterface)
     // =============================================================================
 
+    /**
+     * Get protocolVersion
+     */
     public function getProtocolVersion(): string
     {
         return $this->getPsr7Response()->getProtocolVersion();
     }
 
+    /**
+     * Return instance with protocolVersion
+     */
     public function withProtocolVersion($version): ResponseInterface
     {
         $clone = clone $this;
@@ -425,21 +440,33 @@ class Response implements ResponseInterface
         return $clone;
     }
 
+    /**
+     * Check if has header
+     */
     public function hasHeader($name): bool
     {
         return $this->getPsr7Response()->hasHeader($name);
     }
 
+    /**
+     * Get header
+     */
     public function getHeader($name): array
     {
         return $this->getPsr7Response()->getHeader($name);
     }
 
+    /**
+     * Get headerLine
+     */
     public function getHeaderLine($name): string
     {
         return $this->getPsr7Response()->getHeaderLine($name);
     }
 
+    /**
+     * Return instance with header
+     */
     public function withHeader($name, $value): ResponseInterface
     {
         $clone = clone $this;
@@ -449,6 +476,9 @@ class Response implements ResponseInterface
         return $clone;
     }
 
+    /**
+     * Return instance with addedHeader
+     */
     public function withAddedHeader($name, $value): ResponseInterface
     {
         $clone = clone $this;
@@ -457,6 +487,9 @@ class Response implements ResponseInterface
         return $clone;
     }
 
+    /**
+     * Return instance with outHeader
+     */
     public function withoutHeader($name): ResponseInterface
     {
         $clone = clone $this;
@@ -466,6 +499,9 @@ class Response implements ResponseInterface
         return $clone;
     }
 
+    /**
+     * Return instance with body
+     */
     public function withBody(StreamInterface $body): ResponseInterface
     {
         $clone = clone $this;
@@ -615,8 +651,12 @@ class Response implements ResponseInterface
     /**
      * Envia dados como Server-Sent Events (SSE).
      */
-    public function sendEvent(mixed $data, ?string $event = null, ?string $id = null, ?int $retry = null): self
-    {
+    public function sendEvent(
+        mixed $data,
+        ?string $event = null,
+        ?string $id = null,
+        ?int $retry = null
+    ): self {
         if (!$this->isStreaming) {
             $this->startStream('text/event-stream');
         }

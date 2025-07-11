@@ -91,8 +91,11 @@ class ExtensionManager
     /**
      * Register an extension manually
      */
-    public function registerExtension(string $name, string $provider, array $config = []): void
-    {
+    public function registerExtension(
+        string $name,
+        string $provider,
+        array $config = []
+    ): void {
         $this->extensions[$name] = [
             'provider' => $provider,
             'config' => $config,

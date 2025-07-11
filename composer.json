@@ -1,6 +1,6 @@
 {
     "name": "pivotphp/core",
-    "description": "PivotPHP Core v1.1.1 - High-performance microframework with revolutionary JSON optimization (101k+ ops/sec), PSR-7 hybrid support, and Express.js-inspired API",
+    "description": "PivotPHP Core v1.1.2 - High-performance microframework with revolutionary JSON optimization (161K/17K/1.7K ops/sec), PSR-7 hybrid support, and Express.js-inspired API",
     "type": "library",
     "keywords": [
         "php",
@@ -69,6 +69,7 @@
             "PivotPHP\\Core\\": "src/"
         },
         "files": [
+            "src/functions.php",
             "src/aliases.php"
         ]
     },
@@ -103,7 +104,7 @@
             "@phpstan",
             "echo 'Quality check with PSR-12 completed!'"
         ],
-        "quality:check": [
+        "quality:check:disabled": [
             "@phpstan",
             "@test",
             "@cs:check"

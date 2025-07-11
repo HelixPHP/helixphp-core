@@ -128,8 +128,11 @@ class Router
     /**
      * Registra um grupo de rotas com otimização integrada.
      */
-    public static function group(string $prefix, callable $callback, array $middlewares = []): void
-    {
+    public static function group(
+        string $prefix,
+        callable $callback,
+        array $middlewares = []
+    ): void {
         $startTime = microtime(true);
 
         // Normaliza o prefixo
@@ -545,8 +548,11 @@ class Router
         return null;
     }
 
-    private static function findRouteInGroup(string $prefix, string $method, string $path): ?array
-    {
+    private static function findRouteInGroup(
+        string $prefix,
+        string $method,
+        string $path
+    ): ?array {
         if (!isset(self::$groupIndex[$prefix])) {
             return null;
         }
@@ -679,6 +685,9 @@ class Router
         self::warmupGroups();
     }
 
+    /**
+     * WarmupGroups method
+     */
     public static function warmupGroups(array $prefixes = []): void
     {
         if (empty($prefixes)) {
@@ -737,6 +746,9 @@ class Router
         throw new BadMethodCallException("Method {$method} does not exist in " . self::class);
     }
 
+    /**
+     * Convert to string
+     */
     public static function toString(): string
     {
         $output = '';
@@ -755,6 +767,9 @@ class Router
         return $output;
     }
 
+    /**
+     * Get routes
+     */
     public static function getRoutes(): array
     {
         return self::$routes;
@@ -763,40 +778,60 @@ class Router
     /**
      * Registra uma rota GET.
      */
-    public static function get(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function get(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('GET', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota POST.
      */
-    public static function post(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function post(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('POST', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota PUT.
      */
-    public static function put(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function put(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('PUT', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota DELETE.
      */
-    public static function delete(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function delete(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('DELETE', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota PATCH.
      */
-    public static function patch(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function patch(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('PATCH', $path, $handler, $metadata, ...$middlewares);
     }
 
@@ -815,21 +850,32 @@ class Router
     /**
      * Registra uma rota HEAD.
      */
-    public static function head(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function head(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         self::add('HEAD', $path, $handler, $metadata, ...$middlewares);
     }
 
     /**
      * Registra uma rota para todos os métodos HTTP.
      */
-    public static function any(string $path, callable $handler, array $metadata = [], callable ...$middlewares): void
-    {
+    public static function any(
+        string $path,
+        callable $handler,
+        array $metadata = [],
+        callable ...$middlewares
+    ): void {
         foreach (self::$httpMethodsAccepted as $method) {
             self::add($method, $path, $handler, $metadata, ...$middlewares);
         }
     }
 
+    /**
+     * Get httpMethodsAccepted
+     */
     public static function getHttpMethodsAccepted(): array
     {
         return self::$httpMethodsAccepted;
@@ -904,8 +950,11 @@ class Router
     /**
      * Atualiza estatísticas de acesso de um grupo
      */
-    private static function updateGroupStats(string $prefix, float $startTime, bool $cacheHit): void
-    {
+    private static function updateGroupStats(
+        string $prefix,
+        float $startTime,
+        bool $cacheHit
+    ): void {
         if (!isset(self::$groupStats[$prefix])) {
             return;
         }

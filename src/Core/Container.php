@@ -84,8 +84,11 @@ class Container
      * @param  bool   $singleton Se deve ser tratado como singleton
      * @return $this
      */
-    public function bind(string $abstract, $concrete = null, bool $singleton = false): self
-    {
+    public function bind(
+        string $abstract,
+        $concrete = null,
+        bool $singleton = false
+    ): self {
         if ($concrete === null) {
             $concrete = $abstract;
         }

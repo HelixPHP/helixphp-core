@@ -2,18 +2,30 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Performance;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * Cache Middleware
+ *
+ * Provides HTTP response caching to improve application performance
+ * by storing and serving cached responses for repeated requests.
+ *
+ * @package PivotPHP\Core\Middleware\Performance
+ * @since 1.1.2
+ */
 class CacheMiddleware implements MiddlewareInterface
 {
     private int $ttl;
     private string $cacheDir;
 
+    /**
+     * __construct method
+     */
     public function __construct(int $ttl = 300, string $cacheDir = '/tmp/expressphp_cache')
     {
         $this->ttl = $ttl;
@@ -23,6 +35,9 @@ class CacheMiddleware implements MiddlewareInterface
         }
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $key = $this->generateCacheKey($request);

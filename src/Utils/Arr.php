@@ -19,8 +19,11 @@ class Arr
      *                               encontrado
      * @return mixed
      */
-    public static function get(array $array, string $key, $default = null)
-    {
+    public static function get(
+        array $array,
+        string $key,
+        $default = null
+    ) {
         if (isset($array[$key])) {
             return $array[$key];
         }
@@ -329,12 +332,14 @@ class Arr
     {
         $result = [];
 
-        foreach ($array as $item) {
-            if (is_array($item)) {
-                $values = $depth === 1 ? array_values($item) : static::flatten($item, $depth - 1);
-                $result = array_merge($result, $values);
+        foreach ($array as $key => $value) {
+            if (is_array($value) && ($depth > 1 || $depth === 0)) {
+                $flattened = static::flatten($value, $depth === 0 ? 0 : $depth - 1);
+                foreach ($flattened as $subKey => $subValue) {
+                    $result[$key . '.' . $subKey] = $subValue;
+                }
             } else {
-                $result[] = $item;
+                $result[$key] = $value;
             }
         }
 
@@ -349,12 +354,34 @@ class Arr
      * @param  bool         $preserveKeys Se deve preservar as chaves
      * @return array<array<mixed>>
      */
-    public static function chunk(array $array, int $size, bool $preserveKeys = false): array
-    {
+    public static function chunk(
+        array $array,
+        int $size,
+        bool $preserveKeys = true
+    ): array {
         if ($size <= 0) {
             return [];
         }
 
         return array_chunk($array, $size, $preserveKeys);
+    }
+
+    /**
+     * Embaralha um array preservando as chaves.
+     *
+     * @param  array<mixed> $array Array de origem
+     * @return array<mixed>
+     */
+    public static function shuffle(array $array): array
+    {
+        $keys = array_keys($array);
+        shuffle($keys);
+
+        $shuffled = [];
+        foreach ($keys as $key) {
+            $shuffled[$key] = $array[$key];
+        }
+
+        return $shuffled;
     }
 }

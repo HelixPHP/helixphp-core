@@ -16,7 +16,7 @@ class ProjectValidator
 
     public function validate()
     {
-        echo "🔍 Validando projeto PivotPHP v1.0.0...\n\n";
+        echo "🔍 Validando projeto PivotPHP v1.1.2...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -45,7 +45,6 @@ class ProjectValidator
             'src/',
             'src/Middleware/',
             'src/Authentication/',
-            'examples/',
             'tests/',
             'docs/',
             'docs/releases/',
@@ -67,13 +66,13 @@ class ProjectValidator
         }
 
         $requiredFiles = [
-            'src/Http/Psr15/Middleware/SecurityHeadersMiddleware.php',
+            'src/Middleware/Security/SecurityHeadersMiddleware.php',
             'src/Authentication/JWTHelper.php',
             'composer.json',
             'README.md',
             'docs/index.md',
             'docs/releases/README.md',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md',
             'docs/implementations/usage_basic.md',
             'docs/technical/application.md',
             'docs/technical/http/request.md',
@@ -149,18 +148,48 @@ class ProjectValidator
     {
         echo "🛡️ Validando middlewares...\n";
 
-        // Verificar SecurityHeadersMiddleware (PSR-15)
-        if (class_exists('PivotPHP\\Core\\Http\\Psr15\\Middleware\\SecurityHeadersMiddleware')) {
-            $this->passed[] = "SecurityHeadersMiddleware carregado";
+        // Verificar SecurityHeadersMiddleware (nova estrutura v1.1.2)
+        if (class_exists('PivotPHP\\Core\\Middleware\\Security\\SecurityHeadersMiddleware')) {
+            $this->passed[] = "SecurityHeadersMiddleware carregado (v1.1.2)";
 
             try {
-                $security = new \PivotPHP\Core\Http\Psr15\Middleware\SecurityHeadersMiddleware();
+                $security = new \PivotPHP\Core\Middleware\Security\SecurityHeadersMiddleware();
                 $this->passed[] = "SecurityHeadersMiddleware pode ser instanciado";
             } catch (Exception $e) {
                 $this->errors[] = "Erro ao instanciar SecurityHeadersMiddleware: " . $e->getMessage();
             }
         } else {
-            $this->warnings[] = "SecurityHeadersMiddleware não encontrado";
+            // Verificar se ainda existe via alias de compatibilidade
+            if (class_exists('PivotPHP\\Core\\Http\\Psr15\\Middleware\\SecurityHeadersMiddleware')) {
+                $this->passed[] = "SecurityHeadersMiddleware carregado via alias (compatibilidade)";
+            } else {
+                $this->errors[] = "SecurityHeadersMiddleware não encontrado";
+            }
+        }
+
+        // Verificar outros middlewares de segurança (v1.1.2)
+        $securityMiddlewares = [
+            'CsrfMiddleware' => 'PivotPHP\\Core\\Middleware\\Security\\CsrfMiddleware',
+            'XssMiddleware' => 'PivotPHP\\Core\\Middleware\\Security\\XssMiddleware',
+            'AuthMiddleware' => 'PivotPHP\\Core\\Middleware\\Security\\AuthMiddleware',
+            'CorsMiddleware' => 'PivotPHP\\Core\\Middleware\\Http\\CorsMiddleware',
+            'RateLimitMiddleware' => 'PivotPHP\\Core\\Middleware\\Performance\\RateLimitMiddleware',
+        ];
+
+        $securityCount = 0;
+        foreach ($securityMiddlewares as $name => $class) {
+            if (class_exists($class)) {
+                $this->passed[] = "{$name} carregado (v1.1.2)";
+                $securityCount++;
+            } else {
+                $this->warnings[] = "{$name} não encontrado";
+            }
+        }
+
+        if ($securityCount >= 4) {
+            $this->passed[] = "Middlewares de segurança suficientes encontrados ({$securityCount}/5)";
+        } else {
+            $this->warnings[] = "Poucos middlewares de segurança encontrados ({$securityCount}/5)";
         }
 
         // Verificar JWTHelper
@@ -237,7 +266,7 @@ class ProjectValidator
 
     private function validateDocumentation()
     {
-        echo "📚 Validando documentação v1.0.0...\n";
+        echo "📚 Validando documentação v1.1.2...\n";
 
         // Documentação principal
         $mainDocs = [
@@ -262,9 +291,9 @@ class ProjectValidator
         // Documentação de releases
         $releaseDocs = [
             'docs/releases/README.md' => 'Índice de releases',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
+            'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1',
         ];
 
         foreach ($releaseDocs as $file => $description) {
@@ -380,12 +409,12 @@ class ProjectValidator
             $this->warnings[] = "Arquivo .env.example não encontrado - recomendado para projetos";
         }
 
-        // Verificar configurações de segurança no código
-        $securityFiles = glob('src/Middlewares/Security/*.php');
-        if (count($securityFiles) >= 2) {
-            $this->passed[] = "Múltiplos middlewares de segurança implementados";
+        // Verificar configurações de segurança no código (v1.1.2)
+        $securityFiles = glob('src/Middleware/Security/*.php');
+        if (count($securityFiles) >= 3) {
+            $this->passed[] = "Múltiplos middlewares de segurança implementados (" . count($securityFiles) . " arquivos)";
         } else {
-            $this->warnings[] = "Poucos middlewares de segurança encontrados";
+            $this->warnings[] = "Poucos middlewares de segurança encontrados (" . count($securityFiles) . " arquivos)";
         }
 
         echo "✅ Segurança validada\n\n";
@@ -454,9 +483,9 @@ class ProjectValidator
             // Verificar arquivos de release
             $releaseFiles = [
                 'docs/releases/README.md' => 'Índice de releases',
-                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0 (ATUAL)',
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
                 'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
-                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0'
+                'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1'
             ];
 
             foreach ($releaseFiles as $file => $description) {
@@ -476,17 +505,25 @@ class ProjectValidator
                 }
             }
 
-            // Verificar se v1.0.0 tem conteúdo específico
-            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md')) {
-                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md');
+            // Verificar se v1.1.2 tem conteúdo específico
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md')) {
+                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md');
 
-                if (strpos($content, '2.69M ops/sec') !== false &&
-                    strpos($content, 'PHP 8.4.8') !== false &&
-                    strpos($content, 'JIT') !== false) {
-                    $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.0.md contém métricas de performance esperadas";
+                if (strpos($content, '40,476 ops/sec') !== false &&
+                    strpos($content, 'v1.1.2') !== false &&
+                    strpos($content, 'Consolidation Edition') !== false) {
+                    $this->passed[] = "FRAMEWORK_OVERVIEW_v1.1.2.md contém métricas de performance esperadas";
                 } else {
-                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v1.0.0.md pode estar incompleto (faltam métricas v1.0.0)";
+                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v1.1.2.md pode estar incompleto (faltam métricas v1.1.2)";
                 }
+            }
+            
+            // Verificar se ainda existem versões anteriores (para compatibilidade)
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md')) {
+                $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.0.md mantido para compatibilidade";
+            }
+            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md')) {
+                $this->passed[] = "FRAMEWORK_OVERVIEW_v1.0.1.md mantido para compatibilidade";
             }
 
         } else {
@@ -496,8 +533,8 @@ class ProjectValidator
         // Verificar se arquivos foram movidos da raiz
         $movedFiles = [
             'FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'FRAMEWORK_OVERVIEW_v1.0.0.md',
-            'FRAMEWORK_OVERVIEW_v1.0.0.md'
+            'FRAMEWORK_OVERVIEW_v1.0.1.md',
+            'FRAMEWORK_OVERVIEW_v1.1.2.md'
         ];
 
         foreach ($movedFiles as $file) {
@@ -612,7 +649,7 @@ class ProjectValidator
 
         // Status final
         if (empty($this->errors)) {
-            echo "🎉 PROJETO EXPRESS PHP v1.0.0 VALIDADO COM SUCESSO!\n";
+            echo "🎉 PROJETO PIVOTPHP CORE v1.1.2 VALIDADO COM SUCESSO!\n";
             echo "   O projeto está pronto para uso e publicação.\n";
 
             if (!empty($this->warnings)) {
@@ -625,7 +662,7 @@ class ProjectValidator
             echo "   3. Valide a documentação: ./scripts/validate-docs.sh\n";
             echo "   4. Valide os benchmarks: ./scripts/validate_benchmarks.sh\n";
             echo "   5. Faça commit das alterações\n";
-            echo "   6. Crie uma tag de versão: git tag -a v1.0.0 -m 'Release v1.0.0'\n";
+            echo "   6. Crie uma tag de versão: git tag -a v1.1.2 -m 'Release v1.1.2'\n";
             echo "   7. Push para o repositório: git push origin main --tags\n";
             echo "   8. Publique no Packagist: https://packagist.org\n";
             echo "   9. Repositório: https://github.com/CAFernandes/pivotphp-core\n";

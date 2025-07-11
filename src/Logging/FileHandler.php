@@ -10,6 +10,9 @@ class FileHandler implements LogHandlerInterface
     private string $filePath;
     private string $dateFormat;
 
+    /**
+     * __construct method
+     */
     public function __construct(string $filePath, string $dateFormat = 'Y-m-d H:i:s')
     {
         $this->filePath = $filePath;
@@ -22,6 +25,9 @@ class FileHandler implements LogHandlerInterface
         }
     }
 
+    /**
+     * Handle the request
+     */
     public function handle(array $record): void
     {
         $message = $this->format($record);

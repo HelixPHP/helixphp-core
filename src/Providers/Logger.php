@@ -16,6 +16,9 @@ class Logger extends AbstractLogger
     private string $dateFormat;
     private array $logLevels;
 
+    /**
+     * __construct method
+     */
     public function __construct(
         string $logPath = '',
         string $dateFormat = 'Y-m-d H:i:s'
@@ -39,8 +42,11 @@ class Logger extends AbstractLogger
      *
      * @param string|\Stringable $level
      */
-    public function log($level, string|\Stringable $message, array $context = []): void
-    {
+    public function log(
+        $level,
+        string|\Stringable $message,
+        array $context = []
+    ): void {
         $levelString = (string)$level;
 
         if (!isset($this->logLevels[$levelString])) {
@@ -55,8 +61,11 @@ class Logger extends AbstractLogger
     /**
      * Format the log message
      */
-    private function formatMessage(string $level, string|\Stringable $message, array $context): string
-    {
+    private function formatMessage(
+        string $level,
+        string|\Stringable $message,
+        array $context
+    ): string {
         $timestamp = date($this->dateFormat);
         $levelUpper = strtoupper($level);
 

@@ -66,6 +66,9 @@ class FileCache implements CacheInterface
         return file_put_contents($file, serialize($data)) !== false;
     }
 
+    /**
+     * Delete a cache entry by key
+     */
     public function delete(string $key): bool
     {
         $file = $this->getFilePath($key);
@@ -77,6 +80,9 @@ class FileCache implements CacheInterface
         return true;
     }
 
+    /**
+     * Clear all cache entries
+     */
     public function clear(): bool
     {
         $files = glob($this->cacheDir . '/*');
@@ -92,6 +98,9 @@ class FileCache implements CacheInterface
         return true;
     }
 
+    /**
+     * Check if a cache entry exists
+     */
     public function has(string $key): bool
     {
         return $this->get($key) !== null;

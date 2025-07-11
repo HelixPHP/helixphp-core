@@ -45,8 +45,11 @@ class Str
     /**
      * Limita o tamanho de uma string
      */
-    public static function limit(string $value, int $limit = 100, string $end = '...'): string
-    {
+    public static function limit(
+        string $value,
+        int $limit = 100,
+        string $end = '...'
+    ): string {
         if (mb_strwidth($value, 'UTF-8') <= $limit) {
             return $value;
         }

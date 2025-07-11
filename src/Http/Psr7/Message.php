@@ -46,8 +46,11 @@ class Message implements MessageInterface
     /**
      * Constructor
      */
-    public function __construct(StreamInterface $body, array $headers = [], string $version = '1.1')
-    {
+    public function __construct(
+        StreamInterface $body,
+        array $headers = [],
+        string $version = '1.1'
+    ) {
         $this->body = $body;
         $this->protocolVersion = $version;
         $this->setHeaders($headers);

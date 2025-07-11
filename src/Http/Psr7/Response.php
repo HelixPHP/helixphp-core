@@ -80,6 +80,9 @@ class Response extends Message implements ResponseInterface
         511 => 'Network Authentication Required',
     ];
 
+    /**
+     * __construct method
+     */
     public function __construct(
         int $statusCode = 200,
         array $headers = [],

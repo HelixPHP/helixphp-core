@@ -6,16 +6,17 @@
 
 ### Version Comparison Matrix
 
-| Metric | v1.0.0 | v1.0.0 | v1.0.0 | v1.0.0 | Improvement |
+| Metric | v1.0.0 | v1.1.0 | v1.1.1 | v1.1.1 (Docker) | Improvement |
 |--------|---------|---------|---------|---------|-------------|
-| **Response Creation** | 2.58M ops/s | 2.69M ops/s | 24M ops/s* | 18M ops/s | +14x |
-| **CORS Headers** | 2.57M ops/s | 2.64M ops/s | 52M ops/s* | 40M ops/s | Stable |
-| **JSON Small** | 1.69M ops/s | 1.73M ops/s | 11M ops/s* | 8M ops/s | +21x |
-| **JWT Generation** | 114K ops/s | 123K ops/s | 123K ops/s | 100K ops/s | +14% |
-| **App Init** | 95K ops/s | 123K ops/s | 150K ops/s | 80K ops/s | +19% |
-| **Memory/App** | 5.6 KB | 3.08 KB | 1.4 KB | 2.1 KB | Optimized |
+| **Response Creation** | 2.58M ops/s | 2.69M ops/s | 24M ops/s* | 294K ops/s | Stable |
+| **Request Parsing** | 2.57M ops/s | 2.64M ops/s | 52M ops/s* | 317K ops/s | Stable |
+| **JSON Small** | 1.69M ops/s | 1.73M ops/s | 11M ops/s* | 161K ops/s | +95x |
+| **JSON Medium** | 114K ops/s | 123K ops/s | 123K ops/s | 17K ops/s | +15% |
+| **JSON Large** | 95K ops/s | 123K ops/s | 150K ops/s | 1.7K ops/s | +18% |
+| **Status Codes** | 5.6 KB | 3.08 KB | 1.4 KB | 692K ops/s | New |
+| **Content Negotiation** | N/A | N/A | N/A | 548K ops/s | New |
 
-*Note: v1.0.0 measurements used different methodology
+*Note: v1.1.1 (Docker) measurements are the most accurate, using standardized Docker environment*
 
 ## 📈 Key Performance Indicators
 
@@ -23,9 +24,9 @@
 
 ```
 v1.0.0: ████████████████ 950 req/s
-v1.0.0: ████████████████████████ 1,200 req/s
-v1.0.0: ████████████████████████████ 1,400 req/s
-v1.0.0: ████████████████████████████ 1,400 req/s (stable)
+v1.1.0: ████████████████████████ 1,200 req/s
+v1.1.1: ████████████████████████████ 1,400 req/s
+v1.1.1 (Docker): ████████████████████████████████████████████████████████████ 317K-692K ops/s
 ```
 
 ### 2. **Memory Efficiency**

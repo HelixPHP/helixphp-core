@@ -114,8 +114,11 @@ class Request implements ServerRequestInterface, AttributeInterface
      * @param string $path         Padrão da rota.
      * @param string $pathCallable Caminho real da requisição.
      */
-    public function __construct(string $method, string $path, string $pathCallable)
-    {
+    public function __construct(
+        string $method,
+        string $path,
+        string $pathCallable
+    ) {
         $this->method = strtoupper($method);
         $this->path = $path;
         $this->pathCallable = $pathCallable;
@@ -459,16 +462,25 @@ class Request implements ServerRequestInterface, AttributeInterface
     // MÉTODOS PSR-7 (ServerRequestInterface)
     // =============================================================================
 
+    /**
+     * Get serverParams
+     */
     public function getServerParams(): array
     {
         return $this->getPsr7Request()->getServerParams();
     }
 
+    /**
+     * Get cookieParams
+     */
     public function getCookieParams(): array
     {
         return $this->getPsr7Request()->getCookieParams();
     }
 
+    /**
+     * Return instance with cookieParams
+     */
     public function withCookieParams(array $cookies): ServerRequestInterface
     {
         $clone = clone $this;
@@ -477,11 +489,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get queryParams
+     */
     public function getQueryParams(): array
     {
         return $this->getPsr7Request()->getQueryParams();
     }
 
+    /**
+     * Return instance with queryParams
+     */
     public function withQueryParams(array $query): ServerRequestInterface
     {
         $clone = clone $this;
@@ -490,11 +508,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get uploadedFiles
+     */
     public function getUploadedFiles(): array
     {
         return $this->getPsr7Request()->getUploadedFiles();
     }
 
+    /**
+     * Return instance with uploadedFiles
+     */
     public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $clone = clone $this;
@@ -503,11 +527,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get parsedBody
+     */
     public function getParsedBody()
     {
         return $this->getPsr7Request()->getParsedBody();
     }
 
+    /**
+     * Return instance with parsedBody
+     */
     public function withParsedBody($data): ServerRequestInterface
     {
         $clone = clone $this;
@@ -516,6 +546,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get attributes
+     */
     public function getAttributes(): array
     {
         // Combine local attributes with PSR-7 attributes
@@ -523,6 +556,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return array_merge($psr7Attributes, $this->attributes);
     }
 
+    /**
+     * Get attribute
+     */
     public function getAttribute($name, $default = null)
     {
         // Check local attributes first for better performance
@@ -534,6 +570,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this->getPsr7Request()->getAttribute($name, $default);
     }
 
+    /**
+     * Return instance with attribute
+     */
     public function withAttribute($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
@@ -543,6 +582,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Return instance with outAttribute
+     */
     public function withoutAttribute($name): ServerRequestInterface
     {
         $clone = clone $this;
@@ -556,11 +598,17 @@ class Request implements ServerRequestInterface, AttributeInterface
     // MÉTODOS PSR-7 (RequestInterface)
     // =============================================================================
 
+    /**
+     * Get requestTarget
+     */
     public function getRequestTarget(): string
     {
         return $this->getPsr7Request()->getRequestTarget();
     }
 
+    /**
+     * Return instance with requestTarget
+     */
     public function withRequestTarget($requestTarget): ServerRequestInterface
     {
         $clone = clone $this;
@@ -569,11 +617,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get method
+     */
     public function getMethod(): string
     {
         return $this->getPsr7Request()->getMethod();
     }
 
+    /**
+     * Return instance with method
+     */
     public function withMethod($method): ServerRequestInterface
     {
         $clone = clone $this;
@@ -583,11 +637,19 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get the URI associated with the request
+     *
+     * @return UriInterface The URI instance
+     */
     public function getUri(): UriInterface
     {
         return $this->getPsr7Request()->getUri();
     }
 
+    /**
+     * Return instance with uri
+     */
     public function withUri(UriInterface $uri, $preserveHost = false): ServerRequestInterface
     {
         $clone = clone $this;
@@ -600,11 +662,17 @@ class Request implements ServerRequestInterface, AttributeInterface
     // MÉTODOS PSR-7 (MessageInterface)
     // =============================================================================
 
+    /**
+     * Get protocolVersion
+     */
     public function getProtocolVersion(): string
     {
         return $this->getPsr7Request()->getProtocolVersion();
     }
 
+    /**
+     * Return instance with protocolVersion
+     */
     public function withProtocolVersion($version): ServerRequestInterface
     {
         $clone = clone $this;
@@ -613,26 +681,41 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get headers
+     */
     public function getHeaders(): array
     {
         return $this->getPsr7Request()->getHeaders();
     }
 
+    /**
+     * Check if has header
+     */
     public function hasHeader($name): bool
     {
         return $this->getPsr7Request()->hasHeader($name);
     }
 
+    /**
+     * Get header
+     */
     public function getHeader($name): array
     {
         return $this->getPsr7Request()->getHeader($name);
     }
 
+    /**
+     * Get headerLine
+     */
     public function getHeaderLine($name): string
     {
         return $this->getPsr7Request()->getHeaderLine($name);
     }
 
+    /**
+     * Return instance with header
+     */
     public function withHeader($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
@@ -641,6 +724,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Return instance with addedHeader
+     */
     public function withAddedHeader($name, $value): ServerRequestInterface
     {
         $clone = clone $this;
@@ -649,6 +735,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Return instance with outHeader
+     */
     public function withoutHeader($name): ServerRequestInterface
     {
         $clone = clone $this;
@@ -657,11 +746,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $clone;
     }
 
+    /**
+     * Get body
+     */
     public function getBody(): StreamInterface
     {
         return $this->getPsr7Request()->getBody();
     }
 
+    /**
+     * Return instance with body
+     */
     public function withBody(StreamInterface $body): ServerRequestInterface
     {
         $clone = clone $this;
@@ -783,6 +878,9 @@ class Request implements ServerRequestInterface, AttributeInterface
     }
 
     // Métodos legados mantidos para compatibilidade
+    /**
+     * Get path
+     */
     public function getPath(): string
     {
         if (empty($this->path)) {
@@ -791,6 +889,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this->path;
     }
 
+    /**
+     * Set path
+     */
     public function setPath(string $path): self
     {
         if (empty($path)) {
@@ -804,6 +905,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this;
     }
 
+    /**
+     * Get pathCallable
+     */
     public function getPathCallable(): string
     {
         if (empty($this->pathCallable)) {
@@ -812,11 +916,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this->pathCallable;
     }
 
+    /**
+     * Get params
+     */
     public function getParams(): stdClass
     {
         return $this->params;
     }
 
+    /**
+     * Get param
+     */
     public function getParam(string $key, mixed $default = null): mixed
     {
         return $this->params->{$key} ?? $default;
@@ -856,16 +966,25 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this->headers;
     }
 
+    /**
+     * Get querys
+     */
     public function getQuerys(): stdClass
     {
         return $this->query;
     }
 
+    /**
+     * Get query
+     */
     public function getQuery(string $key, mixed $default = null): mixed
     {
         return $this->query->{$key} ?? $default;
     }
 
+    /**
+     * Get bodyAsStdClass
+     */
     public function getBodyAsStdClass(): stdClass
     {
         if (in_array($this->method, ['GET', 'HEAD', 'OPTIONS', 'DELETE'])) {
@@ -874,6 +993,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this->body;
     }
 
+    /**
+     * Set attribute
+     */
     public function setAttribute(string $name, $value): self
     {
         if (property_exists($this, $name)) {
@@ -887,11 +1009,17 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this;
     }
 
+    /**
+     * Check if has attribute
+     */
     public function hasAttribute(string $name): bool
     {
         return array_key_exists($name, $this->attributes);
     }
 
+    /**
+     * RemoveAttribute method
+     */
     public function removeAttribute(string $name): self
     {
         unset($this->attributes[$name]);
@@ -901,6 +1029,9 @@ class Request implements ServerRequestInterface, AttributeInterface
         return $this;
     }
 
+    /**
+     * Set attributes
+     */
     public function setAttributes(array $attributes): self
     {
         foreach ($attributes as $name => $value) {

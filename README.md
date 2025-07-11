@@ -15,13 +15,14 @@
 
 **PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
 
-- **Alta Performance**: 2.57M ops/sec em CORS, 2.27M ops/sec em Response, 757K ops/sec roteamento, cache integrado.
+- **Performance Competitiva**: 6,227 req/sec em ambiente Docker controlado (3º lugar em validação comparativa), 837K ops/sec JSON processing interno, 505K ops/sec small JSON, apenas 1.61MB memory footprint (v1.1.1 Revolutionary JSON Edition).
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
 - **Qualidade**: 335+ testes, PHPStan Level 9, PSR-12, cobertura completa.
 - **🆕 v1.1.0**: High-Performance Edition com circuit breaker, load shedding e pooling avançado.
-- **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e 101k+ ops/sec sustentados.
+- **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e 161K ops/sec (pequenos), 17K ops/sec (médios), 1.7K ops/sec (grandes) - Docker testado.
+- **🎯 v1.1.2**: Consolidation Edition com arquitetura consolidada, 100% testes passando, PHPStan Level 9, zero duplicações críticas.
 
 ---
 
@@ -209,7 +210,7 @@ $app->get('/api/users', function($req, $res) {
     $users = User::all(); // 1000+ usuários
     
     // Automaticamente usa pooling para datasets grandes
-    return $res->json($users); // 101k+ ops/sec sustentados
+    return $res->json($users); // 505K ops/sec (pequenos), 119K ops/sec (médios), 214K ops/sec (grandes) - Benchmarks internos
 });
 
 // Controle manual para casos específicos
@@ -239,7 +240,7 @@ echo "Operations: {$stats['total_operations']}";
 **Características da Otimização JSON:**
 - ✅ **Detecção automática** - ativa pooling para arrays 10+ elementos, objetos 5+ propriedades
 - ✅ **Fallback inteligente** - dados pequenos usam `json_encode()` tradicional
-- ✅ **101k+ ops/sec** sustentados em testes de carga contínua
+- ✅ **505K ops/sec** (pequenos), **119K ops/sec** (médios), **214K ops/sec** (grandes) em benchmarks internos
 - ✅ **100% reuso** de buffers em cenários de alta frequência
 - ✅ **Zero configuração** - funciona automaticamente com código existente
 - ✅ **Monitoramento integrado** - estatísticas detalhadas para otimização
@@ -419,6 +420,48 @@ composer update
 ```
 
 Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.
+
+---
+
+## 🏗️ Arquitetura v1.1.2 (Consolidation Edition)
+
+O PivotPHP v1.1.2 introduz uma arquitetura consolidada e otimizada:
+
+### 🎯 Estrutura de Middlewares Organizada
+```
+src/Middleware/
+├── Security/              # Middlewares de segurança
+│   ├── AuthMiddleware.php
+│   ├── CsrfMiddleware.php
+│   ├── SecurityHeadersMiddleware.php
+│   └── XssMiddleware.php
+├── Performance/           # Middlewares de performance
+│   ├── CacheMiddleware.php
+│   └── RateLimitMiddleware.php
+└── Http/                 # Middlewares HTTP
+    ├── CorsMiddleware.php
+    └── ErrorMiddleware.php
+```
+
+### ✅ Melhorias da v1.1.2
+- **Zero duplicações críticas** - Código 100% limpo
+- **Arquitetura consolidada** - Estrutura lógica e intuitiva
+- **100% compatibilidade** - Aliases automáticos preservam código existente
+- **Qualidade máxima** - PHPStan Level 9, 100% testes passando
+- **Performance otimizada** - 48,323 ops/sec média mantida
+
+### 🔄 Migração para v1.1.2
+```php
+// Imports antigos (ainda funcionam via aliases)
+use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
+use PivotPHP\Core\Support\Arr;
+
+// Imports recomendados (nova estrutura)
+use PivotPHP\Core\Middleware\Http\CorsMiddleware;
+use PivotPHP\Core\Utils\Arr;
+```
+
+Veja o [Overview Estrutural](STRUCTURAL_OVERVIEW_v1.1.2.md) para detalhes completos.
 
 ---
 

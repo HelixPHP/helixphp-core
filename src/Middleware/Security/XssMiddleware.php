@@ -2,13 +2,22 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Psr15\Middleware;
+namespace PivotPHP\Core\Middleware\Security;
 
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * XSS Protection Middleware
+ *
+ * Provides protection against Cross-Site Scripting (XSS) attacks by
+ * sanitizing request input and adding appropriate security headers.
+ *
+ * @package PivotPHP\Core\Middleware\Security
+ * @since 1.1.2
+ */
 class XssMiddleware implements MiddlewareInterface
 {
     private string $allowedTags;
@@ -18,6 +27,9 @@ class XssMiddleware implements MiddlewareInterface
         $this->allowedTags = $allowedTags;
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $parsedBody = $request->getParsedBody();
@@ -28,6 +40,9 @@ class XssMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
+    /**
+     * Sanitize method
+     */
     public static function sanitize(string $input, string $allowedTags = ''): string
     {
         // Remove <script> e conteúdo, depois strip_tags
@@ -58,6 +73,9 @@ class XssMiddleware implements MiddlewareInterface
         return strip_tags($input, $allowedTags);
     }
 
+    /**
+     * CleanUrl method
+     */
     public static function cleanUrl(string $url): string
     {
         // Remove javascript: e outros protocolos perigosos
@@ -67,6 +85,9 @@ class XssMiddleware implements MiddlewareInterface
         return $url;
     }
 
+    /**
+     * ContainsXss method
+     */
     public static function containsXss(string $input): bool
     {
         // Detecta tags e atributos perigosos

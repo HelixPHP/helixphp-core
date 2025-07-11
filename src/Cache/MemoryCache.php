@@ -44,18 +44,27 @@ class MemoryCache implements CacheInterface
         return true;
     }
 
+    /**
+     * Delete a cache entry by key
+     */
     public function delete(string $key): bool
     {
         unset($this->cache[$key]);
         return true;
     }
 
+    /**
+     * Clear all cache entries
+     */
     public function clear(): bool
     {
         $this->cache = [];
         return true;
     }
 
+    /**
+     * Check if a cache entry exists
+     */
     public function has(string $key): bool
     {
         return isset($this->cache[$key]);

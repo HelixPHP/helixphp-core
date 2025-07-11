@@ -88,19 +88,52 @@ class PSR12Validator
         echo "\n🔧 Validando formatação de métodos...\n";
         $files = $this->getPhpFiles();
         $methodIssues = 0;
+        $foundIssues = [];
+        
         foreach ($files as $file) {
             $content = file_get_contents($file);
-            $pattern = '/public|private|protected.*function\s+\w+\([^)]{80,}\)/';
-            if (preg_match_all($pattern, $content, $matches)) {
-                $methodIssues += count($matches[0]);
+            $lines = explode("\n", $content);
+            
+            foreach ($lines as $lineNum => $line) {
+                // Métodos com mais de 120 caracteres OU com parâmetros longos que não estão quebrados
+                if (preg_match('/(public|private|protected).*function\s+\w+\([^)]+\)/', $line)) {
+                    $lineLength = strlen(trim($line));
+                    
+                    // Conta como problema se:
+                    // 1. Linha total > 120 caracteres
+                    // 2. Tem 4+ parâmetros em uma linha OU 3+ parâmetros e linha > 90 chars
+                    if ($lineLength > 120 || 
+                        (substr_count($line, ',') >= 3) ||
+                        (substr_count($line, ',') >= 2 && $lineLength > 90)) {
+                        
+                        $methodIssues++;
+                        $foundIssues[] = [
+                            'file' => str_replace($this->getBasePath(), '', $file),
+                            'line' => $lineNum + 1,
+                            'length' => $lineLength
+                        ];
+                    }
+                }
             }
         }
+        
         if ($methodIssues > 0) {
             $this->warnings[] = "Métodos com formatação subótima: $methodIssues";
             echo "⚠️  $methodIssues métodos precisam de quebra de linha\n";
+            
+            // Mostrar alguns exemplos
+            echo "   Exemplos (primeiros 5):\n";
+            foreach (array_slice($foundIssues, 0, 5) as $issue) {
+                echo "   • {$issue['file']}:{$issue['line']} ({$issue['length']} chars)\n";
+            }
         } else {
             echo "✅ Formatação de métodos conforme\n";
         }
+    }
+    
+    private function getBasePath(): string
+    {
+        return dirname(__DIR__) . '/';
     }
     private function getPhpFiles(): array
     {
