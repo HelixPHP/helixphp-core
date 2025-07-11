@@ -295,6 +295,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         $data = $response->getJsonData();
         $this->assertTrue($data['config_loaded']);
         $this->assertArrayHasKey('test_config', $data);
+        $this->assertArrayHasKey('custom_setting', $data['test_config']);
         $this->assertEquals('test_value', $data['test_config']['custom_setting']);
     }
 

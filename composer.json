@@ -156,7 +156,12 @@
         "examples:app": "php examples/app.php",
         "benchmark": "./benchmarks/run_benchmark.sh",
         "benchmark:quick": "./benchmarks/run_benchmark.sh -q",
-        "benchmark:simple": "php benchmarks/SimpleBenchmark.php"
+        "benchmark:simple": "php benchmarks/SimpleBenchmark.php",
+        "docker:test-all": "./scripts/test-all-php-versions.sh",
+        "docker:test-quality": "./scripts/test-all-php-versions.sh --with-quality",
+        "ci:validate": "./scripts/ci-validation.sh",
+        "quality:gate": "./scripts/quality-gate.sh",
+        "quality:metrics": "./scripts/quality-metrics.sh"
     },
     "config": {
         "optimize-autoloader": true,

@@ -2,8 +2,6 @@
 
 namespace PivotPHP\Core\Http;
 
-use PivotPHP\Core\Http\Psr7\Response as Psr7Response;
-use PivotPHP\Core\Http\Psr7\Stream;
 use PivotPHP\Core\Http\Pool\Psr7Pool;
 use PivotPHP\Core\Json\Pool\JsonBufferPool;
 use Psr\Http\Message\ResponseInterface;
@@ -77,7 +75,12 @@ class Response implements ResponseInterface
     public function __construct()
     {
         // Detectar automaticamente modo teste
-        if (defined('PHPUNIT_TESTSUITE')) {
+        if (
+            defined('PHPUNIT_TESTSUITE') ||
+            (defined('PHPUNIT_COMPOSER_INSTALL') || class_exists('PHPUnit\Framework\TestCase')) ||
+            (isset($_ENV['PHPUNIT_RUNNING']) || getenv('PHPUNIT_RUNNING')) ||
+            strpos($_SERVER['SCRIPT_NAME'] ?? '', 'phpunit') !== false
+        ) {
             $this->testMode = true;
         }
 
@@ -227,7 +230,7 @@ class Response implements ResponseInterface
 
         // Usar pooling para datasets médios e grandes
         if ($this->shouldUseJsonPooling($sanitizedData)) {
-            $encoded = $this->encodeWithPooling($data, $sanitizedData);
+            $encoded = $this->encodeWithPooling($sanitizedData);
         } else {
             // Usar encoding tradicional para dados pequenos
             $encoded = json_encode($sanitizedData, self::JSON_ENCODE_FLAGS);
@@ -850,7 +853,7 @@ class Response implements ResponseInterface
     /**
      * Codifica JSON usando pooling para melhor performance
      */
-    private function encodeWithPooling(mixed $data, mixed $sanitizedData): string
+    private function encodeWithPooling(mixed $sanitizedData): string
     {
         try {
             return JsonBufferPool::encodeWithPool($sanitizedData, self::JSON_ENCODE_FLAGS);

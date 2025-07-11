@@ -484,7 +484,7 @@ class EndToEndIntegrationTest extends TestCase
                 $password = $body->password ?? '';
 
                 $users = [
-                    'admin' => ['password' => 'secret', 'role' => 'user'],
+                    'admin' => ['password' => 'secret', 'role' => 'admin'],
                     'superuser' => ['password' => 'supersecret', 'role' => 'admin']
                 ];
 
@@ -580,7 +580,7 @@ class EndToEndIntegrationTest extends TestCase
                 if (strpos($accept, 'application/json') !== false) {
                     return $res->json($data);
                 } elseif (strpos($accept, 'text/plain') !== false) {
-                    return $res->header('Content-Type', 'text/plain')->send($data['message']);
+                    return $res->text($data['message']);
                 } elseif (strpos($accept, 'application/xml') !== false) {
                     return $res->status(406)->json(['error' => 'XML not supported']);
                 }

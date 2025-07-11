@@ -1,6 +1,6 @@
 <?php
 
-namespace PivotPHP\Tests\Unit\Routing;
+namespace PivotPHP\Core\Tests\Unit\Routing;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Routing\RouteCache;

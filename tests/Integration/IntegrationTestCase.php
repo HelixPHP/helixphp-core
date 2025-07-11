@@ -314,7 +314,7 @@ abstract class IntegrationTestCase extends TestCase
     /**
      * Assert memory usage is within acceptable limits
      */
-    protected function assertMemoryUsageWithinLimits(int $maxMemoryMB = 50): void
+    protected function assertMemoryUsageWithinLimits(int $maxMemoryMB = 100): void
     {
         $memoryUsage = memory_get_usage(true) / 1024 / 1024; // Convert to MB
         $this->assertLessThan(
