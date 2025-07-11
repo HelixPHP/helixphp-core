@@ -222,8 +222,8 @@ class ExpressPhpBenchmark
     {
         echo "📋 Benchmarking Object Pooling...\n";
         
-        // Limpar pools
-        OptimizedHttpFactory::clearPools();
+        // Pré-aquecer pools (não limpar - isso zera as estatísticas)
+        OptimizedHttpFactory::warmUpPools();
         
         $start = microtime(true);
         
@@ -235,6 +235,12 @@ class ExpressPhpBenchmark
             // Usar objetos PSR-7 do pool
             $psr7Request = OptimizedHttpFactory::createServerRequest('POST', '/psr7/test');
             $psr7Response = OptimizedHttpFactory::createPsr7Response(200, [], '{"pooled": true}');
+            
+            // Retornar objetos ao pool para reutilização
+            if (method_exists('PivotPHP\Core\Http\Pool\Psr7Pool', 'returnServerRequest')) {
+                \PivotPHP\Core\Http\Pool\Psr7Pool::returnServerRequest($psr7Request);
+                \PivotPHP\Core\Http\Pool\Psr7Pool::returnResponse($psr7Response);
+            }
             
             unset($request, $response, $psr7Request, $psr7Response);
         }

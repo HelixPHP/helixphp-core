@@ -37,17 +37,14 @@ jobs:
     - name: Check PHP syntax
       run: find src -name "*.php" -exec php -l {} \;
 
-    - name: Run PHPStan
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress
+
+    - name: Run comprehensive validation for release
       run: |
-        composer install --dev --no-progress
-        ./vendor/bin/phpstan analyse --no-progress
-
-    - name: Run tests
-      run: ./vendor/bin/phpunit --no-coverage
-
-    - name: Run code style check
-      run: ./vendor/bin/phpcs --standard=PSR12 src/ --report=summary
-
+        echo "🚀 Running comprehensive validation for release..."
+        ./scripts/quality-gate.sh
+        
     - name: Prepare release script
       run: |
         chmod +x scripts/prepare_release.sh

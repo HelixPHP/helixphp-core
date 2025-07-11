@@ -1,6 +1,6 @@
 <?php
 
-namespace PivotPHP\Tests\Integration\Routing;
+namespace PivotPHP\Core\Tests\Integration\Routing;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Routing\Router;

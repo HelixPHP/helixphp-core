@@ -290,8 +290,18 @@ class DynamicPoolManager
             self::$simulatedStats['emergency_activations']++;
         }
 
-        // For now, just create a new object since this is a manager
-        // In a real implementation, this would delegate to actual pools
+        // Create object based on factory parameters
+        if (isset($params['callable']) && is_callable($params['callable'])) {
+            return $params['callable']();
+        }
+
+        if (isset($params['class'])) {
+            $class = $params['class'];
+            $args = $params['args'] ?? [];
+            return new $class(...$args);
+        }
+
+        // Fallback: create basic object based on type
         return match ($type) {
             'request' => new \stdClass(),
             'response' => new \stdClass(),

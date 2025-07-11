@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        php-version: ['8.1', '8.2', '8.3', '8.4']
 
     name: PHP ${{ matrix.php-version }} Compatibility
 
@@ -96,9 +96,9 @@ jobs:
     - name: Basic functionality test
       run: php -r "
         require 'vendor/autoload.php';
-        use PivotPHP\Core\ApiExpress;
-        \$app = new ApiExpress();
-        echo 'Express PHP instantiated successfully on PHP ' . PHP_VERSION . '\n';
+        use PivotPHP\Core\Core\Application;
+        \$app = new Application();
+        echo 'PivotPHP Core instantiated successfully on PHP ' . PHP_VERSION . '\n';
       "
 
   release-readiness:

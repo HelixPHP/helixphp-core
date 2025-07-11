@@ -38,7 +38,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '1.1.2';
+    public const VERSION = '1.1.3-dev';
 
     /**
      * Container de dependências PSR-11.
