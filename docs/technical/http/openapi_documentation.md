@@ -13,7 +13,7 @@ use PivotPHP\Core\Utils\OpenApiExporter;
 $app = new Application();
 
 /**
- * @api GET /users/{id}
+ * @api GET /users/:id
  * @summary Buscar usuário por ID
  * @description Retorna os dados completos de um usuário específico
  * @param {integer} id.path.required - ID do usuário
@@ -65,7 +65,7 @@ $app->run();
 ```
 
 **Tipos de parâmetros:**
-- `path` - Parâmetros na URL (`/users/{id}`)
+- `path` - Parâmetros na URL (`/users/:id`)
 - `query` - Query strings (`?filter=value`)
 - `body` - Corpo da requisição
 - `header` - Headers HTTP
@@ -136,7 +136,7 @@ $app->get('/api/products', function($req, $res) {
 });
 
 /**
- * @api GET /api/products/{id}
+ * @api GET /api/products/:id
  * @summary Buscar produto específico
  * @description Retorna dados completos de um produto
  * @param {integer} id.path.required - ID do produto
@@ -185,7 +185,7 @@ $app->post('/api/products', function($req, $res) {
 });
 
 /**
- * @api PUT /api/products/{id}
+ * @api PUT /api/products/:id
  * @summary Atualizar produto
  * @description Atualiza dados de um produto existente
  * @param {integer} id.path.required - ID do produto
@@ -213,7 +213,7 @@ $app->put('/api/products/:id', function($req, $res) {
 });
 
 /**
- * @api DELETE /api/products/{id}
+ * @api DELETE /api/products/:id
  * @summary Deletar produto
  * @description Remove um produto do sistema
  * @param {integer} id.path.required - ID do produto
@@ -360,7 +360,7 @@ $docs = OpenApiExporter::export($app, [
 ### **API com Upload de Arquivo**
 ```php
 /**
- * @api POST /api/products/{id}/image
+ * @api POST /api/products/:id/image
  * @summary Upload de imagem do produto
  * @description Faz upload da imagem principal do produto
  * @param {integer} id.path.required - ID do produto

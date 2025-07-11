@@ -30,9 +30,10 @@ class JsonPoolingThresholdsTest extends TestCase
      */
     public function testPoolingConstantsExist(): void
     {
-        $this->assertTrue(defined('PivotPHP\Core\Json\Pool\JsonBufferPool::POOLING_ARRAY_THRESHOLD'));
-        $this->assertTrue(defined('PivotPHP\Core\Json\Pool\JsonBufferPool::POOLING_OBJECT_THRESHOLD'));
-        $this->assertTrue(defined('PivotPHP\Core\Json\Pool\JsonBufferPool::POOLING_STRING_THRESHOLD'));
+        $reflection = new \ReflectionClass(JsonBufferPool::class);
+        $this->assertTrue($reflection->hasConstant('POOLING_ARRAY_THRESHOLD'));
+        $this->assertTrue($reflection->hasConstant('POOLING_OBJECT_THRESHOLD'));
+        $this->assertTrue($reflection->hasConstant('POOLING_STRING_THRESHOLD'));
 
         // Verify values are reasonable
         $this->assertEquals(10, JsonBufferPool::POOLING_ARRAY_THRESHOLD);
