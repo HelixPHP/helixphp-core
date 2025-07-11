@@ -84,6 +84,9 @@ class JsonBufferPool
         $capacity = $capacity ?? self::$config['default_capacity'];
         $poolKey = self::getPoolKey($capacity);
 
+        // Extract normalized capacity from pool key to ensure buffer creation alignment
+        $normalizedCapacity = self::getNormalizedCapacity($capacity);
+
         if (!isset(self::$pools[$poolKey])) {
             self::$pools[$poolKey] = [];
         }
@@ -99,8 +102,8 @@ class JsonBufferPool
             return $buffer;
         }
 
-        // Create new buffer
-        $buffer = new JsonBuffer($capacity);
+        // Create new buffer with normalized capacity to match pool key
+        $buffer = new JsonBuffer($normalizedCapacity);
         self::$stats['allocations']++;
         self::$stats['current_usage']++;
 
@@ -383,9 +386,9 @@ class JsonBufferPool
     }
 
     /**
-     * Get pool key for given capacity
+     * Get normalized capacity (next power of 2)
      */
-    private static function getPoolKey(int $capacity): string
+    private static function getNormalizedCapacity(int $capacity): int
     {
         // Normalize to power of 2 for efficient pooling
         $normalizedCapacity = 1;
@@ -393,6 +396,15 @@ class JsonBufferPool
             $normalizedCapacity <<= 1;
         }
 
+        return $normalizedCapacity;
+    }
+
+    /**
+     * Get pool key for given capacity
+     */
+    private static function getPoolKey(int $capacity): string
+    {
+        $normalizedCapacity = self::getNormalizedCapacity($capacity);
         return "buffer_{$normalizedCapacity}";
     }
 
