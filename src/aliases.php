@@ -63,6 +63,12 @@ class_alias(
     'PivotPHP\Core\Http\Pool\DynamicPool'
 );
 
+// Core Classes - Compatibilidade
+class_alias(
+    'PivotPHP\Core\Core\Application',
+    'PivotPHP\Core\Application'
+);
+
 // Utilitários
 class_alias(
     'PivotPHP\Core\Utils\Arr',
