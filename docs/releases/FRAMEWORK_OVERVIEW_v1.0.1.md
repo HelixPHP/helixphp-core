@@ -21,7 +21,7 @@ PivotPHP v1.0.1 is a high-performance microframework designed for rapid developm
   - Automatic version detection
   - Script to switch between versions
   - Enables ReactPHP integration
-- **🚀 High Performance**: 13.9M operations/second (278x improvement)
+- **🚀 High Performance**: 692K ops/sec (Status Codes), 548K ops/sec (Content Negotiation), 317K ops/sec (Request Parsing) - Docker v1.1.1 tested
 - **🔒 Security First**: Built-in CORS, CSRF, XSS protection
 - **📋 PSR Compliant**: Full PSR-7, PSR-11, PSR-12, PSR-15 support
 - **🧪 Type Safe**: PHPStan Level 9 analysis
@@ -146,23 +146,26 @@ $app->get('/posts/:category<alpha>/:slug<slug>', handler);
 
 ## 📊 Performance
 
-### Benchmark Results v1.0.1
+### Benchmark Results v1.1.1 (Docker)
 
 | Operation | Ops/Second | Memory Usage | Latency (p99) |
 |-----------|------------|--------------|---------------|
-| Route Matching | 13.9M | 89MB peak | 0.072μs |
-| JSON Response | 11M | 45MB | 0.091μs |
-| CORS Headers | 52M | 23MB | 0.019μs |
-| Middleware Pipeline | 2.2M | 67MB | 0.455μs |
-| Static Routes | 15.2M | 12MB | 0.066μs |
-| Dynamic Routes | 8.7M | 34MB | 0.115μs |
-| Auth Validation | 4.1M | 56MB | 0.244μs |
+| Request Parsing | 317K | 14MB peak | 3.15μs |
+| Response Creation | 294K | 14MB | 3.40μs |
+| Content Negotiation | 548K | 14MB | 1.82μs |
+| Status Code Handling | 692K | 14MB | 1.44μs |
+| Header Processing | 301K | 14MB | 3.32μs |
+| JSON Small (5K iterations) | 161K | 0MB | 6.20μs |
+| JSON Medium (5K iterations) | 17K | 0.03MB | 56.82μs |
+| JSON Large (1K iterations) | 1.7K | 0.26MB | 572.57μs |
 
-### Performance Improvements v1.0.1
-- **278x faster** route matching compared to v0.1.0
-- **95% less memory** usage for static routes
-- **Zero allocation** for common operations
-- **Sub-microsecond** response times
+### Performance Improvements v1.1.1 (Docker)
+- **692K ops/sec** status code handling (optimized)
+- **548K ops/sec** content negotiation (efficient)
+- **317K ops/sec** request parsing (robust)
+- **161K ops/sec** JSON small datasets (pooled)
+- **17K ops/sec** JSON medium datasets (optimized)
+- **1.7K ops/sec** JSON large datasets (managed)
 
 ### Advanced Optimizations
 - **Memory Mapping**: Zero-copy operations

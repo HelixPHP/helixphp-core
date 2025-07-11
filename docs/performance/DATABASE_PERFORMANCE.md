@@ -232,9 +232,9 @@ Comparação com versões anteriores do PivotPHP:
 | Versão | MySQL | PostgreSQL | MariaDB | SQLite |
 |--------|-------|------------|---------|---------|
 | v1.0.0 | 2,345 req/s | 2,123 req/s | 2,456 req/s | 4,567 req/s |
-| v1.0.0 | 3,456 req/s | 2,876 req/s | 3,567 req/s | 6,234 req/s |
-| v1.0.0 | 3,987 req/s | 3,234 req/s | 4,012 req/s | 7,345 req/s |
-| **v1.0.0** | **4,123 req/s** | **3,567 req/s** | **4,234 req/s** | **7,812 req/s** |
+| v1.1.0 | 3,456 req/s | 2,876 req/s | 3,567 req/s | 6,234 req/s |
+| v1.1.1 | 3,987 req/s | 3,234 req/s | 4,012 req/s | 7,345 req/s |
+| **v1.1.1 (Docker)** | **4,123 req/s** | **3,567 req/s** | **4,234 req/s** | **7,812 req/s** |
 
 ## 💻 Exemplo de Implementação com PDO
 
@@ -280,3 +280,4 @@ $app->get('/api/users/:id/posts', function($req, $res) {
 ---
 
 *Benchmarks realizados em ambiente controlado com Docker, PHP 8.4.8, PDO nativo, 1000 requisições por teste*
+*Última atualização: Julho 2025 - Resultados v1.1.1 validados em ambiente Docker*
