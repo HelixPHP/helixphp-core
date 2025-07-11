@@ -24,7 +24,7 @@
         "performance",
         "optimization"
     ],
-    "homepage": "https://github.com/CAFernandes/pivotphp-core",
+    "homepage": "https://github.com/PivotPHP/pivotphp-core",
     "license": "MIT",
     "authors": [
         {
@@ -33,7 +33,7 @@
         },
         {
             "name": "PivotPHP Contributors",
-            "homepage": "https://github.com/CAFernandes/pivotphp-core/contributors"
+            "homepage": "https://github.com/PivotPHP/pivotphp-core/contributors"
         }
     ],
     "require": {
@@ -159,10 +159,10 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/CAFernandes/pivotphp-core/issues",
-        "source": "https://github.com/CAFernandes/pivotphp-core",
-        "docs": "https://github.com/CAFernandes/pivotphp-core/blob/main/README.md",
-        "wiki": "https://github.com/CAFernandes/pivotphp-core/wiki"
+        "issues": "https://github.com/PivotPHP/pivotphp-core/issues",
+        "source": "https://github.com/PivotPHP/pivotphp-core",
+        "docs": "https://github.com/PivotPHP/pivotphp-core/blob/main/README.md",
+        "wiki": "https://github.com/PivotPHP/pivotphp-core/wiki"
     },
     "funding": [
         {

@@ -212,7 +212,7 @@ class JsonBufferPool
             'current_usage' => self::$stats['current_usage'],
             'peak_usage' => self::$stats['peak_usage'],
             'total_buffers_pooled' => $totalBuffersInPools,
-            'active_pool_count' => count(self::$pools),
+            'active_pool_count' => count(array_filter(self::$pools, fn($p) => count($p) > 0)),
             'pool_sizes' => $poolSizes,  // Legacy format sorted by capacity
             'pools_by_capacity' => array_values($poolsByCapacity),  // Enhanced format
             'detailed_stats' => self::$stats

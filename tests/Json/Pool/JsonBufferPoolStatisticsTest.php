@@ -283,4 +283,50 @@ class JsonBufferPoolStatisticsTest extends TestCase
         $this->assertEquals(count($stats['pool_sizes']), count($stats['pools_by_capacity']));
         $this->assertEquals($stats['active_pool_count'], count($stats['pools_by_capacity']));
     }
+
+    /**
+     * Test that active_pool_count only counts non-empty pools
+     */
+    public function testActivePoolCountOnlyCountsNonEmptyPools(): void
+    {
+        // Initial state - no pools
+        $stats = JsonBufferPool::getStatistics();
+        $this->assertEquals(0, $stats['active_pool_count']);
+
+        // Create buffers but don't return them (pools exist but are empty)
+        $buffer1KB = JsonBufferPool::getBuffer(1024);
+        $buffer4KB = JsonBufferPool::getBuffer(4096);
+        $buffer8KB = JsonBufferPool::getBuffer(8192);
+
+        $stats = JsonBufferPool::getStatistics();
+        $this->assertEquals(0, $stats['active_pool_count'], 'Empty pools should not be counted as active');
+
+        // Return only some buffers to pools
+        JsonBufferPool::returnBuffer($buffer1KB);
+        JsonBufferPool::returnBuffer($buffer4KB);
+
+        $stats = JsonBufferPool::getStatistics();
+        $this->assertEquals(2, $stats['active_pool_count'], 'Only non-empty pools should be counted as active');
+        $this->assertEquals(2, $stats['total_buffers_pooled'], 'Should have 2 buffers in pools');
+
+        // Return the remaining buffer
+        JsonBufferPool::returnBuffer($buffer8KB);
+
+        $stats = JsonBufferPool::getStatistics();
+        $this->assertEquals(3, $stats['active_pool_count'], 'All pools with buffers should be counted as active');
+        $this->assertEquals(3, $stats['total_buffers_pooled'], 'Should have 3 buffers in pools');
+
+        // Get all buffers back (making pools empty again)
+        $retrievedBuffer1 = JsonBufferPool::getBuffer(1024);
+        $retrievedBuffer2 = JsonBufferPool::getBuffer(4096);
+        $retrievedBuffer3 = JsonBufferPool::getBuffer(8192);
+
+        $stats = JsonBufferPool::getStatistics();
+        $this->assertEquals(
+            0,
+            $stats['active_pool_count'],
+            'Empty pools should not be counted as active after retrieval'
+        );
+        $this->assertEquals(0, $stats['total_buffers_pooled'], 'Should have 0 buffers in pools after retrieval');
+    }
 }
