@@ -685,6 +685,9 @@ class Router
         self::warmupGroups();
     }
 
+    /**
+     * WarmupGroups method
+     */
     public static function warmupGroups(array $prefixes = []): void
     {
         if (empty($prefixes)) {
@@ -743,6 +746,9 @@ class Router
         throw new BadMethodCallException("Method {$method} does not exist in " . self::class);
     }
 
+    /**
+     * Convert to string
+     */
     public static function toString(): string
     {
         $output = '';
@@ -761,6 +767,9 @@ class Router
         return $output;
     }
 
+    /**
+     * Get routes
+     */
     public static function getRoutes(): array
     {
         return self::$routes;
@@ -864,6 +873,9 @@ class Router
         }
     }
 
+    /**
+     * Get httpMethodsAccepted
+     */
     public static function getHttpMethodsAccepted(): array
     {
         return self::$httpMethodsAccepted;

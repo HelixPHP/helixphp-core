@@ -17,6 +17,9 @@ class AuthMiddleware extends AbstractMiddleware
     private array $config;
     private array $publicPaths;
 
+    /**
+     * __construct method
+     */
     public function __construct(array $config = [], array $publicPaths = [])
     {
         $this->config = array_merge(
@@ -60,6 +63,9 @@ class AuthMiddleware extends AbstractMiddleware
         );
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $authMethods = $this->config['authMethods'] ?? ['jwt'];

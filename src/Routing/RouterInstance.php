@@ -25,6 +25,9 @@ class RouterInstance
         $this->prefix = $prefix;
     }
 
+    /**
+     * Use method
+     */
     public function use(callable $middleware): void
     {
         $this->middlewares[] = $middleware;

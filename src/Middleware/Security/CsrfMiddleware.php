@@ -29,6 +29,9 @@ class CsrfMiddleware implements MiddlewareInterface
         $this->fieldName = $fieldName;
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (strtoupper($request->getMethod()) === 'POST') {
@@ -51,6 +54,9 @@ class CsrfMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
+    /**
+     * Get token
+     */
     public static function getToken(string $fieldName = '_csrf_token'): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -62,6 +68,9 @@ class CsrfMiddleware implements MiddlewareInterface
         return $_SESSION[$fieldName];
     }
 
+    /**
+     * HiddenField method
+     */
     public static function hiddenField(string $fieldName = '_csrf_token'): string
     {
         $token = self::getToken($fieldName);
@@ -73,6 +82,9 @@ class CsrfMiddleware implements MiddlewareInterface
             '">';
     }
 
+    /**
+     * MetaTag method
+     */
     public static function metaTag(string $fieldName = '_csrf_token'): string
     {
         $token = self::getToken($fieldName);

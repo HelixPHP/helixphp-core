@@ -10,6 +10,9 @@ class Database
     private \PDO $pdo;
     private array $config;
 
+    /**
+     * __construct method
+     */
     public function __construct(array $config)
     {
         $this->config = $config;

@@ -23,6 +23,13 @@ use Throwable;
  */
 class ErrorMiddleware implements MiddlewareInterface
 {
+    /**
+     * Process the request and handle any exceptions
+     *
+     * @param ServerRequestInterface $request The incoming request
+     * @param RequestHandlerInterface $handler The request handler
+     * @return ResponseInterface The response or error response
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {

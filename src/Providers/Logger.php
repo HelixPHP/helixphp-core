@@ -16,6 +16,9 @@ class Logger extends AbstractLogger
     private string $dateFormat;
     private array $logLevels;
 
+    /**
+     * __construct method
+     */
     public function __construct(
         string $logPath = '',
         string $dateFormat = 'Y-m-d H:i:s'

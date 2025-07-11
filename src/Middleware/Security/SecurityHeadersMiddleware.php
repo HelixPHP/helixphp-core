@@ -47,21 +47,33 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         return new self();
     }
 
+    /**
+     * Strict method
+     */
     public static function strict(array $options = []): self
     {
         return new self();
     }
 
+    /**
+     * CsrfOnly method
+     */
     public static function csrfOnly(array $options = []): self
     {
         return new self();
     }
 
+    /**
+     * XssOnly method
+     */
     public static function xssOnly(array $options = []): self
     {
         return new self();
     }
 
+    /**
+     * __construct method
+     */
     public function __construct()
     {
     }

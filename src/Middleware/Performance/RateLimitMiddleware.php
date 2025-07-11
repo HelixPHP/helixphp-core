@@ -30,6 +30,9 @@ class RateLimitMiddleware implements MiddlewareInterface
         );
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (session_status() === PHP_SESSION_NONE) {

@@ -27,6 +27,9 @@ class XssMiddleware implements MiddlewareInterface
         $this->allowedTags = $allowedTags;
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $parsedBody = $request->getParsedBody();
@@ -37,6 +40,9 @@ class XssMiddleware implements MiddlewareInterface
         return $handler->handle($request);
     }
 
+    /**
+     * Sanitize method
+     */
     public static function sanitize(string $input, string $allowedTags = ''): string
     {
         // Remove <script> e conteúdo, depois strip_tags
@@ -67,6 +73,9 @@ class XssMiddleware implements MiddlewareInterface
         return strip_tags($input, $allowedTags);
     }
 
+    /**
+     * CleanUrl method
+     */
     public static function cleanUrl(string $url): string
     {
         // Remove javascript: e outros protocolos perigosos
@@ -76,6 +85,9 @@ class XssMiddleware implements MiddlewareInterface
         return $url;
     }
 
+    /**
+     * ContainsXss method
+     */
     public static function containsXss(string $input): bool
     {
         // Detecta tags e atributos perigosos

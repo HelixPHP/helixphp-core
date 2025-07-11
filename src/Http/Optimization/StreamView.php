@@ -29,6 +29,9 @@ class StreamView
         $this->length = $length ?? ($fileSize - $offset);
     }
 
+    /**
+     * Read method
+     */
     public function read(?int $bytes = null): string|false
     {
         if (!$this->handle) {
@@ -76,6 +79,9 @@ class StreamView
         return $totalBytes;
     }
 
+    /**
+     * __destruct method
+     */
     public function __destruct()
     {
         if ($this->handle) {

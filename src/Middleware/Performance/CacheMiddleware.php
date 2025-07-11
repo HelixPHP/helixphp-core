@@ -23,6 +23,9 @@ class CacheMiddleware implements MiddlewareInterface
     private int $ttl;
     private string $cacheDir;
 
+    /**
+     * __construct method
+     */
     public function __construct(int $ttl = 300, string $cacheDir = '/tmp/expressphp_cache')
     {
         $this->ttl = $ttl;
@@ -32,6 +35,9 @@ class CacheMiddleware implements MiddlewareInterface
         }
     }
 
+    /**
+     * Process the request
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $key = $this->generateCacheKey($request);
