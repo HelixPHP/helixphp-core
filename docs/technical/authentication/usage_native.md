@@ -427,7 +427,7 @@ $app->group('/admin', function() use ($app) {
         'requiredRole' => 'admin'
     ]));
 
-    $app->get('/users', 'AdminController@getUsers');
+    $app->get('/users', [AdminController::class, 'getUsers']);
 });
 
 // API Key para integrações externas
@@ -437,7 +437,7 @@ $app->group('/api/v1', function() use ($app) {
         'apiKeyCallback' => 'validateApiKey'
     ]));
 
-    $app->get('/data', 'ApiController@getData');
+    $app->get('/data', [ApiController::class, 'getData']);
 });
 
 // Multi-método para rotas gerais
@@ -448,7 +448,7 @@ $app->group('/api', function() use ($app) {
         'bearerAuthCallback' => 'validateBearerToken'
     ]));
 
-    $app->get('/profile', 'UserController@getProfile');
+    $app->get('/profile', [UserController::class, 'getProfile']);
 });
 ```
 

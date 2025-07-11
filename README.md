@@ -110,6 +110,53 @@ $app->get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<slug>', function($req, $res) 
 $app->run();
 ```
 
+### 🛣️ Sintaxes de Roteamento Suportadas
+
+O PivotPHP suporta múltiplas sintaxes para definir handlers de rota:
+
+```php
+// ✅ Closure/Função Anônima (Recomendado)
+$app->get('/users', function($req, $res) {
+    return $res->json(['users' => []]);
+});
+
+// ✅ Array Callable com classe
+$app->get('/users', [UserController::class, 'index']);
+
+// ✅ Função nomeada
+function getUsersHandler($req, $res) {
+    return $res->json(['users' => []]);
+}
+$app->get('/users', 'getUsersHandler');
+
+// ❌ NÃO suportado - String no formato Controller@method
+// $app->get('/users', 'UserController@index'); // ERRO!
+```
+
+**Exemplo com Controller:**
+
+```php
+<?php
+
+class UserController 
+{
+    public function index($req, $res) 
+    {
+        return $res->json(['users' => User::all()]);
+    }
+    
+    public function show($req, $res) 
+    {
+        $id = $req->param('id');
+        return $res->json(['user' => User::find($id)]);
+    }
+}
+
+// Registrar rotas com array callable
+$app->get('/users', [UserController::class, 'index']);
+$app->get('/users/:id', [UserController::class, 'show']);
+```
+
 ### 🔄 Suporte PSR-7 Híbrido
 
 O PivotPHP oferece **compatibilidade híbrida** com PSR-7, mantendo a facilidade da API Express.js enquanto implementa completamente as interfaces PSR-7:

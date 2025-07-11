@@ -177,19 +177,19 @@ $app->get('/posts/:category<alpha>/:slug<slug>', handler);
 
 ```php
 // Basic routing
-$app->get('/users', 'UserController@index');
-$app->post('/users', 'UserController@create');
-$app->put('/users/:id', 'UserController@update');
-$app->delete('/users/:id', 'UserController@delete');
+$app->get('/users', [UserController::class, 'index']);
+$app->post('/users', [UserController::class, 'create']);
+$app->put('/users/:id', [UserController::class, 'update']);
+$app->delete('/users/:id', [UserController::class, 'delete']);
 
 // Route groups
 $app->group('/api/v1', function ($group) {
-    $group->get('/users', 'UserController@index');
-    $group->post('/users', 'UserController@create');
+    $group->get('/users', [UserController::class, 'index']);
+    $group->post('/users', [UserController::class, 'create']);
 });
 
 // Middleware on routes
-$app->get('/admin', 'AdminController@dashboard')
+$app->get('/admin', [AdminController::class, 'dashboard'])
     ->middleware(AuthMiddleware::class);
 ```
 
@@ -201,7 +201,7 @@ $app->use(new CorsMiddleware());
 $app->use(new SecurityHeadersMiddleware());
 
 // Route-specific middleware
-$app->post('/login', 'AuthController@login')
+$app->post('/login', [AuthController::class, 'login'])
     ->middleware(CsrfMiddleware::class);
 
 // Custom middleware
