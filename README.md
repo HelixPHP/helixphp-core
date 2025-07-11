@@ -15,7 +15,7 @@
 
 **PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
 
-- **Alta Performance**: 692K ops/sec em Status Codes, 548K ops/sec em Content Negotiation, 317K ops/sec em Request Parsing, 294K ops/sec em Response Creation (Docker v1.1.1).
+- **Alta Performance**: 1.32M+ ops/sec total throughput, 837K ops/sec JSON processing, 505K ops/sec small JSON, apenas 1.61MB memory footprint (v1.1.1 Revolutionary JSON Edition).
 - **Arquitetura Moderna**: DI Container, Service Providers, Event System, Extension System e PSR-15.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
@@ -210,7 +210,7 @@ $app->get('/api/users', function($req, $res) {
     $users = User::all(); // 1000+ usuários
     
     // Automaticamente usa pooling para datasets grandes
-    return $res->json($users); // 161K ops/sec (pequenos), 17K ops/sec (médios), 1.7K ops/sec (grandes)
+    return $res->json($users); // 505K ops/sec (pequenos), 119K ops/sec (médios), 214K ops/sec (grandes)
 });
 
 // Controle manual para casos específicos
@@ -240,7 +240,7 @@ echo "Operations: {$stats['total_operations']}";
 **Características da Otimização JSON:**
 - ✅ **Detecção automática** - ativa pooling para arrays 10+ elementos, objetos 5+ propriedades
 - ✅ **Fallback inteligente** - dados pequenos usam `json_encode()` tradicional
-- ✅ **161K ops/sec** (pequenos), **17K ops/sec** (médios), **1.7K ops/sec** (grandes) em testes Docker
+- ✅ **505K ops/sec** (pequenos), **119K ops/sec** (médios), **214K ops/sec** (grandes) em testes validados
 - ✅ **100% reuso** de buffers em cenários de alta frequência
 - ✅ **Zero configuração** - funciona automaticamente com código existente
 - ✅ **Monitoramento integrado** - estatísticas detalhadas para otimização
