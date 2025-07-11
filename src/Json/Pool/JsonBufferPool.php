@@ -16,12 +16,12 @@ namespace PivotPHP\Core\Json\Pool;
 class JsonBufferPool
 {
     // JSON Size Estimation Constants
-    private const STRING_OVERHEAD = 20;              // Quotes + escaping overhead
-    private const EMPTY_ARRAY_SIZE = 2;              // []
-    private const SMALL_ARRAY_SIZE = 512;            // Small array estimate (< 10 items)
-    private const MEDIUM_ARRAY_SIZE = 2048;          // Medium array estimate (< 100 items)
-    private const LARGE_ARRAY_SIZE = 8192;           // Large array estimate (< 1000 items)
-    private const XLARGE_ARRAY_SIZE = 32768;         // XLarge array estimate (>= 1000 items)
+    public const STRING_OVERHEAD = 20;              // Quotes + escaping overhead
+    public const EMPTY_ARRAY_SIZE = 2;              // []
+    public const SMALL_ARRAY_SIZE = 512;            // Small array estimate (< 10 items)
+    public const MEDIUM_ARRAY_SIZE = 2048;          // Medium array estimate (< 100 items)
+    public const LARGE_ARRAY_SIZE = 8192;           // Large array estimate (< 1000 items)
+    public const XLARGE_ARRAY_SIZE = 32768;         // XLarge array estimate (>= 1000 items)
 
     // Array size thresholds
     public const SMALL_ARRAY_THRESHOLD = 10;        // Threshold for small array
@@ -29,16 +29,16 @@ class JsonBufferPool
     public const LARGE_ARRAY_THRESHOLD = 1000;     // Threshold for large array
 
     // Object size estimation constants
-    private const OBJECT_PROPERTY_OVERHEAD = 50;     // Bytes per object property
-    private const OBJECT_BASE_SIZE = 100;            // Base size for objects
+    public const OBJECT_PROPERTY_OVERHEAD = 50;     // Bytes per object property
+    public const OBJECT_BASE_SIZE = 100;            // Base size for objects
 
     // Primitive type size constants
-    private const BOOLEAN_OR_NULL_SIZE = 10;         // Size for boolean/null values
-    private const NUMERIC_SIZE = 20;                 // Size for numeric values
-    private const DEFAULT_ESTIMATE = 100;            // Default fallback estimate
+    public const BOOLEAN_OR_NULL_SIZE = 10;         // Size for boolean/null values
+    public const NUMERIC_SIZE = 20;                 // Size for numeric values
+    public const DEFAULT_ESTIMATE = 100;            // Default fallback estimate
 
     // Buffer capacity constants
-    private const MIN_LARGE_BUFFER_SIZE = 65536;     // Minimum size for very large buffers (64KB)
+    public const MIN_LARGE_BUFFER_SIZE = 65536;     // Minimum size for very large buffers (64KB)
     private const BUFFER_SIZE_MULTIPLIER = 2;        // Multiplier for buffer size calculation
 
     // Pooling decision thresholds (for determining when to use pooled encoding)

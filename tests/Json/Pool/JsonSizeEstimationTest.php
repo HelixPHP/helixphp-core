@@ -39,8 +39,8 @@ class JsonSizeEstimationTest extends TestCase
         $longEstimate = $this->callEstimateJsonSize($longString);
 
         // Should be string length + STRING_OVERHEAD (20)
-        $this->assertEquals(strlen($shortString) + 20, $shortEstimate);
-        $this->assertEquals(strlen($longString) + 20, $longEstimate);
+        $this->assertEquals(strlen($shortString) + JsonBufferPool::STRING_OVERHEAD, $shortEstimate);
+        $this->assertEquals(strlen($longString) + JsonBufferPool::STRING_OVERHEAD, $longEstimate);
 
         // Longer strings should have larger estimates
         $this->assertGreaterThan($shortEstimate, $longEstimate);
@@ -64,7 +64,7 @@ class JsonSizeEstimationTest extends TestCase
         $xlargeEstimate = $this->callEstimateJsonSize($xlargeArray);
 
         // Empty array should be smallest (2 bytes for [])
-        $this->assertEquals(2, $emptyEstimate);
+        $this->assertEquals(JsonBufferPool::EMPTY_ARRAY_SIZE, $emptyEstimate);
 
         // Each category should be larger than the previous
         $this->assertGreaterThan($emptyEstimate, $smallEstimate);
@@ -73,10 +73,10 @@ class JsonSizeEstimationTest extends TestCase
         $this->assertGreaterThan($largeEstimate, $xlargeEstimate);
 
         // Verify expected sizes based on constants
-        $this->assertEquals(512, $smallEstimate);    // SMALL_ARRAY_SIZE
-        $this->assertEquals(2048, $mediumEstimate);  // MEDIUM_ARRAY_SIZE
-        $this->assertEquals(8192, $largeEstimate);   // LARGE_ARRAY_SIZE
-        $this->assertEquals(32768, $xlargeEstimate); // XLARGE_ARRAY_SIZE
+        $this->assertEquals(JsonBufferPool::SMALL_ARRAY_SIZE, $smallEstimate);
+        $this->assertEquals(JsonBufferPool::MEDIUM_ARRAY_SIZE, $mediumEstimate);
+        $this->assertEquals(JsonBufferPool::LARGE_ARRAY_SIZE, $largeEstimate);
+        $this->assertEquals(JsonBufferPool::XLARGE_ARRAY_SIZE, $xlargeEstimate);
     }
 
     /**
@@ -93,15 +93,21 @@ class JsonSizeEstimationTest extends TestCase
         $largeEstimate = $this->callEstimateJsonSize($largeObject);
 
         // Empty object should be base size (100)
-        $this->assertEquals(100, $emptyEstimate);
+        $this->assertEquals(JsonBufferPool::OBJECT_BASE_SIZE, $emptyEstimate);
 
         // Objects with properties should be larger
         $this->assertGreaterThan($emptyEstimate, $smallEstimate);
         $this->assertGreaterThan($smallEstimate, $largeEstimate);
 
-        // Should follow formula: property_count * 50 + 100
-        $this->assertEquals(2 * 50 + 100, $smallEstimate);  // 2 properties
-        $this->assertEquals(10 * 50 + 100, $largeEstimate); // 10 properties
+        // Should follow formula: property_count * OBJECT_PROPERTY_OVERHEAD + OBJECT_BASE_SIZE
+        $this->assertEquals(
+            2 * JsonBufferPool::OBJECT_PROPERTY_OVERHEAD + JsonBufferPool::OBJECT_BASE_SIZE,
+            $smallEstimate
+        );  // 2 properties
+        $this->assertEquals(
+            10 * JsonBufferPool::OBJECT_PROPERTY_OVERHEAD + JsonBufferPool::OBJECT_BASE_SIZE,
+            $largeEstimate
+        ); // 10 properties
     }
 
     /**
@@ -120,12 +126,12 @@ class JsonSizeEstimationTest extends TestCase
         $floatEstimate = $this->callEstimateJsonSize($float);
 
         // Boolean and null should be same size (10)
-        $this->assertEquals(10, $booleanEstimate);
-        $this->assertEquals(10, $nullEstimate);
+        $this->assertEquals(JsonBufferPool::BOOLEAN_OR_NULL_SIZE, $booleanEstimate);
+        $this->assertEquals(JsonBufferPool::BOOLEAN_OR_NULL_SIZE, $nullEstimate);
 
         // Numeric values should be same size (20)
-        $this->assertEquals(20, $integerEstimate);
-        $this->assertEquals(20, $floatEstimate);
+        $this->assertEquals(JsonBufferPool::NUMERIC_SIZE, $integerEstimate);
+        $this->assertEquals(JsonBufferPool::NUMERIC_SIZE, $floatEstimate);
     }
 
     /**
@@ -139,7 +145,7 @@ class JsonSizeEstimationTest extends TestCase
         fclose($resource);
 
         // Should return default estimate (100)
-        $this->assertEquals(100, $estimate);
+        $this->assertEquals(JsonBufferPool::DEFAULT_ESTIMATE, $estimate);
     }
 
     /**
@@ -153,11 +159,11 @@ class JsonSizeEstimationTest extends TestCase
         $smallCapacity = JsonBufferPool::getOptimalCapacity($smallData);
         $largeCapacity = JsonBufferPool::getOptimalCapacity($largeData);
 
-        // Small data should fit in standard categories
+        // Small data should fit in standard categories (1024, 4096, 16384, 65536)
         $this->assertContains($smallCapacity, [1024, 4096, 16384, 65536]);
 
         // Large data should get calculated capacity
-        $this->assertGreaterThanOrEqual(65536, $largeCapacity);
+        $this->assertGreaterThanOrEqual(JsonBufferPool::MIN_LARGE_BUFFER_SIZE, $largeCapacity);
         $this->assertGreaterThan($smallCapacity, $largeCapacity);
     }
 
@@ -167,10 +173,10 @@ class JsonSizeEstimationTest extends TestCase
     public function testConstantsAreReasonable(): void
     {
         // Test that size constants are in ascending order
-        $this->assertLessThan(512, 2);          // EMPTY < SMALL
-        $this->assertLessThan(2048, 512);       // SMALL < MEDIUM
-        $this->assertLessThan(8192, 2048);      // MEDIUM < LARGE
-        $this->assertLessThan(32768, 8192);     // LARGE < XLARGE
+        $this->assertLessThan(JsonBufferPool::SMALL_ARRAY_SIZE, JsonBufferPool::EMPTY_ARRAY_SIZE); // EMPTY < SMALL
+        $this->assertLessThan(JsonBufferPool::MEDIUM_ARRAY_SIZE, JsonBufferPool::SMALL_ARRAY_SIZE); // SMALL < MEDIUM
+        $this->assertLessThan(JsonBufferPool::LARGE_ARRAY_SIZE, JsonBufferPool::MEDIUM_ARRAY_SIZE); // MEDIUM < LARGE
+        $this->assertLessThan(JsonBufferPool::XLARGE_ARRAY_SIZE, JsonBufferPool::LARGE_ARRAY_SIZE); // LARGE < XLARGE
 
         // Test threshold constants are in ascending order
         $this->assertLessThan(
@@ -183,9 +189,9 @@ class JsonSizeEstimationTest extends TestCase
         ); // MEDIUM < LARGE threshold
 
         // Test overhead constants are reasonable
-        $this->assertGreaterThan(0, 20);        // STRING_OVERHEAD > 0
-        $this->assertGreaterThan(0, 50);        // OBJECT_PROPERTY_OVERHEAD > 0
-        $this->assertGreaterThan(0, 100);       // OBJECT_BASE_SIZE > 0
+        $this->assertGreaterThan(0, JsonBufferPool::STRING_OVERHEAD);        // STRING_OVERHEAD > 0
+        $this->assertGreaterThan(0, JsonBufferPool::OBJECT_PROPERTY_OVERHEAD);        // OBJECT_PROPERTY_OVERHEAD > 0
+        $this->assertGreaterThan(0, JsonBufferPool::OBJECT_BASE_SIZE);       // OBJECT_BASE_SIZE > 0
     }
 
     /**
