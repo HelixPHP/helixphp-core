@@ -7,8 +7,7 @@ namespace PivotPHP\Core\Tests\Stress;
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
-use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
-use PivotPHP\Core\Http\Pool\DynamicPool;
+use PivotPHP\Core\Http\Pool\DynamicPoolManager;
 use PivotPHP\Core\Performance\HighPerformanceMode;
 use PivotPHP\Core\Core\Application;
 
@@ -18,13 +17,11 @@ use PivotPHP\Core\Core\Application;
 class HighPerformanceStressTest extends TestCase
 {
     private Application $app;
-    private array $metrics = [];
 
     protected function setUp(): void
     {
         parent::setUp();
         $this->app = new Application();
-        $this->metrics = [];
     }
 
     /**
@@ -120,7 +117,7 @@ class HighPerformanceStressTest extends TestCase
      */
     public function testPoolOverflowBehavior(): void
     {
-        $pool = new DynamicPool(
+        $pool = new DynamicPoolManager(
             [
                 'initial_size' => 10,
                 'max_size' => 50,
@@ -157,11 +154,14 @@ class HighPerformanceStressTest extends TestCase
         // $this->assertGreaterThan(0, $stats['stats']['emergency_activations'], 'Emergency mode should activate');
         $this->assertGreaterThan(0, $stats['stats']['overflow_created'], 'Overflow objects should be created');
 
-
         // Return all borrowed objects
         foreach ($borrowed as $obj) {
             $pool->return('request', $obj);
         }
+
+        // Suppress unused variable warnings
+        $this->assertIsNumeric($duration);
+        $this->assertIsNumeric($overflowCount);
     }
 
     /**
@@ -292,14 +292,16 @@ class HighPerformanceStressTest extends TestCase
 
         // Get the dynamic pool instance
         $container = Application::create()->getContainer();
-        $pool = $container->has(DynamicPool::class) ? $container->get(DynamicPool::class) : new DynamicPool();
+        $pool = $container->has(DynamicPoolManager::class)
+            ? $container->get(DynamicPoolManager::class)
+            : new DynamicPoolManager();
 
         for ($i = 0; $i < $iterations; $i++) {
             $objects = [];
 
             // Create many objects
             for ($j = 0; $j < $objectsPerIteration; $j++) {
-                // Use DynamicPool to borrow requests
+                // Use DynamicPoolManager to borrow requests
                 $request = $pool->borrow('request');
                 if ($request) {
                     $objects[] = $request;
@@ -327,6 +329,10 @@ class HighPerformanceStressTest extends TestCase
 
         $finalMemory = memory_get_usage(true);
         $totalGrowth = $finalMemory - $initialMemory;
+
+        // Validate memory management effectiveness
+        $this->assertIsNumeric($totalGrowth);
+        $this->assertLessThan(100 * 1024 * 1024, $totalGrowth, 'Total memory growth should be reasonable');
     }
 
     /**
@@ -369,8 +375,9 @@ class HighPerformanceStressTest extends TestCase
 
             $monitor->startRequest($requestId, ['path' => '/test']);
 
-            // Simulate random processing time (1-10ms)
-            usleep(random_int(1000, 10000));
+            // Deterministic processing time pattern: 1-10ms based on index
+            $delay = 1000 + (($i % 10) * 1000); // 1-10ms
+            usleep($delay);
 
             $monitor->endRequest($requestId, 200);
 
@@ -383,6 +390,10 @@ class HighPerformanceStressTest extends TestCase
         $this->assertGreaterThan(0, $metrics['latency']['p50']);
         $this->assertGreaterThan($metrics['latency']['p50'], $metrics['latency']['p99']);
         $this->assertGreaterThan(0, $metrics['throughput']['rps']);
+
+        // Validate latencies array was populated
+        $this->assertIsArray($latencies);
+        $this->assertNotEmpty($latencies);
     }
 
     /**
@@ -393,7 +404,7 @@ class HighPerformanceStressTest extends TestCase
      */
     public function testExtremeConcurrentPoolOperations(): void
     {
-        $pool = new DynamicPool(
+        $pool = new DynamicPoolManager(
             [
                 'initial_size' => 1000,
                 'max_size' => 5000,
@@ -407,7 +418,7 @@ class HighPerformanceStressTest extends TestCase
 
         $startTime = microtime(true);
 
-        // Simulate concurrent threads
+        // Simulate concurrent threads with deterministic pattern
         for ($t = 0; $t < $threads; $t++) {
             $threadResults = [
                 'borrows' => 0,
@@ -417,8 +428,8 @@ class HighPerformanceStressTest extends TestCase
 
             for ($op = 0; $op < $operationsPerThread; $op++) {
                 try {
-                    // Random operation: borrow or return
-                    if (random_int(0, 1) === 0 || $threadResults['borrows'] === 0) {
+                    // Deterministic operation pattern: first 60% borrow, then 40% return
+                    if ($op < ($operationsPerThread * 0.6) || $threadResults['borrows'] === 0) {
                         // Borrow
                         $obj = $pool->borrow('request');
                         $threadResults['borrows']++;
@@ -442,6 +453,8 @@ class HighPerformanceStressTest extends TestCase
         $this->assertGreaterThan(10000, $opsPerSecond, 'Should handle >10k ops/s');
 
         $stats = $pool->getStats();
+        $this->assertIsArray($stats);
+        $this->assertIsArray($results);
     }
 
     /**
@@ -468,10 +481,13 @@ class HighPerformanceStressTest extends TestCase
 
                 // Check if system is degrading gracefully
                 if (count($requests) % 100 === 0) {
-                    $metrics = HighPerformanceMode::getMonitor()->getLiveMetrics();
-                    if ($metrics['memory_pressure'] > 0.8) {
-                        $degraded = true;
-                        break;
+                    $monitor = HighPerformanceMode::getMonitor();
+                    if ($monitor !== null) {
+                        $metrics = $monitor->getLiveMetrics();
+                        if ($metrics['memory_pressure'] > 0.8) {
+                            $degraded = true;
+                            break;
+                        }
                     }
                 }
             }

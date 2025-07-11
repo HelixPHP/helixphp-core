@@ -4,28 +4,31 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Tests\Unit\Routing;
 
+use PivotPHP\Core\Http\Request;
+use PivotPHP\Core\Http\Response;
+
 /**
  * Test class for array callable functionality
  */
 class TestController
 {
-    public function index($req, $res): string
+    public function index(Request $req, Response $res): string
     {
         return 'controller index';
     }
 
-    public function show($req, $res): string
+    public function show(Request $req, Response $res): string
     {
         $id = $req->param('id');
         return "controller show: {$id}";
     }
 
-    public static function staticMethod($req, $res): string
+    public static function staticMethod(Request $req, Response $res): string
     {
         return 'static method';
     }
 
-    public function healthCheck($req, $res): array
+    public function healthCheck(Request $req, Response $res): array
     {
         return [
             'status' => 'ok',
@@ -34,7 +37,7 @@ class TestController
         ];
     }
 
-    public function withParameters($req, $res): array
+    public function withParameters(Request $req, Response $res): array
     {
         return [
             'user_id' => $req->param('userId'),

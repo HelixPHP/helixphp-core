@@ -90,7 +90,6 @@ class PerformanceMonitorTest extends TestCase
     public function testMultipleConcurrentRequests(): void
     {
         $requests = [];
-        $startTime = microtime(true);
 
         // Start multiple requests
         for ($i = 0; $i < 10; $i++) {
@@ -106,10 +105,12 @@ class PerformanceMonitorTest extends TestCase
             );
         }
 
-        // Simulate varying processing times
+        // Simulate varying processing times with deterministic pattern
         foreach ($requests as $i => $requestId) {
-            usleep(random_int(10000, 50000)); // 10-50ms
-            $statusCode = random_int(0, 100) < 90 ? 200 : 500; // 90% success rate
+            // Fixed delay pattern: 30ms for consistent testing
+            usleep(30000); // Fixed 30ms delay
+            // Deterministic success pattern: 90% success rate (9/10 success)
+            $statusCode = ($i < 9) ? 200 : 500; // First 9 succeed, last 1 fails
             $this->monitor->endRequest($requestId, $statusCode);
         }
 
@@ -258,7 +259,7 @@ class PerformanceMonitorTest extends TestCase
 
         // Reset metrics (if method exists)
         if (method_exists($this->monitor, 'resetMetrics')) {
-            $this->monitor->resetMetrics();
+            call_user_func([$this->monitor, 'resetMetrics']);
 
             $afterReset = $this->monitor->getPerformanceMetrics();
             $this->assertEquals(0, $afterReset['throughput']['rps']);

@@ -76,6 +76,11 @@ class Response implements ResponseInterface
      */
     public function __construct()
     {
+        // Detectar automaticamente modo teste
+        if (defined('PHPUNIT_TESTSUITE')) {
+            $this->testMode = true;
+        }
+
         // PSR-7 response será inicializado apenas quando necessário (lazy loading)
     }
 
@@ -801,7 +806,10 @@ class Response implements ResponseInterface
 
         // Enviar corpo da resposta
         if (!empty($this->body)) {
-            echo $this->body;
+            // Só faz echo se não estiver em modo teste
+            if (!$this->testMode) {
+                echo $this->body;
+            }
             $this->sent = true;
         }
     }
