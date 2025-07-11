@@ -69,7 +69,7 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     public function testMaxPoolSizeTypeValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("'max_pool_size' must be an integer, got: string");
+        $this->expectExceptionMessage("'max_pool_size' must be an integer");
         JsonBufferPool::configure(['max_pool_size' => '100']);
     }
 
@@ -93,7 +93,7 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     public function testDefaultCapacityTypeValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("'default_capacity' must be an integer, got: double");
+        $this->expectExceptionMessage("'default_capacity' must be an integer");
         JsonBufferPool::configure(['default_capacity' => 4096.5]);
     }
 
@@ -110,7 +110,7 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     public function testSizeCategoriesTypeValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("'size_categories' must be an array, got: string");
+        $this->expectExceptionMessage("'size_categories' must be an array");
         JsonBufferPool::configure(['size_categories' => 'invalid']);
     }
 
@@ -150,7 +150,7 @@ class JsonBufferPoolConfigValidationTest extends TestCase
     public function testSizeCategoriesCapacityValidation(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Size category 'small' must have an integer capacity, got: string");
+        $this->expectExceptionMessage("Size category 'small' must have an integer capacity");
         JsonBufferPool::configure(
             [
                 'size_categories' => [

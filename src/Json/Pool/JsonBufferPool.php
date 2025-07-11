@@ -191,20 +191,15 @@ class JsonBufferPool
         // Sort pools by capacity for better readability
         ksort($poolsByCapacity);
 
-        // Sort pool_sizes by extracting numeric capacity for consistent ordering
-        uksort(
-            $poolSizes,
-            function ($a, $b) {
-            // Extract numeric capacity from formatted strings like "1.0KB (1024 bytes)"
-                preg_match('/\((\d+) bytes\)/', $a, $matchesA);
-                preg_match('/\((\d+) bytes\)/', $b, $matchesB);
-
-                $capacityA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
-                $capacityB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
-
-                return $capacityA <=> $capacityB;
+        // Sort pool_sizes based on numeric capacities from poolsByCapacity
+        $sortedPoolSizes = [];
+        foreach (array_keys($poolsByCapacity) as $capacity) {
+            $readableKey = $poolsByCapacity[$capacity]['capacity_formatted'];
+            if (isset($poolSizes[$readableKey])) {
+                $sortedPoolSizes[$readableKey] = $poolSizes[$readableKey];
             }
-        );
+        }
+        $poolSizes = $sortedPoolSizes;
 
         return [
             'reuse_rate' => round($reuseRate, 2),
@@ -281,11 +276,12 @@ class JsonBufferPool
     {
         // Validate 'max_pool_size'
         if (isset($config['max_pool_size'])) {
+            // First check type
             if (!is_int($config['max_pool_size'])) {
-                throw new \InvalidArgumentException(
-                    "'max_pool_size' must be an integer, got: " . gettype($config['max_pool_size'])
-                );
+                throw new \InvalidArgumentException("'max_pool_size' must be an integer");
             }
+
+            // Then check range
             if ($config['max_pool_size'] <= 0) {
                 throw new \InvalidArgumentException("'max_pool_size' must be a positive integer");
             }
@@ -298,11 +294,12 @@ class JsonBufferPool
 
         // Validate 'default_capacity'
         if (isset($config['default_capacity'])) {
+            // First check type
             if (!is_int($config['default_capacity'])) {
-                throw new \InvalidArgumentException(
-                    "'default_capacity' must be an integer, got: " . gettype($config['default_capacity'])
-                );
+                throw new \InvalidArgumentException("'default_capacity' must be an integer");
             }
+
+            // Then check range
             if ($config['default_capacity'] <= 0) {
                 throw new \InvalidArgumentException("'default_capacity' must be a positive integer");
             }
@@ -315,10 +312,9 @@ class JsonBufferPool
 
         // Validate 'size_categories'
         if (isset($config['size_categories'])) {
+            // First check type
             if (!is_array($config['size_categories'])) {
-                throw new \InvalidArgumentException(
-                    "'size_categories' must be an array, got: " . gettype($config['size_categories'])
-                );
+                throw new \InvalidArgumentException("'size_categories' must be an array");
             }
 
             if (empty($config['size_categories'])) {
@@ -330,11 +326,14 @@ class JsonBufferPool
                     throw new \InvalidArgumentException("Size category names must be non-empty strings");
                 }
 
+                // First check type for each capacity
                 if (!is_int($capacity)) {
                     throw new \InvalidArgumentException(
-                        "Size category '{$name}' must have an integer capacity, got: " . gettype($capacity)
+                        "Size category '{$name}' must have an integer capacity"
                     );
                 }
+
+                // Then check range
                 if ($capacity <= 0) {
                     throw new \InvalidArgumentException(
                         "Size category '{$name}' must have a positive integer capacity"
