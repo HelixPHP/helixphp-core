@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Security;
+namespace PivotPHP\Core\Tests\Security;
 
 class MockResponse
 {

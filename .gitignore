@@ -260,3 +260,4 @@ NOTES.md
 scratch/
 benchmarks/**/*.json
 CLAUDE.md
+proposals/

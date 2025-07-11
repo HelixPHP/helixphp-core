@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests;
+namespace PivotPHP\Core\Tests;
 
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Providers\Container;

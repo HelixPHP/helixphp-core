@@ -144,7 +144,7 @@ class MyExtensionProvider extends ServiceProvider
     {
         // Registrar rotas da extensão
         $this->app->group('/extension', function() {
-            $this->app->get('/status', 'MyExtension\\StatusController@index');
+            $this->app->get('/status', [MyExtension\StatusController::class, 'index']);
         });
     }
 
@@ -262,9 +262,9 @@ class PaymentExtensionProvider extends ServiceProvider
     {
         $this->app->group('/payments', function() {
             // Rotas de API de pagamento
-            $this->app->post('/process', 'PaymentController@process');
-            $this->app->post('/webhook', 'PaymentController@webhook');
-            $this->app->get('/status/{id}', 'PaymentController@status');
+            $this->app->post('/process', [PaymentController::class, 'process']);
+            $this->app->post('/webhook', [PaymentController::class, 'webhook']);
+            $this->app->get('/status/{id}', [PaymentController::class, 'status']);
         });
     }
 

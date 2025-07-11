@@ -5,6 +5,69 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2025-07-10
+
+### 🚀 **JSON Optimization Edition**
+
+#### Added
+- **High-Performance JSON Buffer Pooling System**: Revolutionary JSON processing optimization
+  - `JsonBuffer`: Optimized buffer class for JSON operations with automatic expansion
+  - `JsonBufferPool`: Intelligent pooling system with buffer reuse and size categorization
+  - **Automatic Integration**: `Response::json()` now uses pooling transparently for optimal performance
+  - **Smart Detection**: Automatically activates pooling for arrays 10+ elements, objects 5+ properties, strings >1KB
+  - **Graceful Fallback**: Small datasets use traditional `json_encode()` for best performance
+  - **Public Constants**: All size estimation and threshold constants are now publicly accessible for advanced usage and testing
+  
+- **Performance Monitoring & Statistics**:
+  - Real-time pool statistics with reuse rates and efficiency metrics
+  - Configurable pool sizes and buffer categories (small: 1KB, medium: 4KB, large: 16KB, xlarge: 64KB)
+  - Production-ready monitoring with `JsonBufferPool::getStatistics()`
+  - Performance tracking for optimization and debugging
+
+- **Developer Experience**:
+  - **Zero Breaking Changes**: All existing code continues working without modification
+  - **Transparent Optimization**: Automatic activation based on data characteristics
+  - **Manual Control**: Direct pool access via `JsonBufferPool::encodeWithPool()` when needed
+  - **Configuration API**: Production tuning via `JsonBufferPool::configure()`
+  - **Enhanced Error Handling**: Precise validation messages separating type vs range errors
+  - **Type Safety**: `encodeWithPool()` now always returns string, simplifying error handling
+
+#### Performance Improvements
+- **Sustained Throughput**: 101,000+ JSON operations per second in continuous load tests
+- **Memory Efficiency**: 100% buffer reuse rate in high-frequency scenarios
+- **Reduced GC Pressure**: Significant reduction in garbage collection overhead
+- **Scalable Architecture**: Adaptive pool sizing based on usage patterns
+
+#### Technical Details
+- **PSR-12 Compliant**: All new code follows project coding standards
+- **Comprehensive Testing**: 84 JSON tests with 329+ assertions covering all functionality
+- **Backward Compatible**: No changes required to existing applications
+- **Production Ready**: Tested with various data sizes and load patterns
+- **Centralized Constants**: All thresholds and size constants are unified to avoid duplication
+- **Test Maintainability**: Tests now use constants instead of hardcoded values for better maintainability
+
+#### Files Added
+- `src/Json/Pool/JsonBuffer.php`: Core buffer implementation
+- `src/Json/Pool/JsonBufferPool.php`: Pool management system
+- `tests/Json/Pool/JsonBufferTest.php`: Comprehensive buffer tests
+- `tests/Json/Pool/JsonBufferPoolTest.php`: Pool functionality tests
+- `benchmarks/JsonPoolingBenchmark.php`: Performance validation tools
+
+#### Files Modified
+- `src/Http/Response.php`: Integrated automatic pooling in `json()` method
+- Enhanced with smart detection and fallback mechanisms
+
+#### Post-Release Improvements (July 2025)
+- **Enhanced Configuration Validation**: Separated type checking from range validation for more precise error messages
+- **Improved Type Safety**: `encodeWithPool()` method now has tightened return type (always returns string)
+- **Public Constants Exposure**: Made all size estimation and threshold constants public for advanced usage and testing
+- **Centralized Thresholds**: Unified pooling decision thresholds across Response.php and JsonBufferPool to eliminate duplication
+- **Test Maintainability**: Updated all tests to use constants instead of hardcoded values
+- **Documentation Updates**: 
+  - Added comprehensive [Constants Reference Guide](docs/technical/json/CONSTANTS_REFERENCE.md)
+  - Updated performance guide with recent improvements
+  - Enhanced error handling documentation
+
 ## [1.1.0] - 2025-07-09
 
 ### 🚀 **High-Performance Edition**

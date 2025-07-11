@@ -1,6 +1,6 @@
 {
     "name": "pivotphp/core",
-    "description": "PivotPHP Core - A lightweight, fast, and secure microframework inspired by Express.js for building modern PHP web applications and APIs",
+    "description": "PivotPHP Core v1.1.1 - High-performance microframework with revolutionary JSON optimization (101k+ ops/sec), PSR-7 hybrid support, and Express.js-inspired API",
     "type": "library",
     "keywords": [
         "php",
@@ -18,9 +18,13 @@
         "swagger",
         "authentication",
         "jwt",
-        "auth"
+        "auth",
+        "json",
+        "pooling",
+        "performance",
+        "optimization"
     ],
-    "homepage": "https://github.com/CAFernandes/pivotphp-core",
+    "homepage": "https://github.com/PivotPHP/pivotphp-core",
     "license": "MIT",
     "authors": [
         {
@@ -29,7 +33,7 @@
         },
         {
             "name": "PivotPHP Contributors",
-            "homepage": "https://github.com/CAFernandes/pivotphp-core/contributors"
+            "homepage": "https://github.com/PivotPHP/pivotphp-core/contributors"
         }
     ],
     "require": {
@@ -155,10 +159,10 @@
         ]
     },
     "support": {
-        "issues": "https://github.com/CAFernandes/pivotphp-core/issues",
-        "source": "https://github.com/CAFernandes/pivotphp-core",
-        "docs": "https://github.com/CAFernandes/pivotphp-core/blob/main/README.md",
-        "wiki": "https://github.com/CAFernandes/pivotphp-core/wiki"
+        "issues": "https://github.com/PivotPHP/pivotphp-core/issues",
+        "source": "https://github.com/PivotPHP/pivotphp-core",
+        "docs": "https://github.com/PivotPHP/pivotphp-core/blob/main/README.md",
+        "wiki": "https://github.com/PivotPHP/pivotphp-core/wiki"
     },
     "funding": [
         {

@@ -336,7 +336,7 @@ $app->group('/api/v1', function() use ($app) {
         $app->use(new RateLimitMiddleware(['maxRequests' => 100]));
         $app->use(new AuditMiddleware()); // Log de auditoria
 
-        $app->get('/users', 'AdminController@getUsers');
+        $app->get('/users', [AdminController::class, 'getUsers']);
     });
 });
 ```

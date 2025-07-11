@@ -62,13 +62,13 @@ Comparando requisições diretas ao banco vs através do PivotPHP:
 Performance medida em requisições por segundo para APIs completas:
 
 ```
-GET /api/users/{id} (Simple SELECT)
+GET /api/users/:id (Simple SELECT)
 ├─ SQLite:     7,812 req/s
 ├─ MariaDB:    4,234 req/s
 ├─ MySQL:      4,123 req/s
 └─ PostgreSQL: 3,567 req/s
 
-GET /api/users/{id}/posts (JOIN)
+GET /api/users/:id/posts (JOIN)
 ├─ SQLite:     3,123 req/s
 ├─ PostgreSQL: 1,945 req/s
 ├─ MariaDB:    1,789 req/s

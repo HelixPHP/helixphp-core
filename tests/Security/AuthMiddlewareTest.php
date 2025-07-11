@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Security;
+namespace PivotPHP\Core\Tests\Security;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Http\Psr15\Middleware\AuthMiddleware;
@@ -10,8 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use PivotPHP\Core\Http\Psr7\Response;
 use PivotPHP\Core\Http\Psr7\ServerRequest;
-use Tests\Security\MockResponse;
-use Tests\Security\DummyHandler;
+use PivotPHP\Core\Tests\Security\MockResponse;
+use PivotPHP\Core\Tests\Security\DummyHandler;
 
 class AuthMiddlewareTest extends TestCase
 {
