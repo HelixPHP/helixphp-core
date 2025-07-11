@@ -281,10 +281,13 @@ class JsonBufferPool
     {
         // Validate 'max_pool_size'
         if (isset($config['max_pool_size'])) {
-            if (!is_int($config['max_pool_size']) || $config['max_pool_size'] <= 0) {
+            if (!is_int($config['max_pool_size'])) {
                 throw new \InvalidArgumentException(
-                    "'max_pool_size' must be a positive integer, got: " . gettype($config['max_pool_size'])
+                    "'max_pool_size' must be an integer, got: " . gettype($config['max_pool_size'])
                 );
+            }
+            if ($config['max_pool_size'] <= 0) {
+                throw new \InvalidArgumentException("'max_pool_size' must be a positive integer");
             }
             if ($config['max_pool_size'] > 1000) {
                 throw new \InvalidArgumentException(
@@ -295,10 +298,13 @@ class JsonBufferPool
 
         // Validate 'default_capacity'
         if (isset($config['default_capacity'])) {
-            if (!is_int($config['default_capacity']) || $config['default_capacity'] <= 0) {
+            if (!is_int($config['default_capacity'])) {
                 throw new \InvalidArgumentException(
-                    "'default_capacity' must be a positive integer, got: " . gettype($config['default_capacity'])
+                    "'default_capacity' must be an integer, got: " . gettype($config['default_capacity'])
                 );
+            }
+            if ($config['default_capacity'] <= 0) {
+                throw new \InvalidArgumentException("'default_capacity' must be a positive integer");
             }
             if ($config['default_capacity'] > 1024 * 1024) { // 1MB limit
                 throw new \InvalidArgumentException(
@@ -324,9 +330,14 @@ class JsonBufferPool
                     throw new \InvalidArgumentException("Size category names must be non-empty strings");
                 }
 
-                if (!is_int($capacity) || $capacity <= 0) {
+                if (!is_int($capacity)) {
                     throw new \InvalidArgumentException(
-                        "Size category '{$name}' must have a positive integer capacity, got: " . gettype($capacity)
+                        "Size category '{$name}' must have an integer capacity, got: " . gettype($capacity)
+                    );
+                }
+                if ($capacity <= 0) {
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have a positive integer capacity"
                     );
                 }
 
