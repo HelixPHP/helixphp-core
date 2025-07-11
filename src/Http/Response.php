@@ -11,68 +11,68 @@ use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
 
 /**
- * Classe Response híbrida que implementa PSR-7 mantendo compatibilidade Express.js
+ * Hybrid Response class that implements PSR-7 while maintaining Express.js compatibility
  *
- * Esta classe oferece suporte completo a PSR-7 (ResponseInterface)
- * enquanto mantém todos os métodos de conveniência do estilo Express.js
- * para total compatibilidade com código existente.
+ * This class offers complete PSR-7 (ResponseInterface) support
+ * while maintaining all Express.js style convenience methods
+ * for full backward compatibility with existing code.
  */
 class Response implements ResponseInterface
 {
     /**
-     * Flags para encoding JSON consistente
+     * Flags for consistent JSON encoding
      */
     private const JSON_ENCODE_FLAGS = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
 
     /**
-     * Instância PSR-7 interna (lazy loaded)
+     * Internal PSR-7 instance (lazy loaded)
      */
     private ?ResponseInterface $psr7Response = null;
 
     /**
-     * Código de status HTTP.
+     * HTTP status code.
      */
     private int $statusCode = 200;
 
     /**
-     * Cabeçalhos da resposta.
+     * Response headers.
      *
      * @var array<string, mixed>
      */
     private array $headers = [];
 
     /**
-     * Corpo da resposta.
+     * Response body.
      */
     private string $body = '';
 
     /**
-     * Indica se a resposta está sendo enviada como stream.
+     * Indicates if the response is being sent as stream.
      */
     private bool $isStreaming = false;
 
     /**
-     * Buffer size para streaming (em bytes).
+     * Buffer size for streaming (in bytes).
      */
     private int $streamBufferSize = 8192;
 
     /**
-     * Indica se está em modo teste (não faz echo direto).
+     * Indicates if in test mode (does not echo directly).
      */
     private bool $testMode = false;
 
     /**
-     * Indica se a resposta já foi enviada.
+     * Indicates if the response has already been sent.
      */
     private bool $sent = false;
 
     /**
-     * Indica se o controle de emissão automática está desabilitado.
+     * Indicates if automatic emission control is disabled.
      */
     private bool $disableAutoEmit = false;
 
     /**
-     * Construtor da classe Response.
+     * Response class constructor.
      */
     public function __construct()
     {
@@ -774,24 +774,24 @@ class Response implements ResponseInterface
     }
 
     /**
-     * Determina se deve usar pooling para JSON
+     * Determines if JSON pooling should be used for the given data
      */
     private function shouldUseJsonPooling(mixed $data): bool
     {
-        // Usar pooling para arrays/objetos médios e grandes
+        // Use pooling for medium and large arrays/objects
         if (is_array($data)) {
             $count = count($data);
-            return $count >= 10; // Arrays com 10+ elementos
+            return $count >= JsonBufferPool::POOLING_ARRAY_THRESHOLD;
         }
 
         if (is_object($data)) {
             $vars = get_object_vars($data);
-            return $vars && count($vars) >= 5; // Objetos com 5+ propriedades
+            return $vars && count($vars) >= JsonBufferPool::POOLING_OBJECT_THRESHOLD;
         }
 
-        // Usar pooling para strings longas
+        // Use pooling for long strings
         if (is_string($data)) {
-            return strlen($data) > 1024; // Strings > 1KB
+            return strlen($data) > JsonBufferPool::POOLING_STRING_THRESHOLD;
         }
 
         return false;

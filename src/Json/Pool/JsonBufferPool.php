@@ -41,6 +41,11 @@ class JsonBufferPool
     private const MIN_LARGE_BUFFER_SIZE = 65536;     // Minimum size for very large buffers (64KB)
     private const BUFFER_SIZE_MULTIPLIER = 2;        // Multiplier for buffer size calculation
 
+    // Pooling decision thresholds (for determining when to use pooled encoding)
+    public const POOLING_ARRAY_THRESHOLD = 10;       // Arrays with 10+ elements use pooling
+    public const POOLING_OBJECT_THRESHOLD = 5;       // Objects with 5+ properties use pooling
+    public const POOLING_STRING_THRESHOLD = 1024;    // Strings longer than 1KB use pooling
+
     /**
      * Buffer pools organized by capacity
      */
