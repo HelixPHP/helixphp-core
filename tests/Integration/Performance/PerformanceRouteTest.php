@@ -178,7 +178,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('small', $body['size']);
         $this->assertEquals(10, $body['count']);
@@ -198,7 +199,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('medium', $body['size']);
         $this->assertEquals(100, $body['count']);
@@ -218,7 +220,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('large', $body['size']);
         $this->assertEquals(1000, $body['count']);
@@ -238,7 +241,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(400, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertArrayHasKey('error', $body);
         $this->assertEquals('Invalid size parameter', $body['error']);
@@ -255,7 +259,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('memory', $body['type']);
         $this->assertArrayHasKey('current_usage_mb', $body);
@@ -275,7 +280,8 @@ class PerformanceRouteTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('time', $body['type']);
         $this->assertArrayHasKey('execution_time_ms', $body);
@@ -297,7 +303,8 @@ class PerformanceRouteTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         // Verify the route was matched and parameter extracted correctly
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('small', $body['size']);
     }
 
@@ -312,7 +319,8 @@ class PerformanceRouteTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString('application/json', $response->getHeaderLine('Content-Type'));
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
 
         // Verify required fields

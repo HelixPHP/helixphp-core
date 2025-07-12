@@ -12,7 +12,7 @@ use stdClass;
 
 /**
  * Test suite for Container class
- * 
+ *
  * Tests dependency injection, singleton management, aliases,
  * tagging, auto-wiring, and all container functionality.
  */
@@ -59,11 +59,11 @@ class ContainerTest extends TestCase
     public function testContainerRegistersItselfOnCreation(): void
     {
         $container = Container::getInstance();
-        
+
         // Container should register itself under its class name
         $resolved = $container->make(Container::class);
         $this->assertSame($container, $resolved);
-        
+
         // Container should also have 'container' alias
         $resolvedByAlias = $container->make('container');
         $this->assertSame($container, $resolvedByAlias);
@@ -91,11 +91,14 @@ class ContainerTest extends TestCase
 
     public function testBindWithClosure(): void
     {
-        $this->container->bind('test_closure', function () {
-            $obj = new stdClass();
-            $obj->created_by = 'closure';
-            return $obj;
-        });
+        $this->container->bind(
+            'test_closure',
+            function () {
+                $obj = new stdClass();
+                $obj->created_by = 'closure';
+                return $obj;
+            }
+        );
 
         $instance = $this->container->make('test_closure');
         $this->assertInstanceOf(stdClass::class, $instance);
@@ -105,7 +108,7 @@ class ContainerTest extends TestCase
     public function testBindCreateNewInstanceEachTime(): void
     {
         $this->container->bind('new_each_time', stdClass::class);
-        
+
         $instance1 = $this->container->make('new_each_time');
         $instance2 = $this->container->make('new_each_time');
 
@@ -121,7 +124,7 @@ class ContainerTest extends TestCase
     public function testSingletonReturnsSameInstance(): void
     {
         $this->container->singleton('singleton_test', stdClass::class);
-        
+
         $instance1 = $this->container->make('singleton_test');
         $instance2 = $this->container->make('singleton_test');
 
@@ -130,11 +133,14 @@ class ContainerTest extends TestCase
 
     public function testSingletonWithClosure(): void
     {
-        $this->container->singleton('singleton_closure', function () {
-            $obj = new stdClass();
-            $obj->id = uniqid();
-            return $obj;
-        });
+        $this->container->singleton(
+            'singleton_closure',
+            function () {
+                $obj = new stdClass();
+                $obj->id = uniqid();
+                return $obj;
+            }
+        );
 
         $instance1 = $this->container->make('singleton_closure');
         $instance2 = $this->container->make('singleton_closure');
@@ -146,7 +152,7 @@ class ContainerTest extends TestCase
     public function testBindWithSingletonFlag(): void
     {
         $this->container->bind('flagged_singleton', stdClass::class, true);
-        
+
         $instance1 = $this->container->make('flagged_singleton');
         $instance2 = $this->container->make('flagged_singleton');
 
@@ -180,7 +186,7 @@ class ContainerTest extends TestCase
     public function testInstanceRegistrationWithArray(): void
     {
         $config = ['database' => 'mysql', 'debug' => true];
-        
+
         $this->container->instance('app_config', $config);
         $resolved = $this->container->make('app_config');
 
@@ -259,7 +265,7 @@ class ContainerTest extends TestCase
 
         $tagged = $this->container->tagged('cache');
         $this->assertCount(3, $tagged);
-        
+
         foreach ($tagged as $service) {
             $this->assertInstanceOf(stdClass::class, $service);
         }
@@ -304,7 +310,7 @@ class ContainerTest extends TestCase
     public function testAutoWiringWithDependencies(): void
     {
         $instance = $this->container->make(ClassWithDependencies::class);
-        
+
         $this->assertInstanceOf(ClassWithDependencies::class, $instance);
         $this->assertInstanceOf(SimpleClassWithoutDependencies::class, $instance->dependency);
     }
@@ -313,7 +319,7 @@ class ContainerTest extends TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Circular dependency detected');
-        
+
         $this->container->make(CircularDependencyA::class);
     }
 
@@ -324,9 +330,9 @@ class ContainerTest extends TestCase
     public function testMakeWithParameters(): void
     {
         $this->container->bind(ClassWithParameters::class);
-        
+
         $instance = $this->container->make(ClassWithParameters::class, ['param' => 'test_value']);
-        
+
         $this->assertInstanceOf(ClassWithParameters::class, $instance);
         $this->assertEquals('test_value', $instance->param);
     }
@@ -339,14 +345,14 @@ class ContainerTest extends TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Class NonExistentClass not found');
-        
+
         $this->container->make('NonExistentClass');
     }
 
     public function testMakeThrowsExceptionForUnresolvableInterface(): void
     {
         $this->expectException(Exception::class);
-        
+
         $this->container->make(UnresolvableInterface::class);
     }
 
@@ -362,7 +368,7 @@ class ContainerTest extends TestCase
         }
 
         $initialMemory = memory_get_usage();
-        
+
         // Resolve all services
         for ($i = 0; $i < 100; $i++) {
             $this->container->make("service_{$i}");
@@ -400,7 +406,7 @@ class ContainerTest extends TestCase
     public function testBoundMethodReturnsTrueForBoundServices(): void
     {
         $this->container->bind('test_service', stdClass::class);
-        
+
         $this->assertTrue($this->container->bound('test_service'));
         $this->assertFalse($this->container->bound('non_existent_service'));
     }
@@ -409,7 +415,7 @@ class ContainerTest extends TestCase
     {
         $this->container->bind('original_service', stdClass::class);
         $this->container->alias('original_service', 'service_alias');
-        
+
         $this->assertTrue($this->container->bound('original_service'));
         $this->assertTrue($this->container->bound('service_alias'));
     }
@@ -418,7 +424,7 @@ class ContainerTest extends TestCase
     {
         $this->container->bind('forgettable_service', stdClass::class);
         $this->assertTrue($this->container->bound('forgettable_service'));
-        
+
         $this->container->forget('forgettable_service');
         $this->assertFalse($this->container->bound('forgettable_service'));
     }
@@ -427,11 +433,11 @@ class ContainerTest extends TestCase
     {
         $this->container->singleton('forgettable_singleton', stdClass::class);
         $instance1 = $this->container->make('forgettable_singleton');
-        
+
         $this->container->forget('forgettable_singleton');
         $this->container->singleton('forgettable_singleton', stdClass::class);
         $instance2 = $this->container->make('forgettable_singleton');
-        
+
         $this->assertNotSame($instance1, $instance2);
     }
 
@@ -440,13 +446,13 @@ class ContainerTest extends TestCase
         $this->container->bind('service1', stdClass::class);
         $this->container->singleton('service2', stdClass::class);
         $this->container->instance('service3', new stdClass());
-        
+
         $this->assertTrue($this->container->bound('service1'));
         $this->assertTrue($this->container->bound('service2'));
         $this->assertTrue($this->container->bound('service3'));
-        
+
         $this->container->flush();
-        
+
         $this->assertFalse($this->container->bound('service1'));
         $this->assertFalse($this->container->bound('service2'));
         $this->assertFalse($this->container->bound('service3'));
@@ -455,20 +461,25 @@ class ContainerTest extends TestCase
     public function testCallMethodInvokesCallableWithDependencyInjection(): void
     {
         $this->container->bind(SimpleClassWithoutDependencies::class);
-        
-        $result = $this->container->call(function (SimpleClassWithoutDependencies $dependency) {
-            return $dependency->value;
-        });
-        
+
+        $result = $this->container->call(
+            function (SimpleClassWithoutDependencies $dependency) {
+                return $dependency->value;
+            }
+        );
+
         $this->assertEquals('simple', $result);
     }
 
     public function testCallMethodWithParameters(): void
     {
-        $result = $this->container->call(function ($param1, $param2) {
-            return $param1 . '_' . $param2;
-        }, ['param1' => 'hello', 'param2' => 'world']);
-        
+        $result = $this->container->call(
+            function ($param1, $param2) {
+                return $param1 . '_' . $param2;
+            },
+            ['param1' => 'hello', 'param2' => 'world']
+        );
+
         $this->assertEquals('hello_world', $result);
     }
 
@@ -478,9 +489,9 @@ class ContainerTest extends TestCase
         $this->container->singleton('debug_singleton', stdClass::class);
         $this->container->alias('debug_service', 'debug_alias');
         $this->container->tag('debug_tag', 'debug_service');
-        
+
         $debugInfo = $this->container->getDebugInfo();
-        
+
         $this->assertIsArray($debugInfo);
         $this->assertArrayHasKey('bindings', $debugInfo);
         $this->assertArrayHasKey('instances', $debugInfo);
@@ -498,9 +509,9 @@ class ContainerTest extends TestCase
         $this->container->bind(ServiceInterface::class, ConcreteService::class);
         $this->container->singleton(ConfigService::class);
         $this->container->bind(ComplexService::class);
-        
+
         $service = $this->container->make(ComplexService::class);
-        
+
         $this->assertInstanceOf(ComplexService::class, $service);
         $this->assertInstanceOf(ConcreteService::class, $service->serviceInterface);
         $this->assertInstanceOf(ConfigService::class, $service->configService);
@@ -509,38 +520,38 @@ class ContainerTest extends TestCase
     public function testFullContainerWorkflow(): void
     {
         // Test a complete workflow with all container features
-        
+
         // 1. Bind services
         $this->container->bind('logger', TestLogger::class);
         $this->container->singleton('config', TestConfig::class);
         $this->container->bind('processor', TestProcessor::class);
-        
+
         // 2. Create aliases
         $this->container->alias('config', 'app.config');
         $this->container->alias('logger', 'app.logger');
-        
+
         // 3. Tag services
         $this->container->tag(['core', 'services'], 'logger');
         $this->container->tag(['core', 'services'], 'config');
         $this->container->tag('processing', 'processor');
-        
+
         // 4. Resolve and verify
         $processor = $this->container->make('processor');
         $this->assertInstanceOf(TestProcessor::class, $processor);
-        
+
         // 5. Verify singleton behavior
         $config1 = $this->container->make('config');
         $config2 = $this->container->make('app.config');
         $this->assertSame($config1, $config2);
-        
+
         // 6. Verify tagging
         $coreServices = $this->container->tagged('core');
         $this->assertCount(2, $coreServices);
-        
+
         // 7. Test container introspection
         $this->assertTrue($this->container->bound('logger'));
         $this->assertTrue($this->container->bound('app.logger'));
-        
+
         $debugInfo = $this->container->getDebugInfo();
         $this->assertNotEmpty($debugInfo['bindings']);
         $this->assertNotEmpty($debugInfo['aliases']);
@@ -579,7 +590,7 @@ class ClassWithParameters
 
 class CircularDependencyA
 {
-    public function __construct(CircularDependencyB $b)
+    public function __construct(CircularDependencyB $_)
     {
         // Intentional circular dependency for testing
     }
@@ -587,7 +598,7 @@ class CircularDependencyA
 
 class CircularDependencyB
 {
-    public function __construct(CircularDependencyA $a)
+    public function __construct(CircularDependencyA $_)
     {
         // Intentional circular dependency for testing
     }
@@ -630,7 +641,7 @@ class ComplexService
 
 class TestLogger
 {
-    public function log(string $message): void
+    public function log(string $_): void
     {
         // Test logger implementation
     }

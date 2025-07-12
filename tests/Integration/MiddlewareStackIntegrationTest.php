@@ -131,7 +131,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $this->assertTrue($errorHandled);
         $this->assertEquals(500, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('Middleware error', $body['error']);
     }
 
@@ -187,7 +188,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $this->assertNotEmpty($response->getHeaderLine('X-Request-ID'));
 
         // Check response body
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals(123, $body['user_id']);
         $this->assertTrue($body['authenticated']);
     }
@@ -319,7 +321,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $this->assertStringContainsString('ms', $processingTime);
 
         // Verify async data was processed
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('processed', $body['async_data']);
 
         // Verify timing was recorded
@@ -342,8 +345,9 @@ class MiddlewareStackIntegrationTest extends TestCase
             );
         }
 
+        $uniquePath = '/performance-test-' . substr(md5(__METHOD__), 0, 8);
         $this->app->get(
-            '/performance-test',
+            $uniquePath,
             function ($req, $res) {
                 $executed = [];
                 for ($i = 0; $i < 10; $i++) {
@@ -364,7 +368,7 @@ class MiddlewareStackIntegrationTest extends TestCase
         for ($j = 0; $j < $iterations; $j++) {
             $start = microtime(true);
 
-            $request = new Request('GET', '/performance-test', '/performance-test');
+            $request = new Request('GET', $uniquePath, $uniquePath);
             $response = $this->app->handle($request);
 
             $end = microtime(true);
@@ -372,7 +376,10 @@ class MiddlewareStackIntegrationTest extends TestCase
 
             $this->assertEquals(200, $response->getStatusCode());
 
-            $body = json_decode($response->getBody()->__toString(), true);
+            $responseBody = $response->getBody();
+            $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
+
+            $this->assertArrayHasKey('executed_middleware', $body, 'Response missing executed_middleware key');
             $this->assertCount(10, $body['executed_middleware']);
         }
 
@@ -435,7 +442,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $getResponse = $this->app->handle($getRequest);
 
         $this->assertEquals(200, $getResponse->getStatusCode());
-        $getBody = json_decode($getResponse->getBody()->__toString(), true);
+        $getResponseBody = $getResponse->getBody();
+        $getBody = json_decode(is_string($getResponseBody) ? $getResponseBody : $getResponseBody->__toString(), true);
         $this->assertEquals('GET', $getBody['method']);
 
         // Test POST
@@ -443,7 +451,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $postResponse = $this->app->handle($postRequest);
 
         $this->assertEquals(200, $postResponse->getStatusCode());
-        $postBody = json_decode($postResponse->getBody()->__toString(), true);
+        $postResponseBody = $postResponse->getBody();
+        $postBody = json_decode(is_string($postResponseBody) ? $postResponseBody : $postResponseBody->__toString(), true);
         $this->assertEquals('POST', $postBody['method']);
         $this->assertTrue($postBody['validated']);
 
@@ -452,7 +461,8 @@ class MiddlewareStackIntegrationTest extends TestCase
         $putResponse = $this->app->handle($putRequest);
 
         $this->assertEquals(200, $putResponse->getStatusCode());
-        $putBody = json_decode($putResponse->getBody()->__toString(), true);
+        $putResponseBody = $putResponse->getBody();
+        $putBody = json_decode(is_string($putResponseBody) ? $putResponseBody : $putResponseBody->__toString(), true);
         $this->assertEquals('PUT', $putBody['method']);
 
         // Verify method logging
@@ -600,7 +610,8 @@ class MiddlewareStackIntegrationTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $context = $body['context'];
 
         $this->assertArrayHasKey('request_id', $context);

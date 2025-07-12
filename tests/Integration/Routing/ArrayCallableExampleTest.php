@@ -48,7 +48,8 @@ class ArrayCallableExampleTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('ok', $body['status']);
         $this->assertIsInt($body['timestamp']);
         $this->assertIsNumeric($body['memory_usage_mb']);
@@ -65,7 +66,8 @@ class ArrayCallableExampleTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('1.0', $body['api_version']);
         $this->assertEquals('PivotPHP', $body['framework']);
         $this->assertEquals(Application::VERSION, $body['version']);
@@ -82,7 +84,8 @@ class ArrayCallableExampleTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertEquals('12345', $body['user_id']);
         $this->assertEquals('User 12345', $body['name']);
         $this->assertTrue($body['active']);

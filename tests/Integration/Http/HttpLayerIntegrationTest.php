@@ -558,15 +558,17 @@ class HttpLayerIntegrationTest extends IntegrationTestCase
     {
         $initialMemory = memory_get_usage(true);
 
-        // Create multiple routes with different response types
+        // Create multiple routes with different response types (unique paths)
+        $uniqueId = substr(md5(__METHOD__), 0, 8);
         for ($i = 0; $i < 10; $i++) {
+            $currentIndex = $i; // Create explicit copy to avoid closure issues
             $this->app->get(
-                "/memory-test-{$i}",
-                function ($req, $res) use ($i) {
+                "/memory-test-{$uniqueId}-{$i}",
+                function ($req, $res) use ($currentIndex) {
                     return $res->json(
                         [
-                            'iteration' => $i,
-                            'data' => array_fill(0, 10, "test_data_{$i}"),
+                            'iteration' => $currentIndex,
+                            'data' => array_fill(0, 10, "test_data_{$currentIndex}"),
                             'timestamp' => microtime(true),
                             'memory' => memory_get_usage(true)
                         ]
@@ -578,13 +580,18 @@ class HttpLayerIntegrationTest extends IntegrationTestCase
         // Execute requests
         $responses = [];
         for ($i = 0; $i < 10; $i++) {
-            $responses[] = $this->simulateRequest('GET', "/memory-test-{$i}");
+            $responses[] = $this->simulateRequest('GET', "/memory-test-{$uniqueId}-{$i}");
         }
 
         // Validate all responses
         foreach ($responses as $i => $response) {
             $this->assertEquals(200, $response->getStatusCode());
             $data = $response->getJsonData();
+
+            // Verify the response structure and handle missing keys
+            $this->assertArrayHasKey('iteration', $data, "Response $i missing 'iteration' key");
+            $this->assertArrayHasKey('data', $data, "Response $i missing 'data' key");
+
             $this->assertEquals($i, $data['iteration']);
             $this->assertCount(10, $data['data']);
         }

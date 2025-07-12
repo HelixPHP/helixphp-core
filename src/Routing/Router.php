@@ -390,11 +390,8 @@ class Router
             return null;
         }
 
-        // Tenta validar e fazer match do pattern
-        if (preg_match($pattern, '') === false) {
-            throw new InvalidArgumentException("Invalid regex pattern: $pattern");
-        }
-
+        // Pattern validation is now done during route registration, not here
+        // This optimization removes the expensive validation on every match
         if (preg_match($pattern, $path, $matches)) {
             // Extrai os parâmetros correspondentes se houver
             $parameters = $route['parameters'] ?? [];

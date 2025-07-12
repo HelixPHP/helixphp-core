@@ -110,7 +110,7 @@ class PerformanceMonitor
         $now = microtime(true);
 
         // Calculate metrics
-        $latency = ($now - $start['start_time']) * 1000; // ms
+        $latency = max(0, ($now - $start['start_time']) * 1000); // ms, ensure non-negative
         $memoryDelta = memory_get_usage(true) - $start['start_memory'];
 
         // Record request

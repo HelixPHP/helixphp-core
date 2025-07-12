@@ -35,14 +35,21 @@ class FileCache implements CacheInterface
             return $default;
         }
 
-        $data = unserialize($fileContents);
-
-        if (!is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
+        try {
+            $data = unserialize($fileContents);
+        } catch (\Throwable $e) {
+            // Handle corrupted/invalid serialized data (catch all exceptions)
             $this->delete($key);
             return $default;
         }
 
-        if ($data['expires'] && time() > $data['expires']) {
+        // Check if unserialize returned false (corrupted data) or invalid structure
+        if ($data === false || !is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
+            $this->delete($key);
+            return $default;
+        }
+
+        if ($data['expires'] && time() >= $data['expires']) {
             $this->delete($key);
             return $default;
         }
@@ -103,7 +110,36 @@ class FileCache implements CacheInterface
      */
     public function has(string $key): bool
     {
-        return $this->get($key) !== null;
+        $file = $this->getFilePath($key);
+
+        if (!file_exists($file)) {
+            return false;
+        }
+
+        $fileContents = file_get_contents($file);
+        if ($fileContents === false) {
+            return false;
+        }
+
+        try {
+            $data = unserialize($fileContents);
+        } catch (\Throwable $e) {
+            $this->delete($key);
+            return false;
+        }
+
+        // Check if unserialize returned false (corrupted data) or invalid structure
+        if ($data === false || !is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
+            $this->delete($key);
+            return false;
+        }
+
+        if ($data['expires'] && time() >= $data['expires']) {
+            $this->delete($key);
+            return false;
+        }
+
+        return true;
     }
 
     private function getFilePath(string $key): string

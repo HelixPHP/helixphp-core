@@ -388,11 +388,11 @@ class Container
     /**
      * Executa um callback com dependências resolvidas.
      *
-     * @param  callable     $callback   Callback a ser executado
+     * @param  callable|array<mixed>     $callback   Callback a ser executado
      * @param  array<mixed> $parameters Parâmetros adicionais
      * @return mixed
      */
-    public function call(callable $callback, array $parameters = [])
+    public function call($callback, array $parameters = [])
     {
         if (is_string($callback) && strpos($callback, '::') !== false) {
             $callback = explode('::', $callback);
@@ -406,11 +406,12 @@ class Container
             }
 
             $callback = [$class, $method];
-            
+
             // Resolve dependencies for method
             try {
                 $reflection = new \ReflectionMethod($class, $method);
                 $dependencies = $this->resolveDependencies($reflection->getParameters(), $parameters);
+                /** @var callable $callback */
                 return call_user_func($callback, ...$dependencies);
             } catch (\ReflectionException $e) {
                 throw new Exception("Method {$method} not found: " . $e->getMessage());
@@ -418,7 +419,7 @@ class Container
         }
 
         // Handle closures and functions
-        if ($callback instanceof \Closure || is_string($callback)) {
+        if ($callback instanceof \Closure || (is_string($callback) && is_callable($callback))) {
             try {
                 $reflection = new \ReflectionFunction($callback);
                 $dependencies = $this->resolveDependencies($reflection->getParameters(), $parameters);
@@ -428,9 +429,8 @@ class Container
             }
         }
 
-        /**
- * @phpstan-ignore-next-line
-*/
+        // Fallback for other callable types
+        /** @var callable $callback */
         return call_user_func($callback, ...$parameters);
     }
 

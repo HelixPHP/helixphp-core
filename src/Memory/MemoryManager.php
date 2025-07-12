@@ -499,9 +499,7 @@ class MemoryManager
             }
         }
 
-        if ($cleaned > 0) {
-            error_log("Cleaned $cleaned expired tracked objects");
-        }
+        // Cleaned expired objects - logging removed for clean test output
     }
 
     /**
@@ -620,13 +618,6 @@ class MemoryManager
         // Final GC
         gc_collect_cycles();
 
-        // Log final metrics
-        error_log(
-            sprintf(
-                "Memory manager shutdown - Total GC runs: %d, Total collected: %d",
-                $this->metrics['gc_runs'],
-                $this->metrics['gc_collected']
-            )
-        );
+        // Final metrics - logging removed for clean test output
     }
 }

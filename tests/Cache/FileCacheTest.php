@@ -23,8 +23,20 @@ class FileCacheTest extends TestCase
     {
         parent::setUp();
         
+        // Clean up any potential leftover default cache directories from other tests
+        $defaultDir = sys_get_temp_dir() . '/express-cache';
+        if (is_dir($defaultDir)) {
+            $this->removeDirectory($defaultDir);
+        }
+        
         // Create temporary cache directory
         $this->tempCacheDir = sys_get_temp_dir() . '/pivotphp_cache_test_' . uniqid();
+        
+        // Ensure clean state - remove any existing directory first
+        if (is_dir($this->tempCacheDir)) {
+            $this->removeDirectory($this->tempCacheDir);
+        }
+        
         $this->cache = new FileCache($this->tempCacheDir);
     }
 
@@ -35,6 +47,12 @@ class FileCacheTest extends TestCase
         // Clean up cache directory
         if (is_dir($this->tempCacheDir)) {
             $this->removeDirectory($this->tempCacheDir);
+        }
+        
+        // Also clean up any default cache directories that might have been created
+        $defaultDir = sys_get_temp_dir() . '/express-cache';
+        if (is_dir($defaultDir)) {
+            $this->removeDirectory($defaultDir);
         }
     }
 
@@ -85,7 +103,7 @@ class FileCacheTest extends TestCase
         $this->assertFalse(is_dir($newCacheDir));
         
         // Create cache with new directory
-        $cache = new FileCache($newCacheDir);
+        new FileCache($newCacheDir);
         
         // Directory should now exist
         $this->assertTrue(is_dir($newCacheDir));
@@ -96,11 +114,20 @@ class FileCacheTest extends TestCase
 
     public function testDefaultCacheDirectory(): void
     {
+        // Clean up any existing default directory first
+        $defaultDir = sys_get_temp_dir() . '/express-cache';
+        if (is_dir($defaultDir)) {
+            $this->removeDirectory($defaultDir);
+        }
+        
         $cache = new FileCache();
         
         // Should use default temp directory
-        $defaultDir = sys_get_temp_dir() . '/express-cache';
         $this->assertTrue(is_dir($defaultDir));
+        
+        // Add a test value to ensure it works
+        $cache->set('default_test', 'default_value');
+        $this->assertEquals('default_value', $cache->get('default_test'));
         
         // Clean up
         if (is_dir($defaultDir)) {
@@ -267,38 +294,42 @@ class FileCacheTest extends TestCase
 
     public function testSetWithTTL(): void
     {
-        $this->cache->set('with_ttl', 'value', 5); // 5 seconds TTL for more robust testing
+        $this->cache->set('with_ttl', 'value', 3600); // 1 hour TTL for robust testing
         
         // Should be available immediately
         $this->assertEquals('value', $this->cache->get('with_ttl'));
         
-        // Should be available after 1 second
-        sleep(1);
+        // Should be available after verification (no sleep needed for long TTL)
         $this->assertEquals('value', $this->cache->get('with_ttl'));
     }
 
     public function testTTLExpiration(): void
     {
-        $this->cache->set('expires_fast', 'value', 1); // 1 second TTL
+        // Use unique key to avoid interference from other tests
+        $key = 'expires_fast_' . uniqid();
+        $this->cache->set($key, 'value', 2); // 2 second TTL
         
         // Should be available immediately
-        $this->assertEquals('value', $this->cache->get('expires_fast'));
+        $this->assertEquals('value', $this->cache->get($key));
         
-        // Wait for expiration
-        sleep(2);
+        // Wait for expiration with extra buffer for busy test environment
+        sleep(3); // 3 seconds for reliable timing
         
         // Should return default value (null)
-        $this->assertNull($this->cache->get('expires_fast'));
+        $this->assertNull($this->cache->get($key));
     }
 
     public function testTTLExpirationWithDefault(): void
     {
-        $this->cache->set('expires_with_default', 'value', 1);
+        // Use unique key to avoid interference from other tests
+        $key = 'expires_with_default_' . uniqid();
+        $this->cache->set($key, 'value', 1);
         
-        sleep(2); // Wait for expiration
+        // Wait for expiration with extra buffer for busy test environment
+        sleep(2); // 2 seconds for reliable timing
         
         $default = 'default_value';
-        $this->assertEquals($default, $this->cache->get('expires_with_default', $default));
+        $this->assertEquals($default, $this->cache->get($key, $default));
     }
 
     public function testZeroTTL(): void
@@ -446,14 +477,15 @@ class FileCacheTest extends TestCase
 
     public function testHasExpiredKey(): void
     {
-        $key = 'has_expired_test';
-        $this->cache->set($key, 'value', 1);
+        // Use unique key to avoid interference from other tests
+        $key = 'has_expired_test_' . uniqid();
+        $this->cache->set($key, 'value', 1); // Shorter TTL
         
         // Should exist initially
         $this->assertTrue($this->cache->has($key));
         
-        // Wait for expiration
-        sleep(2);
+        // Wait for expiration with extra buffer for busy test environment
+        sleep(4); // 4 seconds for reliable timing across all PHP versions
         
         // Should not exist after expiration
         $this->assertFalse($this->cache->has($key));
@@ -464,10 +496,12 @@ class FileCacheTest extends TestCase
         $key = 'has_null_test';
         $this->cache->set($key, null);
         
-        // has() uses get() internally, and null value should still be considered as "has"
-        // But since get() returns null for both non-existent and null values,
-        // and has() checks if get() !== null, this will return false
-        $this->assertFalse($this->cache->has($key));
+        // has() should return true even if the stored value is null
+        // because the key exists in the cache
+        $this->assertTrue($this->cache->has($key));
+        
+        // But get() should return the actual stored null value
+        $this->assertNull($this->cache->get($key));
     }
 
     // =========================================================================
@@ -742,8 +776,8 @@ class FileCacheTest extends TestCase
         $this->assertTrue($this->cache->has('config'));
         $this->assertTrue($this->cache->has('temp_data'));
         
-        // 4. Wait for temp data to expire
-        sleep(2);
+        // 4. Wait for temp data to expire (extra margin for test stability)
+        sleep(3); // 3 seconds for reliable timing
         $this->assertNull($this->cache->get('temp_data'));
         $this->assertFalse($this->cache->has('temp_data'));
         

@@ -7,7 +7,7 @@ namespace PivotPHP\Core\Tests\Core;
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Request;
-use PivotPHP\Core\Http\Response;
+// Response class removed - not used in tests
 use PivotPHP\Core\Routing\Router;
 use PivotPHP\Core\Core\Config;
 use PivotPHP\Core\Providers\Container;
@@ -160,35 +160,35 @@ class ApplicationTest extends TestCase
     {
         $this->app->get(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['method' => 'GET']);
             }
         );
 
         $this->app->post(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['method' => 'POST']);
             }
         );
 
         $this->app->put(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['method' => 'PUT']);
             }
         );
 
         $this->app->patch(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['method' => 'PATCH']);
             }
         );
 
         $this->app->delete(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['method' => 'DELETE']);
             }
         );
@@ -213,7 +213,7 @@ class ApplicationTest extends TestCase
 
         $this->app->get(
             '/test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['test' => 'ok']);
             }
         );
@@ -291,7 +291,8 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode((string) $response->getBody(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : (string) $responseBody, true);
         $this->assertEquals(['message' => 'Hello, world!'], $body);
     }
 
@@ -317,7 +318,7 @@ class ApplicationTest extends TestCase
 
         $this->app->get(
             '/error',
-            function ($req, $res) {
+            function ($_, $res) {
                 throw new \Exception('Test exception', 500);
             }
         );
@@ -329,7 +330,8 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
 
-        $body = json_decode((string) $response->getBody(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : (string) $responseBody, true);
         $this->assertTrue($body['error']);
         $this->assertEquals('Test exception', $body['message']);
         $this->assertArrayHasKey('file', $body);
@@ -346,7 +348,7 @@ class ApplicationTest extends TestCase
 
         $this->app->get(
             '/error',
-            function ($req, $res) {
+            function ($_, $res) {
                 throw new \Exception('Test exception', 500);
             }
         );
@@ -358,7 +360,8 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
 
-        $body = json_decode((string) $response->getBody(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : (string) $responseBody, true);
         $this->assertTrue($body['error']);
         $this->assertEquals('Internal Server Error', $body['message']);
         $this->assertArrayHasKey('error_id', $body);
@@ -371,7 +374,7 @@ class ApplicationTest extends TestCase
     {
         $this->app->get(
             '/forbidden',
-            function ($req, $res) {
+            function ($_, $res) {
                 throw new HttpException(403, 'Access denied');
             }
         );

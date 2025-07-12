@@ -88,7 +88,7 @@
         "test:performance": "vendor/bin/phpunit --testsuite=Performance",
         "test:security": "vendor/bin/phpunit --testsuite=Security",
         "test:core": "vendor/bin/phpunit --testsuite=Core",
-        "test:coverage": "vendor/bin/phpunit --coverage-html reports/coverage",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html reports/coverage",
         "test:stress": "vendor/bin/phpunit --testsuite=Stress",
         "test:no-stress": "vendor/bin/phpunit --exclude-group=stress,slow",
         "test:auth": "php test/auth_test.php",

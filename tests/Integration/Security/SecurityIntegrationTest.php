@@ -354,9 +354,10 @@ class SecurityIntegrationTest extends IntegrationTestCase
             };
         };
 
-        // Public route (no auth required)
+        // Public route (no auth required) - unique path
+        $uniquePath = '/public/info-' . substr(md5(__METHOD__), 0, 8);
         $this->app->get(
-            '/public/info',
+            $uniquePath,
             function ($req, $res) {
                 return $res->json(['public' => true, 'message' => 'Public endpoint']);
             }
@@ -393,10 +394,12 @@ class SecurityIntegrationTest extends IntegrationTestCase
         );
 
         // Test public route (no auth needed)
-        $publicResponse = $this->simulateRequest('GET', '/public/info');
+        $publicPath = '/public/info-' . substr(md5(__CLASS__ . '::testAuthorizationAndRoleBasedAccess'), 0, 8);
+        $publicResponse = $this->simulateRequest('GET', $publicPath);
 
         $this->assertEquals(200, $publicResponse->getStatusCode());
         $publicData = $publicResponse->getJsonData();
+        $this->assertArrayHasKey('public', $publicData, 'Public response missing "public" key');
         $this->assertTrue($publicData['public']);
 
         // Test user route without authentication

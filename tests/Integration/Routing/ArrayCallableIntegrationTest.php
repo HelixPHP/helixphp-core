@@ -27,17 +27,18 @@ class ArrayCallableIntegrationTest extends TestCase
 
     private function setupRoutes(): void
     {
-        // Test instance method array callable
-        $this->app->get('/health', [$this->healthController, 'healthCheck']);
+        // Test instance method array callable (unique paths)
+        $uniqueId = substr(md5(__METHOD__), 0, 8);
+        $this->app->get("/health-{$uniqueId}", [$this->healthController, 'healthCheck']);
 
         // Test static method array callable
-        $this->app->get('/health/static', [HealthController::class, 'staticHealthCheck']);
+        $this->app->get("/health-{$uniqueId}/static", [HealthController::class, 'staticHealthCheck']);
 
         // Test with parameters
-        $this->app->get('/users/:userId/health', [$this->healthController, 'getUserHealth']);
+        $this->app->get("/users/:userId/health-{$uniqueId}", [$this->healthController, 'getUserHealth']);
 
         // Test in groups using Router directly
-        $this->app->get('/api/v1/status', [$this->healthController, 'healthCheck']);
+        $this->app->get("/api/v1/status-{$uniqueId}", [$this->healthController, 'healthCheck']);
 
         // Mix with closures for comparison
         $this->app->get(
@@ -53,12 +54,14 @@ class ArrayCallableIntegrationTest extends TestCase
      */
     public function testInstanceMethodArrayCallable(): void
     {
-        $request = new Request('GET', '/health', '/health');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $request = new Request('GET', "/health-{$uniqueId}", "/health-{$uniqueId}");
         $response = $this->app->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('ok', $body['status']);
         $this->assertArrayHasKey('timestamp', $body);
@@ -72,12 +75,14 @@ class ArrayCallableIntegrationTest extends TestCase
      */
     public function testStaticMethodArrayCallable(): void
     {
-        $request = new Request('GET', '/health/static', '/health/static');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $request = new Request('GET', "/health-{$uniqueId}/static", "/health-{$uniqueId}/static");
         $response = $this->app->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('static_ok', $body['status']);
         $this->assertEquals('static', $body['method']);
@@ -88,12 +93,14 @@ class ArrayCallableIntegrationTest extends TestCase
      */
     public function testArrayCallableWithParameters(): void
     {
-        $request = new Request('GET', '/users/:userId/health', '/users/12345/health');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $request = new Request('GET', "/users/:userId/health-{$uniqueId}", "/users/12345/health-{$uniqueId}");
         $response = $this->app->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('12345', $body['user_id']);
         $this->assertEquals('healthy', $body['status']);
@@ -105,12 +112,14 @@ class ArrayCallableIntegrationTest extends TestCase
      */
     public function testArrayCallableInGroup(): void
     {
-        $request = new Request('GET', '/api/v1/status', '/api/v1/status');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $request = new Request('GET', "/api/v1/status-{$uniqueId}", "/api/v1/status-{$uniqueId}");
         $response = $this->app->handle($request);
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $responseBody = $response->getBody();
+        $body = json_decode(is_string($responseBody) ? $responseBody : $responseBody->__toString(), true);
         $this->assertIsArray($body);
         $this->assertEquals('ok', $body['status']);
     }
@@ -125,15 +134,18 @@ class ArrayCallableIntegrationTest extends TestCase
         $closureResponse = $this->app->handle($closureRequest);
 
         // Test array callable
-        $arrayRequest = new Request('GET', '/health', '/health');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $arrayRequest = new Request('GET', "/health-{$uniqueId}", "/health-{$uniqueId}");
         $arrayResponse = $this->app->handle($arrayRequest);
 
         // Both should work
         $this->assertEquals(200, $closureResponse->getStatusCode());
         $this->assertEquals(200, $arrayResponse->getStatusCode());
 
-        $closureBody = json_decode($closureResponse->getBody()->__toString(), true);
-        $arrayBody = json_decode($arrayResponse->getBody()->__toString(), true);
+        $closureResponseBody = $closureResponse->getBody();
+        $closureBody = json_decode(is_string($closureResponseBody) ? $closureResponseBody : $closureResponseBody->__toString(), true);
+        $arrayResponseBody = $arrayResponse->getBody();
+        $arrayBody = json_decode(is_string($arrayResponseBody) ? $arrayResponseBody : $arrayResponseBody->__toString(), true);
 
         $this->assertEquals('closure', $closureBody['type']);
         $this->assertEquals('ok', $arrayBody['status']);
@@ -159,7 +171,8 @@ class ArrayCallableIntegrationTest extends TestCase
 
         // Make multiple requests to array callable route
         for ($i = 0; $i < 10; $i++) {
-            $request = new Request('GET', '/health', '/health');
+            $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+            $request = new Request('GET', "/health-{$uniqueId}", "/health-{$uniqueId}");
             $response = $this->app->handle($request);
             $this->assertEquals(200, $response->getStatusCode());
         }
@@ -188,7 +201,8 @@ class ArrayCallableIntegrationTest extends TestCase
         $this->app->get('/another', [$anotherController, 'testMethod']);
 
         // Test original controller
-        $healthRequest = new Request('GET', '/health', '/health');
+        $uniqueId = substr(md5(__CLASS__ . '::setupRoutes'), 0, 8);
+        $healthRequest = new Request('GET', "/health-{$uniqueId}", "/health-{$uniqueId}");
         $healthResponse = $this->app->handle($healthRequest);
 
         // Test new controller
@@ -198,8 +212,10 @@ class ArrayCallableIntegrationTest extends TestCase
         $this->assertEquals(200, $healthResponse->getStatusCode());
         $this->assertEquals(200, $anotherResponse->getStatusCode());
 
-        $healthBody = json_decode($healthResponse->getBody()->__toString(), true);
-        $anotherBody = json_decode($anotherResponse->getBody()->__toString(), true);
+        $healthResponseBody = $healthResponse->getBody();
+        $healthBody = json_decode(is_string($healthResponseBody) ? $healthResponseBody : $healthResponseBody->__toString(), true);
+        $anotherResponseBody = $anotherResponse->getBody();
+        $anotherBody = json_decode(is_string($anotherResponseBody) ? $anotherResponseBody : $anotherResponseBody->__toString(), true);
 
         $this->assertEquals('ok', $healthBody['status']);
         $this->assertEquals('another', $anotherBody['controller']);
@@ -260,20 +276,23 @@ class ArrayCallableIntegrationTest extends TestCase
         $jsonRequest = new Request('GET', '/json', '/json');
         $jsonResponse = $this->app->handle($jsonRequest);
         $this->assertEquals(200, $jsonResponse->getStatusCode());
-        $jsonBody = json_decode($jsonResponse->getBody()->__toString(), true);
+        $jsonResponseBody = $jsonResponse->getBody();
+        $jsonBody = json_decode(is_string($jsonResponseBody) ? $jsonResponseBody : $jsonResponseBody->__toString(), true);
         $this->assertEquals('json', $jsonBody['type']);
 
         // Test text response
         $textRequest = new Request('GET', '/text', '/text');
         $textResponse = $this->app->handle($textRequest);
         $this->assertEquals(200, $textResponse->getStatusCode());
-        $this->assertEquals('plain text', $textResponse->getBody()->__toString());
+        $textResponseBody = $textResponse->getBody();
+        $this->assertEquals('plain text', is_string($textResponseBody) ? $textResponseBody : $textResponseBody->__toString());
 
         // Test status response
         $statusRequest = new Request('GET', '/status', '/status');
         $statusResponse = $this->app->handle($statusRequest);
         $this->assertEquals(201, $statusResponse->getStatusCode());
-        $statusBody = json_decode($statusResponse->getBody()->__toString(), true);
+        $statusResponseBody = $statusResponse->getBody();
+        $statusBody = json_decode(is_string($statusResponseBody) ? $statusResponseBody : $statusResponseBody->__toString(), true);
         $this->assertTrue($statusBody['created']);
     }
 }

@@ -339,13 +339,13 @@ class Config
     {
         // Clear the key itself
         unset($this->cache[$key]);
-        
+
         // Clear all parent keys and their cached children
         $keyParts = explode('.', $key);
         $parentKey = '';
         foreach ($keyParts as $part) {
             $parentKey .= ($parentKey ? '.' : '') . $part;
-            
+
             // Clear this parent level and all its cached children
             $this->clearCacheForNamespace($parentKey);
         }
