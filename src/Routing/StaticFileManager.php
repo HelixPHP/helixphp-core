@@ -42,7 +42,16 @@ class StaticFileManager
 
     /**
      * Configurações
-     * @var array{enable_cache: bool, max_file_size: int, max_cache_entries: int, allowed_extensions: array<int, string>, security_check: bool, send_etag: bool, send_last_modified: bool, cache_control_max_age: int}
+     * @var array{
+     *     enable_cache: bool,
+     *     max_file_size: int,
+     *     max_cache_entries: int,
+     *     allowed_extensions: array<int, string>,
+     *     security_check: bool,
+     *     send_etag: bool,
+     *     send_last_modified: bool,
+     *     cache_control_max_age: int
+     * }
      */
     private static array $config = [
         'enable_cache' => true,

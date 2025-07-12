@@ -202,7 +202,12 @@ class Container
             if (isset($this->bindings[$abstract])) {
                 $binding = $this->bindings[$abstract];
 
-                if (!is_array($binding) || !array_key_exists('singleton', $binding) || !array_key_exists('instance', $binding) || !array_key_exists('concrete', $binding)) {
+                if (
+                    !is_array($binding) ||
+                    !array_key_exists('singleton', $binding) ||
+                    !array_key_exists('instance', $binding) ||
+                    !array_key_exists('concrete', $binding)
+                ) {
                     throw new Exception("Invalid binding configuration for {$abstract}");
                 }
 

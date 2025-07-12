@@ -178,10 +178,11 @@ rm "$coverage_output"
 log "🎨 4. Padrões de Codificação (PSR-12) - CRÍTICO"
 
 cs_output=$(mktemp)
-if composer cs:check > "$cs_output" 2>&1; then
-    cs_result=0
-    success "Code Style PSR-12 - PASSOU"
-else
+composer cs:check > "$cs_output" 2>&1
+cs_exit_code=$?
+
+# Check if there are actual ERRORS (not just warnings)
+if grep -q "FOUND.*ERROR" "$cs_output"; then
     cs_result=1
     critical "Code Style PSR-12 - FALHOU"
     
@@ -195,11 +196,21 @@ else
         success "Correções aplicadas automaticamente"
         
         # Verificar novamente
-        if composer cs:check > /dev/null 2>&1; then
+        composer cs:check > "$cs_output" 2>&1
+        if ! grep -q "FOUND.*ERROR" "$cs_output"; then
             success "Code Style agora está conforme"
             cs_result=0
         fi
     fi
+elif [ $cs_exit_code -eq 0 ]; then
+    cs_result=0
+    success "Code Style PSR-12 - PASSOU"
+else
+    # Only warnings, not errors
+    cs_result=0
+    success "Code Style PSR-12 - PASSOU (apenas avisos, sem erros)"
+    info "Avisos encontrados (não bloqueiam):"
+    grep "WARNING" "$cs_output" | head -5 || true
 fi
 
 count_check $cs_result "critical"

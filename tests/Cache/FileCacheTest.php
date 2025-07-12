@@ -307,16 +307,22 @@ class FileCacheTest extends TestCase
     {
         // Use unique key to avoid interference from other tests
         $key = 'expires_fast_' . uniqid();
-        $this->cache->set($key, 'value', 2); // 2 second TTL
+        
+        // Clear any existing cache for this key
+        $this->cache->delete($key);
+        
+        // Use a very short TTL that should definitely expire
+        $this->cache->set($key, 'value', 1); // 1 second TTL
         
         // Should be available immediately
         $this->assertEquals('value', $this->cache->get($key));
         
-        // Wait for expiration with extra buffer for busy test environment
-        sleep(3); // 3 seconds for reliable timing
+        // Wait for definite expiration
+        sleep(2); // 2 seconds should definitely expire a 1-second TTL
         
         // Should return default value (null)
-        $this->assertNull($this->cache->get($key));
+        $result = $this->cache->get($key);
+        $this->assertNull($result, 'Cache value should be null after TTL expiration');
     }
 
     public function testTTLExpirationWithDefault(): void
@@ -479,13 +485,17 @@ class FileCacheTest extends TestCase
     {
         // Use unique key to avoid interference from other tests
         $key = 'has_expired_test_' . uniqid();
-        $this->cache->set($key, 'value', 1); // Shorter TTL
+        
+        // Clear any existing cache for this key
+        $this->cache->delete($key);
+        
+        $this->cache->set($key, 'value', 1); // 1 second TTL
         
         // Should exist initially
         $this->assertTrue($this->cache->has($key));
         
-        // Wait for expiration with extra buffer for busy test environment
-        sleep(4); // 4 seconds for reliable timing across all PHP versions
+        // Wait for definite expiration
+        sleep(2); // 2 seconds should definitely expire a 1-second TTL
         
         // Should not exist after expiration
         $this->assertFalse($this->cache->has($key));
@@ -750,6 +760,12 @@ class FileCacheTest extends TestCase
 
     public function testCompleteWorkflow(): void
     {
+        // Clear any existing cache data to avoid interference
+        $this->cache->delete('user_1');
+        $this->cache->delete('user_2');
+        $this->cache->delete('config');
+        $this->cache->delete('temp_data');
+        
         // Test a complete cache workflow
         $testData = [
             'user_1' => ['name' => 'John', 'email' => 'john@example.com'],
@@ -777,7 +793,7 @@ class FileCacheTest extends TestCase
         $this->assertTrue($this->cache->has('temp_data'));
         
         // 4. Wait for temp data to expire (extra margin for test stability)
-        sleep(3); // 3 seconds for reliable timing
+        sleep(2); // 2 seconds should definitely expire a 1-second TTL
         $this->assertNull($this->cache->get('temp_data'));
         $this->assertFalse($this->cache->has('temp_data'));
         
