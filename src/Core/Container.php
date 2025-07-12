@@ -52,6 +52,13 @@ class Container
     private array $tags = [];
 
     /**
+     * Stack para detectar dependências circulares.
+     *
+     * @var array<string>
+     */
+    private array $resolutionStack = [];
+
+    /**
      * Construtor privado para singleton.
      */
     private function __construct()
@@ -177,35 +184,48 @@ class Container
             $abstract = $this->aliases[$abstract];
         }
 
+        // Detectar dependência circular
+        if (in_array($abstract, $this->resolutionStack)) {
+            throw new Exception("Circular dependency detected for {$abstract}");
+        }
+
         // Verificar se já existe uma instância singleton
         if (isset($this->instances[$abstract])) {
             return $this->instances[$abstract];
         }
 
-        // Verificar binding registrado
-        if (isset($this->bindings[$abstract])) {
-            $binding = $this->bindings[$abstract];
+        // Adicionar ao stack de resolução
+        $this->resolutionStack[] = $abstract;
 
-            if (!is_array($binding) || !isset($binding['singleton'], $binding['instance'], $binding['concrete'])) {
-                throw new Exception("Invalid binding configuration for {$abstract}");
+        try {
+            // Verificar binding registrado
+            if (isset($this->bindings[$abstract])) {
+                $binding = $this->bindings[$abstract];
+
+                if (!is_array($binding) || !array_key_exists('singleton', $binding) || !array_key_exists('instance', $binding) || !array_key_exists('concrete', $binding)) {
+                    throw new Exception("Invalid binding configuration for {$abstract}");
+                }
+
+                if ($binding['singleton'] && $binding['instance'] !== null) {
+                    return $binding['instance'];
+                }
+
+                $instance = $this->build($binding['concrete'], $parameters);
+
+                if ($binding['singleton']) {
+                    $binding['instance'] = $instance;
+                    $this->bindings[$abstract] = $binding;
+                }
+
+                return $instance;
             }
 
-            if ($binding['singleton'] && $binding['instance'] !== null) {
-                return $binding['instance'];
-            }
-
-            $instance = $this->build($binding['concrete'], $parameters);
-
-            if ($binding['singleton']) {
-                $binding['instance'] = $instance;
-                $this->bindings[$abstract] = $binding;
-            }
-
-            return $instance;
+            // Tentar resolver automaticamente
+            return $this->build($abstract, $parameters);
+        } finally {
+            // Remover do stack de resolução
+            array_pop($this->resolutionStack);
         }
-
-        // Tentar resolver automaticamente
-        return $this->build($abstract, $parameters);
     }
 
     /**
@@ -386,6 +406,26 @@ class Container
             }
 
             $callback = [$class, $method];
+            
+            // Resolve dependencies for method
+            try {
+                $reflection = new \ReflectionMethod($class, $method);
+                $dependencies = $this->resolveDependencies($reflection->getParameters(), $parameters);
+                return call_user_func($callback, ...$dependencies);
+            } catch (\ReflectionException $e) {
+                throw new Exception("Method {$method} not found: " . $e->getMessage());
+            }
+        }
+
+        // Handle closures and functions
+        if ($callback instanceof \Closure || is_string($callback)) {
+            try {
+                $reflection = new \ReflectionFunction($callback);
+                $dependencies = $this->resolveDependencies($reflection->getParameters(), $parameters);
+                return call_user_func($callback, ...$dependencies);
+            } catch (\ReflectionException $e) {
+                throw new Exception("Function reflection failed: " . $e->getMessage());
+            }
         }
 
         /**
@@ -405,6 +445,7 @@ class Container
         $this->instances = [];
         $this->aliases = [];
         $this->tags = [];
+        $this->resolutionStack = [];
 
         // Re-registrar o container
         $this->instance(Container::class, $this);

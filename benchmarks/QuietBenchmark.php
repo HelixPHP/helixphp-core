@@ -34,16 +34,16 @@ class QuietBenchmark
 
     private function setupRoutes(): void
     {
-        $this->app->get('/test', function ($req, $res) {
-            return $res->json(['status' => 'ok']);
+        $this->app->get('/test', function ($request, $response) {
+            return $response->json(['status' => 'ok']);
         });
 
-        $this->app->post('/api/data', function ($req, $res) {
-            return $res->json(['processed' => true]);
+        $this->app->post('/api/data', function ($request, $response) {
+            return $response->json(['processed' => true]);
         });
 
-        $this->app->get('/api/users/:id', function ($req, $res) {
-            return $res->json(['id' => $req->param('id')]);
+        $this->app->get('/api/users/:id', function ($request, $response) {
+            return $response->json(['id' => $request->param('id')]);
         });
     }
 

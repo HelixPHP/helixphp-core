@@ -76,7 +76,8 @@ class Config
             $config = include $file;
             if (is_array($config)) {
                 $this->items[$name] = $config;
-                unset($this->cache[$name]);
+                // Clear all cache entries that start with this namespace
+                $this->clearCacheForNamespace($name);
             }
         }
 
@@ -152,16 +153,8 @@ class Config
     {
         Arr::set($this->items, $key, $value);
 
-        // Limpar cache relacionado
-        unset($this->cache[$key]);
-
-        // Limpar cache de chaves pais
-        $keyParts = explode('.', $key);
-        $parentKey = '';
-        foreach ($keyParts as $part) {
-            $parentKey .= ($parentKey ? '.' : '') . $part;
-            unset($this->cache[$parentKey]);
-        }
+        // Limpar cache relacionado - the key itself and all parent/child keys
+        $this->clearCacheForKey($key);
 
         return $this;
     }
@@ -318,6 +311,44 @@ class Config
     {
         $this->cache = [];
         return $this;
+    }
+
+    /**
+     * Limpa cache de um namespace específico.
+     *
+     * @param string $namespace Namespace a ser limpo
+     * @return void
+     */
+    private function clearCacheForNamespace(string $namespace): void
+    {
+        $prefix = $namespace . '.';
+        foreach (array_keys($this->cache) as $key) {
+            if ($key === $namespace || strpos($key, $prefix) === 0) {
+                unset($this->cache[$key]);
+            }
+        }
+    }
+
+    /**
+     * Limpa cache relacionado a uma chave específica.
+     *
+     * @param string $key Chave a ser limpa
+     * @return void
+     */
+    private function clearCacheForKey(string $key): void
+    {
+        // Clear the key itself
+        unset($this->cache[$key]);
+        
+        // Clear all parent keys and their cached children
+        $keyParts = explode('.', $key);
+        $parentKey = '';
+        foreach ($keyParts as $part) {
+            $parentKey .= ($parentKey ? '.' : '') . $part;
+            
+            // Clear this parent level and all its cached children
+            $this->clearCacheForNamespace($parentKey);
+        }
     }
 
     /**

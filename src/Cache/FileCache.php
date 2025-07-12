@@ -37,7 +37,7 @@ class FileCache implements CacheInterface
 
         $data = unserialize($fileContents);
 
-        if (!is_array($data) || !isset($data['expires'], $data['value'])) {
+        if (!is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
             $this->delete($key);
             return $default;
         }
@@ -56,7 +56,7 @@ class FileCache implements CacheInterface
     public function set(string $key, $value, ?int $ttl = null): bool
     {
         $file = $this->getFilePath($key);
-        $expires = $ttl ? time() + $ttl : null;
+        $expires = ($ttl !== null && $ttl !== 0) ? time() + $ttl : null;
 
         $data = [
             'value' => $value,

@@ -291,7 +291,7 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $body = json_decode((string) $response->getBody(), true);
         $this->assertEquals(['message' => 'Hello, world!'], $body);
     }
 
@@ -329,7 +329,7 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $body = json_decode((string) $response->getBody(), true);
         $this->assertTrue($body['error']);
         $this->assertEquals('Test exception', $body['message']);
         $this->assertArrayHasKey('file', $body);
@@ -358,7 +358,7 @@ class ApplicationTest extends TestCase
 
         $this->assertEquals(500, $response->getStatusCode());
 
-        $body = json_decode($response->getBody()->__toString(), true);
+        $body = json_decode((string) $response->getBody(), true);
         $this->assertTrue($body['error']);
         $this->assertEquals('Internal Server Error', $body['message']);
         $this->assertArrayHasKey('error_id', $body);
