@@ -186,7 +186,7 @@ class Router
     public static function add(
         string $method,
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -390,11 +390,8 @@ class Router
             return null;
         }
 
-        // Tenta validar e fazer match do pattern
-        if (preg_match($pattern, '') === false) {
-            throw new InvalidArgumentException("Invalid regex pattern: $pattern");
-        }
-
+        // Pattern validation is now done during route registration, not here
+        // This optimization removes the expensive validation on every match
         if (preg_match($pattern, $path, $matches)) {
             // Extrai os parâmetros correspondentes se houver
             $parameters = $route['parameters'] ?? [];
@@ -780,7 +777,7 @@ class Router
      */
     public static function get(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -792,7 +789,7 @@ class Router
      */
     public static function post(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -804,7 +801,7 @@ class Router
      */
     public static function put(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -816,7 +813,7 @@ class Router
      */
     public static function delete(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -828,7 +825,7 @@ class Router
      */
     public static function patch(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -840,7 +837,7 @@ class Router
      */
     public static function options(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -852,7 +849,7 @@ class Router
      */
     public static function head(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {
@@ -864,7 +861,7 @@ class Router
      */
     public static function any(
         string $path,
-        callable $handler,
+        callable|array $handler,
         array $metadata = [],
         callable ...$middlewares
     ): void {

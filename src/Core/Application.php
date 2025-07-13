@@ -38,7 +38,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '1.1.2';
+    public const VERSION = '1.1.3-dev';
 
     /**
      * Container de dependências PSR-11.
@@ -538,6 +538,49 @@ class Application
     public function patch(string $path, $handler): self
     {
         $this->router->patch($path, $handler);
+        return $this;
+    }
+
+    /**
+     * Registra uma rota estática pré-compilada (apenas GET).
+     *
+     * Esta é a implementação simplificada da pré-compilação, onde o desenvolvedor
+     * DECLARA explicitamente que a rota é estática, eliminando complexidade
+     * de análise automática.
+     *
+     * @param  string   $path    Caminho da rota
+     * @param  callable $handler Handler que DEVE retornar dados estáticos
+     * @param  array    $options Opções adicionais
+     * @return $this
+     */
+    public function static(string $path, callable $handler, array $options = []): self
+    {
+        // Importa StaticRouteManager apenas quando necessário
+        $optimizedHandler = \PivotPHP\Core\Routing\StaticRouteManager::register($path, $handler, $options);
+
+        // Registra como rota GET com handler otimizado
+        $this->router->get($path, $optimizedHandler);
+
+        return $this;
+    }
+
+    /**
+     * Registra arquivos específicos como rotas estáticas.
+     *
+     * Abordagem direta: registra cada arquivo encontrado como uma rota individual.
+     * Exemplo: $app->staticFiles('/public/js', 'src/bundle/js')
+     * Resultado: GET /public/js/app.js, GET /public/js/dist/compiled.min.js
+     *
+     * @param  string $routePrefix Prefixo da rota (ex: '/public/js')
+     * @param  string $physicalPath Pasta física (ex: 'src/bundle/js')
+     * @param  array  $options Opções adicionais
+     * @return $this
+     */
+    public function staticFiles(string $routePrefix, string $physicalPath, array $options = []): self
+    {
+        // Registra cada arquivo encontrado como uma rota individual
+        \PivotPHP\Core\Routing\StaticFileManager::registerDirectory($routePrefix, $physicalPath, $this, $options);
+
         return $this;
     }
 

@@ -110,7 +110,7 @@ class PerformanceMonitor
         $now = microtime(true);
 
         // Calculate metrics
-        $latency = ($now - $start['start_time']) * 1000; // ms
+        $latency = max(0, ($now - $start['start_time']) * 1000); // ms, ensure non-negative
         $memoryDelta = memory_get_usage(true) - $start['start_memory'];
 
         // Record request
@@ -497,7 +497,8 @@ class PerformanceMonitor
         $this->alerts = [];
 
         // Latency alert
-        if (($this->aggregated['latency_p99'] ?? 0) > $this->config['alert_thresholds']['latency_p99']) {
+        $latencyThreshold = ($this->config['alert_thresholds'] ?? [])['latency_p99'] ?? 1000;
+        if (($this->aggregated['latency_p99'] ?? 0) > $latencyThreshold) {
             $this->alerts[] = [
                 'type' => 'latency',
                 'severity' => 'warning',
@@ -506,7 +507,8 @@ class PerformanceMonitor
         }
 
         // Error rate alert
-        if (($this->aggregated['error_rate'] ?? 0) > $this->config['alert_thresholds']['error_rate']) {
+        $errorRateThreshold = ($this->config['alert_thresholds'] ?? [])['error_rate'] ?? 0.05;
+        if (($this->aggregated['error_rate'] ?? 0) > $errorRateThreshold) {
             $this->alerts[] = [
                 'type' => 'error_rate',
                 'severity' => 'critical',
@@ -516,7 +518,8 @@ class PerformanceMonitor
 
         // Memory alert
         $memoryPressure = $this->getMemoryPressure();
-        if ($memoryPressure > $this->config['alert_thresholds']['memory_usage']) {
+        $memoryThreshold = ($this->config['alert_thresholds'] ?? [])['memory_usage'] ?? 0.8;
+        if ($memoryPressure > $memoryThreshold) {
             $this->alerts[] = [
                 'type' => 'memory',
                 'severity' => 'warning',
@@ -526,7 +529,8 @@ class PerformanceMonitor
 
         // GC frequency alert
         $gcFrequency = $this->getGCFrequency();
-        if ($gcFrequency > $this->config['alert_thresholds']['gc_frequency']) {
+        $gcThreshold = ($this->config['alert_thresholds'] ?? [])['gc_frequency'] ?? 100;
+        if ($gcFrequency > $gcThreshold) {
             $this->alerts[] = [
                 'type' => 'gc_frequency',
                 'severity' => 'warning',

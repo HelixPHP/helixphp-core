@@ -13,6 +13,11 @@
             <property name="absoluteLineLimit" value="180"/>
         </properties>
     </rule>
+    
+    <!-- Exclude test helper classes from one-class-per-file rule -->
+    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+        <exclude-pattern>*/tests/*</exclude-pattern>
+    </rule>
     <rule ref="PSR2.Classes.PropertyDeclaration"/>
     <rule ref="Generic.Arrays.ArrayIndent"/>
     <rule ref="Squiz.WhiteSpace.OperatorSpacing">

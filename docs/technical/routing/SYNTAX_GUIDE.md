@@ -36,7 +36,9 @@ $app->post('/users', function($req, $res) {
 
 ### 2. Array Callable com Classe
 
-Usando controladores organizados em classes:
+> **✅ Funcionalidade Completa**: Array callables foram aprimorados na v1.1.3 com suporte total para PHP 8.4+
+
+Usando controladores organizados em classes - ideal para aplicações estruturadas:
 
 ```php
 <?php
@@ -78,12 +80,28 @@ class UserController
 }
 
 // Registrar rotas usando array callable
-$app->get('/users', [UserController::class, 'index']);
-$app->get('/users/:id', [UserController::class, 'show']);
-$app->post('/users', [UserController::class, 'store']);
-$app->put('/users/:id', [UserController::class, 'update']);
-$app->delete('/users/:id', [UserController::class, 'destroy']);
+$controller = new UserController();
+
+// ✅ Método de instância (Recomendado para DI)
+$app->get('/users', [$controller, 'index']);
+$app->get('/users/:id', [$controller, 'show']);
+$app->post('/users', [$controller, 'store']);
+$app->put('/users/:id', [$controller, 'update']);
+$app->delete('/users/:id', [$controller, 'destroy']);
+
+// ✅ Método estático (Para utilitários)
+$app->get('/status', [HealthController::class, 'getStatus']);
+$app->get('/info', [ApiController::class, 'getInfo']);
 ```
+
+#### Vantagens dos Array Callables
+
+- **Organização**: Código organizado em classes e métodos
+- **Testabilidade**: Fácil de testar unitariamente cada método
+- **Reutilização**: Métodos podem ser reutilizados em diferentes contextos
+- **Dependency Injection**: Controllers podem receber dependências no construtor
+- **Performance**: Overhead mínimo (~29% comparado a closures)
+- **PHP 8.4+ Compatível**: Totalmente compatível com tipagem estrita moderna
 
 ### 3. Função Nomeada
 
@@ -107,6 +125,94 @@ function createUserHandler($req, $res)
 // Registrar rotas usando nome da função
 $app->get('/users', 'getUsersHandler');
 $app->post('/users', 'createUserHandler');
+```
+
+## 📚 Exemplos Práticos
+
+### Health Check com Array Callable
+
+```php
+<?php
+
+class HealthController
+{
+    public function healthCheck($req, $res)
+    {
+        return $res->json([
+            'status' => 'ok',
+            'timestamp' => time(),
+            'memory_usage_mb' => round(memory_get_usage(true) / 1024 / 1024, 2),
+            'version' => '1.1.3'
+        ]);
+    }
+
+    public static function getSystemInfo($req, $res)
+    {
+        return $res->json([
+            'php_version' => PHP_VERSION,
+            'framework' => 'PivotPHP',
+            'environment' => $_ENV['APP_ENV'] ?? 'production'
+        ]);
+    }
+}
+
+$healthController = new HealthController();
+
+// ✅ Rota de health check
+$app->get('/health', [$healthController, 'healthCheck']);
+
+// ✅ Informações do sistema (método estático)
+$app->get('/system/info', [HealthController::class, 'getSystemInfo']);
+```
+
+### API com Parâmetros
+
+```php
+<?php
+
+class ApiController
+{
+    public function getUserById($req, $res)
+    {
+        $userId = $req->param('id');
+        
+        // Validação básica
+        if (!is_numeric($userId)) {
+            return $res->status(400)->json([
+                'error' => 'Invalid user ID'
+            ]);
+        }
+        
+        return $res->json([
+            'user_id' => $userId,
+            'name' => "User {$userId}",
+            'active' => true
+        ]);
+    }
+
+    public function getUserPosts($req, $res)
+    {
+        $userId = $req->param('userId');
+        $postId = $req->param('postId');
+        
+        return $res->json([
+            'user_id' => $userId,
+            'post_id' => $postId,
+            'post' => [
+                'title' => "Post {$postId} by User {$userId}",
+                'content' => 'Lorem ipsum...'
+            ]
+        ]);
+    }
+}
+
+$apiController = new ApiController();
+
+// ✅ Rota com parâmetro simples
+$app->get('/api/users/:id', [$apiController, 'getUserById']);
+
+// ✅ Rota com múltiplos parâmetros
+$app->get('/api/users/:userId/posts/:postId', [$apiController, 'getUserPosts']);
 ```
 
 ### 4. Middleware com Rotas

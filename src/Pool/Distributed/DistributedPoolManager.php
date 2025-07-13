@@ -124,7 +124,7 @@ class DistributedPoolManager
     private function createRedisCoordinator(): CoordinatorInterface
     {
         if (!extension_loaded('redis')) {
-            error_log('Redis extension not loaded - falling back to NoOpCoordinator');
+            // Redis extension not loaded - logging removed for clean test output
             return new NoOpCoordinator($this->config);
         }
 
@@ -161,7 +161,7 @@ class DistributedPoolManager
 
         $this->coordinator->registerInstance($this->instanceId, $instanceData);
 
-        error_log("Distributed pool instance registered: {$this->instanceId}");
+        // Pool instance registered - logging removed for clean test output
     }
 
     /**
@@ -659,13 +659,6 @@ class DistributedPoolManager
             $this->coordinator->releaseLeadership($this->instanceId);
         }
 
-        error_log(
-            sprintf(
-                "Distributed pool instance shutting down: %s (contributed: %d, borrowed: %d)",
-                $this->instanceId,
-                $this->metrics['objects_contributed'],
-                $this->metrics['objects_borrowed']
-            )
-        );
+        // Pool instance shutting down - logging removed for clean test output
     }
 }

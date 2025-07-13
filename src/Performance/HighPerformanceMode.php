@@ -24,6 +24,7 @@ class HighPerformanceMode
     public const PROFILE_STANDARD = 'standard';
     public const PROFILE_HIGH = 'high';
     public const PROFILE_EXTREME = 'extreme';
+    public const PROFILE_TEST = 'test';
     public const PROFILE_CUSTOM = 'custom';
 
     /**
@@ -174,6 +175,37 @@ class HighPerformanceMode
                 'rebalance_interval' => 30,
             ],
         ],
+
+        self::PROFILE_TEST => [
+            'pool' => [
+                'enable_pooling' => false,      // Disable pooling for test speed
+                'initial_size' => 0,
+                'max_size' => 0,
+                'auto_scale' => false,
+                'warm_up_pools' => false,
+            ],
+            'memory' => [
+                'gc_strategy' => MemoryManager::STRATEGY_CONSERVATIVE,
+                'gc_threshold' => 0.9,          // Higher threshold for tests
+                'emergency_gc' => 0.95,
+                'check_interval' => 60,         // Less frequent checks
+            ],
+            'traffic' => [
+                'classification' => false,      // No traffic classification in tests
+            ],
+            'protection' => [
+                'load_shedding' => false,       // No load shedding in tests
+                'circuit_breaker' => false,     // No circuit breakers in tests
+            ],
+            'monitoring' => [
+                'enabled' => false,             // Minimal monitoring for tests
+                'sample_rate' => 0,
+                'export_interval' => 300,       // Rarely export
+            ],
+            'distributed' => [
+                'enabled' => false,             // No distributed features in tests
+            ],
+        ],
     ];
 
     /**
@@ -230,12 +262,7 @@ class HighPerformanceMode
             self::initializeDistributed();
         }
 
-        error_log(
-            sprintf(
-                "High Performance Mode enabled with profile: %s",
-                is_string($profileOrConfig) ? $profileOrConfig : 'custom'
-            )
-        );
+        // High Performance Mode enabled - logging removed for clean test output
     }
 
     /**
@@ -546,7 +573,7 @@ class HighPerformanceMode
         // Apply adjustments to components
         // This would need component-specific update methods
 
-        error_log("High performance configuration adjusted");
+        // Configuration adjusted - logging removed for clean test output
     }
 
     /**
@@ -566,6 +593,6 @@ class HighPerformanceMode
         // Disable in factory
         OptimizedHttpFactory::initialize(['enable_pooling' => false]);
 
-        error_log("High performance mode disabled");
+        // High performance mode disabled - logging removed for clean test output
     }
 }

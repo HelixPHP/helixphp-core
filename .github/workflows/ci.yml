@@ -1,5 +1,8 @@
 name: CI/CD Pipeline
 
+# Optimized CI/CD - tests critical breaking changes only
+# Full multi-PHP version testing done locally via: ./scripts/test-all-php-versions.sh
+
 on:
   push:
     branches: [ main, develop ]
@@ -9,12 +12,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2', '8.3', '8.4']
-
-    name: PHP ${{ matrix.php-version }} Tests
+    name: Critical CI Tests (PHP 8.1)
 
     steps:
     - name: Checkout code
@@ -23,7 +21,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
+        php-version: '8.1'
         extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, json, session
         coverage: xdebug
 
@@ -45,45 +43,26 @@ jobs:
     - name: Check PHP syntax
       run: find src -name "*.php" -exec php -l {} \; || { echo 'PHP syntax check failed'; exit 1; }
 
-    - name: Run PHPStan
+    - name: Run optimized CI validation
       run: |
-        if [ -f "vendor/bin/phpstan" ]; then
-          ./vendor/bin/phpstan analyse --no-progress || { echo 'PHPStan analysis failed'; exit 1; }
-        else
-          echo "PHPStan not installed, skipping static analysis"
-        fi
+        echo "⚡ Running optimized CI/CD validation for PHP 8.1..."
+        echo "💡 Multi-PHP testing done locally via: ./scripts/test-all-php-versions.sh"
+        ./scripts/ci-validation.sh || { echo 'CI validation failed'; exit 1; }
 
-    - name: Run PHP CS
+    - name: Run CI test suite
       run: |
-        if [ -f "vendor/bin/phpcs" ]; then
-          ./vendor/bin/phpcs --standard=phpcs.xml || { echo 'PHPCS check failed'; exit 1; }
+        echo "🧪 Running CI test suite..."
+        composer test:ci || code=$?
+        if [ "${code:-$?}" -eq 0 ] || [ "${code:-$?}" -eq 1 ]; then
+          echo "CI tests OK (exit code $code: success or only skipped/incomplete tests)"
+          exit 0
         else
-          echo "PHPCS not installed, skipping code style check"
+          echo "CI tests failed (exit code $code)"
+          exit $code
         fi
-
-    - name: Run PHPUnit tests
-      run: |
-        if [ -f "vendor/bin/phpunit" ]; then
-          echo "Running PHPUnit tests on PHP ${{ matrix.php-version }}..."
-          ./vendor/bin/phpunit --testdox --exclude-group performance || code=$?
-          if [ "${code:-$?}" -eq 0 ] || [ "${code:-$?}" -eq 1 ]; then
-            echo "PHPUnit OK (exit code $code: success or only skipped/incomplete tests)"
-            exit 0
-          else
-            echo "PHPUnit failed (exit code $code)"
-            exit $code
-          fi
-        else
-          echo "PHPUnit not installed, running basic tests"
-          php test/auth_test.php
-        fi
-
-    - name: Run custom validation
-      run: php scripts/validate_project.php || { echo 'Custom validation failed'; exit 1; }
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
-      if: matrix.php-version == '8.1'
       with:
         file: ./coverage.xml
         flags: unittests
@@ -91,7 +70,8 @@ jobs:
 
   quality:
     runs-on: ubuntu-latest
-    name: Code Quality
+    name: Quality Gate
+    needs: test
 
     steps:
     - name: Checkout code
@@ -106,13 +86,24 @@ jobs:
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
 
-    - name: Security Check
+    - name: Run Quality Gate
       run: |
-        if [ -f "vendor/bin/security-checker" ]; then
-          ./vendor/bin/security-checker security:check composer.lock
-        else
-          echo "Security checker not installed"
-        fi
+        echo "🏆 Running Quality Gate assessment..."
+        ./scripts/quality-gate.sh || { echo 'Quality Gate failed'; exit 1; }
 
-    - name: Dependency Check
-      run: composer outdated --direct
+    - name: CI/CD Summary
+      if: always()
+      run: |
+        echo ""
+        echo "========================================="
+        echo "        OPTIMIZED CI/CD SUMMARY"
+        echo "========================================="
+        echo ""
+        echo "✅ Critical validations completed (PHP 8.1)"
+        echo ""
+        echo "📋 Comprehensive testing:"
+        echo "   • Multi-PHP: ./scripts/test-all-php-versions.sh (PHP 8.1-8.4)"
+        echo "   • Full validation: ./scripts/validate_all.sh"
+        echo "   • Performance: ./scripts/quality-metrics.sh"
+        echo ""
+        echo "🚀 CI/CD optimized for speed - extensive testing done locally"

@@ -1,14 +1,14 @@
 # JSON Optimization System
 
-PivotPHP Core v1.1.1 introduces a revolutionary JSON optimization system that dramatically improves performance for JSON operations through intelligent buffer pooling and automatic optimization.
+PivotPHP Core v1.1.1+ introduces a revolutionary JSON optimization system that dramatically improves performance for JSON operations through intelligent buffer pooling and automatic optimization.
 
 ## Overview
 
 The JSON optimization system consists of two main components:
-- **JsonBuffer**: High-performance buffer for JSON operations
-- **JsonBufferPool**: Intelligent pooling system for buffer reuse
+- **JsonBuffer**: High-performance buffer for JSON operations with capacity management
+- **JsonBufferPool**: Intelligent pooling system with automatic optimization decisions
 
-These work together to provide automatic performance improvements with zero configuration required.
+These work together to provide automatic performance improvements with zero configuration required while maintaining full backward compatibility.
 
 ## Automatic Integration
 

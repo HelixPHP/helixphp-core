@@ -1,0 +1,101 @@
+services:
+  test-php81:
+    image: php:8.1-cli
+    working_dir: /app
+    environment:
+      - PHPUNIT_RUNNING=1
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y git unzip &&
+        git config --global --add safe.directory /app &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        composer install --no-interaction --prefer-dist &&
+        echo '🧪 Testing PHP 8.1...' &&
+        php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress &&
+        composer test:ci &&
+        echo '✅ PHP 8.1 passed'
+      "
+
+  test-php82:
+    image: php:8.2-cli
+    working_dir: /app
+    environment:
+      - PHPUNIT_RUNNING=1
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y git unzip &&
+        git config --global --add safe.directory /app &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        composer install --no-interaction --prefer-dist &&
+        echo '🧪 Testing PHP 8.2...' &&
+        php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress &&
+        composer test:ci &&
+        echo '✅ PHP 8.2 passed'
+      "
+
+  test-php83:
+    image: php:8.3-cli
+    working_dir: /app
+    environment:
+      - PHPUNIT_RUNNING=1
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y git unzip &&
+        git config --global --add safe.directory /app &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        composer install --no-interaction --prefer-dist &&
+        echo '🧪 Testing PHP 8.3...' &&
+        php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress &&
+        composer test:ci &&
+        echo '✅ PHP 8.3 passed'
+      "
+
+  test-php84:
+    image: php:8.4-cli
+    working_dir: /app
+    environment:
+      - PHPUNIT_RUNNING=1
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y git unzip &&
+        git config --global --add safe.directory /app &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        composer install --no-interaction --prefer-dist &&
+        echo '🧪 Testing PHP 8.4...' &&
+        php -d memory_limit=512M vendor/bin/phpstan analyse --no-progress &&
+        composer test:ci &&
+        echo '✅ PHP 8.4 passed'
+      "
+
+  # Quality metrics service
+  quality-check:
+    image: php:8.4-cli
+    working_dir: /app
+    environment:
+      - PHPUNIT_RUNNING=1
+      - COMPOSER_MEMORY_LIMIT=-1
+    volumes:
+      - .:/app
+    command: >
+      bash -c "
+        apt-get update && apt-get install -y git unzip &&
+        git config --global --add safe.directory /app &&
+        curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&
+        composer install --no-interaction --prefer-dist &&
+        echo '📊 Quality Metrics...' &&
+        php benchmarks/QuietBenchmark.php &&
+        composer test:coverage &&
+        echo '✅ Quality metrics generated'
+      "

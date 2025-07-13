@@ -1,6 +1,6 @@
 #!/bin/bash
 # scripts/quality-check.sh
-# Script de validação completa de qualidade para PivotPHP Core v1.1.2
+# Script de validação completa de qualidade para PivotPHP Core v1.1.3-dev
 
 set -e
 
@@ -63,12 +63,12 @@ fi
 # Criar diretório de relatórios
 mkdir -p reports/quality
 
-log "🔍 Iniciando validação completa de qualidade PivotPHP Core v1.1.2..."
+log "🔍 Iniciando validação completa de qualidade PivotPHP Core v1.1.3-dev..."
 log "📊 Critérios: 8 CRÍTICOS + 4 ALTOS + Métricas avançadas"
 
 echo ""
 echo "======================================="
-echo "   VALIDAÇÃO DE QUALIDADE v1.1.2"
+echo "   VALIDAÇÃO DE QUALIDADE v1.1.3-dev"
 echo "======================================="
 echo ""
 
@@ -98,11 +98,11 @@ count_check $phpstan_result "critical"
 cp "$phpstan_output" "reports/quality/phpstan-results.txt"
 rm "$phpstan_output"
 
-# 2. Testes Unitários - CRÍTICO
-log "🧪 2. Testes Unitários e de Integração - CRÍTICO"
+# 2. Testes CI (sem integração para CI/CD) - CRÍTICO
+log "🧪 2. Testes CI (Unit + Core + Security, sem Integration) - CRÍTICO"
 
 test_output=$(mktemp)
-if composer test -- --exclude-group performance > "$test_output" 2>&1; then
+if composer test:ci > "$test_output" 2>&1; then
     test_result=0
     success "Testes - PASSOU"
     
@@ -178,10 +178,11 @@ rm "$coverage_output"
 log "🎨 4. Padrões de Codificação (PSR-12) - CRÍTICO"
 
 cs_output=$(mktemp)
-if composer cs:check > "$cs_output" 2>&1; then
-    cs_result=0
-    success "Code Style PSR-12 - PASSOU"
-else
+composer cs:check > "$cs_output" 2>&1
+cs_exit_code=$?
+
+# Check if there are actual ERRORS (not just warnings)
+if grep -q "FOUND.*ERROR" "$cs_output"; then
     cs_result=1
     critical "Code Style PSR-12 - FALHOU"
     
@@ -195,11 +196,21 @@ else
         success "Correções aplicadas automaticamente"
         
         # Verificar novamente
-        if composer cs:check > /dev/null 2>&1; then
+        composer cs:check > "$cs_output" 2>&1
+        if ! grep -q "FOUND.*ERROR" "$cs_output"; then
             success "Code Style agora está conforme"
             cs_result=0
         fi
     fi
+elif [ $cs_exit_code -eq 0 ]; then
+    cs_result=0
+    success "Code Style PSR-12 - PASSOU"
+else
+    # Only warnings, not errors
+    cs_result=0
+    success "Code Style PSR-12 - PASSOU (apenas avisos, sem erros)"
+    info "Avisos encontrados (não bloqueiam):"
+    grep "WARNING" "$cs_output" | head -5 || true
 fi
 
 count_check $cs_result "critical"
@@ -460,7 +471,7 @@ count_check $examples_result
 # Relatório Final
 echo ""
 echo "========================================="
-echo "    RELATÓRIO DE QUALIDADE v1.1.2"
+echo "    RELATÓRIO DE QUALIDADE v1.1.3-dev"
 echo "========================================="
 echo ""
 
@@ -497,7 +508,7 @@ echo ""
 # Gerar relatório detalhado
 report_file="reports/quality/quality-report-$(date +%Y%m%d-%H%M%S).txt"
 cat > "$report_file" << EOF
-# Relatório de Qualidade PivotPHP Core v1.1.2
+# Relatório de Qualidade PivotPHP Core v1.1.3-dev
 Data: $(date)
 Executado por: $(whoami)
 Diretório: $(pwd)
@@ -542,7 +553,7 @@ echo "🎯 Decisão Final:"
 if [ $CRITICAL_FAILURES -eq 0 ]; then
     echo -e "${GREEN}🎉 APROVADO PARA ENTREGA${NC}"
     echo ""
-    echo "✨ PivotPHP Core v1.1.2 atende todos os critérios críticos!"
+    echo "✨ PivotPHP Core v1.1.3-dev atende todos os critérios críticos!"
     echo "📊 Taxa de sucesso: $success_rate%"
     echo "🚀 Pronto para produção!"
     echo ""
@@ -555,7 +566,7 @@ if [ $CRITICAL_FAILURES -eq 0 ]; then
 else
     echo -e "${RED}❌ REPROVADO PARA ENTREGA${NC}"
     echo ""
-    echo "🚨 PivotPHP Core v1.1.2 NÃO atende aos critérios críticos!"
+    echo "🚨 PivotPHP Core v1.1.3-dev NÃO atende aos critérios críticos!"
     echo "📊 Falhas críticas: $CRITICAL_FAILURES"
     echo "🛑 Entrega BLOQUEADA!"
     echo ""

@@ -1,6 +1,6 @@
 {
     "name": "pivotphp/core",
-    "description": "PivotPHP Core v1.1.2 - High-performance microframework with revolutionary JSON optimization (161K/17K/1.7K ops/sec), PSR-7 hybrid support, and Express.js-inspired API",
+    "description": "PivotPHP Core v1.1.3-dev - High-performance microframework with revolutionary JSON optimization (161K/17K/1.7K ops/sec), PSR-7 hybrid support, and Express.js-inspired API",
     "type": "library",
     "keywords": [
         "php",
@@ -81,7 +81,16 @@
     },
     "scripts": {
         "test": "phpunit",
-        "test:security": "vendor/bin/phpunit tests/Security/",
+        "test:ci": "vendor/bin/phpunit --testsuite=CI",
+        "test:fast": "vendor/bin/phpunit --testsuite=Fast",
+        "test:unit": "vendor/bin/phpunit --testsuite=Unit",
+        "test:integration": "vendor/bin/phpunit --testsuite=Integration",
+        "test:performance": "vendor/bin/phpunit --testsuite=Performance",
+        "test:security": "vendor/bin/phpunit --testsuite=Security",
+        "test:core": "vendor/bin/phpunit --testsuite=Core",
+        "test:coverage": "XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html reports/coverage",
+        "test:stress": "vendor/bin/phpunit --testsuite=Stress",
+        "test:no-stress": "vendor/bin/phpunit --exclude-group=stress,slow",
         "test:auth": "php test/auth_test.php",
         "phpstan": "phpstan analyse",
         "phpstan:strict": "phpstan analyse -c phpstan-strict.neon",
@@ -104,10 +113,20 @@
             "@phpstan",
             "echo 'Quality check with PSR-12 completed!'"
         ],
-        "quality:check:disabled": [
+        "quality:check": [
+            "@phpstan",
+            "@test:ci",
+            "@cs:check"
+        ],
+        "quality:check:full": [
             "@phpstan",
             "@test",
             "@cs:check"
+        ],
+        "quality:ci": [
+            "@phpstan",
+            "@test:ci",
+            "@cs:check:summary"
         ],
         "quality:fix": [
             "@cs:fix",
@@ -117,6 +136,17 @@
         "fix:psr12-lines": "./scripts/fix-psr12-lines.sh",
         "precommit:install": "./scripts/setup-precommit.sh",
         "precommit:test": "./scripts/pre-commit",
+        "prepush:validate": [
+            "@phpstan",
+            "@test:unit",
+            "@test:integration",
+            "@cs:check:summary"
+        ],
+        "prepush:full": [
+            "@phpstan",
+            "@test",
+            "@cs:check"
+        ],
         "validate:docs": "./scripts/validate-docs.sh",
         "validate:project": "php scripts/validate_project.php",
         "examples:basic": "php examples/example_basic.php",
@@ -126,7 +156,12 @@
         "examples:app": "php examples/app.php",
         "benchmark": "./benchmarks/run_benchmark.sh",
         "benchmark:quick": "./benchmarks/run_benchmark.sh -q",
-        "benchmark:simple": "php benchmarks/SimpleBenchmark.php"
+        "benchmark:simple": "php benchmarks/SimpleBenchmark.php",
+        "docker:test-all": "./scripts/test-all-php-versions.sh",
+        "docker:test-quality": "./scripts/test-all-php-versions.sh --with-quality",
+        "ci:validate": "./scripts/ci-validation.sh",
+        "quality:gate": "./scripts/quality-gate.sh",
+        "quality:metrics": "./scripts/quality-metrics.sh"
     },
     "config": {
         "optimize-autoloader": true,
