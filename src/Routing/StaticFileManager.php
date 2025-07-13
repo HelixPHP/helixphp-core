@@ -97,8 +97,12 @@ class StaticFileManager
     /**
      * Registra um diretório inteiro, criando rotas individuais para cada arquivo
      */
-    public static function registerDirectory(string $routePrefix, string $physicalPath, \PivotPHP\Core\Core\Application $app, array $options = []): void
-    {
+    public static function registerDirectory(
+        string $routePrefix,
+        string $physicalPath,
+        \PivotPHP\Core\Core\Application $app,
+        array $options = []
+    ): void {
         // Delega para o SimpleStaticFileManager
         \PivotPHP\Core\Routing\SimpleStaticFileManager::registerDirectory($routePrefix, $physicalPath, $app, $options);
     }
@@ -159,7 +163,10 @@ class StaticFileManager
      */
     private static function createFileHandler(string $routePrefix): callable
     {
-        return function (\PivotPHP\Core\Http\Request $req, \PivotPHP\Core\Http\Response $res) use ($routePrefix): \PivotPHP\Core\Http\Response {
+        return function (
+            \PivotPHP\Core\Http\Request $req,
+            \PivotPHP\Core\Http\Response $res
+        ) use ($routePrefix): \PivotPHP\Core\Http\Response {
             // Extrai filepath do path da requisição removendo o prefixo
             $requestPath = $req->getPathCallable();
 
@@ -257,8 +264,11 @@ class StaticFileManager
     /**
      * Serve arquivo com headers otimizados
      */
-    private static function serveFile(array $fileInfo, \PivotPHP\Core\Http\Request $req, \PivotPHP\Core\Http\Response $res): \PivotPHP\Core\Http\Response
-    {
+    private static function serveFile(
+        array $fileInfo,
+        \PivotPHP\Core\Http\Request $req,
+        \PivotPHP\Core\Http\Response $res
+    ): \PivotPHP\Core\Http\Response {
         self::$stats['total_hits']++;
 
         // Headers de cache

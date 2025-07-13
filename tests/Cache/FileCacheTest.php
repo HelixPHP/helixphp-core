@@ -329,6 +329,10 @@ class FileCacheTest extends TestCase
     {
         // Use unique key to avoid interference from other tests
         $key = 'expires_with_default_' . uniqid();
+        
+        // Clear any existing cache for this key
+        $this->cache->delete($key);
+        
         $this->cache->set($key, 'value', 1);
         
         // Wait for expiration with extra buffer for busy test environment
@@ -793,7 +797,7 @@ class FileCacheTest extends TestCase
         $this->assertTrue($this->cache->has('temp_data'));
         
         // 4. Wait for temp data to expire (extra margin for test stability)
-        sleep(2); // 2 seconds should definitely expire a 1-second TTL
+        sleep(3); // 3 seconds should definitely expire a 1-second TTL
         $this->assertNull($this->cache->get('temp_data'));
         $this->assertFalse($this->cache->has('temp_data'));
         

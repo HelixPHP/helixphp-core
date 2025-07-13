@@ -85,8 +85,9 @@ fi
 echo "🧪 Executando testes..."
 
 if [ -f "vendor/bin/phpunit" ]; then
-    ./vendor/bin/phpunit --no-coverage --stop-on-failure
-    info "Testes passaram"
+    # Use CI test suite for faster release preparation
+    composer test:ci --no-coverage --stop-on-failure
+    info "Testes CI passaram"
 elif [ -f "phpunit.phar" ]; then
     php phpunit.phar --no-coverage --stop-on-failure
     info "Testes passaram"

@@ -78,8 +78,12 @@ class SimpleStaticFileManager
     /**
      * Registra um diretório inteiro, criando rotas para cada arquivo
      */
-    public static function registerDirectory(string $routePrefix, string $physicalPath, Application $app, array $options = []): void
-    {
+    public static function registerDirectory(
+        string $routePrefix,
+        string $physicalPath,
+        Application $app,
+        array $options = []
+    ): void {
         if (!is_dir($physicalPath)) {
             throw new \InvalidArgumentException("Directory does not exist: {$physicalPath}");
         }

@@ -69,7 +69,8 @@ class StaticRouteManager
         // Valida tamanho
         if (strlen($response) > self::$config['max_response_size']) {
             throw new \InvalidArgumentException(
-                "Static response too large: " . strlen($response) . " bytes (max: " . self::$config['max_response_size'] . ")"
+                "Static response too large: " . strlen($response) .
+                " bytes (max: " . self::$config['max_response_size'] . ")"
             );
         }
 

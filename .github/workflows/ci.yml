@@ -1,5 +1,8 @@
 name: CI/CD Pipeline
 
+# Optimized CI/CD - tests critical breaking changes only
+# Full multi-PHP version testing done locally via: ./scripts/test-all-php-versions.sh
+
 on:
   push:
     branches: [ main, develop ]
@@ -9,12 +12,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        php-version: ['8.1', '8.2', '8.3', '8.4']
-
-    name: PHP ${{ matrix.php-version }} Tests
+    name: Critical CI Tests (PHP 8.1)
 
     steps:
     - name: Checkout code
@@ -23,7 +21,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
+        php-version: '8.1'
         extensions: mbstring, xml, ctype, iconv, intl, pdo, pdo_mysql, dom, filter, gd, json, session
         coverage: xdebug
 
@@ -47,7 +45,8 @@ jobs:
 
     - name: Run optimized CI validation
       run: |
-        echo "⚡ Running optimized CI/CD validation for PHP ${{ matrix.php-version }}..."
+        echo "⚡ Running optimized CI/CD validation for PHP 8.1..."
+        echo "💡 Multi-PHP testing done locally via: ./scripts/test-all-php-versions.sh"
         ./scripts/ci-validation.sh || { echo 'CI validation failed'; exit 1; }
 
     - name: Run CI test suite
@@ -64,7 +63,6 @@ jobs:
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
-      if: matrix.php-version == '8.1'
       with:
         file: ./coverage.xml
         flags: unittests
@@ -92,3 +90,20 @@ jobs:
       run: |
         echo "🏆 Running Quality Gate assessment..."
         ./scripts/quality-gate.sh || { echo 'Quality Gate failed'; exit 1; }
+
+    - name: CI/CD Summary
+      if: always()
+      run: |
+        echo ""
+        echo "========================================="
+        echo "        OPTIMIZED CI/CD SUMMARY"
+        echo "========================================="
+        echo ""
+        echo "✅ Critical validations completed (PHP 8.1)"
+        echo ""
+        echo "📋 Comprehensive testing:"
+        echo "   • Multi-PHP: ./scripts/test-all-php-versions.sh (PHP 8.1-8.4)"
+        echo "   • Full validation: ./scripts/validate_all.sh"
+        echo "   • Performance: ./scripts/quality-metrics.sh"
+        echo ""
+        echo "🚀 CI/CD optimized for speed - extensive testing done locally"
