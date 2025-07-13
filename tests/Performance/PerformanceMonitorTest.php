@@ -72,10 +72,10 @@ class PerformanceMonitorTest extends TestCase
         for ($i = 0; $i < 10; $i++) {
             $reqId = $requestId . '_' . $i;
             $this->monitor->startRequest($reqId, $context);
-            
+
             // Vary processing times for meaningful percentiles
             usleep(random_int(50000, 150000)); // 50-150ms
-            
+
             $this->monitor->endRequest($reqId, 200);
         }
 

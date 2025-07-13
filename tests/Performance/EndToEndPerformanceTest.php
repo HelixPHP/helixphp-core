@@ -107,18 +107,18 @@ class EndToEndPerformanceTest extends TestCase
 
         $endTime = microtime(true);
         $totalTime = $endTime - $startTime;
-        
+
         // Ensure timing makes sense
         if ($totalTime <= 0 || $totalTime > 300) {
             $this->markTestSkipped('Performance test skipped - timing measurement unreliable in CI');
         }
-        
+
         $throughput = count($results) / $totalTime;
 
         // Realistic performance expectations for CI environment with safety checks
         $this->assertGreaterThan(0, $totalTime, 'Total time should be positive');
         $this->assertGreaterThan(0, count($results), 'Should have processed some results');
-        
+
         // Only test throughput if timing is reasonable
         if ($totalTime > 0 && $totalTime < 300) { // 5 minutes max
             $this->assertGreaterThan(1, $throughput, 'Should handle >1 req/s in extreme mode');
