@@ -452,7 +452,10 @@ class MiddlewareStackIntegrationTest extends TestCase
 
         $this->assertEquals(200, $postResponse->getStatusCode());
         $postResponseBody = $postResponse->getBody();
-        $postBody = json_decode(is_string($postResponseBody) ? $postResponseBody : $postResponseBody->__toString(), true);
+        $postBody = json_decode(
+            is_string($postResponseBody) ? $postResponseBody : $postResponseBody->__toString(),
+            true
+        );
         $this->assertEquals('POST', $postBody['method']);
         $this->assertTrue($postBody['validated']);
 

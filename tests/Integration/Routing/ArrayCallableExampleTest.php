@@ -128,18 +128,19 @@ class ArrayCallableExampleTest extends TestCase
         }
         $closureTime = (microtime(true) - $start) * 1000;
 
-        // Performance difference should be reasonable 
+        // Performance difference should be reasonable
         // Note: Array callables can have higher overhead due to reflection, but should be manageable
         $overhead = (($arrayCallableTime - $closureTime) / $closureTime) * 100;
 
         // Allow higher overhead for array callables due to reflection overhead in testing environment
         // In production, this overhead is typically much lower due to opcode caching
         $maxOverhead = 1000; // 10x max overhead for testing environment
-        
+
         $this->assertLessThan(
             $maxOverhead,
             $overhead,
-            "Array callable overhead too high: {$overhead}% (Array: {$arrayCallableTime}ms, Closure: {$closureTime}ms). " .
+            "Array callable overhead too high: {$overhead}% " .
+            "(Array: {$arrayCallableTime}ms, Closure: {$closureTime}ms). " .
             "Note: High overhead in testing is normal due to reflection costs without opcode caching."
         );
 

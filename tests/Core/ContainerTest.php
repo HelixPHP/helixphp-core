@@ -6,6 +6,19 @@ namespace PivotPHP\Core\Tests\Core;
 
 use PHPUnit\Framework\TestCase;
 use PivotPHP\Core\Core\Container;
+use PivotPHP\Core\Tests\Core\Fixtures\SimpleClassWithoutDependencies;
+use PivotPHP\Core\Tests\Core\Fixtures\ClassWithDependencies;
+use PivotPHP\Core\Tests\Core\Fixtures\ClassWithParameters;
+use PivotPHP\Core\Tests\Core\Fixtures\CircularDependencyA;
+use PivotPHP\Core\Tests\Core\Fixtures\CircularDependencyB;
+use PivotPHP\Core\Tests\Core\Fixtures\UnresolvableInterface;
+use PivotPHP\Core\Tests\Core\Fixtures\ServiceInterface;
+use PivotPHP\Core\Tests\Core\Fixtures\ConcreteService;
+use PivotPHP\Core\Tests\Core\Fixtures\ConfigService;
+use PivotPHP\Core\Tests\Core\Fixtures\ComplexService;
+use PivotPHP\Core\Tests\Core\Fixtures\TestLogger;
+use PivotPHP\Core\Tests\Core\Fixtures\TestConfig;
+use PivotPHP\Core\Tests\Core\Fixtures\TestProcessor;
 use ReflectionProperty;
 use Exception;
 use stdClass;
@@ -562,104 +575,3 @@ class ContainerTest extends TestCase
 // =========================================================================
 // TEST HELPER CLASSES
 // =========================================================================
-
-class SimpleClassWithoutDependencies
-{
-    public string $value = 'simple';
-}
-
-class ClassWithDependencies
-{
-    public SimpleClassWithoutDependencies $dependency;
-
-    public function __construct(SimpleClassWithoutDependencies $dependency)
-    {
-        $this->dependency = $dependency;
-    }
-}
-
-class ClassWithParameters
-{
-    public string $param;
-
-    public function __construct(string $param = 'default')
-    {
-        $this->param = $param;
-    }
-}
-
-class CircularDependencyA
-{
-    public function __construct(CircularDependencyB $_)
-    {
-        // Intentional circular dependency for testing
-    }
-}
-
-class CircularDependencyB
-{
-    public function __construct(CircularDependencyA $_)
-    {
-        // Intentional circular dependency for testing
-    }
-}
-
-interface UnresolvableInterface
-{
-    public function doSomething(): void;
-}
-
-interface ServiceInterface
-{
-    public function process(): string;
-}
-
-class ConcreteService implements ServiceInterface
-{
-    public function process(): string
-    {
-        return 'processed';
-    }
-}
-
-class ConfigService
-{
-    public array $config = ['debug' => true];
-}
-
-class ComplexService
-{
-    public ServiceInterface $serviceInterface;
-    public ConfigService $configService;
-
-    public function __construct(ServiceInterface $serviceInterface, ConfigService $configService)
-    {
-        $this->serviceInterface = $serviceInterface;
-        $this->configService = $configService;
-    }
-}
-
-class TestLogger
-{
-    public function log(string $_): void
-    {
-        // Test logger implementation
-    }
-}
-
-class TestConfig
-{
-    public array $config = ['app_name' => 'test'];
-}
-
-class TestProcessor
-{
-    public TestLogger $logger;
-    public TestConfig $config;
-
-    public function __construct(TestLogger $logger, TestConfig $config)
-    {
-        $this->logger = $logger;
-        $this->config = $config;
-    }
-}

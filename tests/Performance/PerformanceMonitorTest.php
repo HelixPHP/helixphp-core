@@ -68,14 +68,16 @@ class PerformanceMonitorTest extends TestCase
             'user_id' => 123,
         ];
 
-        // Start request
-        $this->monitor->startRequest($requestId, $context);
-
-        // Simulate processing time
-        usleep(100000); // 100ms for more reliable timing
-
-        // End request
-        $this->monitor->endRequest($requestId, 200);
+        // Process multiple requests for meaningful percentiles
+        for ($i = 0; $i < 10; $i++) {
+            $reqId = $requestId . '_' . $i;
+            $this->monitor->startRequest($reqId, $context);
+            
+            // Vary processing times for meaningful percentiles
+            usleep(random_int(50000, 150000)); // 50-150ms
+            
+            $this->monitor->endRequest($reqId, 200);
+        }
 
         $metrics = $this->monitor->getPerformanceMetrics();
 
@@ -88,7 +90,7 @@ class PerformanceMonitorTest extends TestCase
         $this->assertGreaterThan(0, $metrics['latency']['p95']);
         $this->assertGreaterThan(0, $metrics['latency']['p99']);
 
-        // Verify throughput tracking
+        // Verify throughput tracking (should have 10 successful requests)
         $this->assertGreaterThan(0, $metrics['throughput']['rps']);
         $this->assertEquals(1.0, $metrics['throughput']['success_rate']); // Rate is 0.0-1.0, not percentage
     }

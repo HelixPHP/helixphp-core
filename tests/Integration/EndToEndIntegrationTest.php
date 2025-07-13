@@ -188,7 +188,10 @@ class EndToEndIntegrationTest extends TestCase
         // Debug: Show token and response
         if ($response->getStatusCode() !== 200) {
             $responseBody = $this->getJsonBody($response);
-            $this->fail('Auth failed. Token: ' . $token . ', Status: ' . $response->getStatusCode() . ', Response: ' . json_encode($responseBody));
+            $this->fail(
+                'Auth failed. Token: ' . $token . ', Status: ' . $response->getStatusCode() .
+                ', Response: ' . json_encode($responseBody)
+            );
         }
 
         $this->assertEquals(200, $response->getStatusCode());
@@ -536,9 +539,13 @@ class EndToEndIntegrationTest extends TestCase
 
                 if (strpos($accept, 'text/plain') !== false) {
                     return $res->header('Content-Type', 'text/plain')
-                              ->send("Message: {$testData['message']}\nTimestamp: {$testData['timestamp']}");
+                            ->send(
+                                "Message: {$testData['message']}\nTimestamp: {$testData['timestamp']}"
+                            );
                 } elseif (strpos($accept, 'application/xml') !== false) {
-                    $xml = "<?xml version=\"1.0\"?>\n<data><message>{$testData['message']}</message><timestamp>{$testData['timestamp']}</timestamp></data>";
+                    $xml = "<?xml version=\"1.0\"?>\n<data>" .
+                           "<message>{$testData['message']}</message>" .
+                           "<timestamp>{$testData['timestamp']}</timestamp></data>";
                     return $res->header('Content-Type', 'application/xml')
                               ->send($xml);
                 } else {

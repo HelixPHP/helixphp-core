@@ -42,25 +42,56 @@ if ! command -v docker-compose &> /dev/null; then
     exit 1
 fi
 
-# Test individual PHP versions
+# Test individual PHP versions in parallel
 PHP_VERSIONS=("php81" "php82" "php83" "php84")
 FAILED_VERSIONS=()
 PASSED_VERSIONS=()
 
-print_status "Testing individual PHP versions..."
+print_status "Starting PHP version tests in parallel..."
+echo ""
 
+# Start all tests in background
+declare -A PIDS
 for version in "${PHP_VERSIONS[@]}"; do
-    echo ""
-    print_status "Testing $version..."
+    print_status "Starting $version..."
     
-    if docker-compose -f docker-compose.test.yml run --rm "test-$version"; then
-        print_success "$version passed"
-        PASSED_VERSIONS+=("$version")
+    (
+        if docker-compose -f docker-compose.test.yml run --rm "test-$version" > "/tmp/test_output_$version.log" 2>&1; then
+            echo "PASSED" > "/tmp/test_result_$version"
+        else
+            echo "FAILED" > "/tmp/test_result_$version"
+        fi
+    ) &
+    
+    PIDS[$version]=$!
+done
+
+print_status "All tests started. Waiting for completion..."
+echo ""
+
+# Wait for all processes and collect results
+for version in "${PHP_VERSIONS[@]}"; do
+    wait ${PIDS[$version]}
+    
+    if [ -f "/tmp/test_result_$version" ]; then
+        result=$(cat "/tmp/test_result_$version")
+        if [ "$result" = "PASSED" ]; then
+            print_success "$version passed"
+            PASSED_VERSIONS+=("$version")
+        else
+            print_error "$version failed"
+            FAILED_VERSIONS+=("$version")
+            echo "   Log: /tmp/test_output_$version.log"
+        fi
+        rm -f "/tmp/test_result_$version"
     else
-        print_error "$version failed"
+        print_error "$version - no result file"
         FAILED_VERSIONS+=("$version")
     fi
 done
+
+# Cleanup temp files
+rm -f /tmp/test_output_*.log
 
 # Summary
 echo ""

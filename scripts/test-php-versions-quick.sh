@@ -21,7 +21,7 @@ FAILED_VERSIONS=()
 
 test_php_version() {
     local version=$1
-    echo -e "${BLUE}🧪 Testing $version...${NC}"
+    echo -e "${BLUE}🧪 Starting $version in parallel...${NC}"
     
     # Run core validation only
     local test_cmd="
@@ -35,18 +35,56 @@ test_php_version() {
         echo '✅ Core Tests OK'
     "
     
-    if timeout 300 docker-compose -f docker-compose.test.yml run --rm test-$version bash -c "$test_cmd" > /dev/null 2>&1; then
-        echo -e "   ${GREEN}✅ $version: PASSED${NC}"
-        PASSED_VERSIONS+=("$version")
-    else
-        echo -e "   ${RED}❌ $version: FAILED${NC}"
-        FAILED_VERSIONS+=("$version")
-    fi
+    # Run in background and save PID and temp file for results
+    local temp_file="/tmp/test_result_$version"
+    (
+        if timeout 180 docker-compose -f docker-compose.test.yml run --rm test-$version bash -c "$test_cmd" > /dev/null 2>&1; then
+            echo "PASSED" > "$temp_file"
+        else
+            echo "FAILED" > "$temp_file"
+        fi
+    ) &
+    
+    local pid=$!
+    echo "$pid" > "/tmp/test_pid_$version"
 }
 
-# Test all versions
+# Start all versions in parallel
+echo -e "${BLUE}🚀 Starting all PHP versions in parallel...${NC}"
+echo ""
+
 for version in php81 php82 php83 php84; do
     test_php_version $version
+done
+
+# Wait for all background processes and collect results
+echo -e "${BLUE}⏳ Waiting for all tests to complete...${NC}"
+echo ""
+
+for version in php81 php82 php83 php84; do
+    pid_file="/tmp/test_pid_$version"
+    result_file="/tmp/test_result_$version"
+    
+    if [ -f "$pid_file" ]; then
+        pid=$(cat "$pid_file")
+        wait $pid 2>/dev/null || true
+        rm -f "$pid_file"
+    fi
+    
+    if [ -f "$result_file" ]; then
+        result=$(cat "$result_file")
+        if [ "$result" = "PASSED" ]; then
+            echo -e "   ${GREEN}✅ $version: PASSED${NC}"
+            PASSED_VERSIONS+=("$version")
+        else
+            echo -e "   ${RED}❌ $version: FAILED${NC}"
+            FAILED_VERSIONS+=("$version")
+        fi
+        rm -f "$result_file"
+    else
+        echo -e "   ${RED}❌ $version: TIMEOUT/ERROR${NC}"
+        FAILED_VERSIONS+=("$version")
+    fi
 done
 
 # Summary

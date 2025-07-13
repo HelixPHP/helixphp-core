@@ -375,7 +375,8 @@ class PerformanceFeaturesIntegrationTest extends IntegrationTestCase
         $this->assertLessThan(
             $maxDegradation,
             $performanceDegradation,
-            "Performance degradation ({$performanceDegradation}) should be less than " . (($maxDegradation - 1) * 100) . "%"
+            "Performance degradation ({$performanceDegradation}) should be less than " .
+            (($maxDegradation - 1) * 100) . "%"
         );
 
         // Verify system metrics are within reasonable bounds

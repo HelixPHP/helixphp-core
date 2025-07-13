@@ -143,9 +143,15 @@ class ArrayCallableIntegrationTest extends TestCase
         $this->assertEquals(200, $arrayResponse->getStatusCode());
 
         $closureResponseBody = $closureResponse->getBody();
-        $closureBody = json_decode(is_string($closureResponseBody) ? $closureResponseBody : $closureResponseBody->__toString(), true);
+        $closureBody = json_decode(
+            is_string($closureResponseBody) ? $closureResponseBody : $closureResponseBody->__toString(),
+            true
+        );
         $arrayResponseBody = $arrayResponse->getBody();
-        $arrayBody = json_decode(is_string($arrayResponseBody) ? $arrayResponseBody : $arrayResponseBody->__toString(), true);
+        $arrayBody = json_decode(
+            is_string($arrayResponseBody) ? $arrayResponseBody : $arrayResponseBody->__toString(),
+            true
+        );
 
         $this->assertEquals('closure', $closureBody['type']);
         $this->assertEquals('ok', $arrayBody['status']);
@@ -213,9 +219,15 @@ class ArrayCallableIntegrationTest extends TestCase
         $this->assertEquals(200, $anotherResponse->getStatusCode());
 
         $healthResponseBody = $healthResponse->getBody();
-        $healthBody = json_decode(is_string($healthResponseBody) ? $healthResponseBody : $healthResponseBody->__toString(), true);
+        $healthBody = json_decode(
+            is_string($healthResponseBody) ? $healthResponseBody : $healthResponseBody->__toString(),
+            true
+        );
         $anotherResponseBody = $anotherResponse->getBody();
-        $anotherBody = json_decode(is_string($anotherResponseBody) ? $anotherResponseBody : $anotherResponseBody->__toString(), true);
+        $anotherBody = json_decode(
+            is_string($anotherResponseBody) ? $anotherResponseBody : $anotherResponseBody->__toString(),
+            true
+        );
 
         $this->assertEquals('ok', $healthBody['status']);
         $this->assertEquals('another', $anotherBody['controller']);
@@ -277,7 +289,10 @@ class ArrayCallableIntegrationTest extends TestCase
         $jsonResponse = $this->app->handle($jsonRequest);
         $this->assertEquals(200, $jsonResponse->getStatusCode());
         $jsonResponseBody = $jsonResponse->getBody();
-        $jsonBody = json_decode(is_string($jsonResponseBody) ? $jsonResponseBody : $jsonResponseBody->__toString(), true);
+        $jsonBody = json_decode(
+            is_string($jsonResponseBody) ? $jsonResponseBody : $jsonResponseBody->__toString(),
+            true
+        );
         $this->assertEquals('json', $jsonBody['type']);
 
         // Test text response
@@ -285,14 +300,20 @@ class ArrayCallableIntegrationTest extends TestCase
         $textResponse = $this->app->handle($textRequest);
         $this->assertEquals(200, $textResponse->getStatusCode());
         $textResponseBody = $textResponse->getBody();
-        $this->assertEquals('plain text', is_string($textResponseBody) ? $textResponseBody : $textResponseBody->__toString());
+        $this->assertEquals(
+            'plain text',
+            is_string($textResponseBody) ? $textResponseBody : $textResponseBody->__toString()
+        );
 
         // Test status response
         $statusRequest = new Request('GET', '/status', '/status');
         $statusResponse = $this->app->handle($statusRequest);
         $this->assertEquals(201, $statusResponse->getStatusCode());
         $statusResponseBody = $statusResponse->getBody();
-        $statusBody = json_decode(is_string($statusResponseBody) ? $statusResponseBody : $statusResponseBody->__toString(), true);
+        $statusBody = json_decode(
+            is_string($statusResponseBody) ? $statusResponseBody : $statusResponseBody->__toString(),
+            true
+        );
         $this->assertTrue($statusBody['created']);
     }
 }
