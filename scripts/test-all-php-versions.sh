@@ -52,6 +52,8 @@ echo ""
 
 # Start all tests in background
 declare -A PIDS
+
+# Start PHP version tests
 for version in "${PHP_VERSIONS[@]}"; do
     print_status "Starting $version..."
     
@@ -66,10 +68,26 @@ for version in "${PHP_VERSIONS[@]}"; do
     PIDS[$version]=$!
 done
 
+# Start quality check in parallel if requested
+QUALITY_PID=""
+if [[ "$1" == "--with-quality" ]]; then
+    print_status "Starting quality metrics in parallel..."
+    
+    (
+        if docker-compose -f docker-compose.test.yml run --rm quality-check > "/tmp/test_output_quality.log" 2>&1; then
+            echo "PASSED" > "/tmp/test_result_quality"
+        else
+            echo "FAILED" > "/tmp/test_result_quality"
+        fi
+    ) &
+    
+    QUALITY_PID=$!
+fi
+
 print_status "All tests started. Waiting for completion..."
 echo ""
 
-# Wait for all processes and collect results
+# Wait for all PHP version processes and collect results
 for version in "${PHP_VERSIONS[@]}"; do
     wait ${PIDS[$version]}
     
@@ -89,6 +107,26 @@ for version in "${PHP_VERSIONS[@]}"; do
         FAILED_VERSIONS+=("$version")
     fi
 done
+
+# Wait for quality check if it was started
+QUALITY_RESULT=""
+if [[ "$1" == "--with-quality" ]] && [[ -n "$QUALITY_PID" ]]; then
+    print_status "Waiting for quality metrics to complete..."
+    wait $QUALITY_PID
+    
+    if [ -f "/tmp/test_result_quality" ]; then
+        QUALITY_RESULT=$(cat "/tmp/test_result_quality")
+        if [ "$QUALITY_RESULT" = "PASSED" ]; then
+            print_success "Quality metrics passed"
+        else
+            print_warning "Quality metrics failed (non-blocking)"
+            echo "   Log: /tmp/test_output_quality.log"
+        fi
+        rm -f "/tmp/test_result_quality"
+    else
+        print_warning "Quality metrics - no result file (non-blocking)"
+    fi
+fi
 
 # Cleanup temp files
 rm -f /tmp/test_output_*.log
@@ -123,19 +161,19 @@ else
     echo "  ✅ PHP 8.2 Compatible"
     echo "  ✅ PHP 8.3 Compatible"
     echo "  ✅ PHP 8.4 Compatible"
-fi
-
-# Optional: Run quality metrics
-if [[ "$1" == "--with-quality" ]]; then
-    echo ""
-    print_status "Running quality metrics..."
     
-    if docker-compose -f docker-compose.test.yml run --rm quality-check; then
-        print_success "Quality metrics generated"
-    else
-        print_warning "Quality metrics failed (non-blocking)"
+    # Show quality metrics status if requested
+    if [[ "$1" == "--with-quality" ]]; then
+        echo ""
+        echo "📈 Quality Metrics:"
+        if [[ "$QUALITY_RESULT" == "PASSED" ]]; then
+            echo "  ✅ Quality Metrics Generated"
+        else
+            echo "  ⚠️  Quality Metrics Failed (non-blocking)"
+        fi
     fi
 fi
+
 
 # Cleanup
 print_status "Cleaning up Docker containers..."

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PivotPHP\Core\Exceptions\Enhanced;
 
 use PivotPHP\Core\Exceptions\HttpException;
+use PivotPHP\Core\Core\Environment;
 
 /**
  * ContextualException - Exception com contexto detalhado para debug
@@ -99,7 +100,7 @@ class ContextualException extends HttpException
         }
 
         // Stack trace for development
-        if (self::isDevelopmentMode()) {
+        if (Environment::isDevelopment()) {
             $debug[] = "\nSTACK TRACE:";
             $debug[] = $this->getTraceAsString();
         }
@@ -133,20 +134,6 @@ class ContextualException extends HttpException
     }
 
     /**
-     * Check if we're in development mode
-     */
-    private static function isDevelopmentMode(): bool
-    {
-        // Check common development indicators
-        return (
-            ($_ENV['APP_ENV'] ?? '') === 'development' ||
-            ($_ENV['APP_DEBUG'] ?? false) === true ||
-            ini_get('display_errors') === '1' ||
-            defined('PIVOTPHP_DEBUG') && PIVOTPHP_DEBUG === true
-        );
-    }
-
-    /**
      * Convert to array for JSON responses
      */
     public function toArray(): array
@@ -158,7 +145,7 @@ class ContextualException extends HttpException
             'category' => $this->category,
         ];
 
-        if (self::isDevelopmentMode()) {
+        if (Environment::isDevelopment()) {
             $data['context'] = $this->context;
             $data['suggestions'] = $this->suggestions;
             $data['debug'] = $this->debugInfo;

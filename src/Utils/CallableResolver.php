@@ -77,7 +77,7 @@ class CallableResolver
 
             if (!method_exists($objectOrClass, $method)) {
                 throw new InvalidArgumentException(
-                    "Static method '{$objectOrClass}::{$method}' does not exist"
+                    "Route handler validation failed: Static method '{$objectOrClass}::{$method}' does not exist"
                 );
             }
 
@@ -99,7 +99,7 @@ class CallableResolver
 
             if (!method_exists($objectOrClass, $method)) {
                 throw new InvalidArgumentException(
-                    "Method '{$className}::{$method}' does not exist"
+                    "Route handler validation failed: Method '{$className}::{$method}' does not exist"
                 );
             }
 

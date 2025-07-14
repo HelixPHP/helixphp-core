@@ -46,6 +46,15 @@ class JsonBufferPool
     public const POOLING_OBJECT_THRESHOLD = 5;       // Objects with 5+ properties use pooling
     public const POOLING_STRING_THRESHOLD = 1024;    // Strings longer than 1KB use pooling
 
+    // Additional constants for consistency
+    public const NESTED_ARRAY_CHECK_THRESHOLD = 50;  // For hasNestedStructures() array count check
+    public const NESTED_ARRAY_ELEMENT_THRESHOLD = 5; // For hasNestedStructures() element check
+    public const NESTED_STRING_LENGTH_THRESHOLD = 100; // For hasNestedStructures() string check
+    public const MAX_POOL_SIZE_LIMIT = 1000;          // Maximum allowed pool size
+    public const CAPACITY_LIMIT_BYTES = 1048576;      // 1MB capacity limit
+    public const BYTES_PER_KB = 1024;                 // Bytes in a kilobyte
+    public const BYTES_PER_MB = 1048576;              // Bytes in a megabyte
+
     /**
      * Buffer pools organized by capacity
      */
@@ -58,7 +67,7 @@ class JsonBufferPool
         'max_pool_size' => 50,
         'default_capacity' => 4096,
         'size_categories' => [
-            'small' => 1024,      // 1KB
+            'small' => self::BYTES_PER_KB,      // 1KB
             'medium' => 4096,     // 4KB
             'large' => 16384,     // 16KB
             'xlarge' => 65536     // 64KB
@@ -187,7 +196,7 @@ class JsonBufferPool
             }
 
             // Para arrays maiores, verificar profundidade
-            if ($count < 50 && !self::hasNestedStructures($data)) {
+            if ($count < self::NESTED_ARRAY_CHECK_THRESHOLD && !self::hasNestedStructures($data)) {
                 return false;
             }
 
@@ -218,13 +227,13 @@ class JsonBufferPool
     private static function hasNestedStructures(array $data): bool
     {
         foreach ($data as $value) {
-            if (is_array($value) && count($value) > 5) {
+            if (is_array($value) && count($value) > self::NESTED_ARRAY_ELEMENT_THRESHOLD) {
                 return true;
             }
             if (is_object($value)) {
                 return true;
             }
-            if (is_string($value) && strlen($value) > 100) {
+            if (is_string($value) && strlen($value) > self::NESTED_STRING_LENGTH_THRESHOLD) {
                 return true;
             }
         }
@@ -298,10 +307,10 @@ class JsonBufferPool
      */
     private static function formatCapacity(int $bytes): string
     {
-        if ($bytes >= 1024 * 1024) {
-            return sprintf('%.1fMB (%d bytes)', $bytes / (1024 * 1024), $bytes);
-        } elseif ($bytes >= 1024) {
-            return sprintf('%.1fKB (%d bytes)', $bytes / 1024, $bytes);
+        if ($bytes >= self::BYTES_PER_MB) {
+            return sprintf('%.1fMB (%d bytes)', $bytes / self::BYTES_PER_MB, $bytes);
+        } elseif ($bytes >= self::BYTES_PER_KB) {
+            return sprintf('%.1fKB (%d bytes)', $bytes / self::BYTES_PER_KB, $bytes);
         } else {
             return sprintf('%d bytes', $bytes);
         }
@@ -331,7 +340,7 @@ class JsonBufferPool
             'max_pool_size' => 50,
             'default_capacity' => 4096,
             'size_categories' => [
-                'small' => 1024,      // 1KB
+                'small' => self::BYTES_PER_KB,      // 1KB
                 'medium' => 4096,     // 4KB
                 'large' => 16384,     // 16KB
                 'xlarge' => 65536     // 64KB
@@ -378,9 +387,10 @@ class JsonBufferPool
             if ($config['max_pool_size'] <= 0) {
                 throw new \InvalidArgumentException("'max_pool_size' must be a positive integer");
             }
-            if ($config['max_pool_size'] > 1000) {
+            if ($config['max_pool_size'] > self::MAX_POOL_SIZE_LIMIT) {
                 throw new \InvalidArgumentException(
-                    "'max_pool_size' cannot exceed 1000 for memory safety, got: {$config['max_pool_size']}"
+                    "'max_pool_size' cannot exceed " . self::MAX_POOL_SIZE_LIMIT .
+                    " for memory safety, got: {$config['max_pool_size']}"
                 );
             }
         }
@@ -396,9 +406,10 @@ class JsonBufferPool
             if ($config['default_capacity'] <= 0) {
                 throw new \InvalidArgumentException("'default_capacity' must be a positive integer");
             }
-            if ($config['default_capacity'] > 1024 * 1024) { // 1MB limit
+            if ($config['default_capacity'] > self::CAPACITY_LIMIT_BYTES) { // 1MB limit
                 throw new \InvalidArgumentException(
-                    "'default_capacity' cannot exceed 1MB (1048576 bytes), got: {$config['default_capacity']}"
+                    "'default_capacity' cannot exceed 1MB (" . self::CAPACITY_LIMIT_BYTES .
+                    " bytes), got: {$config['default_capacity']}"
                 );
             }
         }
@@ -433,9 +444,10 @@ class JsonBufferPool
                     );
                 }
 
-                if ($capacity > 1024 * 1024) { // 1MB limit per category
+                if ($capacity > self::CAPACITY_LIMIT_BYTES) { // 1MB limit per category
                     throw new \InvalidArgumentException(
-                        "Size category '{$name}' capacity cannot exceed 1MB (1048576 bytes), got: {$capacity}"
+                        "Size category '{$name}' capacity cannot exceed 1MB (" . self::CAPACITY_LIMIT_BYTES .
+                        " bytes), got: {$capacity}"
                     );
                 }
             }

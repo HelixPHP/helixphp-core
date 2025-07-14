@@ -12,6 +12,12 @@ use PivotPHP\Core\Json\Pool\JsonBufferPool;
  */
 class JsonBufferPoolEncodeTest extends TestCase
 {
+    /**
+     * Test data size that guarantees pooling is triggered.
+     * This value is greater than NESTED_ARRAY_CHECK_THRESHOLD (50) to bypass nested structure checks
+     * and ensure pooling is always used for consistent test behavior.
+     */
+    private const TEST_DATA_SIZE = 55;
     protected function setUp(): void
     {
         // Clear pools and reset configuration before each test
@@ -78,7 +84,7 @@ class JsonBufferPoolEncodeTest extends TestCase
     {
         // Encode similar sized data multiple times (use data that will use pooling)
         for ($i = 0; $i < 5; $i++) {
-            $data = array_fill(0, 55, ['iteration' => $i, 'test' => 'data']); // Ensure pooling
+            $data = array_fill(0, self::TEST_DATA_SIZE, ['iteration' => $i, 'test' => 'data']); // Ensure pooling
             $json = JsonBufferPool::encodeWithPool($data);
             $this->assertStringContainsString((string)$i, $json);
         }
@@ -166,7 +172,7 @@ class JsonBufferPoolEncodeTest extends TestCase
     public function testEncodeWithPoolErrorHandling(): void
     {
         // Create data that should encode fine and use pooling
-        $validData = array_fill(0, 55, ['test' => 'data']);
+        $validData = array_fill(0, self::TEST_DATA_SIZE, ['test' => 'data']);
         $result = JsonBufferPool::encodeWithPool($validData);
 
         $this->assertIsString($result);

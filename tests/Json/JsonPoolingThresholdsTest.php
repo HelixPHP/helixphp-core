@@ -13,6 +13,12 @@ use PivotPHP\Core\Json\Pool\JsonBufferPool;
  */
 class JsonPoolingThresholdsTest extends TestCase
 {
+    /**
+     * Test data size that guarantees pooling is triggered.
+     * This value is greater than NESTED_ARRAY_CHECK_THRESHOLD (50) to bypass nested structure checks
+     * and ensure pooling is always used for consistent test behavior.
+     */
+    private const TEST_DATA_SIZE = 55;
     protected function setUp(): void
     {
         JsonBufferPool::clearPools();
@@ -62,7 +68,7 @@ class JsonPoolingThresholdsTest extends TestCase
         $response->setTestMode(true);
 
         // Test array threshold - create array that should use pooling (50+ elements)
-        $mediumArray = array_fill(0, 55, 'item');
+        $mediumArray = array_fill(0, self::TEST_DATA_SIZE, 'item');
         $response->json($mediumArray);
 
         $stats = JsonBufferPool::getStatistics();
@@ -154,7 +160,7 @@ class JsonPoolingThresholdsTest extends TestCase
      */
     public function testConsistencyBetweenDirectAndResponsePooling(): void
     {
-        $testData = array_fill(0, 55, 'test'); // Use 55 elements to ensure pooling
+        $testData = array_fill(0, self::TEST_DATA_SIZE, 'test'); // Use TEST_DATA_SIZE elements to ensure pooling
 
         // Direct pooling
         JsonBufferPool::clearPools();
@@ -191,8 +197,8 @@ class JsonPoolingThresholdsTest extends TestCase
 
         $response = new Response();
 
-        // Test array threshold boundary (use 55 elements to ensure pooling)
-        $arrayAtThreshold = array_fill(0, 55, 'item');
+        // Test array threshold boundary (use TEST_DATA_SIZE elements to ensure pooling)
+        $arrayAtThreshold = array_fill(0, self::TEST_DATA_SIZE, 'item');
         $arrayBelowThreshold = array_fill(0, 5, 'item'); // Much smaller array
 
         $this->assertTrue($shouldUsePoolingMethod->invoke($response, $arrayAtThreshold));
