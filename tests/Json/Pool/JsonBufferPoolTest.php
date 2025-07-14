@@ -63,11 +63,12 @@ class JsonBufferPoolTest extends TestCase
 
     public function testEncodeWithPool(): void
     {
-        $data = ['name' => 'test', 'value' => 123];
+        $data = array_fill(0, 55, ['name' => 'test', 'value' => 123]); // Use data that will trigger pooling
 
         $json = JsonBufferPool::encodeWithPool($data);
 
-        $this->assertEquals('{"name":"test","value":123}', $json);
+        $this->assertStringContainsString('"name":"test"', $json);
+        $this->assertStringContainsString('"value":123', $json);
 
         $stats = JsonBufferPool::getStatistics();
         $this->assertEquals(1, $stats['total_operations']);

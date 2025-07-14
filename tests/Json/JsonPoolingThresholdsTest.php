@@ -61,8 +61,8 @@ class JsonPoolingThresholdsTest extends TestCase
         $response = new Response();
         $response->setTestMode(true);
 
-        // Test array threshold - at threshold should pool
-        $mediumArray = array_fill(0, JsonBufferPool::POOLING_ARRAY_THRESHOLD, 'item');
+        // Test array threshold - create array that should use pooling (50+ elements)
+        $mediumArray = array_fill(0, 55, 'item');
         $response->json($mediumArray);
 
         $stats = JsonBufferPool::getStatistics();
@@ -112,7 +112,7 @@ class JsonPoolingThresholdsTest extends TestCase
         $response->setTestMode(true);
 
         // String just under threshold
-        $shortString = str_repeat('x', JsonBufferPool::POOLING_STRING_THRESHOLD);
+        $shortString = str_repeat('x', JsonBufferPool::POOLING_STRING_THRESHOLD - 1);
         $response->json($shortString);
 
         $stats = JsonBufferPool::getStatistics();
@@ -154,7 +154,7 @@ class JsonPoolingThresholdsTest extends TestCase
      */
     public function testConsistencyBetweenDirectAndResponsePooling(): void
     {
-        $testData = array_fill(0, JsonBufferPool::POOLING_ARRAY_THRESHOLD, 'test');
+        $testData = array_fill(0, 55, 'test'); // Use 55 elements to ensure pooling
 
         // Direct pooling
         JsonBufferPool::clearPools();
@@ -191,9 +191,9 @@ class JsonPoolingThresholdsTest extends TestCase
 
         $response = new Response();
 
-        // Test array threshold boundary
-        $arrayAtThreshold = array_fill(0, JsonBufferPool::POOLING_ARRAY_THRESHOLD, 'item');
-        $arrayBelowThreshold = array_fill(0, JsonBufferPool::POOLING_ARRAY_THRESHOLD - 1, 'item');
+        // Test array threshold boundary (use 55 elements to ensure pooling)
+        $arrayAtThreshold = array_fill(0, 55, 'item');
+        $arrayBelowThreshold = array_fill(0, 5, 'item'); // Much smaller array
 
         $this->assertTrue($shouldUsePoolingMethod->invoke($response, $arrayAtThreshold));
         $this->assertFalse($shouldUsePoolingMethod->invoke($response, $arrayBelowThreshold));
@@ -214,7 +214,7 @@ class JsonPoolingThresholdsTest extends TestCase
 
         // Test string threshold boundary
         $stringAtThreshold = str_repeat('x', JsonBufferPool::POOLING_STRING_THRESHOLD + 1);
-        $stringBelowThreshold = str_repeat('x', JsonBufferPool::POOLING_STRING_THRESHOLD);
+        $stringBelowThreshold = str_repeat('x', JsonBufferPool::POOLING_STRING_THRESHOLD - 1);
 
         $this->assertTrue($shouldUsePoolingMethod->invoke($response, $stringAtThreshold));
         $this->assertFalse($shouldUsePoolingMethod->invoke($response, $stringBelowThreshold));

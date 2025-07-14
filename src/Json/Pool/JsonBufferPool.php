@@ -166,6 +166,14 @@ class JsonBufferPool
     }
 
     /**
+     * Public method to check if data should use pooling (for consistency with Response)
+     */
+    public static function shouldUsePoolingForData(mixed $data): bool
+    {
+        return self::shouldUsePooling($data);
+    }
+
+    /**
      * Determine if pooling should be used based on data characteristics
      */
     private static function shouldUsePooling(mixed $data): bool
