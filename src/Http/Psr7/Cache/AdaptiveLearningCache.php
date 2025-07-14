@@ -84,8 +84,7 @@ class AdaptiveLearningCache
         string $key,
         ?callable $loader = null,
         array $context = []
-    )
-    {
+    ) {
         self::$globalStats['total_requests']++;
 
         $prediction = self::predictCacheUtility($key, $context);
@@ -132,8 +131,7 @@ class AdaptiveLearningCache
         $value,
         ?int $ttl = null,
         array $context = []
-    ): void
-    {
+    ): void {
         if ($ttl === null) {
             $ttl = self::calculateAdaptiveTTL($key, $context);
         }
@@ -253,8 +251,7 @@ class AdaptiveLearningCache
         string $key,
         array $context,
         bool $wasHit
-    ): void
-    {
+    ): void {
         if (!isset(self::$learningModels[$key])) {
             self::$learningModels[$key] = [
                 'weights' => [],
@@ -359,8 +356,7 @@ class AdaptiveLearningCache
         string $key,
         array $context,
         float $prediction
-    ): bool
-    {
+    ): bool {
         // Base decision on utility prediction
         if ($prediction < 0.3) {
             return false; // Low utility, don't cache
@@ -544,8 +540,7 @@ class AdaptiveLearningCache
         string $key,
         bool $actualResult,
         float $prediction
-    ): void
-    {
+    ): void {
         $accuracy = 1 - abs(($actualResult ? 1.0 : 0.0) - $prediction);
 
         // Update global accuracy with exponential moving average

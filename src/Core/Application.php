@@ -5,8 +5,10 @@ namespace PivotPHP\Core\Core;
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
 use PivotPHP\Core\Routing\Router;
+use PivotPHP\Core\Utils\CallableResolver;
 use PivotPHP\Core\Middleware\MiddlewareStack;
 use PivotPHP\Core\Exceptions\HttpException;
+use PivotPHP\Core\Exceptions\Enhanced\ContextualException;
 use PivotPHP\Core\Providers\Container;
 use PivotPHP\Core\Providers\ServiceProvider;
 use PivotPHP\Core\Providers\ContainerServiceProvider;
@@ -608,7 +610,17 @@ class Application
             $route = $this->router::identify($request->getMethod(), $request->getPathCallable());
 
             if (!$route) {
-                throw new HttpException(404, 'Route not found');
+                // Buscar rotas disponíveis para suggestions
+                $availableRoutes = array_map(
+                    fn($r) => "{$r['method']} {$r['path']}",
+                    array_slice($this->router::getAllRoutes(), 0, 10)
+                );
+
+                throw ContextualException::routeNotFound(
+                    $request->getMethod(),
+                    $request->getPathCallable(),
+                    $availableRoutes
+                );
             }
             // Definindo o path configurado na requisição
             // Isso é necessário para middlewares que dependem do path para definir os parâmetros
@@ -656,10 +668,22 @@ class Application
     ): Response {
         $handler = $route['handler'];
 
-        if (is_callable($handler)) {
-            $result = $handler($request, $response);
-        } else {
-            throw new \InvalidArgumentException('Route handler is not callable');
+        // Usar CallableResolver para garantir compatibilidade com array callables
+        try {
+            $result = CallableResolver::call($handler, $request, $response);
+        } catch (\InvalidArgumentException $e) {
+            $handlerInfo = [
+                'type' => gettype($handler),
+                'class' => is_array($handler) && isset($handler[0]) ?
+                    (is_object($handler[0]) ? get_class($handler[0]) : $handler[0]) : 'N/A',
+                'method' => is_array($handler) && isset($handler[1]) ? $handler[1] : 'N/A'
+            ];
+
+            throw ContextualException::handlerError(
+                $handlerInfo['type'],
+                $e->getMessage(),
+                $handlerInfo
+            );
         }
 
         return $result instanceof Response ? $result : $response;

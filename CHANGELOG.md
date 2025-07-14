@@ -5,6 +5,110 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-07-13
+
+### 🎯 **Developer Experience & Examples Modernization Edition**
+
+> **Complete Examples Modernization**: Comprehensive update of all examples with v1.1.4+ features including native array callables, intelligent JsonBufferPool threshold system, enhanced error diagnostics with ContextualException, and organized controller architecture while maintaining 100% backward compatibility.
+
+#### 🌟 **New v1.1.4+ Example Suite**
+- **8 Modern Examples Created**: Complete demonstration of v1.1.4+ features
+  - `rest-api-v114.php`: RESTful API with array callables and JsonBufferPool
+  - `rest-api-modernized-v114.php`: Enhanced API with performance monitoring
+  - `array-callables-v114.php`: Comprehensive array callable demonstration  
+  - `json-pool-demo-v114.php`: JsonBufferPool optimization showcase
+  - `enhanced-errors-v114.php`: ContextualException error handling demo
+  - `route-parameters-v114.php`: Advanced parameter handling with validation
+  - `custom-middleware-v114.php`: Organized middleware with array callables
+  - `hello-world.php`: Updated with v1.1.4+ features
+
+#### 🎯 **Array Callables Implementation**
+- **Native Controller Support**: Full implementation of `[Controller::class, 'method']` syntax
+  - **CallableResolver Utility**: Robust validation and resolution of array callables
+  - **Enhanced Validation**: Automatic detection of public/private method accessibility
+  - **IDE Support**: Full autocomplete and refactoring capabilities
+  - **Performance Optimized**: Zero runtime overhead after initial validation
+  - **Error Diagnostics**: ContextualException integration for invalid callables
+
+#### 🚀 **JsonBufferPool Intelligence**
+- **Intelligent Threshold System**: Automatic optimization based on 256-byte threshold
+  - **Small Data**: Direct `json_encode()` for minimal overhead (< 256 bytes)
+  - **Large Data**: Buffer pooling for optimization (≥ 256 bytes)
+  - **Zero Configuration**: Optimal performance out-of-the-box
+  - **Real-time Monitoring**: `getStatistics()` for performance tracking
+  - **Production Ready**: Validated threshold for maximum efficiency
+
+#### 🔍 **Enhanced Error Diagnostics**
+- **ContextualException System**: Advanced error handling with detailed context
+  - **Contextual Information**: Rich error context with relevant details
+  - **Actionable Suggestions**: Built-in resolution guidance for developers
+  - **Error Categorization**: Automatic classification (ROUTING, PARAMETER, VALIDATION, etc.)
+  - **Development vs Production**: Environment-aware error detail levels
+  - **Request Tracking**: Unique error IDs for debugging and monitoring
+
+#### 🏗️ **Organized Architecture**
+- **Controller Organization**: Modern controller structure with dependency injection
+  - **Separated Concerns**: Logical separation of controllers, middleware, and utilities
+  - **Namespace Organization**: Clean `use` statements and imports
+  - **Dependency Injection**: Constructor-based DI patterns demonstrated
+  - **Service Provider Pattern**: Enhanced integration with framework services
+
+#### 🔄 **Backward Compatibility**
+- **100% Compatibility Maintained**: All existing examples continue to function
+  - **Path Corrections**: Fixed autoloader paths in existing examples
+  - **Zero Breaking Changes**: No functionality removed or modified
+  - **Gradual Migration**: Optional transition to v1.1.4+ features
+  - **Parallel Versions**: Old and new examples coexist peacefully
+
+#### 📋 **Composer Scripts Enhancement**
+- **8 New Example Scripts**: Easy execution of v1.1.4+ examples
+  ```bash
+  composer examples:v114:hello-world
+  composer examples:v114:rest-api
+  composer examples:v114:array-callables
+  composer examples:v114:json-optimization
+  composer examples:v114:enhanced-errors
+  composer examples:v114:route-parameters
+  composer examples:v114:middleware
+  ```
+
+#### 🧪 **Comprehensive Testing**
+- **100% Example Validation**: All examples tested for syntax and functionality
+  - **Syntax Testing**: `php -l` validation for all examples
+  - **Runtime Testing**: Autoloader and dependency validation
+  - **HTTP Testing**: Server startup and response validation
+  - **Feature Detection**: v1.1.4+ feature presence verification
+  - **Compatibility Testing**: Backward compatibility confirmation
+
+#### 📚 **Documentation Updates**
+- **Enhanced CLAUDE.md**: Updated project instructions with v1.1.4+ features
+- **Migration Guides**: Comprehensive migration documentation
+- **Performance Guides**: JsonBufferPool optimization instructions
+- **Error Handling Guides**: ContextualException usage patterns
+- **Example Documentation**: Detailed example descriptions and usage
+
+#### 🎉 **Developer Experience Improvements**
+- **Modern Development Patterns**: Demonstrates current PHP best practices
+  - **Type Safety**: Enhanced type declarations and validation
+  - **Error Handling**: Contextual error messages with suggestions
+  - **Performance Awareness**: Built-in optimization indicators
+  - **Code Organization**: Modern PSR standards implementation
+  - **IDE Integration**: Enhanced development environment support
+
+### 🔧 **Technical Improvements**
+- **Enhanced Middleware Architecture**: Organized middleware classes with static methods
+- **Improved Error Context**: Detailed error information for faster debugging
+- **Performance Monitoring**: Real-time performance metrics and optimization status
+- **Configuration Examples**: Production-ready configuration patterns
+- **Testing Patterns**: Modern testing approaches and utilities
+
+### 📈 **Impact & Benefits**
+- **Learning Curve**: Reduced complexity for new developers
+- **Development Speed**: Faster development with enhanced IDE support
+- **Production Readiness**: Battle-tested patterns and optimizations
+- **Migration Path**: Clear upgrade path from older patterns
+- **Community**: Enhanced examples for documentation and learning
+
 ## [1.1.3] - 2025-07-12
 
 ### 🚀 **Performance Optimization & Architectural Excellence Edition**

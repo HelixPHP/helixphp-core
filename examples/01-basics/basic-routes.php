@@ -15,7 +15,7 @@
  * curl -X DELETE http://localhost:8000/users/1
  */
 
-require_once dirname(__DIR__, 2) . '/pivotphp-core/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PivotPHP\Core\Core\Application;
 

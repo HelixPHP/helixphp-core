@@ -133,8 +133,7 @@ class ProbabilisticCache
         string $key,
         $value,
         ?int $ttl = null
-    ): void
-    {
+    ): void {
         if ($ttl === null) {
             $ttl = self::calculateAdaptiveTTL($key);
         }
@@ -210,8 +209,7 @@ class ProbabilisticCache
         string $key,
         int $delta,
         int $ttl
-    ): bool
-    {
+    ): bool {
         // XFetch algorithm implementation
         $probability = self::BETA * log(mt_rand(1, PHP_INT_MAX) / PHP_INT_MAX) * $delta;
 

@@ -211,8 +211,7 @@ class IntelligentJsonCache
         string $structureKey,
         array $data,
         string $json
-    ): void
-    {
+    ): void {
         if (count(self::$structureTemplates) >= self::MAX_TEMPLATE_CACHE) {
             self::evictOldTemplates();
         }
@@ -276,8 +275,7 @@ class IntelligentJsonCache
         mixed $data,
         string &$json,
         string $path
-    ): void
-    {
+    ): void {
         if (is_array($data)) {
             foreach ($data as $key => $value) {
                 $currentPath = $path ? $path . '.' . $key : (string)$key;

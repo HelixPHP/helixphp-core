@@ -145,6 +145,11 @@ class JsonBufferPool
         mixed $data,
         int $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
     ): string {
+        // Usar threshold inteligente - para dados pequenos, json_encode é mais rápido
+        if (!self::shouldUsePooling($data)) {
+            return json_encode($data, $flags);
+        }
+
         $optimalCapacity = self::getOptimalCapacity($data);
         $buffer = self::getBuffer($optimalCapacity);
 
@@ -154,6 +159,65 @@ class JsonBufferPool
         } finally {
             self::returnBuffer($buffer);
         }
+    }
+
+    /**
+     * Determine if pooling should be used based on data characteristics
+     */
+    private static function shouldUsePooling(mixed $data): bool
+    {
+        if (is_array($data)) {
+            $count = count($data);
+
+            // Arrays pequenos (< 10 elementos) são mais rápidos com json_encode direto
+            if ($count < self::POOLING_ARRAY_THRESHOLD) {
+                return false;
+            }
+
+            // Para arrays maiores, verificar profundidade
+            if ($count < 50 && !self::hasNestedStructures($data)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (is_object($data)) {
+            if ($data instanceof \stdClass) {
+                $properties = get_object_vars($data);
+                return count($properties) >= self::POOLING_OBJECT_THRESHOLD;
+            }
+
+            // Outros objetos geralmente se beneficiam do pooling
+            return true;
+        }
+
+        if (is_string($data)) {
+            return strlen($data) >= self::POOLING_STRING_THRESHOLD;
+        }
+
+        // Primitivos simples sempre usam json_encode direto
+        return false;
+    }
+
+    /**
+     * Check if array has nested structures that benefit from pooling
+     */
+    private static function hasNestedStructures(array $data): bool
+    {
+        foreach ($data as $value) {
+            if (is_array($value) && count($value) > 5) {
+                return true;
+            }
+            if (is_object($value)) {
+                return true;
+            }
+            if (is_string($value) && strlen($value) > 100) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

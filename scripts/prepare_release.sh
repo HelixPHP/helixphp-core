@@ -5,9 +5,12 @@
 
 set -e
 
+# Definir diretório do projeto
+PROJECT_DIR="/home/cfernandes/pivotphp/pivotphp-core"
+
 # Obter versão do arquivo VERSION
-if [ -f "VERSION" ]; then
-    VERSION=$(cat VERSION | tr -d '\n')
+if [ -f "$PROJECT_DIR/VERSION" ]; then
+    VERSION=$(cat "$PROJECT_DIR/VERSION" | tr -d '\n')
 else
     echo "Arquivo VERSION não encontrado!"
     exit 1
@@ -31,8 +34,8 @@ title "PivotPHP v$VERSION - Release Preparation"
 echo ""
 
 # Verificar se estamos na raiz do projeto
-if [ ! -f "composer.json" ]; then
-    error "Execute este script na raiz do projeto PivotPHP"
+if [ ! -f "$PROJECT_DIR/composer.json" ]; then
+    error "Projeto PivotPHP não encontrado em $PROJECT_DIR"
 fi
 
 # 1. Verificar se há arquivos sensíveis
