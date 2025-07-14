@@ -194,7 +194,7 @@ class ArrayCallableTest extends TestCase
     public function testInvalidArrayCallable(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Handler must be a callable function');
+        $this->expectExceptionMessage('Route handler validation failed: Method');
 
         // Try to register an invalid callable
         Router::get('/invalid', [$this->controller, 'nonExistentMethod']);
@@ -206,7 +206,7 @@ class ArrayCallableTest extends TestCase
     public function testInvalidStaticCallable(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Handler must be a callable function');
+        $this->expectExceptionMessage('Route handler validation failed: Static method');
 
         // Try to register an invalid static callable
         Router::get('/invalid', [TestController::class, 'nonExistentStaticMethod']);

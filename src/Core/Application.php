@@ -613,7 +613,7 @@ class Application
                 // Buscar rotas disponíveis para suggestions
                 $availableRoutes = array_map(
                     fn($r) => "{$r['method']} {$r['path']}",
-                    array_slice($this->router::getAllRoutes(), 0, 10)
+                    array_slice($this->router::getRoutes(), 0, 10)
                 );
 
                 throw ContextualException::routeNotFound(

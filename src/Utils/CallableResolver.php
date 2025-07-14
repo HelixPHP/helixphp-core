@@ -89,6 +89,7 @@ class CallableResolver
                 );
             }
 
+            /** @var callable */
             return [$objectOrClass, $method];
         }
 
@@ -110,6 +111,7 @@ class CallableResolver
                 );
             }
 
+            /** @var callable */
             return [$objectOrClass, $method];
         }
 

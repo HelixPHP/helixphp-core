@@ -113,7 +113,8 @@ class ContextualException extends HttpException
     private function formatValue(mixed $value): string
     {
         if (is_array($value)) {
-            return json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            $result = json_encode($value, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            return $result !== false ? $result : 'Array (unable to encode)';
         }
 
         if (is_object($value)) {
@@ -128,7 +129,7 @@ class ContextualException extends HttpException
             return 'null';
         }
 
-        return (string) $value;
+        return is_scalar($value) ? (string) $value : gettype($value);
     }
 
     /**

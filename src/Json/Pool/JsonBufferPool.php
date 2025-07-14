@@ -147,7 +147,11 @@ class JsonBufferPool
     ): string {
         // Usar threshold inteligente - para dados pequenos, json_encode é mais rápido
         if (!self::shouldUsePooling($data)) {
-            return json_encode($data, $flags);
+            $result = json_encode($data, $flags);
+            if ($result === false) {
+                throw new \JsonException('JSON encoding failed: ' . json_last_error_msg());
+            }
+            return $result;
         }
 
         $optimalCapacity = self::getOptimalCapacity($data);
