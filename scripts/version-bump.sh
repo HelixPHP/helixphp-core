@@ -17,13 +17,28 @@ success() { echo -e "${GREEN}✅ $1${NC}"; }
 warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
 
-# Função para extrair versão do composer.json
+# Função para extrair versão do arquivo VERSION (OBRIGATÓRIO)
 get_current_version() {
-    if [ -f "composer.json" ]; then
-        grep '"version"' composer.json | sed 's/.*"version": "\([^"]*\)".*/\1/'
-    else
-        echo "0.0.0"
+    if [ ! -f "VERSION" ]; then
+        error "ERRO CRÍTICO: Arquivo VERSION não encontrado na raiz do projeto"
+        error "PivotPHP Core requer um arquivo VERSION para gerenciamento de versões"
     fi
+    
+    local version
+    version=$(cat VERSION | tr -d '\n')
+    
+    if [ -z "$version" ]; then
+        error "ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido"
+        error "Arquivo VERSION deve conter uma versão semântica válida (X.Y.Z)"
+    fi
+    
+    # Validate semantic version format
+    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        error "ERRO CRÍTICO: Formato de versão inválido no arquivo VERSION: $version"
+        error "Formato esperado: X.Y.Z (versionamento semântico)"
+    fi
+    
+    echo "$version"
 }
 
 # Função para incrementar versão
@@ -137,24 +152,33 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 0
 fi
 
-# Atualizar composer.json
-info "Atualizando composer.json..."
-if [ "$CURRENT_VERSION" = "0.0.0" ]; then
-    # Adicionar versão se não existir
-    sed -i.bak '2i\
+# Atualizar VERSION file e composer.json (se necessário)
+info "Atualizando VERSION file..."
+echo "$NEW_VERSION" > VERSION
+success "VERSION file atualizado para $NEW_VERSION"
+
+# Atualizar composer.json se ele tiver campo version
+if [ -f "composer.json" ] && grep -q '"version"' composer.json; then
+    info "Atualizando composer.json..."
+    if [ "$CURRENT_VERSION" = "0.0.0" ]; then
+        # Adicionar versão se não existir
+        sed -i.bak '2i\
     "version": "'$NEW_VERSION'",
 ' composer.json && rm composer.json.bak
-else
-    # Atualizar versão existente
-    sed -i.bak "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" composer.json && rm composer.json.bak
+    else
+        # Atualizar versão existente
+        sed -i.bak "s/\"version\": \"$CURRENT_VERSION\"/\"version\": \"$NEW_VERSION\"/" composer.json && rm composer.json.bak
+    fi
+    success "composer.json atualizado para $NEW_VERSION"
 fi
-
-success "Versão atualizada para $NEW_VERSION"
 
 # Criar commit se solicitado
 if [ "$NO_COMMIT" = false ]; then
     info "Criando commit..."
-    git add composer.json
+    git add VERSION
+    if [ -f "composer.json" ] && grep -q '"version"' composer.json; then
+        git add composer.json
+    fi
     git commit -m "chore: bump version to $NEW_VERSION
 
 Version bump: $CURRENT_VERSION → $NEW_VERSION

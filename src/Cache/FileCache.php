@@ -44,7 +44,12 @@ class FileCache implements CacheInterface
         }
 
         // Check if unserialize returned false (corrupted data) or invalid structure
-        if ($data === false || !is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
+        if (
+            $data === false ||
+            !is_array($data) ||
+            !array_key_exists('expires', $data) ||
+            !array_key_exists('value', $data)
+        ) {
             $this->delete($key);
             return $default;
         }
@@ -129,7 +134,12 @@ class FileCache implements CacheInterface
         }
 
         // Check if unserialize returned false (corrupted data) or invalid structure
-        if ($data === false || !is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('value', $data)) {
+        if (
+            $data === false ||
+            !is_array($data) ||
+            !array_key_exists('expires', $data) ||
+            !array_key_exists('value', $data)
+        ) {
             $this->delete($key);
             return false;
         }

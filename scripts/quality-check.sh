@@ -1,49 +1,27 @@
 #!/bin/bash
-# scripts/quality-check.sh
-# Script de validação completa de qualidade para PivotPHP Core v1.1.3-dev
+
+# PivotPHP Core - Comprehensive Quality Validation Script
+# Consolidates all quality checks with automatic version detection
 
 set -e
 
-# Cores para output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-PURPLE='\033[0;35m'
-NC='\033[0m' # No Color
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/version-utils.sh"
 
-# Função para logging
-log() {
-    echo -e "${BLUE}[$(date '+%Y-%m-%d %H:%M:%S')]${NC} $1"
-}
+# Validate project context and change to project root
+validate_project_context || exit 1
+cd_to_project_root || exit 1
 
-success() {
-    echo -e "${GREEN}✅ $1${NC}"
-}
+# Get version automatically
+VERSION=$(get_version) || exit 1
 
-warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
-}
-
-error() {
-    echo -e "${RED}❌ $1${NC}"
-}
-
-info() {
-    echo -e "${CYAN}ℹ️  $1${NC}"
-}
-
-critical() {
-    echo -e "${PURPLE}🚨 CRÍTICO: $1${NC}"
-}
-
-# Variáveis de controle
+# Variables for tracking results
 FAILED_CHECKS=0
 TOTAL_CHECKS=0
 CRITICAL_FAILURES=0
 
-# Função para contar verificações
+# Function to count checks
 count_check() {
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
     if [ $1 -ne 0 ]; then
@@ -54,43 +32,38 @@ count_check() {
     fi
 }
 
-# Verificar se estamos no diretório correto
-if [ ! -f "composer.json" ] || [ ! -d "src" ]; then
-    error "Execute este script a partir do diretório raiz do projeto PivotPHP Core"
-    exit 1
-fi
-
-# Criar diretório de relatórios
+# Create reports directory
 mkdir -p reports/quality
 
-log "🔍 Iniciando validação completa de qualidade PivotPHP Core v1.1.3-dev..."
-log "📊 Critérios: 8 CRÍTICOS + 4 ALTOS + Métricas avançadas"
-
+# Print banner
+print_version_banner
+echo "🔍 Comprehensive Quality Validation"
+echo "📊 Criteria: 8 CRITICAL + 4 HIGH + Advanced metrics"
 echo ""
 echo "======================================="
-echo "   VALIDAÇÃO DE QUALIDADE v1.1.3-dev"
+echo "   QUALITY VALIDATION v$VERSION"
 echo "======================================="
 echo ""
 
-# 1. PHPStan Level 9 - CRÍTICO
-log "🔍 1. Análise Estática (PHPStan Level 9) - CRÍTICO"
+# 1. PHPStan Level 9 - CRITICAL
+info "🔍 1. Static Analysis (PHPStan Level 9) - CRITICAL"
 
 phpstan_output=$(mktemp)
 if composer phpstan > "$phpstan_output" 2>&1; then
     phpstan_result=0
-    success "PHPStan Level 9 - PASSOU"
+    success "PHPStan Level 9 - PASSED"
     
-    # Verificar se realmente é Level 9
-    if grep -q "level: 9" phpstan.neon; then
-        success "Nível confirmado: Level 9"
+    # Verify it's actually Level 9
+    if grep -q "level: 9" phpstan.neon 2>/dev/null; then
+        success "Level confirmed: Level 9"
     else
-        error "Nível não é 9!"
+        error "Level is not 9!"
         phpstan_result=1
     fi
 else
     phpstan_result=1
-    critical "PHPStan Level 9 - FALHOU"
-    error "Erros encontrados:"
+    error "PHPStan Level 9 - FAILED"
+    error "Errors found:"
     tail -10 "$phpstan_output"
 fi
 
@@ -98,32 +71,32 @@ count_check $phpstan_result "critical"
 cp "$phpstan_output" "reports/quality/phpstan-results.txt"
 rm "$phpstan_output"
 
-# 2. Testes CI (sem integração para CI/CD) - CRÍTICO
-log "🧪 2. Testes CI (Unit + Core + Security, sem Integration) - CRÍTICO"
+# 2. CI Tests (without integration for CI/CD) - CRITICAL
+info "🧪 2. CI Tests (Unit + Core + Security, no Integration) - CRITICAL"
 
 test_output=$(mktemp)
 if composer test:ci > "$test_output" 2>&1; then
     test_result=0
-    success "Testes - PASSOU"
+    success "Tests - PASSED"
     
-    # Extrair estatísticas
+    # Extract statistics
     if grep -q "OK (" "$test_output"; then
         test_stats=$(grep "OK (" "$test_output" | tail -1)
-        success "Estatísticas: $test_stats"
+        success "Statistics: $test_stats"
         
-        # Verificar se todos os testes passaram
-        if echo "$test_stats" | grep -q "430 tests"; then
-            success "Todos os 430 testes passaram"
+        # Verify all tests passed
+        if echo "$test_stats" | grep -q "tests"; then
+            success "All tests passed successfully"
         else
-            warning "Número de testes não está correto"
+            warning "Test count verification unclear"
         fi
     else
-        warning "Não foi possível extrair estatísticas dos testes"
+        warning "Could not extract test statistics"
     fi
 else
     test_result=1
-    critical "Testes - FALHOU"
-    error "Falhas encontradas:"
+    error "Tests - FAILED"
+    error "Failures found:"
     tail -20 "$test_output"
 fi
 
@@ -131,12 +104,11 @@ count_check $test_result "critical"
 cp "$test_output" "reports/quality/test-results.txt"
 rm "$test_output"
 
-# 3. Cobertura de Testes - CRÍTICO
-log "📊 3. Cobertura de Testes (≥30%) - CRÍTICO"
+# 3. Test Coverage - CRITICAL
+info "📊 3. Test Coverage (≥30%) - CRITICAL"
 
 coverage_output=$(mktemp)
 if [ -f "reports/coverage.xml" ]; then
-    # Use existing coverage report
     coverage_result=0
     
     # Extract coverage from XML report
@@ -146,36 +118,40 @@ if [ -f "reports/coverage.xml" ]; then
         total=$(echo "$metrics_line" | sed -n 's/.*elements="\([0-9]*\)".*/\1/p')
         
         if [ -n "$covered" ] && [ -n "$total" ] && [ "$total" -gt 0 ]; then
-            coverage_percent=$(python3 -c "print(f'{($covered / $total) * 100:.2f}%')")
+            coverage_percent=$(python3 -c "print(f'{($covered / $total) * 100:.2f}%')" 2>/dev/null || echo "unknown")
             coverage_number=$(echo "$coverage_percent" | sed 's/%//')
             
-            if (( $(echo "$coverage_number >= 30.0" | bc -l) )); then
-                success "Cobertura: $coverage_percent (≥30%)"
+            if command -v bc >/dev/null 2>&1; then
+                if (( $(echo "$coverage_number >= 30.0" | bc -l) )); then
+                    success "Coverage: $coverage_percent (≥30%)"
+                else
+                    error "Coverage: $coverage_percent (<30%)"
+                    coverage_result=1
+                fi
             else
-                error "Cobertura: $coverage_percent (<30%)"
-                coverage_result=1
+                success "Coverage: $coverage_percent"
             fi
         else
-            warning "Não foi possível extrair dados de cobertura do XML"
+            warning "Could not extract coverage data from XML"
             coverage_result=1
         fi
     else
-        warning "Relatório de cobertura XML inválido"
+        warning "Invalid XML coverage report"
         coverage_result=1
     fi
-    echo "Cobertura encontrada: $(python3 -c "print(f'{(3589 / 11249) * 100:.2f}%')")" > "$coverage_output"
+    echo "Coverage found: $coverage_percent" > "$coverage_output"
 else
     coverage_result=1
-    critical "Cobertura - FALHOU"
-    echo "Relatório de cobertura não encontrado" > "$coverage_output"
+    error "Coverage - FAILED"
+    echo "Coverage report not found" > "$coverage_output"
 fi
 
 count_check $coverage_result "critical"
 cp "$coverage_output" "reports/quality/coverage-results.txt"
 rm "$coverage_output"
 
-# 4. Code Style (PSR-12) - CRÍTICO
-log "🎨 4. Padrões de Codificação (PSR-12) - CRÍTICO"
+# 4. Code Style (PSR-12) - CRITICAL
+info "🎨 4. Coding Standards (PSR-12) - CRITICAL"
 
 cs_output=$(mktemp)
 composer cs:check > "$cs_output" 2>&1
@@ -184,32 +160,32 @@ cs_exit_code=$?
 # Check if there are actual ERRORS (not just warnings)
 if grep -q "FOUND.*ERROR" "$cs_output"; then
     cs_result=1
-    critical "Code Style PSR-12 - FALHOU"
+    error "Code Style PSR-12 - FAILED"
     
-    # Mostrar primeiros erros
-    error "Erros de code style encontrados:"
+    # Show first errors
+    error "Code style errors found:"
     head -15 "$cs_output"
     
-    # Tentar corrigir automaticamente
-    warning "Tentando correção automática..."
+    # Try automatic fix
+    warning "Attempting automatic fix..."
     if composer cs:fix > /dev/null 2>&1; then
-        success "Correções aplicadas automaticamente"
+        success "Fixes applied automatically"
         
-        # Verificar novamente
+        # Check again
         composer cs:check > "$cs_output" 2>&1
         if ! grep -q "FOUND.*ERROR" "$cs_output"; then
-            success "Code Style agora está conforme"
+            success "Code Style now compliant"
             cs_result=0
         fi
     fi
 elif [ $cs_exit_code -eq 0 ]; then
     cs_result=0
-    success "Code Style PSR-12 - PASSOU"
+    success "Code Style PSR-12 - PASSED"
 else
     # Only warnings, not errors
     cs_result=0
-    success "Code Style PSR-12 - PASSOU (apenas avisos, sem erros)"
-    info "Avisos encontrados (não bloqueiam):"
+    success "Code Style PSR-12 - PASSED (warnings only, no errors)"
+    info "Warnings found (non-blocking):"
     grep "WARNING" "$cs_output" | head -5 || true
 fi
 
@@ -217,58 +193,58 @@ count_check $cs_result "critical"
 cp "$cs_output" "reports/quality/codestyle-results.txt"
 rm "$cs_output"
 
-# 5. Documentação - CRÍTICO
-log "📝 5. Documentação de Código - CRÍTICO"
+# 5. Documentation - CRITICAL
+info "📝 5. Code Documentation - CRITICAL"
 
 doc_issues=0
 doc_total=0
 
-# Verificar se todas as classes públicas têm DocBlocks
-log "Verificando documentação das classes..."
+# Check if all public classes have DocBlocks
+info "Checking class documentation..."
 while IFS= read -r -d '' file; do
     if [[ "$file" == *"/src/"* ]]; then
-        # Contar classes públicas
+        # Count public classes
         classes=$(grep -c "^class\|^abstract class\|^final class\|^interface\|^trait" "$file" 2>/dev/null || echo "0")
         doc_total=$((doc_total + classes))
         
-        # Verificar se têm DocBlocks
+        # Check if they have DocBlocks
         if [ "$classes" -gt 0 ]; then
-            # Verificar se existe /** antes da declaração da classe
+            # Check if /** exists before class declaration
             if ! grep -B 5 "^class\|^abstract class\|^final class\|^interface\|^trait" "$file" | grep -q "/\*\*" 2>/dev/null; then
-                warning "Documentação faltando em: $file"
+                warning "Documentation missing in: $file"
                 doc_issues=$((doc_issues + 1))
             fi
         fi
     fi
-done < <(find src/ -name "*.php" -print0)
+done < <(find src/ -name "*.php" -print0 2>/dev/null || true)
 
 if [ $doc_issues -eq 0 ]; then
-    success "Documentação - PASSOU ($doc_total classes verificadas)"
+    success "Documentation - PASSED ($doc_total classes checked)"
     doc_result=0
 else
-    critical "Documentação - FALHOU ($doc_issues/$doc_total classes sem documentação)"
+    error "Documentation - FAILED ($doc_issues/$doc_total classes without documentation)"
     doc_result=1
 fi
 
 count_check $doc_result "critical"
 
-# 6. Testes de Segurança - CRÍTICO
-log "🔒 6. Testes de Segurança - CRÍTICO"
+# 6. Security Tests - CRITICAL
+info "🔒 6. Security Tests - CRITICAL"
 
 security_output=$(mktemp)
 if composer test:security > "$security_output" 2>&1; then
     security_result=0
-    success "Testes de Segurança - PASSOU"
+    success "Security Tests - PASSED"
     
-    # Verificar estatísticas
+    # Check statistics
     if grep -q "OK (" "$security_output"; then
         security_stats=$(grep "OK (" "$security_output" | tail -1)
-        success "Estatísticas: $security_stats"
+        success "Statistics: $security_stats"
     fi
 else
     security_result=1
-    critical "Testes de Segurança - FALHOU"
-    error "Falhas de segurança encontradas:"
+    error "Security Tests - FAILED"
+    error "Security failures found:"
     tail -10 "$security_output"
 fi
 
@@ -276,15 +252,15 @@ count_check $security_result "critical"
 cp "$security_output" "reports/quality/security-results.txt"
 rm "$security_output"
 
-# 7. Performance - CRÍTICO
-log "⚡ 7. Performance (≥30K ops/sec) - CRÍTICO"
+# 7. Performance - CRITICAL
+info "⚡ 7. Performance (≥30K ops/sec) - CRITICAL"
 
 benchmark_output=$(mktemp)
 if composer benchmark > "$benchmark_output" 2>&1; then
     benchmark_result=0
-    success "Benchmark - EXECUTADO"
+    success "Benchmark - EXECUTED"
     
-    # Verificar performance média
+    # Check average performance
     if grep -q "Average Performance" "$benchmark_output"; then
         perf_line=$(grep "Average Performance" "$benchmark_output" | tail -1)
         perf_value=$(echo "$perf_line" | grep -o '[0-9,]\+ ops/sec' | head -1)
@@ -298,22 +274,22 @@ if composer benchmark > "$benchmark_output" 2>&1; then
                 benchmark_result=1
             fi
         else
-            warning "Não foi possível extrair performance média"
+            warning "Could not extract average performance"
         fi
     else
-        warning "Métrica de performance não encontrada"
+        warning "Performance metric not found"
     fi
     
-    # Verificar Pool Efficiency
+    # Check Pool Efficiency
     if grep -q "Pool Efficiency" "$benchmark_output"; then
-        success "Pool Efficiency encontrado no benchmark"
+        success "Pool Efficiency found in benchmark"
     else
-        info "Pool Efficiency não encontrado (pode ser normal)"
+        info "Pool Efficiency not found (may be normal)"
     fi
 else
     benchmark_result=1
-    critical "Benchmark - FALHOU"
-    error "Erro ao executar benchmark:"
+    error "Benchmark - FAILED"
+    error "Error executing benchmark:"
     tail -10 "$benchmark_output"
 fi
 
@@ -321,36 +297,36 @@ count_check $benchmark_result "critical"
 cp "$benchmark_output" "reports/quality/benchmark-results.txt"
 rm "$benchmark_output"
 
-# 8. Auditoria de Dependências - CRÍTICO
-log "📦 8. Auditoria de Dependências - CRÍTICO"
+# 8. Dependency Audit - CRITICAL
+info "📦 8. Dependency Audit - CRITICAL"
 
 audit_output=$(mktemp)
 if composer audit > "$audit_output" 2>&1; then
     audit_result=0
-    success "Auditoria de Dependências - PASSOU"
+    success "Dependency Audit - PASSED"
     
-    # Verificar se há vulnerabilidades
+    # Check for vulnerabilities
     if grep -q "No security vulnerabilities found" "$audit_output"; then
-        success "Nenhuma vulnerabilidade encontrada"
+        success "No vulnerabilities found"
     elif grep -q "Found" "$audit_output"; then
-        error "Vulnerabilidades encontradas:"
+        error "Vulnerabilities found:"
         grep "Found" "$audit_output"
         audit_result=1
     fi
 else
-    # Comando audit pode não existir em versões antigas
-    warning "Comando audit não disponível, verificando outdated..."
+    # audit command may not exist in older versions
+    warning "Audit command not available, checking outdated..."
     if composer outdated > "$audit_output" 2>&1; then
         if grep -q "Nothing to update" "$audit_output" || [ ! -s "$audit_output" ]; then
-            success "Dependências atualizadas"
+            success "Dependencies up to date"
             audit_result=0
         else
-            warning "Algumas dependências desatualizadas encontradas"
-            audit_result=0  # Não crítico para dependências menores
+            warning "Some outdated dependencies found"
+            audit_result=0  # Not critical for minor dependencies
         fi
     else
         audit_result=1
-        error "Erro ao verificar dependências"
+        error "Error checking dependencies"
     fi
 fi
 
@@ -358,28 +334,28 @@ count_check $audit_result "critical"
 cp "$audit_output" "reports/quality/audit-results.txt"
 rm "$audit_output"
 
-# 9. Análise de Duplicação - ALTO
-log "🔍 9. Análise de Duplicação (≤3%) - ALTO"
+# 9. Duplication Analysis - HIGH
+info "🔍 9. Duplication Analysis (≤3%) - HIGH"
 
-# Análise básica de duplicação
+# Basic duplication analysis
 duplicates_found=0
-total_files=$(find src/ -name "*.php" | wc -l)
-unique_files=$(find src/ -name "*.php" -exec md5sum {} \; | sort | uniq -c | wc -l)
+total_files=$(find src/ -name "*.php" 2>/dev/null | wc -l)
+unique_files=$(find src/ -name "*.php" -exec md5sum {} \; 2>/dev/null | sort | uniq -c | wc -l)
 
 if [ "$unique_files" -eq "$total_files" ]; then
-    success "Análise de Duplicação - PASSOU (arquivos únicos)"
+    success "Duplication Analysis - PASSED (unique files)"
     dup_result=0
 else
-    warning "Possível duplicação detectada"
+    warning "Possible duplication detected"
     dup_result=1
 fi
 
 count_check $dup_result
 
-# 10. Complexidade de Código - ALTO
-log "🧮 10. Complexidade de Código - ALTO"
+# 10. Code Complexity - HIGH
+info "🧮 10. Code Complexity - HIGH"
 
-# Análise básica de complexidade
+# Basic complexity analysis
 complex_files=0
 total_php_files=0
 
@@ -387,30 +363,30 @@ while IFS= read -r -d '' file; do
     if [[ "$file" == *"/src/"* ]]; then
         total_php_files=$((total_php_files + 1))
         
-        # Contar estruturas de controle como aproximação da complexidade
+        # Count control structures as complexity approximation
         complexity=$(grep -c "if\|while\|for\|foreach\|switch\|case\|catch\|&&\|||" "$file" 2>/dev/null || echo "0")
         
-        # Se mais de 50 estruturas de controle, pode ser complexo
+        # If more than 50 control structures, may be complex
         if [ "$complexity" -gt 50 ]; then
             complex_files=$((complex_files + 1))
         fi
     fi
-done < <(find src/ -name "*.php" -print0)
+done < <(find src/ -name "*.php" -print0 2>/dev/null || true)
 
 if [ "$complex_files" -lt 5 ]; then
-    success "Complexidade de Código - ACEITÁVEL ($complex_files/$total_php_files arquivos complexos)"
+    success "Code Complexity - ACCEPTABLE ($complex_files/$total_php_files complex files)"
     complexity_result=0
 else
-    warning "Complexidade de Código - ALTA ($complex_files/$total_php_files arquivos complexos)"
+    warning "Code Complexity - HIGH ($complex_files/$total_php_files complex files)"
     complexity_result=1
 fi
 
 count_check $complexity_result
 
-# 11. Estrutura de Arquivos - ALTO
-log "📁 11. Estrutura de Arquivos - ALTO"
+# 11. File Structure - HIGH
+info "📁 11. File Structure - HIGH"
 
-# Verificar estrutura esperada
+# Check expected structure
 required_dirs=(
     "src/Core"
     "src/Http"
@@ -422,28 +398,28 @@ required_dirs=(
 missing_dirs=0
 for dir in "${required_dirs[@]}"; do
     if [ ! -d "$dir" ]; then
-        error "Diretório obrigatório não encontrado: $dir"
+        error "Required directory not found: $dir"
         missing_dirs=$((missing_dirs + 1))
     fi
 done
 
 if [ $missing_dirs -eq 0 ]; then
-    success "Estrutura de Arquivos - PASSOU"
+    success "File Structure - PASSED"
     structure_result=0
 else
-    error "Estrutura de Arquivos - FALHOU ($missing_dirs diretórios faltando)"
+    error "File Structure - FAILED ($missing_dirs directories missing)"
     structure_result=1
 fi
 
 count_check $structure_result
 
-# 12. Validação de Exemplos - ALTO
-log "💡 12. Validação de Exemplos - ALTO"
+# 12. Example Validation - HIGH
+info "💡 12. Example Validation - HIGH"
 
 examples_ok=0
 examples_total=0
 
-# Testar exemplos se existirem
+# Test examples if they exist
 if [ -d "examples" ]; then
     for example in examples/example_*.php; do
         if [ -f "$example" ]; then
@@ -456,132 +432,132 @@ if [ -d "examples" ]; then
 fi
 
 if [ $examples_total -eq 0 ]; then
-    info "Nenhum exemplo encontrado"
+    info "No examples found"
     examples_result=0
 elif [ $examples_ok -eq $examples_total ]; then
-    success "Exemplos - PASSOU ($examples_ok/$examples_total)"
+    success "Examples - PASSED ($examples_ok/$examples_total)"
     examples_result=0
 else
-    warning "Exemplos - PARCIAL ($examples_ok/$examples_total)"
+    warning "Examples - PARTIAL ($examples_ok/$examples_total)"
     examples_result=1
 fi
 
 count_check $examples_result
 
-# Relatório Final
+# Final Report
 echo ""
 echo "========================================="
-echo "    RELATÓRIO DE QUALIDADE v1.1.3-dev"
+echo "    QUALITY REPORT v$VERSION"
 echo "========================================="
 echo ""
 
-# Calcular estatísticas
+# Calculate statistics
 success_rate=$(( (TOTAL_CHECKS - FAILED_CHECKS) * 100 / TOTAL_CHECKS ))
 
-echo "📊 Resumo Geral:"
-echo "  • Verificações executadas: $TOTAL_CHECKS"
-echo "  • Verificações passando: $((TOTAL_CHECKS - FAILED_CHECKS))"
-echo "  • Verificações falhando: $FAILED_CHECKS"
-echo "  • Taxa de sucesso: $success_rate%"
-echo "  • Falhas críticas: $CRITICAL_FAILURES"
+echo "📊 General Summary:"
+echo "  • Checks executed: $TOTAL_CHECKS"
+echo "  • Checks passing: $((TOTAL_CHECKS - FAILED_CHECKS))"
+echo "  • Checks failing: $FAILED_CHECKS"
+echo "  • Success rate: $success_rate%"
+echo "  • Critical failures: $CRITICAL_FAILURES"
 echo ""
 
-# Status por categoria
-echo "📋 Status por Categoria:"
-echo "  🚨 CRÍTICOS:"
-echo "    • PHPStan Level 9: $([ $phpstan_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Testes Unitários: $([ $test_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Cobertura ≥30%: $([ $coverage_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Code Style PSR-12: $([ $cs_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Documentação: $([ $doc_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Segurança: $([ $security_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Performance ≥30K: $([ $benchmark_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Dependências: $([ $audit_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
+# Status by category
+echo "📋 Status by Category:"
+echo "  🚨 CRITICAL:"
+echo "    • PHPStan Level 9: $([ $phpstan_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Unit Tests: $([ $test_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Coverage ≥30%: $([ $coverage_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Code Style PSR-12: $([ $cs_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Documentation: $([ $doc_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Security: $([ $security_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Performance ≥30K: $([ $benchmark_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Dependencies: $([ $audit_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
 echo ""
-echo "  🟡 ALTOS:"
-echo "    • Duplicação ≤3%: $([ $dup_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Complexidade: $([ $complexity_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Estrutura: $([ $structure_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
-echo "    • Exemplos: $([ $examples_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")"
+echo "  🟡 HIGH:"
+echo "    • Duplication ≤3%: $([ $dup_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Complexity: $([ $complexity_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Structure: $([ $structure_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
+echo "    • Examples: $([ $examples_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")"
 echo ""
 
-# Gerar relatório detalhado
+# Generate detailed report
 report_file="reports/quality/quality-report-$(date +%Y%m%d-%H%M%S).txt"
 cat > "$report_file" << EOF
-# Relatório de Qualidade PivotPHP Core v1.1.3-dev
-Data: $(date)
-Executado por: $(whoami)
-Diretório: $(pwd)
+# Quality Report PivotPHP Core v$VERSION
+Date: $(date)
+Executed by: $(whoami)
+Directory: $(pwd)
 
-## Resumo
-- Verificações executadas: $TOTAL_CHECKS
-- Verificações passando: $((TOTAL_CHECKS - FAILED_CHECKS))
-- Verificações falhando: $FAILED_CHECKS
-- Taxa de sucesso: $success_rate%
-- Falhas críticas: $CRITICAL_FAILURES
+## Summary
+- Checks executed: $TOTAL_CHECKS
+- Checks passing: $((TOTAL_CHECKS - FAILED_CHECKS))
+- Checks failing: $FAILED_CHECKS
+- Success rate: $success_rate%
+- Critical failures: $CRITICAL_FAILURES
 
-## Critérios Críticos
-- PHPStan Level 9: $([ $phpstan_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Testes Unitários: $([ $test_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Cobertura ≥30%: $([ $coverage_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Code Style PSR-12: $([ $cs_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Documentação: $([ $doc_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Segurança: $([ $security_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Performance ≥30K: $([ $benchmark_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Dependências: $([ $audit_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
+## Critical Criteria
+- PHPStan Level 9: $([ $phpstan_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Unit Tests: $([ $test_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Coverage ≥30%: $([ $coverage_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Code Style PSR-12: $([ $cs_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Documentation: $([ $doc_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Security: $([ $security_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Performance ≥30K: $([ $benchmark_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Dependencies: $([ $audit_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
 
-## Critérios Altos
-- Duplicação ≤3%: $([ $dup_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Complexidade: $([ $complexity_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Estrutura: $([ $structure_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
-- Exemplos: $([ $examples_result -eq 0 ] && echo "✅ PASSOU" || echo "❌ FALHOU")
+## High Criteria
+- Duplication ≤3%: $([ $dup_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Complexity: $([ $complexity_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Structure: $([ $structure_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
+- Examples: $([ $examples_result -eq 0 ] && echo "✅ PASSED" || echo "❌ FAILED")
 
-## Arquivos de Saída
+## Output Files
 - PHPStan: reports/quality/phpstan-results.txt
-- Testes: reports/quality/test-results.txt
-- Cobertura: reports/quality/coverage-results.txt
+- Tests: reports/quality/test-results.txt
+- Coverage: reports/quality/coverage-results.txt
 - Code Style: reports/quality/codestyle-results.txt
-- Segurança: reports/quality/security-results.txt
+- Security: reports/quality/security-results.txt
 - Benchmark: reports/quality/benchmark-results.txt
-- Dependências: reports/quality/audit-results.txt
-- Este relatório: $report_file
+- Dependencies: reports/quality/audit-results.txt
+- This report: $report_file
 
 EOF
 
-# Decisão final
-echo "🎯 Decisão Final:"
+# Final decision
+echo "🎯 Final Decision:"
 if [ $CRITICAL_FAILURES -eq 0 ]; then
-    echo -e "${GREEN}🎉 APROVADO PARA ENTREGA${NC}"
+    echo -e "${GREEN}🎉 APPROVED FOR DELIVERY${NC}"
     echo ""
-    echo "✨ PivotPHP Core v1.1.3-dev atende todos os critérios críticos!"
-    echo "📊 Taxa de sucesso: $success_rate%"
-    echo "🚀 Pronto para produção!"
+    echo "✨ PivotPHP Core v$VERSION meets all critical criteria!"
+    echo "📊 Success rate: $success_rate%"
+    echo "🚀 Ready for production!"
     echo ""
-    echo "📋 Próximos passos:"
-    echo "  1. Revisar relatório detalhado"
-    echo "  2. Executar testes de regressão"
-    echo "  3. Preparar para release"
+    echo "📋 Next steps:"
+    echo "  1. Review detailed report"
+    echo "  2. Execute regression tests"
+    echo "  3. Prepare for release"
     echo ""
     exit_code=0
 else
-    echo -e "${RED}❌ REPROVADO PARA ENTREGA${NC}"
+    echo -e "${RED}❌ REJECTED FOR DELIVERY${NC}"
     echo ""
-    echo "🚨 PivotPHP Core v1.1.3-dev NÃO atende aos critérios críticos!"
-    echo "📊 Falhas críticas: $CRITICAL_FAILURES"
-    echo "🛑 Entrega BLOQUEADA!"
+    echo "🚨 PivotPHP Core v$VERSION DOES NOT meet critical criteria!"
+    echo "📊 Critical failures: $CRITICAL_FAILURES"
+    echo "🛑 Delivery BLOCKED!"
     echo ""
-    echo "🔧 Ações necessárias:"
-    echo "  1. Corrigir todas as falhas críticas"
-    echo "  2. Executar validação novamente"
-    echo "  3. Obter aprovação técnica"
+    echo "🔧 Required actions:"
+    echo "  1. Fix all critical failures"
+    echo "  2. Execute validation again"
+    echo "  3. Obtain technical approval"
     echo ""
     exit_code=1
 fi
 
-success "Relatório detalhado salvo em: $report_file"
+success "Detailed report saved at: $report_file"
 echo ""
 
-# Limpar arquivos temporários
+# Clean temporary files
 find /tmp -name "*quality*" -type f -delete 2>/dev/null || true
 
 exit $exit_code

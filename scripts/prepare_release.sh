@@ -1,231 +1,224 @@
 #!/bin/bash
 
-# Script de preparação para publicação do PivotPHP
-# Este script limpa, valida e prepara o projeto para release
+# PivotPHP Core - Release Preparation Script
+# Validates and prepares the project for release with automatic version detection
 
 set -e
 
-# Definir diretório do projeto
-PROJECT_DIR="/home/cfernandes/pivotphp/pivotphp-core"
+# Load shared utilities
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib/version-utils.sh"
 
-# Obter versão do arquivo VERSION
-if [ -f "$PROJECT_DIR/VERSION" ]; then
-    VERSION=$(cat "$PROJECT_DIR/VERSION" | tr -d '\n')
-else
-    echo "Arquivo VERSION não encontrado!"
-    exit 1
-fi
+# Validate project context and change to project root
+validate_project_context || exit 1
+cd_to_project_root || exit 1
 
-# Cores
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-PURPLE='\033[0;35m'
-NC='\033[0m'
+# Get version automatically
+VERSION=$(get_version) || exit 1
+PROJECT_ROOT=$(get_project_root) || exit 1
 
-title() { echo -e "${PURPLE}🚀 $1${NC}"; }
-info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
-success() { echo -e "${GREEN}✅ $1${NC}"; }
-warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
-error() { echo -e "${RED}❌ $1${NC}"; exit 1; }
-
-title "PivotPHP v$VERSION - Release Preparation"
+print_version_banner
+echo "🚀 Release Preparation"
 echo ""
 
-# Verificar se estamos na raiz do projeto
-if [ ! -f "$PROJECT_DIR/composer.json" ]; then
-    error "Projeto PivotPHP não encontrado em $PROJECT_DIR"
-fi
-
-# 1. Verificar se há arquivos sensíveis
-echo "🔍 Verificando arquivos sensíveis..."
+# 1. Check for sensitive files
+echo "🔍 Checking for sensitive files..."
 
 if [ -f ".env" ]; then
-    warning "Arquivo .env encontrado - certifique-se de que está no .gitignore"
+    warning "File .env found - ensure it's in .gitignore"
 fi
 
 if [ -d "vendor" ]; then
-    warning "Diretório vendor/ encontrado - será ignorado na publicação"
+    warning "Directory vendor/ found - will be ignored in publication"
 fi
 
 if [ -f "composer.lock" ]; then
-    info "composer.lock encontrado - normal para aplicações, opcional para bibliotecas"
+    info "composer.lock found - normal for applications, optional for libraries"
 fi
 
-# 2. Validar estrutura básica
-echo "📁 Validando estrutura do projeto..."
+# 2. Validate basic structure
+echo "📁 Validating project structure..."
 
 required_files=("composer.json" "README.md" "LICENSE")
 for file in "${required_files[@]}"; do
     if [ -f "$file" ]; then
-        info "Arquivo $file presente"
+        info "File $file present"
     else
-        error "Arquivo obrigatório $file não encontrado"
+        error "Required file $file not found"
     fi
 done
 
 required_dirs=("src" "docs")
 for dir in "${required_dirs[@]}"; do
     if [ -d "$dir" ]; then
-        info "Diretório $dir presente"
+        info "Directory $dir present"
     else
-        error "Diretório obrigatório $dir não encontrado"
+        error "Required directory $dir not found"
     fi
 done
 
-# 3. Verificar sintaxe PHP
-echo "🔧 Verificando sintaxe PHP..."
+# 3. Check PHP syntax
+echo "🔧 Checking PHP syntax..."
 
-find src -name "*.php" -exec php -l {} \; > /dev/null
-if [ $? -eq 0 ]; then
-    info "Sintaxe PHP válida em todos os arquivos"
+if find src -name "*.php" -exec php -l {} \; > /dev/null 2>&1; then
+    info "PHP syntax valid in all files"
 else
-    error "Erros de sintaxe encontrados"
+    error "Syntax errors found"
 fi
 
-# 4. Executar testes (se disponível)
-echo "🧪 Executando testes..."
+# 4. Execute tests (if available)
+echo "🧪 Executing tests..."
 
 if [ -f "vendor/bin/phpunit" ]; then
     # Use CI test suite for faster release preparation
-    composer test:ci --no-coverage --stop-on-failure
-    info "Testes CI passaram"
+    if composer test:ci --no-coverage --stop-on-failure > /dev/null 2>&1; then
+        info "CI tests passed"
+    else
+        error "CI tests failed"
+    fi
 elif [ -f "phpunit.phar" ]; then
-    php phpunit.phar --no-coverage --stop-on-failure
-    info "Testes passaram"
+    if php phpunit.phar --no-coverage --stop-on-failure > /dev/null 2>&1; then
+        info "Tests passed"
+    else
+        error "Tests failed"
+    fi
 else
-    warning "PHPUnit não encontrado - testes não executados"
+    warning "PHPUnit not found - tests not executed"
 fi
 
-# 5. Executar análise estática (se disponível)
-echo "🔍 Análise estática..."
+# 5. Execute static analysis (if available)
+echo "🔍 Static analysis..."
 
 if [ -f "vendor/bin/phpstan" ]; then
-    ./vendor/bin/phpstan analyse --no-progress
-    info "Análise estática passou"
+    if ./vendor/bin/phpstan analyse --no-progress > /dev/null 2>&1; then
+        info "Static analysis passed"
+    else
+        error "Static analysis failed"
+    fi
 else
-    warning "PHPStan não encontrado - análise estática não executada"
+    warning "PHPStan not found - static analysis not executed"
 fi
 
-# 6. Verificar composer.json
-echo "📦 Validando composer.json..."
+# 6. Validate composer.json
+echo "📦 Validating composer.json..."
 
-# Verificar se composer.json é válido
-composer validate --no-check-all --no-check-lock
-if [ $? -eq 0 ]; then
-    info "composer.json válido"
+# Check if composer.json is valid
+if composer validate --no-check-all --no-check-lock > /dev/null 2>&1; then
+    info "composer.json valid"
 else
-    error "composer.json inválido"
+    error "composer.json invalid"
 fi
 
-# 7. Verificar se há mudanças não commitadas (se for um repositório Git)
+# 7. Check for uncommitted changes (if it's a Git repository)
 if [ -d ".git" ]; then
-    echo "📝 Verificando status do Git..."
+    echo "📝 Checking Git status..."
 
     if [ -n "$(git status --porcelain)" ]; then
-        warning "Há mudanças não commitadas:"
+        warning "There are uncommitted changes:"
         git status --porcelain
         echo ""
-        read -p "Continuar mesmo assim? (y/N) " -n 1 -r
+        read -p "Continue anyway? (y/N) " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            error "Cancelado pelo usuário"
+            error "Cancelled by user"
         fi
     else
-        info "Todos os arquivos estão commitados"
+        info "All files are committed"
     fi
 fi
 
-# 8. Executar validação personalizada
-echo "🎯 Executando validação completa..."
+# 8. Execute custom validation
+echo "🎯 Executing comprehensive validation..."
 
 if [ -f "scripts/validate_all.sh" ]; then
-    scripts/validate_all.sh
-    if [ $? -eq 0 ]; then
-        info "Validação completa passou"
+    if scripts/validate_all.sh > /dev/null 2>&1; then
+        info "Comprehensive validation passed"
     else
-        error "Validação completa falhou - corrija os problemas antes de continuar"
+        error "Comprehensive validation failed - fix issues before continuing"
     fi
 elif [ -f "scripts/validate_project.php" ]; then
-    php scripts/validate_project.php
-    if [ $? -eq 0 ]; then
-        info "Validação personalizada passou"
+    if php scripts/validate_project.php > /dev/null 2>&1; then
+        info "Custom validation passed"
     else
-        error "Validação personalizada falhou"
+        error "Custom validation failed"
     fi
 else
-    warning "Scripts de validação não encontrados"
+    warning "Validation scripts not found"
 fi
 
-# 9. Limpar arquivos temporários
-echo "🧹 Limpando arquivos temporários..."
+# 9. Clean temporary files
+echo "🧹 Cleaning temporary files..."
 
-# Remover cache de desenvolvimento
+# Remove development cache
 if [ -d ".phpunit.cache" ]; then
     rm -rf .phpunit.cache
-    info "Cache do PHPUnit removido"
+    info "PHPUnit cache removed"
 fi
 
 if [ -f ".phpunit.result.cache" ]; then
     rm -f .phpunit.result.cache
-    info "Cache de resultados do PHPUnit removido"
+    info "PHPUnit result cache removed"
 fi
 
 if [ -d ".phpstan.cache" ]; then
     rm -rf .phpstan.cache
-    info "Cache do PHPStan removido"
+    info "PHPStan cache removed"
 fi
 
-# Limpar logs de desenvolvimento
+# Clean development logs
 if [ -d "logs" ]; then
     find logs -name "*.log" -type f -delete 2>/dev/null || true
-    info "Logs de desenvolvimento limpos"
+    info "Development logs cleaned"
 fi
 
-# 10. Verificar tamanho do projeto
-echo "📊 Análise do tamanho do projeto..."
+# 10. Analyze project size
+echo "📊 Project size analysis..."
 
 project_size=$(du -sh . 2>/dev/null | cut -f1)
-info "Tamanho total do projeto: $project_size"
+info "Total project size: $project_size"
 
-# Verificar arquivos grandes
-echo "Arquivos maiores que 1MB:"
-find . -type f -size +1M -not -path "./vendor/*" -not -path "./.git/*" 2>/dev/null | head -10
+# Check for large files
+echo "Files larger than 1MB:"
+find . -type f -size +1M -not -path "./vendor/*" -not -path "./.git/*" 2>/dev/null | head -10 || true
 
-# 11. Relatório final
+# 11. Final report
 echo ""
-echo "🎉 PREPARAÇÃO CONCLUÍDA!"
+echo "🎉 PREPARATION COMPLETED!"
 echo "========================"
 echo ""
-echo "✅ Projeto validado e pronto para publicação"
+echo "✅ Project validated and ready for publication"
 echo ""
-echo "📋 Próximos passos:"
-echo "   1. Revisar as mudanças uma última vez"
-echo "   2. Fazer commit final (se necessário)"
-echo "   3. Criar tag de versão: git tag -a v1.0.0 -m 'Release v1.0.0'"
-echo "   4. Push para o repositório: git push origin main --tags"
-echo "   5. Publicar no Packagist"
+echo "📋 Next steps:"
+echo "   1. Review changes one last time"
+echo "   2. Make final commit (if necessary)"
+echo "   3. Create version tag: git tag -a v$VERSION -m 'Release v$VERSION'"
+echo "   4. Push to repository: git push origin main --tags"
+echo "   5. Publish to Packagist"
 echo ""
-echo "🔗 Links úteis:"
-echo "   - Repositório: https://github.com/CAFernandes/pivotphp-core"
+echo "🔗 Useful links:"
+echo "   - Repository: https://github.com/PivotPHP/pivotphp-core"
 echo "   - Packagist: https://packagist.org"
-echo "   - Guia de publicação: PUBLISHING_GUIDE.md"
+echo "   - Documentation: https://pivotphp.com"
 echo ""
 
-# 12. Oferece executar comandos úteis
-read -p "Deseja executar 'composer validate' agora? (y/N) " -n 1 -r
+# 12. Offer to execute useful commands
+read -p "Do you want to execute 'composer validate' now? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     composer validate
 fi
 
-read -p "Deseja ver um preview do que será incluído no package? (y/N) " -n 1 -r
+read -p "Do you want to see a preview of what will be included in the package? (y/N) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Arquivos que serão incluídos no package:"
-    git ls-files 2>/dev/null || find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+    echo "Files that will be included in the package:"
+    if [ -d ".git" ]; then
+        git ls-files 2>/dev/null || find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+    else
+        find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+    fi
 fi
 
 echo ""
-echo "🚀 PivotPHP está pronto para o mundo!"
+success "🚀 PivotPHP v$VERSION is ready for the world!"
+echo ""

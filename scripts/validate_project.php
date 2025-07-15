@@ -14,9 +14,41 @@ class ProjectValidator
     private $warnings = [];
     private $passed = [];
 
+    /**
+     * Get current version from VERSION file (REQUIRED)
+     */
+    private function getCurrentVersion(): string
+    {
+        $versionFile = dirname(__DIR__) . '/VERSION';
+        
+        if (!file_exists($versionFile)) {
+            echo "❌ ERRO CRÍTICO: Arquivo VERSION não encontrado em: $versionFile\n";
+            echo "❌ PivotPHP Core requer um arquivo VERSION na raiz do projeto\n";
+            exit(1);
+        }
+        
+        $version = trim(file_get_contents($versionFile));
+        
+        if (empty($version)) {
+            echo "❌ ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido\n";
+            echo "❌ Arquivo VERSION deve conter uma versão semântica válida (X.Y.Z)\n";
+            exit(1);
+        }
+        
+        // Validate semantic version format
+        if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+            echo "❌ ERRO CRÍTICO: Formato de versão inválido no arquivo VERSION: $version\n";
+            echo "❌ Formato esperado: X.Y.Z (versionamento semântico)\n";
+            exit(1);
+        }
+        
+        return $version;
+    }
+
     public function validate()
     {
-        echo "🔍 Validando projeto PivotPHP v1.1.2...\n\n";
+        $version = $this->getCurrentVersion();
+        echo "🔍 Validando projeto PivotPHP v{$version}...\n\n";
 
         // Testes estruturais
         $this->validateStructure();
@@ -649,7 +681,7 @@ class ProjectValidator
 
         // Status final
         if (empty($this->errors)) {
-            echo "🎉 PROJETO PIVOTPHP CORE v1.1.2 VALIDADO COM SUCESSO!\n";
+            echo "🎉 PROJETO PIVOTPHP CORE v{$this->getCurrentVersion()} VALIDADO COM SUCESSO!\n";
             echo "   O projeto está pronto para uso e publicação.\n";
 
             if (!empty($this->warnings)) {

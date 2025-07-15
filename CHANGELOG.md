@@ -5,109 +5,150 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.4] - 2025-07-13
+## [1.1.4] - 2025-07-14
 
-### 🎯 **Developer Experience & Examples Modernization Edition**
+### 🔧 **Infrastructure Consolidation & Automation Edition**
 
-> **Complete Examples Modernization**: Comprehensive update of all examples with v1.1.4+ features including native array callables, intelligent JsonBufferPool threshold system, enhanced error diagnostics with ContextualException, and organized controller architecture while maintaining 100% backward compatibility.
+> **Script Infrastructure Overhaul**: Complete consolidation of script ecosystem with 40% reduction (25 → 15 scripts), automatic version detection via mandatory VERSION file, GitHub Actions optimization, and comprehensive versioning documentation while maintaining 100% backward compatibility and zero impact on framework performance.
 
-#### 🌟 **New v1.1.4+ Example Suite**
-- **8 Modern Examples Created**: Complete demonstration of v1.1.4+ features
-  - `rest-api-v114.php`: RESTful API with array callables and JsonBufferPool
-  - `rest-api-modernized-v114.php`: Enhanced API with performance monitoring
-  - `array-callables-v114.php`: Comprehensive array callable demonstration  
-  - `json-pool-demo-v114.php`: JsonBufferPool optimization showcase
-  - `enhanced-errors-v114.php`: ContextualException error handling demo
-  - `route-parameters-v114.php`: Advanced parameter handling with validation
-  - `custom-middleware-v114.php`: Organized middleware with array callables
-  - `hello-world.php`: Updated with v1.1.4+ features
+#### 🔧 **Script Infrastructure Consolidation**
+- **40% Script Reduction**: Consolidated from 25 to 15 scripts, eliminating duplication
+  - **Removed Scripts**: 10 duplicate/obsolete scripts eliminated
+    - `quality-check-v114.sh` → Hardcoded version, consolidated into `quality-check.sh`
+    - `validate_all_v114.sh` → Hardcoded version, consolidated into `validate_all.sh`
+    - `quick-quality-check.sh` → Duplicate functionality integrated
+    - `simple_pre_release.sh` → Replaced by enhanced `prepare_release.sh`
+    - `quality-gate.sh` → Functionality consolidated into `quality-check.sh`
+    - `quality-metrics.sh` → Functionality consolidated into `quality-check.sh`
+    - `test-php-versions-quick.sh` → Replaced by `test-all-php-versions.sh`
+    - `ci-validation.sh` → Functionality consolidated into `quality-check.sh`
+    - `setup-precommit.sh` → One-time setup script, no longer needed
+    - `adapt-psr7-v1.php` → Specific utility script removed for simplicity
 
-#### 🎯 **Array Callables Implementation**
-- **Native Controller Support**: Full implementation of `[Controller::class, 'method']` syntax
-  - **CallableResolver Utility**: Robust validation and resolution of array callables
-  - **Enhanced Validation**: Automatic detection of public/private method accessibility
-  - **IDE Support**: Full autocomplete and refactoring capabilities
-  - **Performance Optimized**: Zero runtime overhead after initial validation
-  - **Error Diagnostics**: ContextualException integration for invalid callables
+- **Shared Utility Library**: Created `scripts/lib/version-utils.sh` with common functions
+  - `get_version()` - Automatic version detection from VERSION file
+  - `get_project_root()` - Project root directory detection
+  - `validate_project_context()` - PivotPHP Core context validation
+  - `print_version_banner()` - Consistent version display across scripts
 
-#### 🚀 **JsonBufferPool Intelligence**
-- **Intelligent Threshold System**: Automatic optimization based on 256-byte threshold
-  - **Small Data**: Direct `json_encode()` for minimal overhead (< 256 bytes)
-  - **Large Data**: Buffer pooling for optimization (≥ 256 bytes)
-  - **Zero Configuration**: Optimal performance out-of-the-box
-  - **Real-time Monitoring**: `getStatistics()` for performance tracking
-  - **Production Ready**: Validated threshold for maximum efficiency
+#### 📦 **Automatic Version Management System**
+- **VERSION File Requirement**: Central version source with strict validation
+  - **Mandatory Format**: X.Y.Z semantic versioning strictly enforced
+  - **Automatic Detection**: All scripts now detect version from single source
+  - **Strict Validation**: Scripts fail immediately if VERSION file missing or invalid
+  - **Portuguese Error Messages**: Clear error messages for better developer experience
 
-#### 🔍 **Enhanced Error Diagnostics**
-- **ContextualException System**: Advanced error handling with detailed context
-  - **Contextual Information**: Rich error context with relevant details
-  - **Actionable Suggestions**: Built-in resolution guidance for developers
-  - **Error Categorization**: Automatic classification (ROUTING, PARAMETER, VALIDATION, etc.)
-  - **Development vs Production**: Environment-aware error detail levels
-  - **Request Tracking**: Unique error IDs for debugging and monitoring
-
-#### 🏗️ **Organized Architecture**
-- **Controller Organization**: Modern controller structure with dependency injection
-  - **Separated Concerns**: Logical separation of controllers, middleware, and utilities
-  - **Namespace Organization**: Clean `use` statements and imports
-  - **Dependency Injection**: Constructor-based DI patterns demonstrated
-  - **Service Provider Pattern**: Enhanced integration with framework services
-
-#### 🔄 **Backward Compatibility**
-- **100% Compatibility Maintained**: All existing examples continue to function
-  - **Path Corrections**: Fixed autoloader paths in existing examples
-  - **Zero Breaking Changes**: No functionality removed or modified
-  - **Gradual Migration**: Optional transition to v1.1.4+ features
-  - **Parallel Versions**: Old and new examples coexist peacefully
-
-#### 📋 **Composer Scripts Enhancement**
-- **8 New Example Scripts**: Easy execution of v1.1.4+ examples
+- **Enhanced Version Management**: New `scripts/version-bump.sh` with automation
   ```bash
-  composer examples:v114:hello-world
-  composer examples:v114:rest-api
-  composer examples:v114:array-callables
-  composer examples:v114:json-optimization
-  composer examples:v114:enhanced-errors
-  composer examples:v114:route-parameters
-  composer examples:v114:middleware
+  # Semantic version management
+  scripts/version-bump.sh patch    # 1.1.4 → 1.1.5
+  scripts/version-bump.sh minor    # 1.1.4 → 1.2.0
+  scripts/version-bump.sh major    # 1.1.4 → 2.0.0
+  
+  # Preview mode
+  scripts/version-bump.sh minor --dry-run
+  ```
+  - **Git Integration**: Automatic commit and tag creation
+  - **Composer Integration**: Updates composer.json if present
+  - **Validation**: Semantic version format enforcement
+
+#### 🚀 **GitHub Actions Optimization**
+- **25% Workflow Reduction**: Consolidated from 4 to 3 workflows
+  - **Removed**: `quality-gate.yml` - duplicate functionality eliminated
+  - **Updated**: `ci.yml` - now uses consolidated `quality-check.sh`
+  - **Enhanced**: `pre-release.yml` - automatic version detection from VERSION file
+  - **Fixed**: `release.yml` - corrected repository URLs from express-php to pivotphp-core
+
+- **Workflow Improvements**:
+  - Automatic version detection eliminates hardcoded references
+  - Consolidated script usage for consistency
+  - Fixed broken references to removed scripts
+  - Enhanced validation consistency across all workflows
+
+#### 📚 **Comprehensive Documentation System**
+- **Versioning Guide**: New `docs/VERSIONING_GUIDE.md` (315 lines)
+  - **When to increment MAJOR, MINOR, PATCH** with specific examples
+  - **Complete workflow** from development to release
+  - **Script usage examples** with troubleshooting
+  - **FAQ section** addressing common versioning questions
+
+- **Script Documentation**: Complete rewrite of `scripts/README.md`
+  - **Categorized organization** by script purpose and usage
+  - **Workflow examples** for daily development and releases
+  - **Command reference** with detailed descriptions
+  - **Troubleshooting section** for common issues
+
+- **Release Documentation**: Comprehensive v1.1.4 documentation suite
+  - **Framework Overview**: Complete technical overview and metrics
+  - **Release Notes**: Detailed changes and migration guidance
+  - **Migration Guide**: Step-by-step upgrade instructions
+  - **Changelog**: Comprehensive change documentation
+
+#### ✅ **Validation and Error Handling Improvements**
+- **Strict Error Handling**: No fallback mechanisms, fail-fast approach
+  ```bash
+  # Error examples (in Portuguese for clarity)
+  ❌ ERRO CRÍTICO: Arquivo VERSION não encontrado
+  ❌ ERRO CRÍTICO: Formato de versão inválido: invalid.format
+  ❌ ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido
   ```
 
-#### 🧪 **Comprehensive Testing**
-- **100% Example Validation**: All examples tested for syntax and functionality
-  - **Syntax Testing**: `php -l` validation for all examples
-  - **Runtime Testing**: Autoloader and dependency validation
-  - **HTTP Testing**: Server startup and response validation
-  - **Feature Detection**: v1.1.4+ feature presence verification
-  - **Compatibility Testing**: Backward compatibility confirmation
+- **Project Context Validation**: Ensures scripts run in correct environment
+  - **Automatic detection** of PivotPHP Core project structure
+  - **Path-independent execution** - works from any directory within project
+  - **Context validation** prevents execution in wrong projects
 
-#### 📚 **Documentation Updates**
-- **Enhanced CLAUDE.md**: Updated project instructions with v1.1.4+ features
-- **Migration Guides**: Comprehensive migration documentation
-- **Performance Guides**: JsonBufferPool optimization instructions
-- **Error Handling Guides**: ContextualException usage patterns
-- **Example Documentation**: Detailed example descriptions and usage
+- **Enhanced Script Capabilities**:
+  - **Cross-directory execution**: Scripts work from any project directory
+  - **Improved error messages**: Clear, actionable feedback in Portuguese
+  - **Consistent interface**: Uniform behavior across all scripts
+  - **Zero configuration**: Automatic setup and detection
 
-#### 🎉 **Developer Experience Improvements**
-- **Modern Development Patterns**: Demonstrates current PHP best practices
-  - **Type Safety**: Enhanced type declarations and validation
-  - **Error Handling**: Contextual error messages with suggestions
-  - **Performance Awareness**: Built-in optimization indicators
-  - **Code Organization**: Modern PSR standards implementation
-  - **IDE Integration**: Enhanced development environment support
+#### 🔄 **Development Workflow Optimization**
+- **Simplified Commands**: Single entry points for complex operations
+  ```bash
+  # Quality validation (replaces multiple scripts)
+  scripts/quality-check.sh
+  
+  # Complete validation
+  scripts/validate_all.sh
+  
+  # Release preparation
+  scripts/prepare_release.sh
+  ```
 
-### 🔧 **Technical Improvements**
-- **Enhanced Middleware Architecture**: Organized middleware classes with static methods
-- **Improved Error Context**: Detailed error information for faster debugging
-- **Performance Monitoring**: Real-time performance metrics and optimization status
-- **Configuration Examples**: Production-ready configuration patterns
-- **Testing Patterns**: Modern testing approaches and utilities
+- **Improved Developer Experience**:
+  - **Fewer commands to remember** (40% reduction)
+  - **Consistent behavior** across all environments
+  - **Automatic version detection** eliminates manual errors
+  - **Better error feedback** with actionable solutions
 
-### 📈 **Impact & Benefits**
-- **Learning Curve**: Reduced complexity for new developers
-- **Development Speed**: Faster development with enhanced IDE support
-- **Production Readiness**: Battle-tested patterns and optimizations
-- **Migration Path**: Clear upgrade path from older patterns
-- **Community**: Enhanced examples for documentation and learning
+#### 📊 **Infrastructure Metrics**
+- **Script Consolidation Results**:
+  - **Active Scripts**: 25 → 15 (40% reduction)
+  - **Duplications Eliminated**: 10 scripts removed
+  - **GitHub Actions**: 4 → 3 workflows (25% reduction)
+  - **Hardcoding Eliminated**: 100% removal of hardcoded versions and paths
+  - **Documentation Added**: 500+ lines of new infrastructure documentation
+
+- **Performance Impact**: **Zero framework performance impact**
+  - All v1.1.3 performance characteristics maintained
+  - JSON pooling: 161K ops/sec (small), 17K ops/sec (medium), 1.7K ops/sec (large)
+  - Framework average: 40,476 ops/sec maintained
+  - Infrastructure changes only, no framework code modifications
+
+#### 🛡️ **Quality Assurance**
+- **Enhanced Validation**: Comprehensive quality checks maintained
+  - **PHPStan Level 9**: Zero errors maintained
+  - **PSR-12 Compliance**: 100% compliance maintained  
+  - **Test Coverage**: All 684 CI tests + 131 integration tests passing
+  - **Cross-platform Compatibility**: Linux, macOS, WSL validation
+
+- **Security Improvements**:
+  - **VERSION file validation** prevents malformed version injection
+  - **Project context validation** ensures correct environment
+  - **Input sanitization** for version strings and paths
+  - **No sensitive information** exposed in error messages
 
 ## [1.1.3] - 2025-07-12
 

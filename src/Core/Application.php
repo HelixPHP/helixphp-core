@@ -578,8 +578,11 @@ class Application
      * @param  array  $options Opções adicionais
      * @return $this
      */
-    public function staticFiles(string $routePrefix, string $physicalPath, array $options = []): self
-    {
+    public function staticFiles(
+        string $routePrefix,
+        string $physicalPath,
+        array $options = []
+    ): self {
         // Registra cada arquivo encontrado como uma rota individual
         \PivotPHP\Core\Routing\StaticFileManager::registerDirectory($routePrefix, $physicalPath, $this, $options);
 

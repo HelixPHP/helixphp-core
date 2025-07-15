@@ -381,12 +381,12 @@ class RegexRoutingIntegrationTest extends TestCase
         $duration = $endTime - $startTime;
 
         // Adjust timeout based on environment - more lenient for slow systems
-        $isSlowEnvironment = extension_loaded('xdebug') || 
-                           getenv('CI') === 'true' || 
+        $isSlowEnvironment = extension_loaded('xdebug') ||
+                           getenv('CI') === 'true' ||
                            getenv('GITHUB_ACTIONS') === 'true' ||
                            is_dir('/.dockerenv') ||
                            file_exists('/.dockerenv');
-        
+
         $maxDuration = $isSlowEnvironment ? 30.0 : 0.5; // 30s for slow environments, 0.5s for fast
         $this->assertLessThan($maxDuration, $duration, "Route matching is too slow: {$duration}s");
     }

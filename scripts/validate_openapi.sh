@@ -3,7 +3,35 @@
 # Script de Validação OpenAPI/Swagger - PivotPHP
 # Verifica se os recursos de documentação OpenAPI estão funcionando corretamente
 
-echo "🔍 Validando recursos OpenAPI/Swagger do PivotPHP..."
+# Get version from VERSION file (REQUIRED)
+get_version() {
+    if [ ! -f "VERSION" ]; then
+        echo "❌ ERRO CRÍTICO: Arquivo VERSION não encontrado na raiz do projeto"
+        echo "❌ PivotPHP Core requer um arquivo VERSION para identificação de versão"
+        exit 1
+    fi
+    
+    local version
+    version=$(cat VERSION | tr -d '\n')
+    
+    if [ -z "$version" ]; then
+        echo "❌ ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido"
+        echo "❌ Arquivo VERSION deve conter uma versão semântica válida (X.Y.Z)"
+        exit 1
+    fi
+    
+    # Validate semantic version format
+    if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "❌ ERRO CRÍTICO: Formato de versão inválido no arquivo VERSION: $version"
+        echo "❌ Formato esperado: X.Y.Z (versionamento semântico)"
+        exit 1
+    fi
+    
+    echo "$version"
+}
+
+VERSION=$(get_version)
+echo "🔍 Validando recursos OpenAPI/Swagger do PivotPHP v$VERSION..."
 echo
 
 # Verificar se o OpenApiExporter existe

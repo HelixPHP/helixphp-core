@@ -21,7 +21,7 @@ jobs:
         extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
 
     - name: Cache Composer packages
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
@@ -37,18 +37,20 @@ jobs:
     - name: Check PHP syntax
       run: find src -name "*.php" -exec php -l {} \;
 
-    - name: Install dependencies
+    - name: Install dependencies for validation
       run: composer install --prefer-dist --no-progress
 
-    - name: Run comprehensive validation for release
+    - name: Run comprehensive release validation
       run: |
         echo "🚀 Running comprehensive validation for release..."
-        ./scripts/quality-gate.sh
+        echo "📋 Using consolidated quality check with auto-version detection"
+        scripts/quality-check.sh
         
-    - name: Prepare release script
+    - name: Prepare release validation
       run: |
+        echo "📦 Running release preparation validation..."
         chmod +x scripts/prepare_release.sh
-        ./scripts/prepare_release.sh
+        scripts/prepare_release.sh
 
   release:
     needs: validate
@@ -72,22 +74,48 @@ jobs:
       id: tag_version
       run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+    - name: Get version from VERSION file
+      id: version_file
+      run: |
+        if [ -f "VERSION" ]; then
+          FILE_VERSION=$(cat VERSION | tr -d '\n')
+          echo "FILE_VERSION=$FILE_VERSION" >> $GITHUB_OUTPUT
+        else
+          echo "FILE_VERSION=unknown" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Verify version consistency
+      run: |
+        TAG_VERSION="${{ steps.tag_version.outputs.VERSION }}"
+        FILE_VERSION="${{ steps.version_file.outputs.FILE_VERSION }}"
+        
+        # Remove 'v' prefix from tag if present
+        TAG_VERSION_CLEAN=${TAG_VERSION#v}
+        
+        if [ "$TAG_VERSION_CLEAN" != "$FILE_VERSION" ]; then
+          echo "❌ Version mismatch: Tag '$TAG_VERSION_CLEAN' vs VERSION file '$FILE_VERSION'"
+          exit 1
+        else
+          echo "✅ Version consistency verified: $FILE_VERSION"
+        fi
+
     - name: Create archive
       run: |
         # Create clean directory for packaging
-        mkdir -p build/express-php
+        mkdir -p build/pivotphp-core
 
         # Copy source files
-        cp -r src build/express-php/
-        cp composer.json build/express-php/
-        cp README.md build/express-php/
-        cp LICENSE build/express-php/
-        cp -r docs/en build/express-php/docs
+        cp -r src build/pivotphp-core/
+        cp composer.json build/pivotphp-core/
+        cp README.md build/pivotphp-core/
+        cp LICENSE build/pivotphp-core/
+        cp VERSION build/pivotphp-core/
+        cp -r docs build/pivotphp-core/
 
         # Create tarball
         cd build
-        tar -czf express-php-${{ steps.tag_version.outputs.VERSION }}.tar.gz express-php/
-        zip -r express-php-${{ steps.tag_version.outputs.VERSION }}.zip express-php/
+        tar -czf pivotphp-core-${{ steps.tag_version.outputs.VERSION }}.tar.gz pivotphp-core/
+        zip -r pivotphp-core-${{ steps.tag_version.outputs.VERSION }}.zip pivotphp-core/
 
     - name: Generate changelog
       id: changelog
@@ -101,21 +129,29 @@ jobs:
         fi
 
         # Save changelog to file for GitHub release
-        echo "## What's Changed" > changelog.md
+        echo "## What's Changed in ${{ steps.version_file.outputs.FILE_VERSION }}" > changelog.md
         echo "" >> changelog.md
         echo "$CHANGELOG" >> changelog.md
         echo "" >> changelog.md
-        echo "**Full Changelog**: https://github.com/CAFernandes/express-php/compare/$PREVIOUS_TAG...${{ steps.tag_version.outputs.VERSION }}" >> changelog.md
+        echo "## 🚀 PivotPHP Core Features" >> changelog.md
+        echo "" >> changelog.md
+        echo "- **High Performance**: Optimized object pooling and memory management" >> changelog.md
+        echo "- **Express.js API**: Familiar and intuitive routing and middleware" >> changelog.md
+        echo "- **PSR Compliance**: Full PSR-7, PSR-15, and PSR-12 support" >> changelog.md
+        echo "- **Automatic Version Detection**: All scripts use VERSION file" >> changelog.md
+        echo "- **Consolidated Scripts**: Streamlined development workflow" >> changelog.md
+        echo "" >> changelog.md
+        echo "**Full Changelog**: https://github.com/PivotPHP/pivotphp-core/compare/$PREVIOUS_TAG...${{ steps.tag_version.outputs.VERSION }}" >> changelog.md
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ steps.tag_version.outputs.VERSION }}
-        name: Release ${{ steps.tag_version.outputs.VERSION }}
+        name: PivotPHP Core ${{ steps.tag_version.outputs.VERSION }}
         body_path: changelog.md
         files: |
-          build/express-php-${{ steps.tag_version.outputs.VERSION }}.tar.gz
-          build/express-php-${{ steps.tag_version.outputs.VERSION }}.zip
+          build/pivotphp-core-${{ steps.tag_version.outputs.VERSION }}.tar.gz
+          build/pivotphp-core-${{ steps.tag_version.outputs.VERSION }}.zip
         draft: false
         prerelease: false
       env:
@@ -129,6 +165,7 @@ jobs:
     steps:
     - name: Update Packagist
       run: |
-        curl -XPOST -H'content-type:application/json' 'https://packagist.org/api/update-package?username=CAFernandes&apiToken=${{ secrets.PACKAGIST_TOKEN }}' \
-        -d'{"repository":{"url":"https://github.com/CAFernandes/express-php"}}'
+        echo "📦 Updating Packagist for PivotPHP Core..."
+        curl -XPOST -H'content-type:application/json' 'https://packagist.org/api/update-package?username=PivotPHP&apiToken=${{ secrets.PACKAGIST_TOKEN }}' \
+        -d'{"repository":{"url":"https://github.com/PivotPHP/pivotphp-core"}}'
       continue-on-error: true

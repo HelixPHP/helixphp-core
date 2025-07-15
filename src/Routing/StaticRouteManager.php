@@ -55,8 +55,11 @@ class StaticRouteManager
      * @param array $options Opções adicionais
      * @return callable Handler otimizado
      */
-    public static function register(string $path, callable $handler, array $options = []): callable
-    {
+    public static function register(
+        string $path,
+        callable $handler,
+        array $options = []
+    ): callable {
         // Executa handler UMA VEZ para capturar response estática
         $response = self::captureStaticResponse($handler);
 
@@ -143,8 +146,11 @@ class StaticRouteManager
     /**
      * Cria handler otimizado para runtime
      */
-    private static function createOptimizedHandler(string $path, string $response, array $options): callable
-    {
+    private static function createOptimizedHandler(
+        string $path,
+        string $response,
+        array $options
+    ): callable {
         $isCompressed = $options['compressed'] ?? false;
 
         return function (Request $req, Response $res) use ($response, $isCompressed) {

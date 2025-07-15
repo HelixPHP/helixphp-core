@@ -9,6 +9,35 @@ declare(strict_types=1);
 $basePath = dirname(__DIR__);
 $srcPath = $basePath . '/src';
 
+// Get current version from VERSION file (REQUIRED)
+function getCurrentVersion(): string {
+    global $basePath;
+    $versionFile = $basePath . '/VERSION';
+    
+    if (!file_exists($versionFile)) {
+        error("ERRO CRÍTICO: Arquivo VERSION não encontrado em: $versionFile");
+        error("PivotPHP Core requer um arquivo VERSION na raiz do projeto");
+        exit(1);
+    }
+    
+    $version = trim(file_get_contents($versionFile));
+    
+    if (empty($version)) {
+        error("ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido");
+        error("Arquivo VERSION deve conter uma versão semântica válida (X.Y.Z)");
+        exit(1);
+    }
+    
+    // Validate semantic version format
+    if (!preg_match('/^\d+\.\d+\.\d+$/', $version)) {
+        error("ERRO CRÍTICO: Formato de versão inválido no arquivo VERSION: $version");
+        error("Formato esperado: X.Y.Z (versionamento semântico)");
+        exit(1);
+    }
+    
+    return $version;
+}
+
 // Cores para output
 const RED = "\033[0;31m";
 const GREEN = "\033[0;32m";
@@ -231,7 +260,8 @@ function validateDocBlock(array $docBlock): array {
 }
 
 // Início do script
-logMessage("🔍 Iniciando validação de documentação...");
+$version = getCurrentVersion();
+logMessage("🔍 Iniciando validação de documentação v{$version}...");
 
 if (!is_dir($srcPath)) {
     error("Diretório src não encontrado: $srcPath");

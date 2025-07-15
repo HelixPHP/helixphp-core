@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get up and running with PivotPHP Core v1.1.3 in under 5 minutes! This guide will walk you through installation, basic setup, and creating your first API endpoints.
+Get up and running with PivotPHP Core v1.1.4 in under 5 minutes! This guide will walk you through installation, basic setup, and creating your first API endpoints.
 
 ## 🚀 Installation
 

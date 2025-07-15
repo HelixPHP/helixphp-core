@@ -116,8 +116,11 @@ class StaticFileManager
      * @return callable Handler otimizado para o router
      * @deprecated Use registerDirectory() no lugar
      */
-    public static function register(string $routePrefix, string $physicalPath, array $options = []): callable
-    {
+    public static function register(
+        string $routePrefix,
+        string $physicalPath,
+        array $options = []
+    ): callable {
         // Normaliza caminhos
         $routePrefix = '/' . trim($routePrefix, '/');
         $physicalPath = rtrim($physicalPath, '/\\');
@@ -381,8 +384,11 @@ class StaticFileManager
     /**
      * Lista arquivos disponíveis em uma pasta registrada
      */
-    public static function listFiles(string $routePrefix, string $subPath = '', int $maxDepth = 3): array
-    {
+    public static function listFiles(
+        string $routePrefix,
+        string $subPath = '',
+        int $maxDepth = 3
+    ): array {
         if (!isset(self::$registeredPaths[$routePrefix])) {
             return [];
         }

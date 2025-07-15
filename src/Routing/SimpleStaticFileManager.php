@@ -109,8 +109,11 @@ class SimpleStaticFileManager
     /**
      * Registra um único arquivo como rota estática
      */
-    private static function registerSingleFile(string $route, array $fileInfo, Application $app): void
-    {
+    private static function registerSingleFile(
+        string $route,
+        array $fileInfo,
+        Application $app
+    ): void {
         // Cria handler específico para este arquivo
         $handler = self::createFileHandler($fileInfo);
 
