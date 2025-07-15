@@ -326,7 +326,10 @@ class StaticFileManager
         // Lê e envia conteúdo do arquivo
         $content = file_get_contents($fileInfo['path']);
         if ($content === false) {
-            return $res->status(500)->json(['error' => 'Unable to read file']);
+            return $res
+                ->withStatus(500)
+                ->withHeader('Content-Type', 'application/json')
+                ->withBody(\PivotPHP\Core\Http\Pool\Psr7Pool::getStream(json_encode(['error' => 'Unable to read file'])));
         }
 
         // Define o body e retorna response
