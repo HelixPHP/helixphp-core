@@ -5,10 +5,27 @@ declare(strict_types=1);
 namespace PivotPHP\Core\Routing;
 
 /**
- * Static File Manager
+ * Static File Manager (Façade + Advanced Features)
  *
- * Serve arquivos estáticos de pastas específicas de forma otimizada.
- * Implementa funcionalidade similar ao express.static() do Node.js.
+ * Implementação avançada para servir arquivos estáticos com cache e otimizações.
+ * Funcionalidade similar ao express.static() do Node.js.
+ *
+ * ESTRATÉGIA: Resolve arquivos dinamicamente com cache inteligente.
+ * - Usa padrões de rota com wildcards
+ * - Cache inteligente de metadados de arquivos
+ * - Funcionalidades avançadas: ETag, compression, security
+ * - Suporte a index files (index.html, index.htm)
+ *
+ * USO RECOMENDADO:
+ * - Projetos médios/grandes com centenas de arquivos estáticos
+ * - Quando você quer funcionalidades express.static()
+ * - SPAs com assets e bundle management
+ * - Produção com cache e performance otimizada
+ *
+ * ARQUITETURA:
+ * - registerDirectory() → Delega para SimpleStaticFileManager
+ * - register() → Mantém compatibilidade com método antigo
+ * - Funcionalidades extras: listFiles(), generateRouteMap(), cache management
  *
  * @package PivotPHP\Core\Routing
  * @since 1.1.3
@@ -312,8 +329,9 @@ class StaticFileManager
             return $res->status(500)->json(['error' => 'Unable to read file']);
         }
 
-        // Escreve conteúdo na resposta
-        return $res->write($content);
+        // Define o body e retorna response
+        $res = $res->withBody(\PivotPHP\Core\Http\Pool\Psr7Pool::getStream($content));
+        return $res;
     }
 
     /**

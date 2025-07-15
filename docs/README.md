@@ -1,6 +1,6 @@
-# PivotPHP Core v1.1.3 Documentation
+# PivotPHP Core v1.1.4 Documentation
 
-Welcome to the complete documentation for **PivotPHP Core v1.1.3** - a high-performance, lightweight PHP microframework inspired by Express.js, designed for building APIs and web applications with exceptional speed and simplicity.
+Welcome to the complete documentation for **PivotPHP Core v1.1.4** - a high-performance, lightweight PHP microframework inspired by Express.js, designed for building APIs and web applications with exceptional speed and simplicity.
 
 ## 🚀 Quick Navigation
 
@@ -40,34 +40,37 @@ Welcome to the complete documentation for **PivotPHP Core v1.1.3** - a high-perf
 3. [Service Providers](technical/providers/README.md) - Dependency injection
 4. [Extensions](technical/extensions/README.md) - Framework extensions
 
-## ✨ v1.1.3 Highlights
+## ✨ v1.1.4 Highlights
 
-### 🎯 **Array Callable Support**
-Full PHP 8.4+ compatibility with array callable route handlers:
-```php
-// NEW: Array callable syntax
-$app->get('/users', [UserController::class, 'index']);
-$app->post('/users', [$controller, 'store']);
+### 🔧 **Infrastructure Consolidation**
+Complete infrastructure optimization and automation:
+```bash
+# Scripts reduced from 25 to 15 (40% reduction)
+scripts/quality-check.sh    # Consolidated validation
+scripts/version-bump.sh     # Automatic version management
 ```
 
-### ⚡ **Performance Revolution**  
-- **+116% framework performance improvement** (20,400 → 44,092 ops/sec)
-- **100% object pool reuse rate** (was 0%)
-- **Multi-PHP validation** across PHP 8.1-8.4
+### 📦 **Automatic Version Management**  
+- **VERSION file requirement** - Single source of truth
+- **Automatic version detection** - No more hardcoded versions
+- **Strict validation** - X.Y.Z semantic versioning enforced
+- **Portuguese error messages** - Clear developer feedback
 
-### 🏗️ **Architectural Excellence**
-- **Organized middleware structure** by responsibility
-- **Over-engineering elimination** following ARCHITECTURAL_GUIDELINES
-- **100% backward compatibility** via automatic aliases
+### 🚀 **GitHub Actions Optimization**
+- **25% workflow reduction** (4 → 3 workflows)
+- **Consolidated scripts** - No more duplicate functionality
+- **Fixed repository URLs** - Corrected from express-php to pivotphp-core
+- **Enhanced validation** - Consistent across all workflows
 
-### 🧪 **Quality Assurance**
-- **PHPStan Level 9** across all PHP versions
-- **684+ tests passing** with comprehensive coverage
-- **Zero breaking changes** for existing applications
+### 📚 **Comprehensive Documentation**
+- **315-line versioning guide** - Complete semantic versioning guidance
+- **Static file managers documentation** - Two managers with clear use cases
+- **Release documentation** - Complete v1.1.4 documentation suite
+- **Zero breaking changes** - 100% backward compatibility maintained
 
 ## 🔧 Framework Status
 
-- **Current Version**: v1.1.3 (Performance Optimization & Array Callables Edition)
+- **Current Version**: v1.1.4 (Infrastructure Consolidation & Automation Edition)
 - **PHP Requirements**: 8.1+ with strict typing
 - **Production Ready**: Enterprise-grade quality with type safety
 - **Community**: [Discord](https://discord.gg/DMtxsP7z) | [GitHub](https://github.com/PivotPHP/pivotphp-core)
@@ -88,7 +91,8 @@ $app->post('/users', [$controller, 'store']);
 ### Core Components
 - **[Application](technical/application.md)** - Framework bootstrap and lifecycle
 - **[HTTP Layer](technical/http/README.md)** - Request/response handling
-- **[Routing](technical/routing/router.md)** - URL routing and parameters
+- **[Routing](technical/routing/README.md)** - URL routing and static file management
+- **[Static File Managers](technical/routing/STATIC_FILE_MANAGERS.md)** - Complete static file serving guide
 - **[Middleware](technical/middleware/README.md)** - Request/response pipeline
 
 ### Advanced Topics

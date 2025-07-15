@@ -1,6 +1,6 @@
-# Guia do Router
+# Guia Completo do Sistema de Roteamento
 
-O Router é o sistema de roteamento do PivotPHP, responsável por registrar, organizar e encontrar rotas HTTP de forma otimizada.
+O PivotPHP Core oferece um sistema de roteamento completo que inclui tanto roteamento dinâmico quanto gerenciamento de arquivos estáticos, inspirado na simplicidade do Express.js com a robustez do PSR-7.
 
 ## Conceitos Fundamentais
 
@@ -690,4 +690,166 @@ class RouteServiceProvider extends ServiceProvider
 }
 ```
 
-O Router do PivotPHP é projetado para performance e flexibilidade, oferecendo todas as funcionalidades necessárias para aplicações modernas, desde APIs simples até sistemas complexos com múltiplas versões e recursos avançados.
+## 📁 Gerenciamento de Arquivos Estáticos
+
+O PivotPHP Core oferece dois gerenciadores de arquivos estáticos complementares, cada um otimizado para diferentes cenários de uso.
+
+### Visão Geral dos Managers
+
+| Manager | Melhor Para | Estratégia | Performance |
+|---------|-------------|------------|-------------|
+| **SimpleStaticFileManager** | Projetos pequenos (<100 arquivos) | Uma rota por arquivo | Alta para poucos arquivos |
+| **StaticFileManager** | Projetos grandes (100+ arquivos) | Resolução dinâmica + cache | Otimizada para muitos arquivos |
+
+### Uso Básico via Application
+
+```php
+use PivotPHP\Core\Core\Application;
+
+$app = new Application();
+
+// Método simples (usa StaticFileManager internamente)
+$app->staticFiles('/assets', 'public/assets');
+
+// Equivale a:
+// StaticFileManager::registerDirectory('/assets', 'public/assets', $app);
+// Que por sua vez delega para:
+// SimpleStaticFileManager::registerDirectory('/assets', 'public/assets', $app);
+```
+
+### SimpleStaticFileManager - Abordagem Direta
+
+**Quando usar:**
+- Projetos pequenos/médios
+- Controle total sobre arquivos servidos
+- Performance crítica de roteamento
+- Menos de 100 arquivos estáticos
+
+**Exemplo de uso:**
+```php
+use PivotPHP\Core\Routing\SimpleStaticFileManager;
+
+// Registra diretório inteiro
+SimpleStaticFileManager::registerDirectory(
+    '/assets',           // Prefixo da rota
+    'public/assets',     // Caminho físico
+    $app                 // Instância da aplicação
+);
+
+// Configuração
+SimpleStaticFileManager::configure([
+    'max_file_size' => 5242880,        // 5MB
+    'allowed_extensions' => [
+        'css', 'js', 'png', 'jpg', 'svg'
+    ],
+    'cache_control_max_age' => 3600    // 1 hora
+]);
+
+// Estatísticas
+$stats = SimpleStaticFileManager::getStats();
+echo "Arquivos registrados: {$stats['registered_files']}\n";
+echo "Total hits: {$stats['total_hits']}\n";
+```
+
+### StaticFileManager - Recursos Avançados
+
+**Quando usar:**
+- SPAs e aplicações grandes
+- Centenas de arquivos estáticos
+- Produção com cache otimizado
+- Funcionalidades express.static()
+
+**Exemplo de uso:**
+```php
+use PivotPHP\Core\Routing\StaticFileManager;
+
+// Configuração avançada
+StaticFileManager::configure([
+    'enable_cache' => true,
+    'max_file_size' => 10485760,       // 10MB
+    'max_cache_entries' => 10000,
+    'security_check' => true,          // Proteção path traversal
+    'send_etag' => true,              // Headers de cache
+    'cache_control_max_age' => 86400   // 24 horas
+]);
+
+// Registro com opções
+StaticFileManager::registerDirectory(
+    '/public',
+    'public/dist',
+    $app,
+    [
+        'index' => ['index.html', 'index.htm'],
+        'dotfiles' => 'ignore',
+        'redirect' => true
+    ]
+);
+
+// Funcionalidades avançadas
+$files = StaticFileManager::listFiles('/public', 'css/', 2);
+$routeMap = StaticFileManager::generateRouteMap();
+$stats = StaticFileManager::getStats();
+```
+
+### Integração com Middleware
+
+```php
+// Static files com middleware
+$app->use('/admin-assets', [AuthMiddleware::class], function($req, $res, $next) {
+    // Registra arquivos estáticos apenas para usuários autenticados
+    StaticFileManager::registerDirectory('/admin-assets', 'admin/assets', $app);
+    return $next($req, $res);
+});
+```
+
+### Performance e Otimização
+
+**SimpleStaticFileManager:**
+- Memória: Linear com número de arquivos
+- Velocidade: Excelente para <100 arquivos
+- Cache: Básico (metadados em memória)
+
+**StaticFileManager:**
+- Memória: Otimizada com cache inteligente
+- Velocidade: Muito boa para qualquer quantidade
+- Cache: Avançado com ETag, Last-Modified
+
+### Configuração para Produção
+
+```php
+// Produção - StaticFileManager
+StaticFileManager::configure([
+    'enable_cache' => true,
+    'max_cache_entries' => 50000,
+    'security_check' => true,
+    'send_etag' => true,
+    'send_last_modified' => true,
+    'cache_control_max_age' => 86400
+]);
+
+// Desenvolvimento - SimpleStaticFileManager
+SimpleStaticFileManager::configure([
+    'cache_control_max_age' => 0,  // Sem cache para hot reload
+    'max_file_size' => 1048576     // 1MB limite para dev
+]);
+```
+
+---
+
+## 🎯 Resumo do Sistema de Roteamento
+
+O PivotPHP Core oferece um sistema completo de roteamento que combina:
+
+1. **Roteamento Dinâmico**: Flexível, com parâmetros e constraints
+2. **Arquivos Estáticos**: Dois managers para diferentes necessidades
+3. **Middleware Integration**: Sistema middleware robusto
+4. **Performance**: Otimizado para alta performance
+5. **Express.js Compatibility**: API familiar para desenvolvedores Node.js
+
+O sistema é projetado para performance e flexibilidade, oferecendo todas as funcionalidades necessárias para aplicações modernas, desde APIs simples até sistemas complexos com múltiplas versões e recursos avançados.
+
+### 📖 Documentação Relacionada
+
+- **[STATIC_FILE_MANAGERS.md](STATIC_FILE_MANAGERS.md)** - Guia completo dos gerenciadores de arquivos estáticos
+- **[SYNTAX_GUIDE.md](SYNTAX_GUIDE.md)** - Sintaxe detalhada de rotas
+- **[Middleware Documentation](../middleware/README.md)** - Sistema de middleware
