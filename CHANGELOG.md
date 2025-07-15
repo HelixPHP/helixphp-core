@@ -697,10 +697,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Throughput and error rate tracking
   - Prometheus-compatible metric export
   - Built-in alerting system
-- **Console Commands**:
-  - `pool:stats` for real-time pool monitoring
-  - Performance metrics display
-  - Health status monitoring
+- **Pool Management**:
+  - Pool statistics and metrics collection
+  - Performance monitoring capabilities
+  - Health status tracking
 
 #### Performance Improvements
 - **25x faster** Request/Response creation (2K → 50K ops/s)

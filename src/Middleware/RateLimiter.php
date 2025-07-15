@@ -465,16 +465,23 @@ class RateLimiter
      */
     public function reset(string $key): void
     {
-        $patterns = [
-            "fixed_window:{$key}:*",
-            "sliding_window:{$key}",
-            "token_bucket:{$key}",
-            "leaky_bucket:{$key}",
-        ];
+        $keysToRemove = [];
 
-        foreach ($patterns as $pattern) {
-            // Remove from storage
-            unset($this->storage[$pattern]);
+        // Find all keys that match the patterns
+        foreach ($this->storage as $storageKey => $value) {
+            if (
+                str_contains($storageKey, "fixed_window:{$key}:") ||
+                $storageKey === "sliding_window:{$key}" ||
+                $storageKey === "token_bucket:{$key}" ||
+                $storageKey === "leaky_bucket:{$key}"
+            ) {
+                $keysToRemove[] = $storageKey;
+            }
+        }
+
+        // Remove matching keys
+        foreach ($keysToRemove as $storageKey) {
+            unset($this->storage[$storageKey]);
         }
     }
 

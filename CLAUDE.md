@@ -146,7 +146,7 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
    - **Performance**: `src/Middleware/Performance/` - CacheMiddleware, RateLimitMiddleware  
    - **HTTP**: `src/Middleware/Http/` - CorsMiddleware, ErrorMiddleware
    - **Core**: `src/Middleware/Core/` - BaseMiddleware, MiddlewareInterface
-   - **Advanced**: LoadShedder, CircuitBreaker, TrafficClassifier
+   - **Advanced**: LoadShedder, TrafficClassifier
 
 4. **HTTP Layer** (`src/Http/`): PSR-7 hybrid implementation
    - Express.js style API with PSR-7 compliance
@@ -347,6 +347,16 @@ $stats = JsonBufferPool::getStatistics();
 - **Code Quality**: PHPStan Level 9, PSR-12 100% compliant, zero violations
 - **Architecture**: ARCHITECTURAL_GUIDELINES compliant, optimized object pooling, array callable support, simplified complexity
 - **Compatibility**: 100% backward compatible via automatic aliases
+
+### Key Development Scripts
+```bash
+# Most frequently used commands
+./scripts/validation/validate_all.sh          # Comprehensive project validation
+./scripts/pre-commit                          # Pre-commit validation
+composer quality:check                        # Quality checks (PHPStan + tests + style)
+composer test                                 # Run all tests
+composer cs:fix                               # Auto-fix code style
+```
 
 ## Important Notes
 

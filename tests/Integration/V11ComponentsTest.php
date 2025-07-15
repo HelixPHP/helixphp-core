@@ -58,7 +58,7 @@ class V11ComponentsTest extends TestCase
 
         // Configure application with performance features
         $this->app->middleware('load-shedder');
-        $this->app->middleware('circuit-breaker');
+        // Circuit breaker removed following ARCHITECTURAL_GUIDELINES
 
         // Create test route
         $this->app->get(
@@ -143,7 +143,7 @@ class V11ComponentsTest extends TestCase
      */
     public function testMiddlewareIntegration(): void
     {
-        // Configure all performance middlewares
+        // Configure performance middlewares (circuit breaker removed per ARCHITECTURAL_GUIDELINES)
         $this->app->middleware(
             'rate-limiter',
             [
@@ -160,13 +160,14 @@ class V11ComponentsTest extends TestCase
             ]
         );
 
-        $this->app->middleware(
-            'circuit-breaker',
-            [
-                'failure_threshold' => 5,
-                'timeout' => 30,
-            ]
-        );
+        // Circuit breaker removed following ARCHITECTURAL_GUIDELINES
+        // $this->app->middleware(
+        //     'circuit-breaker',
+        //     [
+        //         'failure_threshold' => 5,
+        //         'timeout' => 30,
+        //     ]
+        // );
 
         // Create routes
         $this->app->get(
@@ -375,7 +376,7 @@ class V11ComponentsTest extends TestCase
 
         // Configure application
         $this->app->middleware('load-shedder');
-        $this->app->middleware('circuit-breaker');
+        // Circuit breaker removed following ARCHITECTURAL_GUIDELINES
 
         // Add routes
         $this->app->get(

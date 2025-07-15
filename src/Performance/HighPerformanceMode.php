@@ -11,7 +11,6 @@ use PivotPHP\Core\Pool\Distributed\DistributedPoolManager;
 use PivotPHP\Core\Memory\MemoryManager;
 use PivotPHP\Core\Middleware\TrafficClassifier;
 use PivotPHP\Core\Middleware\LoadShedder;
-use PivotPHP\Core\Middleware\CircuitBreaker;
 
 /**
  * High Performance Mode configurator for PivotPHP
@@ -324,15 +323,12 @@ class HighPerformanceMode
     {
         $protection = self::$currentConfig['protection'];
 
-        // Circuit breaker
+        // Circuit breaker removed - over-engineering for microframework
+        // Following ARCHITECTURAL_GUIDELINES principle: "Simplicidade sobre Otimização Prematura"
         if ($protection['circuit_breaker']) {
-            $circuitConfig = [
-                'failure_threshold' => $protection['circuit_threshold'] ?? 50,
-                'timeout' => $protection['circuit_timeout'] ?? 30,
-                'half_open_requests' => $protection['half_open_requests'] ?? 10,
-            ];
-
-            $app->use(new CircuitBreaker($circuitConfig));
+            // Circuit breaker functionality removed to reduce complexity
+            // For high-scale applications, consider using external load balancers
+            // or dedicated circuit breaker services instead
         }
 
         // Load shedder

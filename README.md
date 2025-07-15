@@ -15,7 +15,7 @@
 
 **PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
 
-- **Performance Excepcional**: 44,092 ops/sec framework (+116% v1.1.3), 6,227 req/sec Docker (3º lugar), 161K ops/sec JSON pooling, 1.61MB memory footprint.
+- **Performance Excepcional**: 44,092 ops/sec framework (+116% v1.1.3), **2,250 req/sec HTTP real** (cross-framework equivalent), 161K ops/sec JSON pooling, 1.61MB memory footprint.
 - **Arquitetura Excelente (v1.1.3)**: ARCHITECTURAL_GUIDELINES compliant, separação perfeita functional/performance, zero over-engineering.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.

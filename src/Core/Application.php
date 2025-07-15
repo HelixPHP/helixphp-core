@@ -97,7 +97,6 @@ class Application
      */
     protected array $middlewareAliases = [
         'load-shedder' => \PivotPHP\Core\Middleware\LoadShedder::class,
-        'circuit-breaker' => \PivotPHP\Core\Middleware\CircuitBreaker::class,
         'rate-limiter' => \PivotPHP\Core\Middleware\RateLimiter::class,
     ];
 
