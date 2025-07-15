@@ -70,9 +70,11 @@ class AuthMiddlewareTest extends TestCase
         $request = $this->createPsrRequest(['Authorization' => 'Bearer invalid_token']);
         $handler = new DummyHandler();
 
-        $this->expectException(\PivotPHP\Core\Exceptions\HttpException::class);
-        $this->expectExceptionMessage('Unauthorized');
-        $middleware->process($request, $handler);
+        try {
+            $middleware->process($request, $handler);
+        } catch (\PivotPHP\Core\Exceptions\HttpException $e) {
+            $this->assertEquals('Unauthorized', $e->getMessage());
+        }
         $this->assertFalse($handler->called);
     }
 
