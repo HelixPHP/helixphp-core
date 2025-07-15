@@ -4,7 +4,6 @@ namespace PivotPHP\Core\Routing;
 
 use InvalidArgumentException;
 use BadMethodCallException;
-use PivotPHP\Core\Utils\Arr;
 use PivotPHP\Core\Utils\CallableResolver;
 
 /**
@@ -200,13 +199,7 @@ class Router
         $method = strtoupper($method);
 
         // Validar e resolver o handler usando CallableResolver
-        try {
-            $resolvedHandler = CallableResolver::resolve($handler);
-        } catch (InvalidArgumentException $e) {
-            throw new InvalidArgumentException(
-                "Route handler validation failed: {$e->getMessage()}"
-            );
-        }
+        $resolvedHandler = CallableResolver::resolve($handler);
 
         foreach ($middlewares as $mw) {
             if (!is_callable($mw)) {
@@ -626,7 +619,7 @@ class Router
     {
         $routes = [];
 
-        foreach (self::$preCompiledRoutes as $key => $route) {
+        foreach (self::$preCompiledRoutes as $route) {
             if (strpos($route['path'], $prefix) === 0) {
                 $routes[] = $route;
             }
