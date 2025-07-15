@@ -7,7 +7,7 @@ set -e
 
 # Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/lib/version-utils.sh"
+source "$SCRIPT_DIR/../utils/version-utils.sh"
 
 # Validate project context and change to project root
 validate_project_context || exit 1
@@ -108,14 +108,21 @@ rm "$test_output"
 info "📊 3. Test Coverage (≥30%) - CRITICAL"
 
 coverage_output=$(mktemp)
-if [ -f "reports/coverage.xml" ]; then
+# Generate coverage report for CI tests (excludes integration/stress)
+if XDEBUG_MODE=coverage vendor/bin/phpunit --testsuite=CI --coverage-clover=reports/coverage.xml --no-progress > "$coverage_output" 2>&1; then
+    coverage_gen_result=0
+else
+    coverage_gen_result=1
+fi
+
+if [ -f "reports/coverage.xml" ] && [ $coverage_gen_result -eq 0 ]; then
     coverage_result=0
     
     # Extract coverage from XML report
     if grep -q "metrics files=" "reports/coverage.xml"; then
         metrics_line=$(grep "metrics files=" "reports/coverage.xml" | tail -1)
         covered=$(echo "$metrics_line" | sed -n 's/.*coveredelements="\([0-9]*\)".*/\1/p')
-        total=$(echo "$metrics_line" | sed -n 's/.*elements="\([0-9]*\)".*/\1/p')
+        total=$(echo "$metrics_line" | sed -n 's/.*[^d]elements="\([0-9]*\)".*/\1/p')
         
         if [ -n "$covered" ] && [ -n "$total" ] && [ "$total" -gt 0 ]; then
             coverage_percent=$(python3 -c "print(f'{($covered / $total) * 100:.2f}%')" 2>/dev/null || echo "unknown")
@@ -141,9 +148,14 @@ if [ -f "reports/coverage.xml" ]; then
     fi
     echo "Coverage found: $coverage_percent" > "$coverage_output"
 else
+    if [ $coverage_gen_result -ne 0 ]; then
+        error "Coverage - FAILED (test execution failed)"
+        echo "Coverage generation failed - check test output" > "$coverage_output"
+    else
+        error "Coverage - FAILED (XML report not found)"
+        echo "Coverage report not found" > "$coverage_output"
+    fi
     coverage_result=1
-    error "Coverage - FAILED"
-    echo "Coverage report not found" > "$coverage_output"
 fi
 
 count_check $coverage_result "critical"

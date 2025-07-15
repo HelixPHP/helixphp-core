@@ -91,8 +91,8 @@ title "Executando verificações pré-release..."
 
 # 1. Executar validação completa usando validate_all.sh
 info "Executando validação completa do projeto..."
-if [ -f "scripts/validate_all.sh" ]; then
-    if scripts/validate_all.sh; then
+if [ -f "scripts/validation/validate_all.sh" ]; then
+    if scripts/validation/validate_all.sh; then
         success "Todas as validações passaram"
     else
         error "Algumas validações falharam. Corrija os problemas antes de continuar."

@@ -85,12 +85,12 @@ if [ "$PRE_COMMIT_MODE" = true ]; then
 
     # Para pre-commit, executamos apenas validações críticas
     # 1. Validação PSR-12 (crítica para qualidade de código)
-    if [ -f "./scripts/validate-psr12.php" ]; then
+    if [ -f "./scripts/quality/validate-psr12.php" ]; then
         print_status "Executando: Validação PSR-12"
         echo "----------------------------------------"
         ((TOTAL_TESTS++))
 
-        if php ./scripts/validate-psr12.php; then
+        if php ./scripts/quality/validate-psr12.php; then
             print_success "Validação PSR-12 - PASSOU"
             ((PASSED_TESTS++))
         else
@@ -144,7 +144,7 @@ else
     echo ""
 
     # 1. Validação da estrutura de documentação
-    run_validation "./scripts/validate-docs.sh" "Validação da Estrutura de Documentação"
+    run_validation "./scripts/validation/validate-docs.sh" "Validação da Estrutura de Documentação"
 
     # 2. Validação dos benchmarks - REMOVIDO (benchmarks migrados para outro projeto)
     # run_validation "./scripts/validate_benchmarks.sh" "Validação dos Benchmarks"
@@ -154,8 +154,8 @@ else
     echo "----------------------------------------"
     ((TOTAL_TESTS++))
 
-    if [ -f "./scripts/validate_project.php" ]; then
-        if php ./scripts/validate_project.php; then
+    if [ -f "./scripts/validation/validate_project.php" ]; then
+        if php ./scripts/validation/validate_project.php; then
             print_success "Validação Completa do Projeto (PHP) - PASSOU"
             ((PASSED_TESTS++))
         else
@@ -163,17 +163,17 @@ else
             ((FAILED_TESTS++))
         fi
     else
-        print_error "Script não encontrado: ./scripts/validate_project.php"
+        print_error "Script não encontrado: ./scripts/validation/validate_project.php"
         ((FAILED_TESTS++))
     fi
 
     # 4. Validação PSR-12 (se disponível)
-    if [ -f "./scripts/validate-psr12.php" ]; then
+    if [ -f "./scripts/quality/validate-psr12.php" ]; then
         print_status "Executando: Validação PSR-12"
         echo "----------------------------------------"
         ((TOTAL_TESTS++))
 
-        if php ./scripts/validate-psr12.php; then
+        if php ./scripts/quality/validate-psr12.php; then
             print_success "Validação PSR-12 - PASSOU"
             ((PASSED_TESTS++))
         else
@@ -242,7 +242,7 @@ elif [ $SUCCESS_RATE -ge 80 ]; then
         echo "🚨 Algumas validações críticas falharam."
         echo "   Corrija os problemas reportados antes de tentar novamente."
         echo ""
-        echo "💡 Dica: Execute 'scripts/validate_all.sh' sem --pre-commit para validação completa"
+        echo "💡 Dica: Execute 'scripts/validation/validate_all.sh' sem --pre-commit para validação completa"
     else
         print_warning "⚠️ MAIORIA DAS VALIDAÇÕES PASSOU ($SUCCESS_RATE%)"
         echo ""
@@ -271,8 +271,8 @@ else
         echo "🔧 Ações necessárias:"
         echo "   • Corrija todos os erros críticos reportados"
         echo "   • Verifique a estrutura do projeto"
-        echo "   • Execute ./scripts/validate-docs.sh individualmente"
-        echo "   • Execute ./scripts/validate_project.php individualmente"
+        echo "   • Execute ./scripts/validation/validate-docs.sh individualmente"
+        echo "   • Execute ./scripts/validation/validate_project.php individualmente"
         echo "   • Execute validações individuais para detalhes específicos"
     fi
 

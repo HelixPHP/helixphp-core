@@ -167,7 +167,7 @@ class StaticRouteManager
             // Retorna response diretamente - zero overhead
             $res = $res->withHeader('Content-Type', 'application/json')
                       ->withHeader('X-Static-Route', 'true');
-            
+
             // Define o body usando PSR-7
             $res = $res->withBody(\PivotPHP\Core\Http\Pool\Psr7Pool::getStream($content));
             return $res;

@@ -4,7 +4,7 @@
  * Script de Validação PSR-12 Completa
  * PivotPHP Framework
  */
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 class PSR12Validator
 {
     private array $errors = [];
@@ -138,7 +138,7 @@ class PSR12Validator
     private function getPhpFiles(): array
     {
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(__DIR__ . '/../src')
+            new RecursiveDirectoryIterator(__DIR__ . '/../../src')
         );
         $phpFiles = [];
         foreach ($iterator as $file) {

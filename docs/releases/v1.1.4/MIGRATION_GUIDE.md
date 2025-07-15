@@ -36,14 +36,14 @@ cat VERSION
 #### ❌ Removed Scripts:
 ```bash
 # Replace these references:
-scripts/quality-check-v114.sh        → scripts/quality-check.sh
-scripts/validate_all_v114.sh         → scripts/validate_all.sh
-scripts/quick-quality-check.sh       → scripts/quality-check.sh
-scripts/simple_pre_release.sh        → scripts/prepare_release.sh
-scripts/quality-gate.sh              → scripts/quality-check.sh
-scripts/quality-metrics.sh           → scripts/quality-check.sh
-scripts/test-php-versions-quick.sh   → scripts/test-all-php-versions.sh
-scripts/ci-validation.sh             → scripts/quality-check.sh
+scripts/quality-check-v114.sh        → scripts/quality/quality-check.sh
+scripts/validate_all_v114.sh         → scripts/validation/validate_all.sh
+scripts/quick-quality-check.sh       → scripts/quality/quality-check.sh
+scripts/simple_pre_release.sh        → scripts/release/prepare_release.sh
+scripts/quality-gate.sh              → scripts/quality/quality-check.sh
+scripts/quality-metrics.sh           → scripts/quality/quality-check.sh
+scripts/test-php-versions-quick.sh   → scripts/testing/test-all-php-versions.sh
+scripts/ci-validation.sh             → scripts/quality/quality-check.sh
 scripts/setup-precommit.sh           → (one-time setup, remove)
 scripts/adapt-psr7-v1.php            → (specific utility, remove)
 ```
@@ -55,7 +55,7 @@ scripts/adapt-psr7-v1.php            → (specific utility, remove)
 run: ./scripts/quality-gate.sh
 
 # NEW:
-run: scripts/quality-check.sh
+run: scripts/quality/quality-check.sh
 ```
 
 ## 🔄 Recommended Changes
@@ -72,9 +72,9 @@ run: scripts/quality-check.sh
 # git commit -m "bump version"
 
 # NEW WAY:
-scripts/version-bump.sh patch   # 1.1.4 → 1.1.5
-scripts/version-bump.sh minor   # 1.1.4 → 1.2.0
-scripts/version-bump.sh major   # 1.1.4 → 2.0.0
+scripts/release/version-bump.sh patch   # 1.1.4 → 1.1.5
+scripts/release/version-bump.sh minor   # 1.1.4 → 1.2.0
+scripts/release/version-bump.sh major   # 1.1.4 → 2.0.0
 ```
 
 **Benefits:**
@@ -93,10 +93,10 @@ scripts/version-bump.sh major   # 1.1.4 → 2.0.0
 # OLD WAY:
 scripts/quality-check-v114.sh
 scripts/quick-quality-check.sh
-scripts/validate_all.sh
+scripts/validation/validate_all.sh
 
 # NEW WAY:
-scripts/quality-check.sh  # Consolidates all quality checks
+scripts/quality/quality-check.sh  # Consolidates all quality checks
 ```
 
 **Benefits:**
@@ -114,22 +114,22 @@ scripts/quality-check.sh  # Consolidates all quality checks
 #### Daily Development:
 ```bash
 # Before commit:
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 
 # Before push (optional):
-scripts/validate_all.sh
+scripts/validation/validate_all.sh
 ```
 
 #### Release Preparation:
 ```bash
 # 1. Version bump
-scripts/version-bump.sh [patch|minor|major]
+scripts/release/version-bump.sh [patch|minor|major]
 
 # 2. Release preparation
-scripts/prepare_release.sh
+scripts/release/prepare_release.sh
 
 # 3. Final release (if validation passes)
-scripts/release.sh
+scripts/release/release.sh
 ```
 
 ## 📚 Documentation Updates
@@ -154,7 +154,7 @@ Run quality checks:
 
 <!-- NEW documentation -->
 Run quality checks:
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 ```
 
 ## 🔧 Troubleshooting Migration
@@ -195,7 +195,7 @@ echo "1.1.4" > VERSION
 **Solution:**
 ```bash
 # Use consolidated script instead
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 ```
 
 #### Issue 4: Project root not found
@@ -207,7 +207,7 @@ scripts/quality-check.sh
 ```bash
 # Run scripts from project root directory
 cd /path/to/pivotphp-core
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 
 # Or use absolute path to VERSION file
 ```
@@ -218,13 +218,13 @@ scripts/quality-check.sh
 
 ```bash
 # Test VERSION file detection
-scripts/quality-check.sh --version  # Should show v1.1.4
+scripts/quality/quality-check.sh --version  # Should show v1.1.4
 
 # Test script execution
-scripts/quality-check.sh            # Should run without errors
+scripts/quality/quality-check.sh            # Should run without errors
 
 # Test version management
-scripts/version-bump.sh patch --dry-run  # Should show next version
+scripts/release/version-bump.sh patch --dry-run  # Should show next version
 ```
 
 ### 2. Validate CI/CD:
@@ -244,7 +244,7 @@ git push origin feature/test-migration
 # Each team member should verify:
 1. git pull latest changes
 2. Check VERSION file exists: cat VERSION
-3. Run quality check: scripts/quality-check.sh
+3. Run quality check: scripts/quality/quality-check.sh
 4. Verify no errors related to missing scripts
 ```
 

@@ -6,6 +6,7 @@ namespace PivotPHP\Core\Middleware;
 
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Exceptions\HttpException;
 
 /**
  * Circuit Breaker middleware to prevent cascade failures
@@ -407,19 +408,16 @@ class CircuitBreaker
             $this->config['timeout'] - (time() - $circuit['opened_at'])
         );
 
-        return $response
-            ->status(503)
-            ->json(
-                [
-                    'error' => 'Service temporarily unavailable',
-                    'circuit_state' => $circuit['state'],
-                    'circuit_name' => $circuit['name'],
-                    'retry_after' => $timeUntilRetry,
-                ]
-            )
-            ->header('X-Circuit-State', $circuit['state'])
-            ->header('X-Circuit-Name', $circuit['name'])
-            ->header('Retry-After', (string) $timeUntilRetry);
+        throw new HttpException(
+            503,
+            'Service temporarily unavailable',
+            [
+                'Content-Type' => 'application/json',
+                'X-Circuit-State' => $circuit['state'],
+                'X-Circuit-Name' => $circuit['name'],
+                'Retry-After' => (string) $timeUntilRetry,
+            ]
+        );
     }
 
     /**

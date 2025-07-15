@@ -48,7 +48,7 @@ PivotPHP Core v1.1.4 representa um marco na **maturidade da infraestrutura** do 
 **Biblioteca Compartilhada:**
 ```bash
 # Nova biblioteca de utilitários
-scripts/lib/version-utils.sh
+scripts/utils/version-utils.sh
 
 # Funções disponíveis:
 - get_version()              # Detecção automática de versão
@@ -58,9 +58,9 @@ scripts/lib/version-utils.sh
 ```
 
 **Scripts Principais Consolidados:**
-- `scripts/quality-check.sh` - ⭐ **Principal**: Validação completa consolidada
-- `scripts/version-bump.sh` - ⭐ **Versioning**: Gerenciamento semântico automático
-- `scripts/prepare_release.sh` - ⭐ **Release**: Preparação automatizada
+- `scripts/quality/quality-check.sh` - ⭐ **Principal**: Validação completa consolidada
+- `scripts/release/version-bump.sh` - ⭐ **Versioning**: Gerenciamento semântico automático
+- `scripts/release/prepare_release.sh` - ⭐ **Release**: Preparação automatizada
 
 ### 📦 Sistema de Versionamento Automático
 
@@ -78,16 +78,16 @@ echo "1.1.4" > VERSION
 **Comandos de Versionamento:**
 ```bash
 # Increment patch (1.1.4 → 1.1.5)
-scripts/version-bump.sh patch
+scripts/release/version-bump.sh patch
 
 # Increment minor (1.1.4 → 1.2.0)
-scripts/version-bump.sh minor
+scripts/release/version-bump.sh minor
 
 # Increment major (1.1.4 → 2.0.0)
-scripts/version-bump.sh major
+scripts/release/version-bump.sh major
 
 # Preview next version
-scripts/version-bump.sh minor --dry-run
+scripts/release/version-bump.sh minor --dry-run
 ```
 
 ### 🚀 GitHub Actions Otimizado
@@ -98,7 +98,7 @@ scripts/version-bump.sh minor --dry-run
 - `release.yml` - Release final com validação de consistência
 
 **Melhorias Implementadas:**
-- Usa `scripts/quality-check.sh` consolidado
+- Usa `scripts/quality/quality-check.sh` consolidado
 - Detecção automática da versão do arquivo VERSION
 - URLs corrigidas para repositório PivotPHP Core
 - Validação de consistência entre Git tags e VERSION file
@@ -118,11 +118,11 @@ scripts/version-bump.sh minor --dry-run
 10. `adapt-psr7-v1.php` → Script específico não essencial
 
 ### ✅ Scripts Consolidados Mantidos:
-- **Qualidade (5):** quality-check.sh, validate_all.sh, validate_project.php, validate-documentation.php, validate-psr12.php
-- **Release (3):** version-bump.sh, prepare_release.sh, release.sh
-- **Documentação (2):** validate-docs.sh, validate_openapi.sh
-- **Testes (2):** run_stress_tests.sh, test-all-php-versions.sh
-- **Utilitários (3):** validate_benchmarks.sh, switch-psr7-version.php, lib/version-utils.sh
+- **Qualidade (5):** quality/quality-check.sh, validation/validate_all.sh, validation/validate_project.php, validation/validate-documentation.php, validation/validate-psr12.php
+- **Release (3):** release/version-bump.sh, release/prepare_release.sh, release/release.sh
+- **Documentação (2):** validation/validate-docs.sh, validation/validate_openapi.sh
+- **Testes (2):** testing/run_stress_tests.sh, testing/test-all-php-versions.sh
+- **Utilitários (3):** validation/validate_benchmarks.sh, utils/switch-psr7-version.php, utils/version-utils.sh
 
 ## 📚 Nova Documentação
 
@@ -133,7 +133,7 @@ scripts/version-bump.sh minor --dry-run
 - **Quando incrementar MAJOR, MINOR, PATCH**
 - **Exemplos específicos do PivotPHP Core**
 - **Workflow completo de development → release**
-- **Como usar `scripts/version-bump.sh`**
+- **Como usar `scripts/release/version-bump.sh`**
 - **Checklist de validação pré-release**
 - **FAQ com dúvidas comuns**
 
@@ -175,31 +175,31 @@ scripts/version-bump.sh minor --dry-run
 ### 🚀 Desenvolvimento Diário:
 ```bash
 # Validação antes de commit
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 
 # Validação completa (opcional)
-scripts/validate_all.sh
+scripts/validation/validate_all.sh
 ```
 
 ### 📦 Preparação de Release:
 ```bash
 # 1. Bump da versão
-scripts/version-bump.sh [patch|minor|major]
+scripts/release/version-bump.sh [patch|minor|major]
 
 # 2. Preparação final
-scripts/prepare_release.sh
+scripts/release/prepare_release.sh
 
 # 3. Release (se validação passou)
-scripts/release.sh
+scripts/release/release.sh
 ```
 
 ### 🧪 Validação Estendida:
 ```bash
 # Testes cross-version PHP
-scripts/test-all-php-versions.sh
+scripts/testing/test-all-php-versions.sh
 
 # Testes de stress
-scripts/run_stress_tests.sh
+scripts/testing/run_stress_tests.sh
 
 # Validação de documentação
 scripts/validate-documentation.php
@@ -299,9 +299,9 @@ scripts/
 - **Consolidação Summary:** `CONSOLIDATION_SUMMARY.md`
 
 ### 🛠️ Scripts Principais:
-- **Validação Principal:** `scripts/quality-check.sh`
-- **Gerenciamento de Versão:** `scripts/version-bump.sh`
-- **Preparação Release:** `scripts/prepare_release.sh`
+- **Validação Principal:** `scripts/quality/quality-check.sh`
+- **Gerenciamento de Versão:** `scripts/release/version-bump.sh`
+- **Preparação Release:** `scripts/release/prepare_release.sh`
 
 ### 🌐 Comunidade:
 - **Discord:** https://discord.gg/DMtxsP7z

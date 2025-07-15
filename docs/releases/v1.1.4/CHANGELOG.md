@@ -11,8 +11,8 @@ v1.1.4 focuses on **infrastructure consolidation** and **developer experience op
 ## 🆕 Added
 
 ### New Scripts and Tools
-- **`scripts/lib/version-utils.sh`** - Shared utility library for version detection and project validation
-- **`scripts/version-bump.sh`** - Enhanced semantic version management with automation
+- **`scripts/utils/version-utils.sh`** - Shared utility library for version detection and project validation
+- **`scripts/release/version-bump.sh`** - Enhanced semantic version management with automation
 - **VERSION file requirement** - Central version source with strict validation
 
 ### New Documentation
@@ -33,8 +33,8 @@ v1.1.4 focuses on **infrastructure consolidation** and **developer experience op
 ## 🔄 Changed
 
 ### Scripts Updated
-- **`scripts/quality-check.sh`** - Now consolidates functionality from multiple removed scripts
-- **`scripts/prepare_release.sh`** - Enhanced with automatic version detection and path independence
+- **`scripts/quality/quality-check.sh`** - Now consolidates functionality from multiple removed scripts
+- **`scripts/release/prepare_release.sh`** - Enhanced with automatic version detection and path independence
 - **`scripts/validate_project.php`** - Updated to use VERSION file with strict validation
 - **`scripts/validate-documentation.php`** - Enhanced with automatic version detection
 - **`scripts/validate_openapi.sh`** - Updated with version detection and better error handling

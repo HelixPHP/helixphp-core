@@ -14,12 +14,12 @@ PivotPHP Core v1.1.4 focuses on **infrastructure consolidation** and **developer
 ### 📦 Automatic Version Management
 - **VERSION File Integration:** All scripts now use a central VERSION file
 - **Semantic Version Validation:** Enforces X.Y.Z format with strict validation
-- **Version Bump Automation:** `scripts/version-bump.sh` with patch/minor/major support
+- **Version Bump Automation:** `scripts/release/version-bump.sh` with patch/minor/major support
 - **Git Integration:** Automatic commit and tag creation for version changes
 
 ### 🔧 Consolidated Script Infrastructure
-- **Shared Library:** `scripts/lib/version-utils.sh` with common functions
-- **Single Quality Script:** `scripts/quality-check.sh` consolidates all quality checks
+- **Shared Library:** `scripts/utils/version-utils.sh` with common functions
+- **Single Quality Script:** `scripts/quality/quality-check.sh` consolidates all quality checks
 - **Auto-Detection:** Project root and context detection from any directory
 - **Error Handling:** Strict validation with clear Portuguese error messages
 
@@ -53,15 +53,15 @@ PivotPHP Core v1.1.4 focuses on **infrastructure consolidation** and **developer
 ### New Commands Available:
 ```bash
 # Version management
-scripts/version-bump.sh patch    # 1.1.4 → 1.1.5
-scripts/version-bump.sh minor    # 1.1.4 → 1.2.0
-scripts/version-bump.sh major    # 1.1.4 → 2.0.0
+scripts/release/version-bump.sh patch    # 1.1.4 → 1.1.5
+scripts/release/version-bump.sh minor    # 1.1.4 → 1.2.0
+scripts/release/version-bump.sh major    # 1.1.4 → 2.0.0
 
 # Quality validation (consolidated)
-scripts/quality-check.sh         # Replaces multiple scripts
+scripts/quality/quality-check.sh         # Replaces multiple scripts
 
 # Release preparation (enhanced)
-scripts/prepare_release.sh       # Auto-detects version
+scripts/release/prepare_release.sh       # Auto-detects version
 ```
 
 ### Deprecated Commands (still work but not recommended):

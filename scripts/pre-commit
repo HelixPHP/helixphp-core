@@ -33,7 +33,7 @@ if [ ! -d "vendor" ]; then
 fi
 
 # Verifica se o script validate_all.sh existe
-if [ ! -f "scripts/validate_all.sh" ]; then
+if [ ! -f "scripts/validation/validate_all.sh" ]; then
     print_error "Script validate_all.sh não encontrado!"
     exit 1
 fi
@@ -41,7 +41,7 @@ fi
 print_status "Executando todas as validações via validate_all.sh..."
 
 # Executa o script centralizado de validação
-if scripts/validate_all.sh --pre-commit; then
+if scripts/validation/validate_all.sh --pre-commit; then
     print_success "Todas as validações passaram! 🎉"
     echo ""
     echo "Commit autorizado ✅"
@@ -52,6 +52,6 @@ else
     print_error "Commit rejeitado ❌"
     echo ""
     echo "Corrija os problemas reportados acima e tente novamente."
-    echo "Para detalhes específicos, execute: scripts/validate_all.sh"
+    echo "Para detalhes específicos, execute: scripts/validation/validate_all.sh"
     exit 1
 fi

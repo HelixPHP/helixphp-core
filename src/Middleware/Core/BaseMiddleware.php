@@ -4,6 +4,7 @@ namespace PivotPHP\Core\Middleware\Core;
 
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Exceptions\HttpException;
 
 /**
  * Classe base para middlewares.
@@ -116,12 +117,7 @@ abstract class BaseMiddleware implements MiddlewareInterface
         string $message,
         array $data = []
     ): Response {
-        $error = ['error' => $message, 'code' => $statusCode];
-        if (!empty($data)) {
-            $error['data'] = $data;
-        }
-
-        return $response->status($statusCode)->json($error);
+        throw new HttpException($statusCode, $message, ['Content-Type' => 'application/json']);
     }
 
     /**

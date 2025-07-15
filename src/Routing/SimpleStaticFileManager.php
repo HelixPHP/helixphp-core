@@ -8,19 +8,20 @@ use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
 use PivotPHP\Core\Http\Pool\Psr7Pool;
+use PivotPHP\Core\Exceptions\HttpException;
 
 /**
  * Simple Static File Manager
  *
  * Implementação simples e direta para servir arquivos estáticos.
- * 
+ *
  * ESTRATÉGIA: Registra cada arquivo como uma rota individual.
  * - Sem complexidade de wildcards ou regex
  * - Cada arquivo físico = uma rota específica no router
  * - Performance alta para poucos arquivos
  * - Memória proporcional ao número de arquivos
- * 
- * USO RECOMENDADO: 
+ *
+ * USO RECOMENDADO:
  * - Projetos pequenos com <100 arquivos estáticos
  * - Quando você quer controle total sobre quais arquivos são servidos
  * - Quando performance de roteamento é crítica
@@ -157,7 +158,7 @@ class SimpleStaticFileManager
             // Lê conteúdo do arquivo
             $content = file_get_contents($fileInfo['path']);
             if ($content === false) {
-                return $res->status(500)->json(['error' => 'Cannot read file']);
+                throw new HttpException(500, 'Cannot read file: ' . $fileInfo['path']);
             }
 
             // Headers de resposta

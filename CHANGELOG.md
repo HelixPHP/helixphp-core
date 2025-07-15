@@ -5,27 +5,41 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.4] - 2025-07-14
+## [1.1.4] - 2025-07-15
 
 ### 🔧 **Infrastructure Consolidation & Automation Edition**
 
-> **Script Infrastructure Overhaul**: Complete consolidation of script ecosystem with 40% reduction (25 → 15 scripts), automatic version detection via mandatory VERSION file, GitHub Actions optimization, and comprehensive versioning documentation while maintaining 100% backward compatibility and zero impact on framework performance.
+> **Script Infrastructure Overhaul**: Complete consolidation and reorganization of script ecosystem with logical organization in subfolders, 40% reduction (25 → 15 scripts), automatic version detection via mandatory VERSION file, GitHub Actions optimization, and comprehensive versioning documentation while maintaining 100% backward compatibility and zero impact on framework performance.
+
+#### 📁 **Script Organization & Structure** 
+- **Logical Subfolder Organization**: Scripts organized by functionality for better maintainability
+  ```
+  scripts/
+  ├── validation/     # Validation scripts (validate_all.sh, validate-docs.sh, etc.)
+  ├── quality/        # Quality checks (quality-check.sh, validate-psr12.php)  
+  ├── release/        # Release management (prepare_release.sh, version-bump.sh)
+  ├── testing/        # Testing scripts (test-all-php-versions.sh, run_stress_tests.sh)
+  └── utils/          # Utilities (version-utils.sh, switch-psr7-version.php)
+  ```
+- **Comprehensive Documentation**: README files in each subfolder with usage examples
+- **Backward Compatibility**: All existing script names preserved, only location changed
+- **Updated Integrations**: GitHub Actions workflows, composer.json, and documentation updated
 
 #### 🔧 **Script Infrastructure Consolidation**
 - **40% Script Reduction**: Consolidated from 25 to 15 scripts, eliminating duplication
   - **Removed Scripts**: 10 duplicate/obsolete scripts eliminated
-    - `quality-check-v114.sh` → Hardcoded version, consolidated into `quality-check.sh`
-    - `validate_all_v114.sh` → Hardcoded version, consolidated into `validate_all.sh`
+    - `quality-check-v114.sh` → Hardcoded version, consolidated into `scripts/quality/quality-check.sh`
+    - `validate_all_v114.sh` → Hardcoded version, consolidated into `scripts/validation/validate_all.sh`
     - `quick-quality-check.sh` → Duplicate functionality integrated
-    - `simple_pre_release.sh` → Replaced by enhanced `prepare_release.sh`
-    - `quality-gate.sh` → Functionality consolidated into `quality-check.sh`
-    - `quality-metrics.sh` → Functionality consolidated into `quality-check.sh`
-    - `test-php-versions-quick.sh` → Replaced by `test-all-php-versions.sh`
-    - `ci-validation.sh` → Functionality consolidated into `quality-check.sh`
+    - `simple_pre_release.sh` → Replaced by enhanced `scripts/release/prepare_release.sh`
+    - `quality-gate.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
+    - `quality-metrics.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
+    - `test-php-versions-quick.sh` → Replaced by `scripts/testing/test-all-php-versions.sh`
+    - `ci-validation.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
     - `setup-precommit.sh` → One-time setup script, no longer needed
     - `adapt-psr7-v1.php` → Specific utility script removed for simplicity
 
-- **Shared Utility Library**: Created `scripts/lib/version-utils.sh` with common functions
+- **Shared Utility Library**: Created `scripts/utils/version-utils.sh` with common functions
   - `get_version()` - Automatic version detection from VERSION file
   - `get_project_root()` - Project root directory detection
   - `validate_project_context()` - PivotPHP Core context validation
@@ -38,15 +52,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Strict Validation**: Scripts fail immediately if VERSION file missing or invalid
   - **Portuguese Error Messages**: Clear error messages for better developer experience
 
-- **Enhanced Version Management**: New `scripts/version-bump.sh` with automation
+- **Enhanced Version Management**: New `scripts/release/version-bump.sh` with automation
   ```bash
   # Semantic version management
-  scripts/version-bump.sh patch    # 1.1.4 → 1.1.5
-  scripts/version-bump.sh minor    # 1.1.4 → 1.2.0
-  scripts/version-bump.sh major    # 1.1.4 → 2.0.0
+  scripts/release/version-bump.sh patch    # 1.1.4 → 1.1.5
+  scripts/release/version-bump.sh minor    # 1.1.4 → 1.2.0
+  scripts/release/version-bump.sh major    # 1.1.4 → 2.0.0
   
   # Preview mode
-  scripts/version-bump.sh minor --dry-run
+  scripts/release/version-bump.sh minor --dry-run
   ```
   - **Git Integration**: Automatic commit and tag creation
   - **Composer Integration**: Updates composer.json if present
@@ -108,13 +122,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Simplified Commands**: Single entry points for complex operations
   ```bash
   # Quality validation (replaces multiple scripts)
-  scripts/quality-check.sh
+  scripts/quality/quality-check.sh
   
   # Complete validation
-  scripts/validate_all.sh
+  scripts/validation/validate_all.sh
   
   # Release preparation
-  scripts/prepare_release.sh
+  scripts/release/prepare_release.sh
   ```
 
 - **Improved Developer Experience**:
@@ -800,7 +814,7 @@ OptimizedHttpFactory::initialize([
 - **Backward Compatibility**: All v1.0.0 routes continue to work
 - **PSR-7 Dual Version Support**: Full compatibility with both PSR-7 v1.x and v2.x
   - Automatic version detection via `Psr7VersionDetector`
-  - Script to switch between versions: `scripts/switch-psr7-version.php`
+  - Script to switch between versions: `scripts/utils/switch-psr7-version.php`
   - Enables ReactPHP integration with PSR-7 v1.x
   - Maintains type safety with PSR-7 v2.x
 

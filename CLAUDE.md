@@ -11,7 +11,7 @@ PivotPHP Core is a high-performance PHP microframework inspired by Express.js, d
 ### Development Workflow
 ```bash
 # Run comprehensive validation (includes all checks)
-./scripts/validate_all.sh
+./scripts/validation/validate_all.sh
 
 # Multi-PHP version testing (RECOMMENDED for releases)
 composer docker:test-all        # Test all PHP versions (8.1-8.4) via Docker
@@ -46,16 +46,16 @@ vendor/bin/phpunit --testsuite=Unit      # Unit tests only
 vendor/bin/phpunit --testsuite=Fast      # Fast tests (excludes stress)
 
 # Additional validation commands
-php ./scripts/validate-psr12.php    # PSR-12 validation (standalone)
-php ./scripts/switch-psr7-version.php --check  # Check PSR-7 version
+php ./scripts/quality/validate-psr12.php    # PSR-12 validation (standalone)
+php ./scripts/utils/switch-psr7-version.php --check  # Check PSR-7 version
 
 # Pre-commit and release
 ./scripts/pre-commit             # Run pre-commit validations
-./scripts/prepare_release.sh 1.1.3  # Prepare release for version 1.1.3
-./scripts/release.sh            # Create release after preparation
+./scripts/release/prepare_release.sh 1.1.3  # Prepare release for version 1.1.3
+./scripts/release/release.sh            # Create release after preparation
 
 # Quality validation (recommended before commits)
-./scripts/quality-check.sh       # Comprehensive quality validation (uses CI tests)
+./scripts/quality/quality-check.sh       # Comprehensive quality validation (uses CI tests)
 ./scripts/pre-push              # Pre-push validation (includes integration tests)
 
 # CI/CD specific commands
@@ -266,11 +266,11 @@ $app->get('/users', 'UserController@index'); // TypeError!
 
 ## Development Workflow
 
-1. Before committing, run `./scripts/pre-commit` or `./scripts/validate_all.sh`
+1. Before committing, run `./scripts/pre-commit` or `./scripts/validation/validate_all.sh`
 2. All tests must pass before pushing changes
 3. Static analysis must pass at Level 9
 4. Code style must comply with PSR-12
-5. For releases, use `./scripts/prepare_release.sh` followed by `./scripts/release.sh`
+5. For releases, use `./scripts/release/prepare_release.sh` followed by `./scripts/release/release.sh`
 
 ### Array Callable Testing (v1.1.4)
 When implementing array callable routes, verify compatibility:

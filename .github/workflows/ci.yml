@@ -1,7 +1,7 @@
 name: CI/CD Pipeline
 
 # Optimized CI/CD using consolidated scripts with automatic version detection
-# Multi-PHP testing available locally via: ./scripts/test-all-php-versions.sh
+# Multi-PHP testing available locally via: ./scripts/testing/test-all-php-versions.sh
 
 on:
   push:
@@ -47,8 +47,8 @@ jobs:
       run: |
         echo "🔍 Running consolidated quality validation..."
         echo "📋 Using automatic version detection from VERSION file"
-        echo "💡 Multi-PHP testing done locally via: ./scripts/test-all-php-versions.sh"
-        scripts/quality-check.sh || { echo 'Quality check failed'; exit 1; }
+        echo "💡 Multi-PHP testing done locally via: ./scripts/testing/test-all-php-versions.sh"
+        scripts/quality/quality-check.sh || { echo 'Quality check failed'; exit 1; }
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -70,8 +70,8 @@ jobs:
         echo "🔍 Used consolidated scripts with auto-version detection"
         echo ""
         echo "📋 For comprehensive testing:"
-        echo "   • Multi-PHP: ./scripts/test-all-php-versions.sh (PHP 8.1-8.4)"
-        echo "   • Full validation: ./scripts/validate_all.sh"
-        echo "   • Version management: ./scripts/version-bump.sh"
+        echo "   • Multi-PHP: ./scripts/testing/test-all-php-versions.sh (PHP 8.1-8.4)"
+        echo "   • Full validation: ./scripts/validation/validate_all.sh"
+        echo "   • Version management: ./scripts/release/version-bump.sh"
         echo ""
         echo "🚀 CI/CD optimized for speed - extensive testing done locally"

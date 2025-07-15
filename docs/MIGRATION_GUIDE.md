@@ -31,8 +31,8 @@
 - [ ] **Test consolidated scripts** work correctly
 
 #### ✅ Recommended Actions:
-- [ ] **Use consolidated scripts** (`scripts/quality-check.sh`)
-- [ ] **Adopt automatic versioning** (`scripts/version-bump.sh`)
+- [ ] **Use consolidated scripts** (`scripts/quality/quality-check.sh`)
+- [ ] **Adopt automatic versioning** (`scripts/release/version-bump.sh`)
 - [ ] **Read versioning guide** ([docs/VERSIONING_GUIDE.md](VERSIONING_GUIDE.md))
 
 ### 📖 Additional Resources

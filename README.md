@@ -577,7 +577,7 @@ php scripts/switch-psr7-version.php 2
 composer update
 
 # Validar o projeto
-./scripts/validate_all.sh
+./scripts/validation/validate_all.sh
 ```
 
 Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-dual-support.md) para mais detalhes.

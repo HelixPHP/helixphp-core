@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PivotPHP\Core\Middleware\Security;
 
 use PivotPHP\Core\Http\Psr15\AbstractMiddleware;
+use PivotPHP\Core\Exceptions\HttpException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -52,15 +53,7 @@ class AuthMiddleware extends AbstractMiddleware
 
     protected function getResponse(ServerRequestInterface $request): ResponseInterface
     {
-        $jsonResponse = json_encode(['error' => 'Authentication required']);
-        if ($jsonResponse === false) {
-            $jsonResponse = '{"error": "Authentication required"}';
-        }
-        return new \PivotPHP\Core\Http\Psr7\Response(
-            401,
-            ['Content-Type' => 'application/json'],
-            \PivotPHP\Core\Http\Psr7\Stream::createFromString($jsonResponse)
-        );
+        throw new HttpException(401, 'Authentication required', ['Content-Type' => 'application/json']);
     }
 
     /**
@@ -167,15 +160,7 @@ class AuthMiddleware extends AbstractMiddleware
 
     private function unauthorizedResponse(): ResponseInterface
     {
-        $jsonResponse = json_encode(['error' => 'Unauthorized']);
-        if ($jsonResponse === false) {
-            $jsonResponse = '{"error": "Unauthorized"}';
-        }
-        return new \PivotPHP\Core\Http\Psr7\Response(
-            401,
-            ['Content-Type' => 'application/json'],
-            \PivotPHP\Core\Http\Psr7\Stream::createFromString($jsonResponse)
-        );
+        throw new HttpException(401, 'Unauthorized', ['Content-Type' => 'application/json']);
     }
 
     protected function before(ServerRequestInterface $request): ServerRequestInterface

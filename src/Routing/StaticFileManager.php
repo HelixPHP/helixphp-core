@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Routing;
 
+use PivotPHP\Core\Exceptions\HttpException;
+
 /**
  * Static File Manager (Façade + Advanced Features)
  *
@@ -192,7 +194,7 @@ class StaticFileManager
 
             // Remove o prefixo da rota para obter o caminho relativo do arquivo
             if (!str_starts_with($requestPath, $routePrefix)) {
-                return $res->status(404)->json(['error' => 'Path does not match route prefix']);
+                throw new HttpException(404, 'Path does not match route prefix');
             }
 
             $relativePath = substr($requestPath, strlen($routePrefix));
@@ -207,7 +209,7 @@ class StaticFileManager
             $fileInfo = self::resolveFile($routePrefix, $relativePath);
 
             if ($fileInfo === null) {
-                return $res->status(404)->json(['error' => 'File not found']);
+                throw new HttpException(404, 'File not found');
             }
 
             // Serve o arquivo
@@ -326,10 +328,11 @@ class StaticFileManager
         // Lê e envia conteúdo do arquivo
         $content = file_get_contents($fileInfo['path']);
         if ($content === false) {
-            return $res
-                ->withStatus(500)
-                ->withHeader('Content-Type', 'application/json')
-                ->withBody(\PivotPHP\Core\Http\Pool\Psr7Pool::getStream(json_encode(['error' => 'Unable to read file'])));
+            throw new HttpException(
+                500,
+                'Unable to read file: ' . $fileInfo['path'],
+                ['Content-Type' => 'application/json']
+            );
         }
 
         // Define o body e retorna response

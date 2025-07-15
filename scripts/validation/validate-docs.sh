@@ -102,7 +102,7 @@ print_status "Validando documentação de releases..."
 
 # Releases
 validate_file "docs/releases/README.md" "Índice de releases" 1000
-validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md" "Overview v1.1.2 (ATUAL)" 10000
+validate_file "docs/releases/FRAMEWORK_OVERVIEW_v$VERSION.md" "Overview v$VERSION (ATUAL)" 10000
 validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md" "Overview v1.0.0" 5000
 validate_file "docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md" "Overview v1.0.1" 5000
 
@@ -147,17 +147,17 @@ print_status "Validando documentação de contribuição..."
 validate_file "docs/contributing/README.md" "Guia de contribuição" 5000
 
 echo ""
-print_status "Verificando conteúdo específico v1.1.2..."
+print_status "Verificando conteúdo específico v$VERSION..."
 
-# Verificar conteúdo específico da v1.1.2
-if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md" ]; then
-    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md")
+# Verificar conteúdo específico da versão atual
+if [ -f "docs/releases/FRAMEWORK_OVERVIEW_v$VERSION.md" ]; then
+    content=$(cat "docs/releases/FRAMEWORK_OVERVIEW_v$VERSION.md")
 
-    if echo "$content" | grep -q "v1.1.2" && echo "$content" | grep -q "performance" && echo "$content" | grep -q "PSR"; then
-        print_success "FRAMEWORK_OVERVIEW_v1.1.2.md contém métricas de performance v1.1.2"
+    if echo "$content" | grep -q "v$VERSION" && echo "$content" | grep -q "performance" && echo "$content" | grep -q "PSR"; then
+        print_success "FRAMEWORK_OVERVIEW_v$VERSION.md contém métricas de performance v$VERSION"
         ((PASSED++))
     else
-        print_warning "FRAMEWORK_OVERVIEW_v1.1.2.md pode estar incompleto (faltam métricas v1.1.2)"
+        print_warning "FRAMEWORK_OVERVIEW_v$VERSION.md pode estar incompleto (faltam métricas v$VERSION)"
         ((WARNINGS++))
     fi
 fi
@@ -167,10 +167,10 @@ if [ -f "docs/index.md" ]; then
     content=$(cat "docs/index.md")
 
     if echo "$content" | grep -q "releases/" && echo "$content" | grep -q "technical/"; then
-        print_success "Índice principal atualizado para estrutura v1.1.2"
+        print_success "Índice principal atualizado para estrutura v$VERSION"
         ((PASSED++))
     else
-        print_warning "Índice principal pode não estar totalmente atualizado para v1.1.2"
+        print_warning "Índice principal pode não estar totalmente atualizado para v$VERSION"
         ((WARNINGS++))
     fi
 fi

@@ -44,13 +44,13 @@ jobs:
       run: |
         echo "🚀 Running comprehensive validation for release..."
         echo "📋 Using consolidated quality check with auto-version detection"
-        scripts/quality-check.sh
+        scripts/quality/quality-check.sh
         
     - name: Prepare release validation
       run: |
         echo "📦 Running release preparation validation..."
-        chmod +x scripts/prepare_release.sh
-        scripts/prepare_release.sh
+        chmod +x scripts/release/prepare_release.sh
+        scripts/release/prepare_release.sh
 
   release:
     needs: validate

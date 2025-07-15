@@ -6,7 +6,7 @@
  * corretamente antes da publicação do projeto.
  */
 
-require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 class ProjectValidator
 {
@@ -19,7 +19,7 @@ class ProjectValidator
      */
     private function getCurrentVersion(): string
     {
-        $versionFile = dirname(__DIR__) . '/VERSION';
+        $versionFile = dirname(__DIR__, 2) . '/VERSION';
         
         if (!file_exists($versionFile)) {
             echo "❌ ERRO CRÍTICO: Arquivo VERSION não encontrado em: $versionFile\n";
@@ -71,6 +71,7 @@ class ProjectValidator
 
     private function validateStructure()
     {
+        $version = $this->getCurrentVersion();
         echo "📁 Validando estrutura do projeto...\n";
 
         $requiredDirs = [
@@ -104,7 +105,7 @@ class ProjectValidator
             'README.md',
             'docs/index.md',
             'docs/releases/README.md',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md',
+            "docs/releases/FRAMEWORK_OVERVIEW_v{$version}.md",
             'docs/implementations/usage_basic.md',
             'docs/technical/application.md',
             'docs/technical/http/request.md',
@@ -116,9 +117,9 @@ class ProjectValidator
             // 'docs/performance/benchmarks/README.md',  // Benchmarks movidos para outro projeto
             'docs/testing/api_testing.md',
             'docs/contributing/README.md',
-            'scripts/validate-docs.sh',
-            'scripts/validate_project.php',
-            'scripts/validate_benchmarks.sh',
+            'scripts/validation/validate-docs.sh',
+            'scripts/validation/validate_project.php',
+            'scripts/validation/validate_benchmarks.sh',
             'benchmarks/run_benchmark.sh'
         ];
 
@@ -180,9 +181,9 @@ class ProjectValidator
     {
         echo "🛡️ Validando middlewares...\n";
 
-        // Verificar SecurityHeadersMiddleware (nova estrutura v1.1.2)
+        // Verificar SecurityHeadersMiddleware (nova estrutura)
         if (class_exists('PivotPHP\\Core\\Middleware\\Security\\SecurityHeadersMiddleware')) {
-            $this->passed[] = "SecurityHeadersMiddleware carregado (v1.1.2)";
+            $this->passed[] = "SecurityHeadersMiddleware carregado";
 
             try {
                 $security = new \PivotPHP\Core\Middleware\Security\SecurityHeadersMiddleware();
@@ -199,7 +200,7 @@ class ProjectValidator
             }
         }
 
-        // Verificar outros middlewares de segurança (v1.1.2)
+        // Verificar outros middlewares de segurança
         $securityMiddlewares = [
             'CsrfMiddleware' => 'PivotPHP\\Core\\Middleware\\Security\\CsrfMiddleware',
             'XssMiddleware' => 'PivotPHP\\Core\\Middleware\\Security\\XssMiddleware',
@@ -211,7 +212,7 @@ class ProjectValidator
         $securityCount = 0;
         foreach ($securityMiddlewares as $name => $class) {
             if (class_exists($class)) {
-                $this->passed[] = "{$name} carregado (v1.1.2)";
+                $this->passed[] = "{$name} carregado";
                 $securityCount++;
             } else {
                 $this->warnings[] = "{$name} não encontrado";
@@ -298,7 +299,8 @@ class ProjectValidator
 
     private function validateDocumentation()
     {
-        echo "📚 Validando documentação v1.1.2...\n";
+        $version = $this->getCurrentVersion();
+        echo "📚 Validando documentação v{$version}...\n";
 
         // Documentação principal
         $mainDocs = [
@@ -323,7 +325,7 @@ class ProjectValidator
         // Documentação de releases
         $releaseDocs = [
             'docs/releases/README.md' => 'Índice de releases',
-            'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
+            "docs/releases/FRAMEWORK_OVERVIEW_v{$version}.md" => "Overview v{$version} (ATUAL)",
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
             'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1',
         ];
@@ -441,7 +443,7 @@ class ProjectValidator
             $this->warnings[] = "Arquivo .env.example não encontrado - recomendado para projetos";
         }
 
-        // Verificar configurações de segurança no código (v1.1.2)
+        // Verificar configurações de segurança no código
         $securityFiles = glob('src/Middleware/Security/*.php');
         if (count($securityFiles) >= 3) {
             $this->passed[] = "Múltiplos middlewares de segurança implementados (" . count($securityFiles) . " arquivos)";
@@ -506,6 +508,7 @@ class ProjectValidator
 
     private function validateReleases()
     {
+        $version = $this->getCurrentVersion();
         echo "📋 Validando estrutura de releases...\n";
 
         // Verificar diretório de releases
@@ -515,7 +518,7 @@ class ProjectValidator
             // Verificar arquivos de release
             $releaseFiles = [
                 'docs/releases/README.md' => 'Índice de releases',
-                'docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md' => 'Overview v1.1.2 (ATUAL)',
+                "docs/releases/FRAMEWORK_OVERVIEW_v{$version}.md" => "Overview v{$version} (ATUAL)",
                 'docs/releases/FRAMEWORK_OVERVIEW_v1.0.0.md' => 'Overview v1.0.0',
                 'docs/releases/FRAMEWORK_OVERVIEW_v1.0.1.md' => 'Overview v1.0.1'
             ];
@@ -537,16 +540,14 @@ class ProjectValidator
                 }
             }
 
-            // Verificar se v1.1.2 tem conteúdo específico
-            if (file_exists('docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md')) {
-                $content = file_get_contents('docs/releases/FRAMEWORK_OVERVIEW_v1.1.2.md');
+            // Verificar se versão atual tem conteúdo específico
+            if (file_exists("docs/releases/FRAMEWORK_OVERVIEW_v{$version}.md")) {
+                $content = file_get_contents("docs/releases/FRAMEWORK_OVERVIEW_v{$version}.md");
 
-                if (strpos($content, '40,476 ops/sec') !== false &&
-                    strpos($content, 'v1.1.2') !== false &&
-                    strpos($content, 'Consolidation Edition') !== false) {
-                    $this->passed[] = "FRAMEWORK_OVERVIEW_v1.1.2.md contém métricas de performance esperadas";
+                if (strpos($content, "v{$version}") !== false) {
+                    $this->passed[] = "FRAMEWORK_OVERVIEW_v{$version}.md contém métricas de performance v{$version}";
                 } else {
-                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v1.1.2.md pode estar incompleto (faltam métricas v1.1.2)";
+                    $this->warnings[] = "FRAMEWORK_OVERVIEW_v{$version}.md pode estar incompleto (faltam métricas v{$version})";
                 }
             }
             
@@ -566,7 +567,7 @@ class ProjectValidator
         $movedFiles = [
             'FRAMEWORK_OVERVIEW_v1.0.0.md',
             'FRAMEWORK_OVERVIEW_v1.0.1.md',
-            'FRAMEWORK_OVERVIEW_v1.1.2.md'
+            "FRAMEWORK_OVERVIEW_v{$version}.md"
         ];
 
         foreach ($movedFiles as $file) {
@@ -691,10 +692,11 @@ class ProjectValidator
             echo "\n📋 PRÓXIMOS PASSOS:\n";
             echo "   1. Execute os benchmarks: ./benchmarks/run_benchmark.sh\n";
             echo "   2. Execute os testes: composer test\n";
-            echo "   3. Valide a documentação: ./scripts/validate-docs.sh\n";
-            echo "   4. Valide os benchmarks: ./scripts/validate_benchmarks.sh\n";
+            echo "   3. Valide a documentação: ./scripts/validation/validate-docs.sh\n";
+            echo "   4. Valide os benchmarks: ./scripts/validation/validate_benchmarks.sh\n";
             echo "   5. Faça commit das alterações\n";
-            echo "   6. Crie uma tag de versão: git tag -a v1.1.2 -m 'Release v1.1.2'\n";
+            $version = $this->getCurrentVersion();
+            echo "   6. Crie uma tag de versão: git tag -a v{$version} -m 'Release v{$version}'\n";
             echo "   7. Push para o repositório: git push origin main --tags\n";
             echo "   8. Publique no Packagist: https://packagist.org\n";
             echo "   9. Repositório: https://github.com/CAFernandes/pivotphp-core\n";
@@ -703,7 +705,7 @@ class ProjectValidator
         } else {
             echo "❌ VALIDAÇÃO FALHOU!\n";
             echo "   Corrija os erros antes de publicar o projeto.\n";
-            echo "   Execute ./scripts/validate-docs.sh para mais detalhes.\n";
+            echo "   Execute ./scripts/validation/validate-docs.sh para mais detalhes.\n";
             return false;
         }
     }

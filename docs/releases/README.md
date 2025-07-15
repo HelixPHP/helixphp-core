@@ -17,7 +17,7 @@ Este diretório contém a documentação completa de todas as versões do PivotP
 
 **Novos recursos:**
 - Sistema automático de gerenciamento de versões com `version-bump.sh`
-- Biblioteca compartilhada `scripts/lib/version-utils.sh`
+- Biblioteca compartilhada `scripts/utils/version-utils.sh`
 - Script consolidado `quality-check.sh` para validação completa
 - Validação rigorosa do arquivo VERSION com formato X.Y.Z
 - Documentação completa de versionamento semântico

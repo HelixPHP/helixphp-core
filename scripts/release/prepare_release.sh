@@ -7,7 +7,7 @@ set -e
 
 # Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/lib/version-utils.sh"
+source "$SCRIPT_DIR/../utils/version-utils.sh"
 
 # Validate project context and change to project root
 validate_project_context || exit 1
@@ -130,8 +130,8 @@ fi
 # 8. Execute custom validation
 echo "🎯 Executing comprehensive validation..."
 
-if [ -f "scripts/validate_all.sh" ]; then
-    if scripts/validate_all.sh > /dev/null 2>&1; then
+if [ -f "scripts/validation/validate_all.sh" ]; then
+    if scripts/validation/validate_all.sh > /dev/null 2>&1; then
         info "Comprehensive validation passed"
     else
         error "Comprehensive validation failed - fix issues before continuing"

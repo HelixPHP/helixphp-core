@@ -1,233 +1,93 @@
-# PivotPHP Core - Scripts Directory
+# Scripts Directory
 
-## 📋 Visão Geral
+Este diretório contém todos os scripts auxiliares organizados por funcionalidade para o PivotPHP Core.
 
-Este diretório contém todos os scripts de automação, validação e gerenciamento do PivotPHP Core. **Todos os scripts foram consolidados e otimizados** com detecção automática de versão e remoção de hardcoding.
+## Estrutura Organizada
 
-## 🚀 Scripts Principais (Uso Diário)
-
-### 🔍 Validação de Qualidade
-```bash
-# Validação completa de qualidade (RECOMENDADO)
-scripts/quality-check.sh
-
-# Validação abrangente do projeto
-scripts/validate_all.sh
-
-# Validação específica de documentação
-scripts/validate-documentation.php
+```
+scripts/
+├── validation/     # Scripts de validação geral
+├── quality/        # Scripts de verificação de qualidade
+├── release/        # Scripts de gerenciamento de releases
+├── testing/        # Scripts de execução de testes
+└── utils/          # Scripts utilitários
 ```
 
-### 📦 Gerenciamento de Versões
-```bash
-# Incrementar versão patch (1.1.4 → 1.1.5)
-scripts/version-bump.sh patch
+## Diretórios
 
-# Incrementar versão minor (1.1.4 → 1.2.0)
-scripts/version-bump.sh minor
+### 📋 [validation/](./validation/)
+Scripts para validação geral do projeto:
+- `validate_all.sh` - Validação completa do projeto
+- `validate-docs.sh` - Validação da documentação
+- `validate_project.php` - Validação programática
+- `pre-commit` - Validações pré-commit
+- `pre-push` - Validações pré-push
 
-# Incrementar versão major (1.1.4 → 2.0.0)
-scripts/version-bump.sh major
+### 🔍 [quality/](./quality/)
+Scripts para verificação de qualidade do código:
+- `quality-check.sh` - Verificação completa de qualidade
+- `validate-psr12.php` - Validação PSR-12 específica
 
-# Ver próxima versão sem aplicar
-scripts/version-bump.sh minor --dry-run
-```
+### 🚀 [release/](./release/)
+Scripts para gerenciamento de versões e releases:
+- `prepare_release.sh` - Preparação de releases
+- `release.sh` - Criação de releases
+- `version-bump.sh` - Incremento de versões
 
-### 🚢 Release e Deploy
-```bash
-# Preparar para release
-scripts/prepare_release.sh
+### 🧪 [testing/](./testing/)
+Scripts para execução de testes especializados:
+- `run_stress_tests.sh` - Testes de stress
+- `test-all-php-versions.sh` - Testes multi-versão PHP
 
-# Executar release final
-scripts/release.sh
-```
+### 🛠️ [utils/](./utils/)
+Scripts utilitários para manutenção:
+- `switch-psr7-version.php` - Alternância de versões PSR-7
+- `version-utils.sh` - Utilitários de versão
 
-## 🔧 Scripts de Validação Específica
+## Fluxo de Desenvolvimento
 
-### 📖 Documentação
-```bash
-# Validar documentação de código (DocBlocks)
-scripts/validate-documentation.php
-
-# Validar documentação de arquivos markdown
-scripts/validate-docs.sh
-
-# Validar recursos OpenAPI/Swagger
-scripts/validate_openapi.sh
-```
-
-### 🧪 Testes e Qualidade
-```bash
-# Executar testes de stress
-scripts/run_stress_tests.sh
-
-# Testar em múltiplas versões PHP (8.1-8.4)
-scripts/test-all-php-versions.sh
-
-# Validar padrões PSR-12
-scripts/validate-psr12.php
-
-# Validar estrutura de benchmarks
-scripts/validate_benchmarks.sh
-
-# Validar projeto completo
-scripts/validate_project.php
-```
-
-## ⚙️ Scripts Utilitários
-
-### 🔄 Configuração e Desenvolvimento
-```bash
-# Hook de pre-commit
-scripts/pre-commit
-
-# Hook de pre-push  
-scripts/pre-push
-
-# Alternar versão PSR-7 para testes
-scripts/switch-psr7-version.php
-```
-
-### 📚 Biblioteca Compartilhada
-```bash
-# Utilitários de detecção de versão e projeto
-scripts/lib/version-utils.sh
-```
-
-## 🎯 Scripts por Categoria
-
-### 📊 Qualidade e Validação (5 scripts)
-- `quality-check.sh` - ⭐ **Principal**: Validação completa de qualidade
-- `validate_all.sh` - Orchestrador de todas as validações
-- `validate_project.php` - Validação estrutural do projeto
-- `validate-documentation.php` - Validação de documentação de código
-- `validate-psr12.php` - Validação de padrões PSR-12
-
-### 📖 Documentação (2 scripts)  
-- `validate-docs.sh` - Validação de documentação markdown
-- `validate_openapi.sh` - Validação de recursos OpenAPI
-
-### 🧪 Testes (2 scripts)
-- `run_stress_tests.sh` - Testes de stress e performance
-- `test-all-php-versions.sh` - Testes cross-version PHP
-
-### 📦 Release e Versão (3 scripts)
-- `version-bump.sh` - ⭐ **Principal**: Gerenciamento de versões
-- `prepare_release.sh` - Preparação para release
-- `release.sh` - Execução final do release
-
-### 🔧 Utilitários (3 scripts)
-- `validate_benchmarks.sh` - Validação de benchmarks
-- `switch-psr7-version.php` - Utilitário PSR-7
-- `lib/version-utils.sh` - ⭐ **Biblioteca**: Funções compartilhadas
-
-### ⚙️ Git Hooks (2 scripts)
-- `pre-commit` - Hook de pre-commit
-- `pre-push` - Hook de pre-push
-
-## ✨ Principais Melhorias (v1.1.4)
-
-### 🔄 Consolidação Realizada
-- **Removidos 10 scripts duplicados/obsoletos**
-- **Consolidado** `quality-check.sh` como script principal
-- **Eliminado** hardcoding de versões e caminhos
-- **Criada** biblioteca compartilhada `lib/version-utils.sh`
-
-### 🎯 Detecção Automática
-- **Versão**: Lida automaticamente do arquivo `VERSION`
-- **Projeto Root**: Detecta automaticamente o diretório do projeto
-- **Validação**: Verifica contexto correto do PivotPHP Core
-
-### 🚨 Validação Rigorosa
-- **Arquivo VERSION obrigatório**: Scripts falham se não encontrar
-- **Formato semântico**: Valida formato X.Y.Z
-- **Mensagens claras**: Erros críticos em português
-
-## 📋 Workflow Recomendado
-
-### 🔄 Desenvolvimento Diário
+### Desenvolvimento Diário
 ```bash
 # Antes de commit
-scripts/quality-check.sh
+./scripts/validation/pre-commit
 
-# Validação completa (opcional)
-scripts/validate_all.sh
+# Verificação de qualidade
+./scripts/quality/quality-check.sh
 ```
 
-### 📦 Preparação de Release
+### Antes de Release
 ```bash
-# 1. Bump da versão
-scripts/version-bump.sh [patch|minor|major]
+# Validação completa
+./scripts/validation/validate_all.sh
 
-# 2. Preparação final
-scripts/prepare_release.sh
+# Testes multi-versão PHP
+./scripts/testing/test-all-php-versions.sh
 
-# 3. Release (se tudo estiver ok)
-scripts/release.sh
+# Preparar release
+./scripts/release/prepare_release.sh 1.2.0
 ```
 
-### 🧪 Validação Estendida
+### CI/CD Integration
 ```bash
-# Multi-version PHP testing
-scripts/test-all-php-versions.sh
+# Validação rápida para CI
+./scripts/quality/quality-check.sh
 
-# Testes de stress
-scripts/run_stress_tests.sh
-
-# Validação de documentação
-scripts/validate-documentation.php
+# Testes de stress para validação completa
+./scripts/testing/run_stress_tests.sh
 ```
 
-## 🆘 Resolução de Problemas
+## Convenções
 
-### ❌ Erro: "VERSION file not found"
-```bash
-# Criar arquivo VERSION na raiz do projeto
-echo "1.1.4" > VERSION
-```
+- Todos os scripts são executáveis e bem documentados
+- Scripts de validação retornam códigos de saída apropriados (0 = sucesso)
+- Relatórios são gerados em `reports/` quando aplicável
+- Scripts utilizam cores e formatação consistente para output
+- Dependências são documentadas em cada README específico
 
-### ❌ Erro: "Invalid version format"
-```bash
-# Verificar formato do arquivo VERSION (deve ser X.Y.Z)
-cat VERSION
-# Corrigir se necessário
-echo "1.1.4" > VERSION
-```
+## Migração de Scripts Legados
 
-### ❌ Erro: "Project root not found"
-```bash
-# Executar scripts a partir da raiz do projeto
-cd /path/to/pivotphp-core
-scripts/quality-check.sh
-```
-
-## 📚 Documentação Adicional
-
-- **Guia de Versionamento**: `docs/VERSIONING_GUIDE.md`
-- **Plano de Limpeza**: `scripts/CLEANUP_PLAN.md`
-- **Status de Scripts**: `scripts/SCRIPTS_UPDATE_STATUS.md`
-- **Consolidação**: `CONSOLIDATION_SUMMARY.md`
-
-## 🔗 Scripts Removidos (Histórico)
-
-Os seguintes scripts foram **removidos** por serem duplicados ou obsoletos:
-- `quality-check-v114.sh` → Substituído por `quality-check.sh`
-- `validate_all_v114.sh` → Substituído por `validate_all.sh`
-- `quick-quality-check.sh` → Duplicação removida
-- `simple_pre_release.sh` → Substituído por `prepare_release.sh`
-- `quality-gate.sh` → Funcionalidade incorporada
-- `quality-metrics.sh` → Funcionalidade incorporada
-- `test-php-versions-quick.sh` → Substituído por `test-all-php-versions.sh`
-- `ci-validation.sh` → Funcionalidade incorporada
-- `setup-precommit.sh` → Script de configuração única
-- `adapt-psr7-v1.php` → Script específico não essencial
-
----
-
-**📊 Estatísticas Finais**:
-- **Scripts ativos**: 15 (redução de 40% de 25 → 15)
-- **Duplicações eliminadas**: 10 scripts
-- **Hardcoding removido**: 100% dos scripts
-- **Versão automática**: Todos os scripts
-
-**🎯 Resultado**: Scripts mais limpos, organizados e maintíveis para o PivotPHP Core v1.1.4+
+Scripts movidos da raiz para subdiretórios mantêm funcionalidade:
+- Nomes dos scripts preservados
+- Funcionalidades mantidas
+- Compatibilidade com scripts existentes
+- Documentação atualizada

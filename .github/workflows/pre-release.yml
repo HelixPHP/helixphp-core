@@ -6,6 +6,11 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   pre-release-validation:
     runs-on: ubuntu-latest
@@ -42,13 +47,13 @@ jobs:
     - name: Run release preparation script
       run: |
         echo "🚀 Running automated release preparation..."
-        chmod +x scripts/prepare_release.sh
-        echo "n\nn\nn" | scripts/prepare_release.sh
+        chmod +x scripts/release/prepare_release.sh
+        echo "n\nn\nn" | scripts/release/prepare_release.sh
 
     - name: Run project validation
       run: |
         echo "📋 Running comprehensive project validation..."
-        php scripts/validate_project.php
+        php scripts/validation/validate_project.php
 
     - name: Check for security vulnerabilities
       run: composer audit --no-dev

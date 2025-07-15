@@ -46,8 +46,8 @@ Welcome to the complete documentation for **PivotPHP Core v1.1.4** - a high-perf
 Complete infrastructure optimization and automation:
 ```bash
 # Scripts reduced from 25 to 15 (40% reduction)
-scripts/quality-check.sh    # Consolidated validation
-scripts/version-bump.sh     # Automatic version management
+scripts/quality/quality-check.sh    # Consolidated validation
+scripts/release/version-bump.sh     # Automatic version management
 ```
 
 ### 📦 **Automatic Version Management**  

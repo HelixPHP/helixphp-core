@@ -113,22 +113,22 @@ O PivotPHP Core inclui um script automatizado para gerenciar versões:
 
 ```bash
 # Incrementar PATCH (1.1.4 → 1.1.5)
-scripts/version-bump.sh patch
+scripts/release/version-bump.sh patch
 
 # Incrementar MINOR (1.1.4 → 1.2.0)  
-scripts/version-bump.sh minor
+scripts/release/version-bump.sh minor
 
 # Incrementar MAJOR (1.1.4 → 2.0.0)
-scripts/version-bump.sh major
+scripts/release/version-bump.sh major
 
 # Visualizar próxima versão sem aplicar
-scripts/version-bump.sh minor --dry-run
+scripts/release/version-bump.sh minor --dry-run
 
 # Fazer bump sem criar commit/tag
-scripts/version-bump.sh patch --no-commit
+scripts/release/version-bump.sh patch --no-commit
 
 # Fazer bump sem criar tag (mas com commit)
-scripts/version-bump.sh minor --no-tag
+scripts/release/version-bump.sh minor --no-tag
 ```
 
 ### O que o Script Faz Automaticamente:
@@ -145,7 +145,7 @@ scripts/version-bump.sh minor --no-tag
 
 ```bash
 # Cenário: Correção de bug de segurança
-$ scripts/version-bump.sh patch
+$ scripts/release/version-bump.sh patch
 
 ℹ️  Versão atual: 1.1.4
 ℹ️  Nova versão: 1.1.5
@@ -180,7 +180,7 @@ Confirma o bump de 1.1.4 para 1.1.5? (y/N): y
 - [ ] Cobertura de testes ≥30% (`composer test:coverage`)
 - [ ] Testes de segurança passando (`composer test:security`)
 - [ ] Performance ≥30K ops/sec (`composer benchmark`)
-- [ ] Validação completa (`scripts/quality-check.sh`)
+- [ ] Validação completa (`scripts/quality/quality-check.sh`)
 
 #### ✅ Documentação:
 - [ ] CHANGELOG.md atualizado
@@ -249,13 +249,13 @@ git checkout main
 git merge feature/new-middleware
 
 # Execute validações
-scripts/quality-check.sh
+scripts/quality/quality-check.sh
 ```
 
 ### 3. Versionamento
 ```bash
 # Para nova funcionalidade (MINOR)
-scripts/version-bump.sh minor
+scripts/release/version-bump.sh minor
 
 # Resultado: 1.1.4 → 1.2.0
 ```
@@ -279,9 +279,9 @@ git push origin main --tags
 - [Contributing Guidelines](../CONTRIBUTING.md)
 
 ### Scripts Relacionados:
-- `scripts/version-bump.sh` - Gerenciamento de versões
-- `scripts/prepare_release.sh` - Preparação para release
-- `scripts/quality-check.sh` - Validação de qualidade
+- `scripts/release/version-bump.sh` - Gerenciamento de versões
+- `scripts/release/prepare_release.sh` - Preparação para release
+- `scripts/quality/quality-check.sh` - Validação de qualidade
 
 ### Comunidade:
 - [Discord PivotPHP](https://discord.gg/DMtxsP7z)

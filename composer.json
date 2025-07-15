@@ -133,8 +133,7 @@
             "@phpstan",
             "@test"
         ],
-        "fix:psr12-lines": "./scripts/fix-psr12-lines.sh",
-        "precommit:install": "./scripts/setup-precommit.sh",
+        "precommit:install": "./scripts/utils/setup-precommit.sh",
         "precommit:test": "./scripts/pre-commit",
         "prepush:validate": [
             "@phpstan",
@@ -147,8 +146,8 @@
             "@test",
             "@cs:check"
         ],
-        "validate:docs": "./scripts/validate-docs.sh",
-        "validate:project": "php scripts/validate_project.php",
+        "validate:docs": "./scripts/validation/validate-docs.sh",
+        "validate:project": "php scripts/validation/validate_project.php",
         "examples:basic": "php examples/example_basic.php",
         "examples:auth": "php examples/example_auth.php",
         "examples:auth-simple": "php examples/example_auth_simple.php",
@@ -165,11 +164,11 @@
         "benchmark": "./benchmarks/run_benchmark.sh",
         "benchmark:quick": "./benchmarks/run_benchmark.sh -q",
         "benchmark:simple": "php benchmarks/SimpleBenchmark.php",
-        "docker:test-all": "./scripts/test-all-php-versions.sh",
-        "docker:test-quality": "./scripts/test-all-php-versions.sh --with-quality",
-        "ci:validate": "./scripts/ci-validation.sh",
-        "quality:gate": "./scripts/quality-gate.sh",
-        "quality:metrics": "./scripts/quality-metrics.sh"
+        "docker:test-all": "./scripts/testing/test-all-php-versions.sh",
+        "docker:test-quality": "./scripts/testing/test-all-php-versions.sh --with-quality",
+        "ci:validate": "./scripts/quality/quality-check.sh",
+        "quality:gate": "./scripts/quality/quality-check.sh",
+        "quality:metrics": "./scripts/quality/quality-check.sh"
     },
     "config": {
         "optimize-autoloader": true,
