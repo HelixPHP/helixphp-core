@@ -24,7 +24,7 @@ class StreamTest extends TestCase
     {
         $content = 'Hello, World!';
         $stream = Stream::createFromString($content);
-        
+
         $this->assertInstanceOf(StreamInterface::class, $stream);
         $this->assertEquals($content, (string) $stream);
         $this->assertTrue($stream->isReadable());
@@ -40,9 +40,9 @@ class StreamTest extends TestCase
         $resource = fopen('php://temp', 'r+');
         fwrite($resource, 'Test content');
         rewind($resource);
-        
+
         $stream = new Stream($resource);
-        
+
         $this->assertInstanceOf(StreamInterface::class, $stream);
         $this->assertEquals('Test content', (string) $stream);
         $this->assertTrue($stream->isReadable());
@@ -57,10 +57,10 @@ class StreamTest extends TestCase
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'stream_test');
         file_put_contents($tempFile, 'File content');
-        
+
         try {
             $stream = Stream::createFromFile($tempFile);
-            
+
             $this->assertInstanceOf(StreamInterface::class, $stream);
             $this->assertEquals('File content', (string) $stream);
             $this->assertTrue($stream->isReadable());
@@ -76,7 +76,7 @@ class StreamTest extends TestCase
     {
         $content = 'Hello, World!';
         $stream = Stream::createFromString($content);
-        
+
         $this->assertEquals('Hello', $stream->read(5));
         $this->assertEquals(', World!', $stream->read(100));
         $this->assertEquals('', $stream->read(5)); // EOF
@@ -88,13 +88,13 @@ class StreamTest extends TestCase
     public function testStreamWritingOperations(): void
     {
         $stream = Stream::createFromString('');
-        
+
         $bytesWritten = $stream->write('Hello');
         $this->assertEquals(5, $bytesWritten);
-        
+
         $bytesWritten = $stream->write(', World!');
         $this->assertEquals(8, $bytesWritten);
-        
+
         $stream->rewind();
         $this->assertEquals('Hello, World!', (string) $stream);
     }
@@ -105,13 +105,13 @@ class StreamTest extends TestCase
     public function testStreamSeekingOperations(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $stream->seek(7);
         $this->assertEquals('World!', $stream->read(10));
-        
+
         $stream->seek(0);
         $this->assertEquals('Hello', $stream->read(5));
-        
+
         $stream->rewind();
         $this->assertEquals('Hello, World!', (string) $stream);
     }
@@ -123,7 +123,7 @@ class StreamTest extends TestCase
     {
         $content = 'Hello, World!';
         $stream = Stream::createFromString($content);
-        
+
         $this->assertEquals(13, $stream->getSize());
         $this->assertEquals(strlen($content), $stream->getSize());
     }
@@ -134,15 +134,15 @@ class StreamTest extends TestCase
     public function testStreamPositionTracking(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $this->assertEquals(0, $stream->tell());
-        
+
         $stream->read(5);
         $this->assertEquals(5, $stream->tell());
-        
+
         $stream->seek(7);
         $this->assertEquals(7, $stream->tell());
-        
+
         $stream->rewind();
         $this->assertEquals(0, $stream->tell());
     }
@@ -153,13 +153,13 @@ class StreamTest extends TestCase
     public function testStreamEofDetection(): void
     {
         $stream = Stream::createFromString('Hello');
-        
+
         $this->assertFalse($stream->eof());
-        
+
         $stream->read(5);
         $stream->read(1); // Try to read past end
         $this->assertTrue($stream->eof());
-        
+
         $stream->rewind();
         $this->assertFalse($stream->eof());
     }
@@ -170,10 +170,10 @@ class StreamTest extends TestCase
     public function testStreamContentsRetrieval(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $stream->seek(7);
         $this->assertEquals('World!', $stream->getContents());
-        
+
         $stream->rewind();
         $this->assertEquals('Hello, World!', $stream->getContents());
     }
@@ -184,10 +184,10 @@ class StreamTest extends TestCase
     public function testStreamTruncation(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $stream->truncate(5);
         $stream->rewind();
-        
+
         $this->assertEquals('Hello', (string) $stream);
         $this->assertEquals(5, $stream->getSize());
     }
@@ -198,11 +198,11 @@ class StreamTest extends TestCase
     public function testStreamMetadata(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $metadata = $stream->getMetadata();
         $this->assertIsArray($metadata);
         $this->assertArrayHasKey('mode', $metadata);
-        
+
         $mode = $stream->getMetadata('mode');
         $this->assertIsString($mode);
         $this->assertNotEmpty($mode);
@@ -214,10 +214,10 @@ class StreamTest extends TestCase
     public function testStreamDetachment(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $resource = $stream->detach();
         $this->assertIsResource($resource);
-        
+
         // Stream should be unusable after detachment
         $this->assertNull($stream->detach());
         $this->assertNull($stream->getSize());
@@ -230,13 +230,13 @@ class StreamTest extends TestCase
     public function testStreamClosure(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $this->assertTrue($stream->isReadable());
         $this->assertTrue($stream->isWritable());
         $this->assertTrue($stream->isSeekable());
-        
+
         $stream->close();
-        
+
         $this->assertFalse($stream->isReadable());
         $this->assertFalse($stream->isWritable());
         $this->assertFalse($stream->isSeekable());
@@ -249,7 +249,7 @@ class StreamTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Stream must be a resource or string');
-        
+
         new Stream(123);
     }
 
@@ -259,9 +259,9 @@ class StreamTest extends TestCase
     public function testStreamReusability(): void
     {
         $stream = Stream::createFromString('Hello, World!');
-        
+
         $this->assertTrue($stream->isReusable());
-        
+
         // After detachment, stream should not be reusable
         $stream->detach();
         $this->assertFalse($stream->isReusable());
@@ -274,15 +274,19 @@ class StreamTest extends TestCase
     {
         // Use a pipe which is not seekable
         $pipes = [];
-        $process = proc_open('echo "test"', [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w']
-        ], $pipes);
-        
+        $process = proc_open(
+            'echo "test"',
+            [
+                0 => ['pipe', 'r'],
+                1 => ['pipe', 'w'],
+                2 => ['pipe', 'w']
+            ],
+            $pipes
+        );
+
         if (is_resource($process)) {
             $stream = new Stream($pipes[1]);
-            
+
             // If it's not seekable, trying to seek should throw exception
             if (!$stream->isSeekable()) {
                 $this->expectException(\RuntimeException::class);
@@ -291,7 +295,7 @@ class StreamTest extends TestCase
                 // Skip test if stream is actually seekable
                 $this->markTestSkipped('Stream is seekable on this system');
             }
-            
+
             proc_close($process);
         } else {
             $this->markTestSkipped('Unable to create non-seekable stream');
@@ -305,13 +309,13 @@ class StreamTest extends TestCase
     {
         $tempFile = tempnam(sys_get_temp_dir(), 'readonly_test');
         file_put_contents($tempFile, 'Read only content');
-        
+
         try {
             $resource = fopen($tempFile, 'r');
             $stream = new Stream($resource);
-            
+
             $this->assertFalse($stream->isWritable());
-            
+
             $this->expectException(\RuntimeException::class);
             $stream->write('test');
         } finally {
@@ -326,13 +330,13 @@ class StreamTest extends TestCase
     {
         $largeContent = str_repeat('A', 100000);
         $stream = Stream::createFromString($largeContent);
-        
+
         $this->assertEquals(100000, $stream->getSize());
         $this->assertEquals($largeContent, (string) $stream);
-        
+
         $stream->seek(50000);
         $this->assertEquals(50000, $stream->tell());
-        
+
         $chunk = $stream->read(1000);
         $this->assertEquals(1000, strlen($chunk));
         $this->assertEquals(str_repeat('A', 1000), $chunk);
@@ -345,10 +349,10 @@ class StreamTest extends TestCase
     {
         $binaryData = "\x00\x01\x02\x03\x04\x05";
         $stream = Stream::createFromString($binaryData);
-        
+
         $this->assertEquals(6, $stream->getSize());
         $this->assertEquals($binaryData, (string) $stream);
-        
+
         $stream->rewind();
         $this->assertEquals($binaryData, $stream->read(6));
     }
@@ -359,22 +363,22 @@ class StreamTest extends TestCase
     public function testStreamPerformance(): void
     {
         $startTime = microtime(true);
-        
+
         // Create many streams
         $streams = [];
         for ($i = 0; $i < 100; $i++) {
             $streams[] = Stream::createFromString("Content {$i}");
         }
-        
+
         // Read from all streams
         foreach ($streams as $stream) {
             $content = (string) $stream;
             $this->assertNotEmpty($content);
         }
-        
+
         $endTime = microtime(true);
         $duration = ($endTime - $startTime) * 1000;
-        
+
         $this->assertLessThan(100, $duration); // Should be fast
     }
 
@@ -385,7 +389,7 @@ class StreamTest extends TestCase
     {
         $sourceStream = Stream::createFromString('Source content');
         $targetStream = Stream::createFromString('');
-        
+
         // Copy content
         $sourceStream->rewind();
         while (!$sourceStream->eof()) {
@@ -394,7 +398,7 @@ class StreamTest extends TestCase
                 $targetStream->write($chunk);
             }
         }
-        
+
         $targetStream->rewind();
         $this->assertEquals('Source content', (string) $targetStream);
     }
@@ -406,7 +410,7 @@ class StreamTest extends TestCase
     {
         $stream = Stream::createFromString('Hello, World!');
         $stream->close();
-        
+
         $this->expectException(\RuntimeException::class);
         $stream->read(5);
     }

@@ -65,7 +65,7 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // Verify clean data passes through unchanged
         $processedData = $this->handler->getLastProcessedData();
         $this->assertEquals($cleanData, $processedData);
@@ -87,7 +87,7 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // Verify malicious data was sanitized
         $processedData = $this->handler->getLastProcessedData();
         $this->assertStringNotContainsString('<script>', $processedData['name']);
@@ -119,7 +119,7 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $processedData = $this->handler->getLastProcessedData();
-        
+
         // Verify nested sanitization
         $this->assertStringNotContainsString('<script>', $processedData['user']['profile']['bio']);
         $this->assertStringNotContainsString('<svg', $processedData['user']['profile']['skills'][0]);
@@ -139,7 +139,7 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // Non-array data should pass through unchanged
         $processedData = $this->handler->getLastProcessedData();
         // The middleware only processes array data, so non-array data passes through as-is
@@ -188,7 +188,7 @@ class XssMiddlewareTest extends TestCase
     {
         $maliciousInput = '<script>alert("evil")</script>Safe text';
         $result = XssMiddleware::sanitize($maliciousInput);
-        
+
         $this->assertStringNotContainsString('<script>', $result);
         $this->assertStringNotContainsString('alert("evil")', $result);
         $this->assertStringContainsString('Safe text', $result);
@@ -201,7 +201,7 @@ class XssMiddlewareTest extends TestCase
     {
         $maliciousInput = '<iframe src="javascript:alert(1)">content</iframe>Safe text';
         $result = XssMiddleware::sanitize($maliciousInput);
-        
+
         $this->assertStringNotContainsString('<iframe', $result);
         $this->assertStringNotContainsString('javascript:alert(1)', $result);
         $this->assertStringContainsString('Safe text', $result);
@@ -214,7 +214,7 @@ class XssMiddlewareTest extends TestCase
     {
         $maliciousInput = '<svg onload="alert(1)">content</svg>Safe text';
         $result = XssMiddleware::sanitize($maliciousInput);
-        
+
         $this->assertStringNotContainsString('<svg', $result);
         $this->assertStringNotContainsString('onload=', $result);
         $this->assertStringContainsString('Safe text', $result);
@@ -227,7 +227,7 @@ class XssMiddlewareTest extends TestCase
     {
         $maliciousInput = '<img src="x" onerror="alert(1)">Safe text';
         $result = XssMiddleware::sanitize($maliciousInput);
-        
+
         $this->assertStringNotContainsString('onerror=', $result);
         $this->assertStringContainsString('Safe text', $result);
     }
@@ -239,7 +239,7 @@ class XssMiddlewareTest extends TestCase
     {
         $maliciousInput = '<div onclick="alert(1)" onmouseover="alert(2)">Safe text</div>';
         $result = XssMiddleware::sanitize($maliciousInput);
-        
+
         $this->assertStringNotContainsString('onclick=', $result);
         $this->assertStringNotContainsString('onmouseover=', $result);
         $this->assertStringContainsString('Safe text', $result);
@@ -252,7 +252,7 @@ class XssMiddlewareTest extends TestCase
     {
         $input = '<p>Safe <strong>text</strong></p><script>alert("evil")</script>';
         $result = XssMiddleware::sanitize($input, '<p><strong>');
-        
+
         $this->assertStringNotContainsString('<script>', $result);
         $this->assertStringNotContainsString('alert("evil")', $result);
         $this->assertStringContainsString('Safe', $result);
@@ -382,19 +382,19 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $processedData = $this->handler->getLastProcessedData();
-        
+
         // Verify all XSS patterns were sanitized
         $this->assertStringNotContainsString('<script>', $processedData['name']);
         $this->assertStringNotContainsString('<svg', $processedData['bio']);
         $this->assertStringNotContainsString('onload=', $processedData['bio']);
         $this->assertStringNotContainsString('<script>', $processedData['social']['twitter']);
         $this->assertStringNotContainsString('<iframe', $processedData['social']['linkedin']);
-        
+
         // Verify safe content is preserved
         $this->assertEquals('test@example.com', $processedData['email']);
         // The iframe content may be completely removed, so check for remaining safe content
         $this->assertTrue(
-            str_contains($processedData['social']['linkedin'], 'profile') || 
+            str_contains($processedData['social']['linkedin'], 'profile') ||
             $processedData['social']['linkedin'] === ''
         );
     }
@@ -415,10 +415,10 @@ class XssMiddlewareTest extends TestCase
         $endTime = microtime(true);
 
         $duration = ($endTime - $startTime) * 1000; // Convert to milliseconds
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertLessThan(1000, $duration); // Should process 1000 fields in less than 1 second
-        
+
         // Verify sanitization still works
         $processedData = $this->handler->getLastProcessedData();
         $this->assertStringNotContainsString('<script>', $processedData['field_0']);
@@ -464,7 +464,7 @@ class XssMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $processedData = $this->handler->getLastProcessedData();
-        
+
         // Verify script was removed but allowed tags may be preserved
         $this->assertStringNotContainsString('<script>', $processedData['content']);
         $this->assertStringNotContainsString('alert("xss")', $processedData['content']);
@@ -484,7 +484,7 @@ class MockRequestHandler implements RequestHandlerInterface
     public function handle(\Psr\Http\Message\ServerRequestInterface $request): ResponseInterface
     {
         $this->lastProcessedData = $request->getParsedBody();
-        
+
         $factory = new ResponseFactory();
         return $factory->createResponse(200)
                       ->withHeader('Content-Type', 'application/json');

@@ -14,7 +14,8 @@ use PivotPHP\Core\Http\Pool\Psr7Pool;
 use PivotPHP\Core\Performance\HighPerformanceMode;
 use PivotPHP\Core\Performance\PerformanceMonitor;
 use PivotPHP\Core\Memory\MemoryManager;
-use PivotPHP\Core\Pool\Distributed\DistributedPoolManager;
+
+// use PivotPHP\Core\Pool\Distributed\DistributedPoolManager; // REMOVED - Enterprise distributed system
 
 /**
  * Integration tests for v1.1.0 components
@@ -345,23 +346,11 @@ class V11ComponentsTest extends TestCase
      */
     public function testDistributedPoolManagerMock(): void
     {
-        $this->markTestSkipped('Distributed pool requires Redis');
+        $this->markTestSkipped('Distributed pool system removed - enterprise complexity eliminated');
 
-        $manager = new DistributedPoolManager(
-            [
-                'coordination' => 'redis',
-                'namespace' => 'test:pools',
-            ]
-        );
-
-        $localPool = new DynamicPool();
-        $manager->setLocalPool($localPool);
-
-        // Test basic operations
-        $status = $manager->getStatus();
-        $this->assertArrayHasKey('instance_id', $status);
-        $this->assertArrayHasKey('is_leader', $status);
-        $this->assertArrayHasKey('metrics', $status);
+        // REMOVED - Enterprise distributed system
+        // Complex multi-instance coordination not needed for microframework
+        // For high-scale applications, consider external load balancers instead
     }
 
     /**

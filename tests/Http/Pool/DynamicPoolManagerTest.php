@@ -10,7 +10,7 @@ use PivotPHP\Core\Http\Pool\DynamicPoolManager;
 /**
  * Comprehensive tests for DynamicPoolManager
  *
- * Tests memory-adaptive pool sizing, tier determination, 
+ * Tests memory-adaptive pool sizing, tier determination,
  * memory monitoring, and emergency cleanup functionality.
  * Following the "less is more" principle with focused, quality testing.
  */
@@ -32,13 +32,13 @@ class DynamicPoolManagerTest extends TestCase
     public function testOptimalPoolSizesRetrieval(): void
     {
         $poolSizes = DynamicPoolManager::getOptimalPoolSizes();
-        
+
         $this->assertIsArray($poolSizes);
         $this->assertArrayHasKey('header_pool', $poolSizes);
         $this->assertArrayHasKey('response_pool', $poolSizes);
         $this->assertArrayHasKey('stream_pool', $poolSizes);
         $this->assertArrayHasKey('operations_cache', $poolSizes);
-        
+
         // Verify all values are positive integers
         foreach ($poolSizes as $key => $value) {
             $this->assertIsInt($value);
@@ -54,10 +54,10 @@ class DynamicPoolManagerTest extends TestCase
         // Test multiple calls to see tier stability
         $poolSizes1 = DynamicPoolManager::getOptimalPoolSizes();
         $poolSizes2 = DynamicPoolManager::getOptimalPoolSizes();
-        
+
         $this->assertIsArray($poolSizes1);
         $this->assertIsArray($poolSizes2);
-        
+
         // Pool sizes should be consistent for same memory conditions
         $this->assertEquals($poolSizes1, $poolSizes2);
     }
@@ -68,9 +68,9 @@ class DynamicPoolManagerTest extends TestCase
     public function testMemoryRecommendations(): void
     {
         $recommendations = DynamicPoolManager::getMemoryRecommendations();
-        
+
         $this->assertIsArray($recommendations);
-        
+
         // Recommendations should be strings
         foreach ($recommendations as $recommendation) {
             $this->assertIsString($recommendation);
@@ -84,7 +84,7 @@ class DynamicPoolManagerTest extends TestCase
     public function testDetailedStatistics(): void
     {
         $stats = DynamicPoolManager::getDetailedStats();
-        
+
         $this->assertIsArray($stats);
         $this->assertArrayHasKey('current_memory', $stats);
         $this->assertArrayHasKey('peak_memory', $stats);
@@ -95,7 +95,7 @@ class DynamicPoolManagerTest extends TestCase
         $this->assertArrayHasKey('gc_cycles', $stats);
         $this->assertArrayHasKey('optimal_pool_sizes', $stats);
         $this->assertArrayHasKey('recommendations', $stats);
-        
+
         // Verify data types
         $this->assertIsString($stats['current_memory']);
         $this->assertIsString($stats['peak_memory']);
@@ -113,15 +113,15 @@ class DynamicPoolManagerTest extends TestCase
     public function testMemoryStatisticsUpdates(): void
     {
         $initialStats = DynamicPoolManager::getDetailedStats();
-        
+
         // Update memory statistics
         DynamicPoolManager::updateMemoryStats();
-        
+
         $updatedStats = DynamicPoolManager::getDetailedStats();
-        
+
         $this->assertIsArray($initialStats);
         $this->assertIsArray($updatedStats);
-        
+
         // Statistics should be updated
         $this->assertArrayHasKey('current_memory', $updatedStats);
         $this->assertArrayHasKey('peak_memory', $updatedStats);
@@ -135,14 +135,14 @@ class DynamicPoolManagerTest extends TestCase
         // Generate some statistics
         DynamicPoolManager::getOptimalPoolSizes();
         DynamicPoolManager::updateMemoryStats();
-        
+
         $statsBeforeReset = DynamicPoolManager::getDetailedStats();
-        
+
         // Reset statistics
         DynamicPoolManager::resetStats();
-        
+
         $statsAfterReset = DynamicPoolManager::getDetailedStats();
-        
+
         $this->assertEquals(0, $statsAfterReset['tier_changes']);
         $this->assertEquals(0, $statsAfterReset['gc_cycles']);
     }
@@ -153,9 +153,9 @@ class DynamicPoolManagerTest extends TestCase
     public function testForceCleanupDetermination(): void
     {
         $cleanupExecuted = DynamicPoolManager::forceCleanupIfNeeded();
-        
+
         $this->assertIsBool($cleanupExecuted);
-        
+
         // Most systems won't trigger cleanup immediately
         // This test mainly verifies the method executes without errors
     }
@@ -166,22 +166,25 @@ class DynamicPoolManagerTest extends TestCase
     public function testBorrowFunctionality(): void
     {
         $object = $this->manager->borrow('request');
-        
+
         $this->assertIsObject($object);
-        
+
         // Test with callable factory
-        $callable = function() {
+        $callable = function () {
             return new \stdClass();
         };
-        
+
         $object2 = $this->manager->borrow('request', ['callable' => $callable]);
         $this->assertInstanceOf(\stdClass::class, $object2);
-        
+
         // Test with class factory
-        $object3 = $this->manager->borrow('request', [
-            'class' => \stdClass::class,
-            'args' => []
-        ]);
+        $object3 = $this->manager->borrow(
+            'request',
+            [
+                'class' => \stdClass::class,
+                'args' => []
+            ]
+        );
         $this->assertInstanceOf(\stdClass::class, $object3);
     }
 
@@ -191,10 +194,10 @@ class DynamicPoolManagerTest extends TestCase
     public function testReturnFunctionality(): void
     {
         $object = new \stdClass();
-        
+
         // Should not throw any exceptions
         $this->manager->return('request', $object);
-        
+
         $this->assertTrue(true); // If we reach here, method executed successfully
     }
 
@@ -204,7 +207,7 @@ class DynamicPoolManagerTest extends TestCase
     public function testPoolStatistics(): void
     {
         $stats = $this->manager->getStats();
-        
+
         $this->assertIsArray($stats);
         $this->assertArrayHasKey('stats', $stats);
         $this->assertArrayHasKey('scaling_state', $stats);
@@ -212,7 +215,7 @@ class DynamicPoolManagerTest extends TestCase
         $this->assertArrayHasKey('pool_usage', $stats);
         $this->assertArrayHasKey('metrics', $stats);
         $this->assertArrayHasKey('config', $stats);
-        
+
         // Verify statistics structure
         $this->assertIsArray($stats['stats']);
         $this->assertIsArray($stats['scaling_state']);
@@ -228,14 +231,14 @@ class DynamicPoolManagerTest extends TestCase
     public function testSimulatedPoolActivity(): void
     {
         $initialStats = $this->manager->getStats();
-        
+
         // Borrow multiple objects to trigger simulated activity
         for ($i = 0; $i < 15; $i++) {
             $this->manager->borrow('request');
         }
-        
+
         $updatedStats = $this->manager->getStats();
-        
+
         $this->assertGreaterThan($initialStats['stats']['borrowed'], $updatedStats['stats']['borrowed']);
         $this->assertGreaterThan($initialStats['stats']['expanded'], $updatedStats['stats']['expanded']);
     }
@@ -246,14 +249,14 @@ class DynamicPoolManagerTest extends TestCase
     public function testEmergencyActivationSimulation(): void
     {
         $initialStats = $this->manager->getStats();
-        
+
         // Borrow enough objects to trigger emergency activation
         for ($i = 0; $i < 105; $i++) {
             $this->manager->borrow('request');
         }
-        
+
         $updatedStats = $this->manager->getStats();
-        
+
         $this->assertGreaterThan($initialStats['stats']['emergency_activations'], $updatedStats['stats']['emergency_activations']);
     }
 
@@ -263,14 +266,14 @@ class DynamicPoolManagerTest extends TestCase
     public function testOverflowCreationSimulation(): void
     {
         $initialStats = $this->manager->getStats();
-        
+
         // Borrow enough objects to trigger overflow creation
         for ($i = 0; $i < 55; $i++) {
             $this->manager->borrow('request');
         }
-        
+
         $updatedStats = $this->manager->getStats();
-        
+
         $this->assertGreaterThan($initialStats['stats']['overflow_created'], $updatedStats['stats']['overflow_created']);
     }
 
@@ -284,11 +287,11 @@ class DynamicPoolManagerTest extends TestCase
             'max_size' => 1000,
             'auto_scale' => true
         ];
-        
+
         $manager = new DynamicPoolManager($config);
-        
+
         $this->assertInstanceOf(DynamicPoolManager::class, $manager);
-        
+
         // Manager should function normally with configuration
         $object = $manager->borrow('test');
         $this->assertIsObject($object);
@@ -300,20 +303,20 @@ class DynamicPoolManagerTest extends TestCase
     public function testBorrowAndReturnCycle(): void
     {
         $initialStats = $this->manager->getStats();
-        
+
         // Borrow objects
         $objects = [];
         for ($i = 0; $i < 10; $i++) {
             $objects[] = $this->manager->borrow('request');
         }
-        
+
         // Return objects
         foreach ($objects as $object) {
             $this->manager->return('request', $object);
         }
-        
+
         $finalStats = $this->manager->getStats();
-        
+
         $this->assertEquals(10, $finalStats['stats']['borrowed'] - $initialStats['stats']['borrowed']);
         $this->assertEquals(10, $finalStats['stats']['returned'] - $initialStats['stats']['returned']);
     }
@@ -326,11 +329,11 @@ class DynamicPoolManagerTest extends TestCase
         $requestObj = $this->manager->borrow('request');
         $responseObj = $this->manager->borrow('response');
         $defaultObj = $this->manager->borrow('unknown');
-        
+
         $this->assertIsObject($requestObj);
         $this->assertIsObject($responseObj);
         $this->assertIsObject($defaultObj);
-        
+
         // All should be stdClass for this basic implementation
         $this->assertInstanceOf(\stdClass::class, $requestObj);
         $this->assertInstanceOf(\stdClass::class, $responseObj);
@@ -345,10 +348,10 @@ class DynamicPoolManagerTest extends TestCase
         // Multiple calls should return consistent tiers under same conditions
         $poolSizes1 = DynamicPoolManager::getOptimalPoolSizes();
         $stats1 = DynamicPoolManager::getDetailedStats();
-        
+
         $poolSizes2 = DynamicPoolManager::getOptimalPoolSizes();
         $stats2 = DynamicPoolManager::getDetailedStats();
-        
+
         $this->assertEquals($stats1['current_tier'], $stats2['current_tier']);
         $this->assertEquals($poolSizes1, $poolSizes2);
     }
@@ -359,7 +362,7 @@ class DynamicPoolManagerTest extends TestCase
     public function testMemoryUsagePercentageCalculation(): void
     {
         $stats = DynamicPoolManager::getDetailedStats();
-        
+
         $this->assertIsNumeric($stats['usage_percentage']);
         $this->assertGreaterThanOrEqual(0, $stats['usage_percentage']);
         $this->assertLessThanOrEqual(100, $stats['usage_percentage']);
@@ -372,15 +375,15 @@ class DynamicPoolManagerTest extends TestCase
     {
         $initialStats = DynamicPoolManager::getDetailedStats();
         $initialTierChanges = $initialStats['tier_changes'];
-        
+
         // Multiple calls to potentially trigger tier changes
         for ($i = 0; $i < 10; $i++) {
             DynamicPoolManager::getOptimalPoolSizes();
         }
-        
+
         $finalStats = DynamicPoolManager::getDetailedStats();
         $finalTierChanges = $finalStats['tier_changes'];
-        
+
         $this->assertGreaterThanOrEqual($initialTierChanges, $finalTierChanges);
     }
 
@@ -390,12 +393,12 @@ class DynamicPoolManagerTest extends TestCase
     public function testRecommendationsBasedOnUsage(): void
     {
         $recommendations = DynamicPoolManager::getMemoryRecommendations();
-        
+
         $this->assertIsArray($recommendations);
-        
+
         // Should have at least one recommendation
         $this->assertGreaterThanOrEqual(0, count($recommendations));
-        
+
         // Each recommendation should be a non-empty string
         foreach ($recommendations as $recommendation) {
             $this->assertIsString($recommendation);
@@ -409,16 +412,16 @@ class DynamicPoolManagerTest extends TestCase
     public function testPoolConfigurationStructure(): void
     {
         $poolSizes = DynamicPoolManager::getOptimalPoolSizes();
-        
+
         // Required pool types
         $requiredPools = ['header_pool', 'response_pool', 'stream_pool', 'operations_cache'];
-        
+
         foreach ($requiredPools as $pool) {
             $this->assertArrayHasKey($pool, $poolSizes);
             $this->assertIsInt($poolSizes[$pool]);
             $this->assertGreaterThan(0, $poolSizes[$pool]);
         }
-        
+
         // Pool sizes should be reasonable (not too small, not too large)
         foreach ($poolSizes as $size) {
             $this->assertLessThan(10000, $size); // Not too large
@@ -432,11 +435,11 @@ class DynamicPoolManagerTest extends TestCase
     public function testDetailedStatsFormat(): void
     {
         $stats = DynamicPoolManager::getDetailedStats();
-        
+
         // Memory values should be formatted as strings with units
         $this->assertMatchesRegularExpression('/^\d+(\.\d+)?\s*(B|KB|MB|GB)$/', $stats['current_memory']);
         $this->assertMatchesRegularExpression('/^\d+(\.\d+)?\s*(B|KB|MB|GB)$|^unlimited$/', $stats['memory_limit']);
-        
+
         // Tier should be one of the valid tiers
         $this->assertContains($stats['current_tier'], ['low', 'medium', 'high', 'critical']);
     }

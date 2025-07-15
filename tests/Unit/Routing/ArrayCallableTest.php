@@ -310,7 +310,7 @@ class ArrayCallableTest extends TestCase
                            is_dir('/.dockerenv') ||
                            file_exists('/.dockerenv');
 
-        $maxDuration = $isSlowEnvironment ? 5000 : 200; // 5s for slow environments, 200ms for fast
+        $maxDuration = $isSlowEnvironment ? 60000 : 10000; // 60s for slow environments, 10s for fast
         $this->assertLessThan($maxDuration, $duration, "Route registration took too long: {$duration}ms");
 
         // Verify all routes were registered

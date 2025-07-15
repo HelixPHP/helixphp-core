@@ -30,12 +30,12 @@ class CsrfMiddlewareTest extends TestCase
         $this->middleware = new CsrfMiddleware();
         $this->request = new ServerRequest('GET', 'https://example.com/test');
         $this->handler = new CsrfMockRequestHandler();
-        
+
         // Start session for CSRF token management
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-        
+
         // Clean session state
         if (isset($_SESSION['_csrf_token'])) {
             unset($_SESSION['_csrf_token']);
@@ -79,7 +79,7 @@ class CsrfMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // CSRF token should be generated for next request
         $this->assertArrayHasKey('_csrf_token', $_SESSION);
         $this->assertNotEmpty($_SESSION['_csrf_token']);
@@ -96,12 +96,12 @@ class CsrfMiddlewareTest extends TestCase
 
         $request = $this->request->withMethod('POST')
                                 ->withParsedBody(['_csrf_token' => $token]);
-        
+
         $response = $this->middleware->process($request, $this->handler);
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // New token should be generated
         $this->assertArrayHasKey('_csrf_token', $_SESSION);
         $this->assertNotEmpty($_SESSION['_csrf_token']);
@@ -205,12 +205,12 @@ class CsrfMiddlewareTest extends TestCase
 
         $request = $this->request->withMethod('POST')
                                 ->withParsedBody(['custom_token' => $token]);
-        
+
         $response = $middleware->process($request, $this->handler);
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // New token should be generated with custom field name
         $this->assertArrayHasKey('custom_token', $_SESSION);
         $this->assertNotEmpty($_SESSION['custom_token']);
@@ -236,7 +236,7 @@ class CsrfMiddlewareTest extends TestCase
     public function testTokenGenerationWithCustomFieldName(): void
     {
         $token = CsrfMiddleware::getToken('custom_field');
-        
+
         $this->assertNotEmpty($token);
         $this->assertEquals(64, strlen($token), 'Token should be 64 characters long');
         $this->assertArrayHasKey('custom_field', $_SESSION);
@@ -254,7 +254,7 @@ class CsrfMiddlewareTest extends TestCase
         }
 
         $token = CsrfMiddleware::getToken();
-        
+
         $this->assertNotEmpty($token);
         $this->assertEquals(64, strlen($token));
         $this->assertArrayHasKey('_csrf_token', $_SESSION);
@@ -272,7 +272,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->assertStringContainsString('type="hidden"', $hiddenField);
         $this->assertStringContainsString('name="_csrf_token"', $hiddenField);
         $this->assertStringContainsString('value="', $hiddenField);
-        
+
         // Verify it contains a valid token
         $this->assertNotEmpty($_SESSION['_csrf_token']);
         $this->assertStringContainsString($_SESSION['_csrf_token'], $hiddenField);
@@ -289,7 +289,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->assertStringContainsString('type="hidden"', $hiddenField);
         $this->assertStringContainsString('name="custom_field"', $hiddenField);
         $this->assertStringContainsString('value="', $hiddenField);
-        
+
         // Verify it contains a valid token
         $this->assertArrayHasKey('custom_field', $_SESSION);
         $this->assertStringContainsString($_SESSION['custom_field'], $hiddenField);
@@ -305,7 +305,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->assertStringContainsString('<meta', $metaTag);
         $this->assertStringContainsString('name="csrf-token"', $metaTag);
         $this->assertStringContainsString('content="', $metaTag);
-        
+
         // Verify it contains a valid token
         $this->assertNotEmpty($_SESSION['_csrf_token']);
         $this->assertStringContainsString($_SESSION['_csrf_token'], $metaTag);
@@ -321,7 +321,7 @@ class CsrfMiddlewareTest extends TestCase
         $this->assertStringContainsString('<meta', $metaTag);
         $this->assertStringContainsString('name="csrf-token"', $metaTag);
         $this->assertStringContainsString('content="', $metaTag);
-        
+
         // Verify it contains a valid token
         $this->assertArrayHasKey('custom_field', $_SESSION);
         $this->assertStringContainsString($_SESSION['custom_field'], $metaTag);
@@ -345,7 +345,7 @@ class CsrfMiddlewareTest extends TestCase
     {
         // Set a token with special characters (though this shouldn't happen in practice)
         $_SESSION['_csrf_token'] = 'token"with<special>characters';
-        
+
         $metaTag = CsrfMiddleware::metaTag();
 
         $this->assertStringContainsString('content="token&quot;with&lt;special&gt;characters"', $metaTag);
@@ -359,7 +359,7 @@ class CsrfMiddlewareTest extends TestCase
     {
         // This test verifies that sessions are started when needed
         // The middleware should handle session management internally
-        
+
         $request = $this->request->withMethod('GET');
         $response = $this->middleware->process($request, $this->handler);
 
@@ -378,12 +378,12 @@ class CsrfMiddlewareTest extends TestCase
 
         $request = $this->request->withMethod('POST')
                                 ->withParsedBody(['_csrf_token' => $originalToken]);
-        
+
         $response = $this->middleware->process($request, $this->handler);
 
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // New token should be different from original
         $this->assertArrayHasKey('_csrf_token', $_SESSION);
         $this->assertNotEmpty($_SESSION['_csrf_token']);
@@ -426,22 +426,22 @@ class CsrfMiddlewareTest extends TestCase
     public function testMiddlewarePerformance(): void
     {
         $startTime = microtime(true);
-        
+
         // Simulate 100 requests
         for ($i = 0; $i < 100; $i++) {
             $token = CsrfMiddleware::getToken();
             $_SESSION['_csrf_token'] = $token;
-            
+
             $request = $this->request->withMethod('POST')
                                     ->withParsedBody(['_csrf_token' => $token]);
-            
+
             $response = $this->middleware->process($request, $this->handler);
             $this->assertEquals(200, $response->getStatusCode());
         }
-        
+
         $endTime = microtime(true);
         $duration = ($endTime - $startTime) * 1000; // Convert to milliseconds
-        
+
         // Should handle 100 requests quickly (less than 1 second)
         $this->assertLessThan(1000, $duration);
     }
@@ -452,14 +452,14 @@ class CsrfMiddlewareTest extends TestCase
     public function testDifferentHttpMethods(): void
     {
         $methods = ['GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'];
-        
+
         foreach ($methods as $method) {
             $request = $this->request->withMethod($method);
             $response = $this->middleware->process($request, $this->handler);
-            
+
             $this->assertInstanceOf(ResponseInterface::class, $response);
             $this->assertEquals(200, $response->getStatusCode());
-            
+
             // All non-POST methods should pass through
             $this->assertArrayHasKey('_csrf_token', $_SESSION);
         }

@@ -50,10 +50,10 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('application/json', $response->getHeaderLine('Content-Type'));
         $this->assertEquals('custom-value', $response->getHeaderLine('X-Custom-Header'));
         $this->assertEquals(['session=abc123', 'user=john'], $response->getHeader('Set-Cookie'));
-        
+
         // Test status code
         $this->assertEquals(201, $response->getStatusCode());
-        
+
         // Test body
         $this->assertEquals('{"message": "Created"}', (string) $response->getBody());
     }
@@ -68,7 +68,7 @@ class ResponseEmitterTest extends TestCase
         // Test that we can emit without body
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(204, $response->getStatusCode());
-        
+
         // When withoutBody is true, body should not be emitted
         // This simulates the behavior of emit($response, true)
         $bodyContent = (string) $response->getBody();
@@ -116,7 +116,7 @@ class ResponseEmitterTest extends TestCase
     {
         // Status codes that should not be chunked
         $noChunkCodes = [100, 101, 199, 204, 304];
-        
+
         foreach ($noChunkCodes as $code) {
             $response = new Response($code, [], Stream::createFromString('Test content'));
             $this->assertFalse(ResponseEmitter::shouldChunk($response), "Status code $code should not be chunked");
@@ -124,7 +124,7 @@ class ResponseEmitterTest extends TestCase
 
         // Status codes that should be chunked
         $chunkCodes = [200, 201, 202, 400, 500];
-        
+
         foreach ($chunkCodes as $code) {
             $response = new Response($code, [], Stream::createFromString('Test content'));
             $this->assertTrue(ResponseEmitter::shouldChunk($response), "Status code $code should be chunked");
@@ -170,7 +170,7 @@ class ResponseEmitterTest extends TestCase
 
         // Test that response should be chunked
         $this->assertTrue(ResponseEmitter::shouldChunk($response));
-        
+
         // Test that chunked response has correct headers
         $chunkedResponse = $response->withHeader('Transfer-Encoding', 'chunked');
         $this->assertEquals('chunked', $chunkedResponse->getHeaderLine('Transfer-Encoding'));

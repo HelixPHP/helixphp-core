@@ -7,7 +7,7 @@ namespace PivotPHP\Core\Performance;
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
 use PivotPHP\Core\Http\Pool\DynamicPoolManager;
-use PivotPHP\Core\Pool\Distributed\DistributedPoolManager;
+// use PivotPHP\Core\Pool\Distributed\DistributedPoolManager; // REMOVED - Enterprise distributed system
 use PivotPHP\Core\Memory\MemoryManager;
 use PivotPHP\Core\Middleware\TrafficClassifier;
 use PivotPHP\Core\Middleware\LoadShedder;
@@ -218,7 +218,7 @@ class HighPerformanceMode
     private static ?DynamicPoolManager $pool = null;
     private static ?MemoryManager $memoryManager = null;
     private static ?PerformanceMonitor $monitor = null;
-    private static ?DistributedPoolManager $distributedManager = null;
+    // private static ?DistributedPoolManager $distributedManager = null; // REMOVED - Enterprise distributed system
 
     /**
      * Enable high performance mode
@@ -257,9 +257,10 @@ class HighPerformanceMode
             self::initializeMonitoring(null);
         }
 
-        if (self::$currentConfig['distributed']['enabled'] ?? false) {
-            self::initializeDistributed();
-        }
+        // Distributed system removed - enterprise complexity eliminated
+        // if (self::$currentConfig['distributed']['enabled'] ?? false) {
+        //     self::initializeDistributed();
+        // }
 
         // High Performance Mode enabled - logging removed for clean test output
     }
@@ -404,30 +405,17 @@ class HighPerformanceMode
     }
 
     /**
-     * Initialize distributed pooling
+     * Initialize distributed pooling - REMOVED
+     *
+     * Enterprise distributed system eliminated for microframework simplicity.
+     * Following ARCHITECTURAL_GUIDELINES principle: "Simplicidade sobre Otimização Prematura"
      */
-    private static function initializeDistributed(): void
-    {
-        $config = self::$currentConfig['distributed'];
-
-        try {
-            self::$distributedManager = new DistributedPoolManager($config);
-
-            if (self::$pool) {
-                self::$distributedManager->setLocalPool(self::$pool);
-            }
-
-            // Schedule sync tasks
-            self::schedulePeriodicTask(
-                $config['sync_interval'] ?? 5,
-                [self::$distributedManager, 'sync']
-            );
-        } catch (\Exception $e) {
-            error_log('Failed to initialize distributed pooling: ' . $e->getMessage());
-            // Distributed pooling is optional, continue without it
-            self::$distributedManager = null;
-        }
-    }
+    // private static function initializeDistributed(): void
+    // {
+    //     // REMOVED - Enterprise distributed coordination
+    //     // Complex multi-instance coordination not needed for microframework
+    //     // For high-scale applications, consider external load balancers instead
+    // }
 
     /**
      * Schedule periodic task (simulated)
@@ -477,12 +465,12 @@ class HighPerformanceMode
                 'pooling' => self::$pool !== null,
                 'memory_management' => self::$memoryManager !== null,
                 'monitoring' => self::$monitor !== null,
-                'distributed' => self::$distributedManager !== null,
+                'distributed' => false, // REMOVED - Enterprise distributed system
             ],
             'pool_stats' => self::$pool?->getStats() ?? [],
             'memory_status' => self::$memoryManager?->getStatus() ?? [],
             'monitor_metrics' => self::$monitor?->getLiveMetrics() ?? [],
-            'distributed_status' => self::$distributedManager?->getStatus() ?? [],
+            'distributed_status' => [], // REMOVED - Enterprise distributed system
         ];
     }
 
@@ -581,7 +569,7 @@ class HighPerformanceMode
         self::$pool = null;
         self::$memoryManager = null;
         self::$monitor = null;
-        self::$distributedManager = null;
+        // self::$distributedManager = null; // REMOVED - Enterprise distributed system
 
         // Reset configuration
         self::$currentConfig = [];

@@ -49,7 +49,7 @@ class RequestHandlerTest extends TestCase
     {
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $this->assertInstanceOf(RequestHandlerInterface::class, $handler);
     }
 
@@ -59,7 +59,7 @@ class RequestHandlerTest extends TestCase
     public function testHandleRequestWithNoMiddleware(): void
     {
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(404, $response->getStatusCode());
         $this->assertEquals('Not Found', (string) $response->getBody());
@@ -72,9 +72,9 @@ class RequestHandlerTest extends TestCase
     {
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $response = $handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Mock Response', (string) $response->getBody());
@@ -87,7 +87,7 @@ class RequestHandlerTest extends TestCase
     {
         $middleware = new MockMiddleware();
         $result = $this->handler->add($middleware);
-        
+
         $this->assertSame($this->handler, $result);
     }
 
@@ -98,9 +98,9 @@ class RequestHandlerTest extends TestCase
     {
         $middleware = new MockMiddleware('Modified by middleware');
         $this->handler->add($middleware);
-        
+
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Modified by middleware', (string) $response->getBody());
@@ -113,11 +113,11 @@ class RequestHandlerTest extends TestCase
     {
         $middleware1 = new MockMiddleware('First middleware');
         $middleware2 = new MockMiddleware('Second middleware');
-        
+
         $this->handler->add($middleware1)->add($middleware2);
-        
+
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('First middleware', (string) $response->getBody());
@@ -131,25 +131,25 @@ class RequestHandlerTest extends TestCase
         $middleware1 = new RHOrderTrackingMiddleware('First');
         $middleware2 = new RHOrderTrackingMiddleware('Second');
         $middleware3 = new RHOrderTrackingMiddleware('Third');
-        
+
         $this->handler->add($middleware1)
                      ->add($middleware2)
                      ->add($middleware3);
-        
+
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(404, $response->getStatusCode()); // No fallback handler, so 404
-        
+
         // Since no fallback handler, we won't have the execution order header
         // Let's test with a fallback handler
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $handler->add($middleware1)
                 ->add($middleware2)
                 ->add($middleware3);
-        
+
         $response = $handler->handle($this->request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Third,Second,First', $response->getHeaderLine('X-Execution-Order'));
@@ -162,12 +162,12 @@ class RequestHandlerTest extends TestCase
     {
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $middleware = new RHPassThroughMiddleware();
         $handler->add($middleware);
-        
+
         $response = $handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Mock Response', (string) $response->getBody());
@@ -180,12 +180,12 @@ class RequestHandlerTest extends TestCase
     {
         $terminatingMiddleware = new RHTerminatingMiddleware();
         $normalMiddleware = new MockMiddleware('Should not be reached');
-        
+
         $this->handler->add($terminatingMiddleware)
                      ->add($normalMiddleware);
-        
+
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(403, $response->getStatusCode());
         $this->assertEquals('Terminated', (string) $response->getBody());
@@ -198,15 +198,15 @@ class RequestHandlerTest extends TestCase
     {
         $middleware = new MockMiddleware('Test response');
         $this->handler->add($middleware);
-        
+
         // First call
         $response1 = $this->handler->handle($this->request);
         $this->assertEquals(200, $response1->getStatusCode());
-        
+
         // Reset handler
         $result = $this->handler->reset();
         $this->assertSame($this->handler, $result);
-        
+
         // Second call after reset
         $response2 = $this->handler->handle($this->request);
         $this->assertEquals(200, $response2->getStatusCode());
@@ -220,13 +220,13 @@ class RequestHandlerTest extends TestCase
         $middleware1 = new RequestHandlerRequestModifyingMiddleware('X-Modified-By', 'Middleware1');
         $middleware2 = new RequestHandlerRequestModifyingMiddleware('X-Modified-By', 'Middleware2');
         $middleware3 = new RHRequestReadingMiddleware();
-        
+
         $this->handler->add($middleware1)
                      ->add($middleware2)
                      ->add($middleware3);
-        
+
         $response = $this->handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Middleware2', (string) $response->getBody());
@@ -242,21 +242,21 @@ class RequestHandlerTest extends TestCase
             $middleware = new RHPassThroughMiddleware();
             $this->handler->add($middleware);
         }
-        
+
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         for ($i = 0; $i < 50; $i++) {
             $middleware = new RHPassThroughMiddleware();
             $handler->add($middleware);
         }
-        
+
         $startTime = microtime(true);
         $response = $handler->handle($this->request);
         $endTime = microtime(true);
-        
+
         $duration = ($endTime - $startTime) * 1000; // Convert to milliseconds
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertLessThan(50, $duration); // Should be fast (less than 50ms)
@@ -269,10 +269,10 @@ class RequestHandlerTest extends TestCase
     {
         $middleware = new RHExceptionThrowingMiddleware();
         $this->handler->add($middleware);
-        
+
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Test exception');
-        
+
         $this->handler->handle($this->request);
     }
 
@@ -284,17 +284,17 @@ class RequestHandlerTest extends TestCase
         $authMiddleware = new RHAuthenticationMiddleware();
         $loggingMiddleware = new RHLoggingMiddleware();
         $validationMiddleware = new RHValidationMiddleware();
-        
+
         // Need fallback handler for proper response
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $handler->add($authMiddleware)
                 ->add($loggingMiddleware)
                 ->add($validationMiddleware);
-        
+
         $response = $handler->handle($this->request);
-        
+
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('Validated,Logged,Authenticated', $response->getHeaderLine('X-Processed-By'));
@@ -308,10 +308,10 @@ class RequestHandlerTest extends TestCase
         // Test with empty middleware stack and fallback
         $fallbackHandler = new MockRequestHandler();
         $handler = new RequestHandler($fallbackHandler);
-        
+
         $response = $handler->handle($this->request);
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         // Test reset on empty handler
         $emptyHandler = new RequestHandler();
         $result = $emptyHandler->reset();
@@ -385,10 +385,10 @@ class RHOrderTrackingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        
+
         $existing = $response->getHeaderLine('X-Execution-Order');
         $newOrder = $existing ? $existing . ',' . $this->name : $this->name;
-        
+
         return $response->withHeader('X-Execution-Order', $newOrder);
     }
 }
@@ -445,10 +445,10 @@ class RHAuthenticationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        
+
         $existing = $response->getHeaderLine('X-Processed-By');
         $newValue = $existing ? $existing . ',Authenticated' : 'Authenticated';
-        
+
         return $response->withHeader('X-Processed-By', $newValue);
     }
 }
@@ -461,10 +461,10 @@ class RHLoggingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        
+
         $existing = $response->getHeaderLine('X-Processed-By');
         $newValue = $existing ? $existing . ',Logged' : 'Logged';
-        
+
         return $response->withHeader('X-Processed-By', $newValue);
     }
 }
@@ -477,10 +477,10 @@ class RHValidationMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $response = $handler->handle($request);
-        
+
         $existing = $response->getHeaderLine('X-Processed-By');
         $newValue = $existing ? $existing . ',Validated' : 'Validated';
-        
+
         return $response->withHeader('X-Processed-By', $newValue);
     }
 }

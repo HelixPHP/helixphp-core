@@ -29,7 +29,7 @@ class GlobalsToServerRequestAdapterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Backup original global variables
         $this->originalServer = $_SERVER;
         $this->originalGet = $_GET;
@@ -46,7 +46,7 @@ class GlobalsToServerRequestAdapterTest extends TestCase
         $_POST = $this->originalPost;
         $_COOKIE = $this->originalCookie;
         $_FILES = $this->originalFiles;
-        
+
         parent::tearDown();
     }
 
@@ -275,10 +275,10 @@ class GlobalsToServerRequestAdapterTest extends TestCase
         $this->assertArrayHasKey('documents', $uploadedFiles);
         $this->assertIsArray($uploadedFiles['documents']);
         $this->assertCount(2, $uploadedFiles['documents']);
-        
+
         $this->assertInstanceOf(UploadedFile::class, $uploadedFiles['documents'][0]);
         $this->assertEquals('file1.txt', $uploadedFiles['documents'][0]->getClientFilename());
-        
+
         $this->assertInstanceOf(UploadedFile::class, $uploadedFiles['documents'][1]);
         $this->assertEquals('file2.txt', $uploadedFiles['documents'][1]->getClientFilename());
 
