@@ -10,6 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use PivotPHP\Core\Http\Psr7\Response;
 use PivotPHP\Core\Http\Psr7\Stream;
+use PivotPHP\Core\Exceptions\HttpException;
 
 /**
  * CSRF Protection Middleware
@@ -39,11 +40,7 @@ class CsrfMiddleware implements MiddlewareInterface
             $token = is_array($parsedBody) ? ($parsedBody[$this->fieldName] ?? null) : null;
             $sessionToken = $_SESSION[$this->fieldName] ?? null;
             if (!$token || !$sessionToken || !hash_equals($sessionToken, $token)) {
-                $error = ['error' => 'CSRF token inválido ou ausente'];
-                $body = Stream::createFromString((string)json_encode($error, JSON_UNESCAPED_UNICODE));
-                return (new Response(403))
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withBody($body);
+                throw new HttpException(403, 'CSRF token inválido ou ausente', ['Content-Type' => 'application/json']);
             }
         }
         // Gera novo token para próxima requisição

@@ -28,11 +28,11 @@ A utility script is provided to switch between PSR-7 versions:
 
 ```bash
 # Switch to PSR-7 v1.x (for ReactPHP compatibility)
-php scripts/switch-psr7-version.php 1
+php scripts/utils/switch-psr7-version.php 1
 composer update psr/http-message
 
 # Switch to PSR-7 v2.x (for modern projects)
-php scripts/switch-psr7-version.php 2
+php scripts/utils/switch-psr7-version.php 2
 composer update psr/http-message
 ```
 
@@ -55,7 +55,7 @@ If you need to integrate with ReactPHP (which uses PSR-7 v1.x):
 
 ```bash
 # Switch to PSR-7 v1.x
-php scripts/switch-psr7-version.php 1
+php scripts/utils/switch-psr7-version.php 1
 composer update psr/http-message
 
 # Install ReactPHP
@@ -101,7 +101,7 @@ For new projects or those using modern PHP packages:
 
 ```bash
 # Switch to PSR-7 v2.x
-php scripts/switch-psr7-version.php 2
+php scripts/utils/switch-psr7-version.php 2
 composer update psr/http-message
 ```
 
@@ -125,7 +125,7 @@ The PSR-7 implementations are located in:
 
 ### Compatibility Script
 
-The `scripts/switch-psr7-version.php` script:
+The `scripts/utils/switch-psr7-version.php` script:
 1. Modifies method signatures in all PSR-7 implementation files
 2. Updates composer.json to require the appropriate PSR-7 version
 3. Adds PHPDoc annotations when using v1.x for IDE support
@@ -136,12 +136,12 @@ Both versions are tested to ensure compatibility:
 
 ```bash
 # Test with PSR-7 v1.x
-php scripts/switch-psr7-version.php 1
+php scripts/utils/switch-psr7-version.php 1
 composer update
 composer test
 
 # Test with PSR-7 v2.x
-php scripts/switch-psr7-version.php 2
+php scripts/utils/switch-psr7-version.php 2
 composer update
 composer test
 ```

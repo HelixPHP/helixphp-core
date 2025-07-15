@@ -146,7 +146,7 @@ dist/
 config.local.php
 
 # ==============================================
-# Express PHP Specific
+# PivotPHP Specific
 # ==============================================
 # Upload directories
 uploads/
@@ -155,7 +155,7 @@ storage/
 
 # Cache directories
 cache/
-/tmp/express_cache/
+/tmp/pivotphp_cache/
 
 # Logs
 logs/
@@ -220,11 +220,28 @@ yarn.lock
 *.7z
 
 # ==============================================
-# Express PHP Examples - Keep tracked but ignore user modifications
+# PivotPHP Examples - Keep tracked but ignore user modifications
 # ==============================================
 # Uncomment the following if you want to ignore user modifications to examples
 # examples/user_*
 # examples/custom_*
+
+# Test files for v1.1.4+ examples
+test_*.php
+test_old_examples_*.php
+COMPATIBILIDADE_*.md
+
+# Development fixes and improvements
+fixes/
+
+# Temporary development files and reports
+test_*.php
+validate_examples_structure.php
+final_example_test.php
+*TESTE*
+*RELATORIO*
+*COMPATIBILITY*
+*COMPATIBILIDADE*
 
 # ==============================================
 # Issues and Project Management
@@ -259,5 +276,6 @@ TODO.md
 NOTES.md
 scratch/
 benchmarks/**/*.json
-CLAUDE.md
+# CLAUDE.md  # Comentado para manter CLAUDE.md no repo
 proposals/
+*.txt

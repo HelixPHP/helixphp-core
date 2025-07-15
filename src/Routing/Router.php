@@ -4,7 +4,7 @@ namespace PivotPHP\Core\Routing;
 
 use InvalidArgumentException;
 use BadMethodCallException;
-use PivotPHP\Core\Utils\Arr;
+use PivotPHP\Core\Utils\CallableResolver;
 
 /**
  * Classe Router responsável pelo registro e identificação otimizada de rotas HTTP.
@@ -198,9 +198,8 @@ class Router
         }
         $method = strtoupper($method);
 
-        if (!is_callable($handler)) {
-            throw new InvalidArgumentException('Handler must be a callable function');
-        }
+        // Validar e resolver o handler usando CallableResolver
+        $resolvedHandler = CallableResolver::resolve($handler);
 
         foreach ($middlewares as $mw) {
             if (!is_callable($mw)) {
@@ -218,7 +217,7 @@ class Router
             'method' => $method,
             'path' => $path,
             'middlewares' => array_merge(self::getGroupMiddlewaresForPath($path), $middlewares),
-            'handler' => $handler,
+            'handler' => $resolvedHandler, // Usar handler resolvido
             'metadata' => self::sanitizeForJson($metadata),
             'pattern' => $compiled['pattern'],
             'parameters' => $compiled['parameters'],
@@ -237,7 +236,7 @@ class Router
             'path' => $path,
             'pattern' => $compiled['pattern'],
             'parameters' => $compiled['parameters'],
-            'handler' => $handler,
+            'handler' => $resolvedHandler, // Usar handler resolvido
             'metadata' => $metadata,
             'middlewares' => $routeData['middlewares'],
             'has_parameters' => !empty($compiled['parameters']),
@@ -620,7 +619,7 @@ class Router
     {
         $routes = [];
 
-        foreach (self::$preCompiledRoutes as $key => $route) {
+        foreach (self::$preCompiledRoutes as $route) {
             if (strpos($route['path'], $prefix) === 0) {
                 $routes[] = $route;
             }

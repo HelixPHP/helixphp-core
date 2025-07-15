@@ -7,12 +7,24 @@ namespace PivotPHP\Core\Routing;
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
+use PivotPHP\Core\Http\Pool\Psr7Pool;
+use PivotPHP\Core\Exceptions\HttpException;
 
 /**
  * Simple Static File Manager
  *
- * Abordagem direta: registra cada arquivo como uma rota individual.
- * Sem complexidade de wildcards ou regex - cada arquivo = uma rota.
+ * Implementação simples e direta para servir arquivos estáticos.
+ *
+ * ESTRATÉGIA: Registra cada arquivo como uma rota individual.
+ * - Sem complexidade de wildcards ou regex
+ * - Cada arquivo físico = uma rota específica no router
+ * - Performance alta para poucos arquivos
+ * - Memória proporcional ao número de arquivos
+ *
+ * USO RECOMENDADO:
+ * - Projetos pequenos com <100 arquivos estáticos
+ * - Quando você quer controle total sobre quais arquivos são servidos
+ * - Quando performance de roteamento é crítica
  *
  * @package PivotPHP\Core\Routing
  * @since 1.1.3
@@ -84,6 +96,8 @@ class SimpleStaticFileManager
         Application $app,
         array $options = []
     ): void {
+        // Suprime warning sobre $options não usado - reservado para funcionalidades futuras
+        unset($options);
         if (!is_dir($physicalPath)) {
             throw new \InvalidArgumentException("Directory does not exist: {$physicalPath}");
         }
@@ -109,8 +123,11 @@ class SimpleStaticFileManager
     /**
      * Registra um único arquivo como rota estática
      */
-    private static function registerSingleFile(string $route, array $fileInfo, Application $app): void
-    {
+    private static function registerSingleFile(
+        string $route,
+        array $fileInfo,
+        Application $app
+    ): void {
         // Cria handler específico para este arquivo
         $handler = self::createFileHandler($fileInfo);
 
@@ -134,12 +151,14 @@ class SimpleStaticFileManager
     private static function createFileHandler(array $fileInfo): callable
     {
         return function (Request $req, Response $res) use ($fileInfo) {
+            // Suprime warning sobre $req não usado - pode ser usado em funcionalidades futuras
+            unset($req);
             self::$stats['total_hits']++;
 
             // Lê conteúdo do arquivo
             $content = file_get_contents($fileInfo['path']);
             if ($content === false) {
-                return $res->status(500)->json(['error' => 'Cannot read file']);
+                throw new HttpException(500, 'Cannot read file: ' . $fileInfo['path']);
             }
 
             // Headers de resposta
@@ -163,8 +182,9 @@ class SimpleStaticFileManager
             $lastModified = gmdate('D, d M Y H:i:s', $filemtime !== false ? $filemtime : 0) . ' GMT';
             $res = $res->withHeader('Last-Modified', $lastModified);
 
-            // Escreve conteúdo
-            return $res->write($content);
+            // Define o body e retorna response
+            $res = $res->withBody(Psr7Pool::getStream($content));
+            return $res;
         };
     }
 

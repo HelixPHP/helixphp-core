@@ -1,321 +1,93 @@
-# Scripts de Qualidade de Código - PivotPHP v1.0.0
+# Scripts Directory
 
-Este diretório contém scripts para garantir a qualidade do código no PivotPHP v1.0.0.
+Este diretório contém todos os scripts auxiliares organizados por funcionalidade para o PivotPHP Core.
 
-## 🚀 Script Principal de Validação
-
-### validate_all.sh (Recomendado)
-Script principal que executa todas as validações em sequência:
-
-```bash
-./scripts/validate_all.sh           # Validação completa
-./scripts/validate_all.sh --pre-commit  # Validação rápida para pre-commit
-```
-
-**Características:**
-- Executa todas as validações do projeto
-- Modo pre-commit para validações essenciais
-- Relatório consolidado de resultados
-- Taxa de sucesso e recomendações
-- Integração com Git hooks
-
-## 🔄 Git Hooks Integrados
-
-### pre-commit
-Hook executado antes de cada commit:
-
-```bash
-./scripts/pre-commit
-```
-
-**Validações incluídas:**
-- Conformidade PSR-12
-- Sintaxe PHP
-- Estrutura básica do projeto
-- Arquivos staged específicos
-
-### pre-push
-Hook executado antes de cada push:
-
-```bash
-./scripts/pre-push
-```
-
-**Validações incluídas:**
-- Validação completa via validate_all.sh
-- Documentação
-- Benchmarks
-- Testes unitários
-- Qualidade geral do código
-
-### setup-precommit.sh
-Instala automaticamente os Git hooks:
-
-```bash
-./scripts/setup-precommit.sh
-```
-
-## 📚 Scripts de Validação Específicos
-
-### validate-docs.sh
-Validação da estrutura de documentação v1.0.0:
-
-```bash
-./scripts/validate-docs.sh
-```
-
-**Validações incluídas:**
-- Nova estrutura de releases (docs/releases/)
-- Documentação técnica organizada (docs/technical/)
-- Guias de implementação (docs/implementations/)
-- Documentação de performance e benchmarks
-- Arquivos movidos e redundantes removidos
-- Consistência de versão v1.0.0
-
-### validate_project.php
-Validação completa do projeto PHP:
-
-```bash
-php scripts/validate_project.php
-```
-
-**Validações incluídas:**
-- Estrutura do projeto v1.0.0
-- Dependências (Composer)
-- Middlewares e segurança
-- Recursos OpenAPI
-- Exemplos e testes
-- Sistema de autenticação
-- Estrutura de releases
-- Benchmarks atualizados
-
-### validate_benchmarks.sh
-Validação específica dos benchmarks:
-
-```bash
-./scripts/validate_benchmarks.sh
-```
-
-**Características:**
-- Valida scripts de benchmark
-- Verifica relatórios gerados
-- Confirma dados v1.0.0
-- Estrutura de performance
-
-## Pre-commit Hooks
-
-### Configuração Automática
-
-Para configurar os hooks de pre-commit automaticamente:
-
-```bash
-composer run precommit:install
-```
-
-Ou execute diretamente:
-
-```bash
-./scripts/setup-precommit.sh
-```
-
-### Configuração Manual
-
-#### Usando framework pre-commit (Recomendado)
-
-1. Instale o framework pre-commit:
-   ```bash
-   pip install pre-commit
-   ```
-
-2. Instale os hooks:
-   ```bash
-   pre-commit install
-   ```
-
-3. Execute em todos os arquivos:
-   ```bash
-   pre-commit run --all-files
-   ```
-
-#### Usando Git Hooks Manual
-
-1. Copie o script para o diretório de hooks do Git:
-   ```bash
-   cp scripts/pre-commit .git/hooks/pre-commit
-   chmod +x .git/hooks/pre-commit
-   ```
-
-## Validações Incluídas
-
-### 1. PHPStan - Análise Estática
-- **Nível**: 5 (padrão) ou 8 (strict)
-- **Arquivos**: `src/`
-- **Comando**: `composer phpstan`
-- **Comando strict**: `composer phpstan:strict`
-
-### 2. PHPUnit - Testes Unitários
-- **Cobertura**: Todos os testes
-- **Comando**: `composer test`
-- **Específico**: `composer test:security` ou `composer test:auth`
-
-### 3. PSR-12 - Padrão de Código
-- **Verificação**: `composer cs:check`
-- **Correção automática**: `composer cs:fix`
-- **Arquivos**: `src/`
-
-### 4. Verificações Adicionais
-- Sintaxe PHP válida
-- Espaços em branco finais
-- Fim de arquivo
-- Arquivos grandes
-- Conflitos de merge
-
-## Comandos Úteis
-
-### Executar todas as verificações de qualidade
-```bash
-composer quality:check
-```
-
-### Corrigir e verificar qualidade
-```bash
-composer quality:fix
-```
-
-### Testar hooks manualmente
-```bash
-composer precommit:test
-# ou
-./scripts/pre-commit
-```
-
-### Pular validações temporariamente
-```bash
-git commit --no-verify
-```
-
-## Estrutura dos Arquivos
+## Estrutura Organizada
 
 ```
 scripts/
-├── pre-commit              # Script principal de validação
-├── setup-precommit.sh     # Instalador automático
-└── README.md              # Esta documentação
-
-.pre-commit-config.yaml     # Configuração do framework pre-commit
+├── validation/     # Scripts de validação geral
+├── quality/        # Scripts de verificação de qualidade
+├── release/        # Scripts de gerenciamento de releases
+├── testing/        # Scripts de execução de testes
+└── utils/          # Scripts utilitários
 ```
 
-## Fluxo de Trabalho
+## Diretórios
 
-1. **Antes do commit**: As validações são executadas automaticamente
-2. **Falha na validação**: O commit é rejeitado com detalhes dos erros
-3. **Correção automática**: PSR-12 tenta corrigir automaticamente
-4. **Sucesso**: Commit é permitido
+### 📋 [validation/](./validation/)
+Scripts para validação geral do projeto:
+- `validate_all.sh` - Validação completa do projeto
+- `validate-docs.sh` - Validação da documentação
+- `validate_project.php` - Validação programática
+- `pre-commit` - Validações pré-commit
+- `pre-push` - Validações pré-push
 
-## Configuração do PHPStan
+### 🔍 [quality/](./quality/)
+Scripts para verificação de qualidade do código:
+- `quality-check.sh` - Verificação completa de qualidade
+- `validate-psr12.php` - Validação PSR-12 específica
 
-### Padrão (`phpstan.neon`)
-- Nível 5 de análise
-- Ignora alguns erros comuns
-- Focado em produtividade
+### 🚀 [release/](./release/)
+Scripts para gerenciamento de versões e releases:
+- `prepare_release.sh` - Preparação de releases
+- `release.sh` - Criação de releases
+- `version-bump.sh` - Incremento de versões
 
-### Strict (`phpstan-strict.neon`)
-- Nível 8 de análise
-- Sem ignorar erros
-- Focado em qualidade máxima
+### 🧪 [testing/](./testing/)
+Scripts para execução de testes especializados:
+- `run_stress_tests.sh` - Testes de stress
+- `test-all-php-versions.sh` - Testes multi-versão PHP
 
-## Personalização
+### 🛠️ [utils/](./utils/)
+Scripts utilitários para manutenção:
+- `switch-psr7-version.php` - Alternância de versões PSR-7
+- `version-utils.sh` - Utilitários de versão
 
-### Adicionando novas validações
+## Fluxo de Desenvolvimento
 
-Edite o arquivo `scripts/pre-commit` para adicionar novas verificações:
-
+### Desenvolvimento Diário
 ```bash
-# Nova validação personalizada
-print_status "Executando validação customizada..."
-if ! my_custom_validation; then
-    print_error "Validação customizada falhou!"
-    FAILURES+=("custom")
-else
-    print_success "Validação customizada passou!"
-fi
+# Antes de commit
+./scripts/validation/pre-commit
+
+# Verificação de qualidade
+./scripts/quality/quality-check.sh
 ```
 
-### Modificando padrões PSR-12
-
-Edite os comandos no `composer.json`:
-
-```json
-{
-    "scripts": {
-        "cs:check": "phpcs --standard=PSR12 --extensions=php src/",
-        "cs:fix": "phpcbf --standard=PSR12 --extensions=php src/"
-    }
-}
-```
-
-## Troubleshooting
-
-### Erro: "Dependências não encontradas"
+### Antes de Release
 ```bash
-composer install
+# Validação completa
+./scripts/validation/validate_all.sh
+
+# Testes multi-versão PHP
+./scripts/testing/test-all-php-versions.sh
+
+# Preparar release
+./scripts/release/prepare_release.sh 1.2.0
 ```
 
-### Erro: "PHPStan falhou"
-- Verifique os erros mostrados
-- Execute `composer phpstan` para ver detalhes
-- Corrija os problemas de código
-
-### Erro: "Testes falharam"
-- Execute `composer test` para ver detalhes
-- Corrija os testes que falharam
-
-### Erro: "PSR-12 não conforme"
-- Execute `composer cs:fix` para correção automática
-- Adicione as mudanças ao commit: `git add .`
-
-### Hook não está executando
-- Verifique se o arquivo tem permissão de execução: `chmod +x .git/hooks/pre-commit`
-- Verifique se o framework pre-commit está instalado: `pre-commit --version`
-
-## Benefícios
-
-- ✅ **Qualidade consistente**: Garante padrões em todo o projeto
-- ✅ **Detecção precoce**: Encontra problemas antes do commit
-- ✅ **Automação**: Reduz revisões manuais
-- ✅ **Educação**: Ensina boas práticas aos desenvolvedores
-- ✅ **CI/CD friendly**: Preparado para integração contínua
-
-## 📁 Pasta Legacy
-
-### scripts/legacy/
-Contém scripts obsoletos migrados durante a reestruturação v1.0.0:
-
+### CI/CD Integration
 ```bash
-scripts/legacy/
-├── cleanup_docs.sh         # Script de limpeza da documentação antiga
-├── fix-psr12-lines.sh      # Correções PSR-12 específicas hardcoded
-├── publish_v1.0.0.sh       # Script de publicação v1.0.0
-├── validate-docs-legacy.sh # Validação de docs estrutura antiga
-└── validate-docs-v2.sh     # Validação de docs v2.0
+# Validação rápida para CI
+./scripts/quality/quality-check.sh
+
+# Testes de stress para validação completa
+./scripts/testing/run_stress_tests.sh
 ```
 
-**Motivo da migração:**
-- Scripts específicos para versões antigas
-- Funcionalidades integradas em scripts atuais
-- Referências a estruturas obsoletas
-- Correções hardcoded específicas
+## Convenções
 
-**Uso:**
-Os scripts legacy são mantidos para referência histórica, mas não são mais executados automaticamente.
+- Todos os scripts são executáveis e bem documentados
+- Scripts de validação retornam códigos de saída apropriados (0 = sucesso)
+- Relatórios são gerados em `reports/` quando aplicável
+- Scripts utilizam cores e formatação consistente para output
+- Dependências são documentadas em cada README específico
 
-## 🔄 Estrutura de Scripts Atual vs Legacy
+## Migração de Scripts Legados
 
-| Funcionalidade | Script Atual | Script Legacy | Status |
-|---|---|---|---|
-| Validação completa | `validate_all.sh` | - | ✅ Ativo |
-| Validação de docs | `validate-docs.sh` | `validate-docs-legacy.sh` | ♻️ Migrado |
-| Pre-commit hooks | `pre-commit` (integrado) | Manual individual | ♻️ Migrado |
-| Correções PSR-12 | `validate-psr12.php` | `fix-psr12-lines.sh` | ♻️ Migrado |
-| Limpeza de docs | Não necessário | `cleanup_docs.sh` | 🗂️ Arquivado |
-| Publicação | `release.sh` | `publish_v1.0.0.sh` | ♻️ Migrado |
+Scripts movidos da raiz para subdiretórios mantêm funcionalidade:
+- Nomes dos scripts preservados
+- Funcionalidades mantidas
+- Compatibilidade com scripts existentes
+- Documentação atualizada

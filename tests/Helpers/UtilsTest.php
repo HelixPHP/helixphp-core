@@ -286,4 +286,216 @@ class UtilsTest extends TestCase
             $this->assertFalse(Utils::isEmail($email), "Should fail for email: $email");
         }
     }
+
+    public function testFormatBytes(): void
+    {
+        // Test bytes
+        $this->assertEquals('512 B', Utils::formatBytes(512));
+        $this->assertEquals('0 B', Utils::formatBytes(0));
+
+        // Test KB - Note: the function only formats when bytes > 1024, so 1024 exactly stays as bytes
+        $this->assertEquals('1024 B', Utils::formatBytes(1024));
+        $this->assertEquals('2.5 KB', Utils::formatBytes(2560));
+
+        // Test MB
+        $this->assertEquals('1024 KB', Utils::formatBytes(1024 * 1024));
+        $this->assertEquals('1.5 MB', Utils::formatBytes(1024 * 1024 * 1.5));
+
+        // Test GB
+        $this->assertEquals('1024 MB', Utils::formatBytes(1024 * 1024 * 1024));
+
+        // Test precision
+        $this->assertEquals('1.123 KB', Utils::formatBytes(1150, 3));
+        $this->assertEquals('1 KB', Utils::formatBytes(1150, 0));
+
+        // Test very large numbers
+        $this->assertEquals('1024 GB', Utils::formatBytes(1024 * 1024 * 1024 * 1024));
+        $this->assertEquals('1024 TB', Utils::formatBytes(1024 * 1024 * 1024 * 1024 * 1024));
+
+        // Test edge cases
+        $this->assertEquals('1023 B', Utils::formatBytes(1023));
+        $this->assertEquals('1000 PB', Utils::formatBytes(1024 * 1024 * 1024 * 1024 * 1024 * 1000));
+    }
+
+    public function testCamelCase(): void
+    {
+        $this->assertEquals('helloWorld', Utils::camelCase('hello_world'));
+        $this->assertEquals('helloWorld', Utils::camelCase('hello-world'));
+        $this->assertEquals('helloWorld', Utils::camelCase('hello world'));
+        $this->assertEquals('helloWorldTest', Utils::camelCase('hello_world_test'));
+        $this->assertEquals('helloWorldTest', Utils::camelCase('hello-world-test'));
+        $this->assertEquals('hello', Utils::camelCase('hello'));
+        $this->assertEquals('h', Utils::camelCase('h'));
+        $this->assertEquals('', Utils::camelCase(''));
+        $this->assertEquals('helloWorldFromSnake', Utils::camelCase('hello_world_from_snake'));
+    }
+
+    public function testSnakeCase(): void
+    {
+        $this->assertEquals('hello_world', Utils::snakeCase('HelloWorld'));
+        $this->assertEquals('hello_world', Utils::snakeCase('helloWorld'));
+        $this->assertEquals('hello_world_test', Utils::snakeCase('HelloWorldTest'));
+        $this->assertEquals('hello', Utils::snakeCase('hello'));
+        $this->assertEquals('h', Utils::snakeCase('H'));
+        $this->assertEquals('', Utils::snakeCase(''));
+        $this->assertEquals('a_b_c_d', Utils::snakeCase('ABCD'));
+        $this->assertEquals('hello_world_from_camel', Utils::snakeCase('HelloWorldFromCamel'));
+    }
+
+    public function testKebabCase(): void
+    {
+        $this->assertEquals('hello-world', Utils::kebabCase('HelloWorld'));
+        $this->assertEquals('hello-world', Utils::kebabCase('helloWorld'));
+        $this->assertEquals('hello-world-test', Utils::kebabCase('HelloWorldTest'));
+        $this->assertEquals('hello', Utils::kebabCase('hello'));
+        $this->assertEquals('h', Utils::kebabCase('H'));
+        $this->assertEquals('', Utils::kebabCase(''));
+        $this->assertEquals('a-b-c-d', Utils::kebabCase('ABCD'));
+        $this->assertEquals('hello-world-from-camel', Utils::kebabCase('HelloWorldFromCamel'));
+    }
+
+    public function testUuid4(): void
+    {
+        $uuid1 = Utils::uuid4();
+        $uuid2 = Utils::uuid4();
+
+        // Test format (8-4-4-4-12)
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
+            $uuid1
+        );
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
+            $uuid2
+        );
+
+        // Test version 4 (should have '4' in the version position)
+        $this->assertEquals('4', $uuid1[14]);
+        $this->assertEquals('4', $uuid2[14]);
+
+        // Test variant bits (should be 8, 9, a, or b)
+        $this->assertContains($uuid1[19], ['8', '9', 'a', 'b']);
+        $this->assertContains($uuid2[19], ['8', '9', 'a', 'b']);
+
+        // Test uniqueness
+        $this->assertNotEquals($uuid1, $uuid2);
+
+        // Test multiple generations are unique
+        $uuids = [];
+        for ($i = 0; $i < 10; $i++) {
+            $uuids[] = Utils::uuid4();
+        }
+        $this->assertEquals(10, count(array_unique($uuids)));
+    }
+
+    public function testIsJson(): void
+    {
+        // Valid JSON
+        $this->assertTrue(Utils::isJson('{}'));
+        $this->assertTrue(Utils::isJson('[]'));
+        $this->assertTrue(Utils::isJson('{"key": "value"}'));
+        $this->assertTrue(Utils::isJson('[1, 2, 3]'));
+        $this->assertTrue(Utils::isJson('"string"'));
+        $this->assertTrue(Utils::isJson('123'));
+        $this->assertTrue(Utils::isJson('true'));
+        $this->assertTrue(Utils::isJson('null'));
+
+        // Invalid JSON
+        $this->assertFalse(Utils::isJson('{invalid}'));
+        $this->assertFalse(Utils::isJson('{"key": value}'));
+        $this->assertFalse(Utils::isJson('[1, 2, 3,]'));
+        $this->assertFalse(Utils::isJson('undefined'));
+        $this->assertFalse(Utils::isJson(''));
+        $this->assertFalse(Utils::isJson('hello world'));
+
+        // Complex valid JSON
+        $complexJson = json_encode(
+            [
+                'users' => [
+                    ['name' => 'John', 'age' => 30],
+                    ['name' => 'Jane', 'age' => 25]
+                ],
+                'meta' => [
+                    'total' => 2,
+                    'active' => true
+                ]
+            ]
+        );
+        $this->assertTrue(Utils::isJson($complexJson));
+    }
+
+    public function testTruncate(): void
+    {
+        // Test normal truncation
+        $this->assertEquals('Hello...', Utils::truncate('Hello World', 8));
+        $this->assertEquals('Hello W...', Utils::truncate('Hello World', 10));
+
+        // Test string shorter than limit
+        $this->assertEquals('Short', Utils::truncate('Short', 10));
+        $this->assertEquals('Exact Len', Utils::truncate('Exact Len', 9));
+
+        // Test custom suffix
+        $this->assertEquals('Hello[...]', Utils::truncate('Hello World', 10, '[...]'));
+        $this->assertEquals('Hello~~', Utils::truncate('Hello World', 7, '~~'));
+
+        // Test edge cases
+        $this->assertEquals('...', Utils::truncate('Hello', 3));
+        $this->assertEquals('H...', Utils::truncate('Hello', 4));
+        $this->assertEquals('', Utils::truncate('Hello', 0, ''));
+
+        // Test empty string
+        $this->assertEquals('', Utils::truncate('', 10));
+
+        // Test exact length with suffix
+        $this->assertEquals('Hello', Utils::truncate('Hello', 5));
+        $this->assertEquals('Hello', Utils::truncate('Hello', 6));
+    }
+
+    public function testSlug(): void
+    {
+        // Basic slug generation
+        $this->assertEquals('hello-world', Utils::slug('Hello World'));
+        $this->assertEquals('hello-world', Utils::slug('  Hello   World  '));
+        $this->assertEquals('hello-world', Utils::slug('Hello-World'));
+
+        // Test special characters removal
+        $this->assertEquals('helloworld', Utils::slug('Hello!@#$%^&*()World'));
+        $this->assertEquals('hello-world-123', Utils::slug('Hello World 123'));
+
+        // Test unicode characters (function preserves them, doesn't convert)
+        $this->assertEquals('café-crème', Utils::slug('Café Crème'));
+        $this->assertEquals('niño-muñoz', Utils::slug('Niño Muñoz'));
+
+        // Test multiple spaces/hyphens
+        $this->assertEquals('hello-world', Utils::slug('Hello---World'));
+        $this->assertEquals('hello-world', Utils::slug('Hello    World'));
+        $this->assertEquals('hello-world', Utils::slug('Hello - - - World'));
+
+        // Test edge cases
+        $this->assertEquals('', Utils::slug(''));
+        $this->assertEquals('', Utils::slug('!@#$%^&*()'));
+        $this->assertEquals('hello', Utils::slug('Hello'));
+        $this->assertEquals('hello-world-from-long-text', Utils::slug('Hello World From Long Text'));
+
+        // Test numbers and letters preservation
+        $this->assertEquals('product-123-abc', Utils::slug('Product 123 ABC'));
+        $this->assertEquals('test-v20', Utils::slug('Test v2.0')); // Note: dots are removed
+    }
+
+    public function testLogDestinations(): void
+    {
+        // Test suppressed logging - should not produce any output
+        Utils::log('Test message', 'info', Utils::DEST_SUPPRESS);
+        $this->assertTrue(true); // If we get here, suppression worked
+
+        // Test logging to temporary file
+        $tempFile = tempnam(sys_get_temp_dir(), 'utils_test_log');
+        Utils::log('Test log message', 'debug', $tempFile);
+
+        $logContent = file_get_contents($tempFile);
+        $this->assertStringContainsString('[debug] Test log message', $logContent);
+        $this->assertStringContainsString(date('Y-m-d'), $logContent);
+
+        unlink($tempFile);
+    }
 }

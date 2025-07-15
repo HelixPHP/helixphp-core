@@ -4,11 +4,30 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Routing;
 
+use PivotPHP\Core\Exceptions\HttpException;
+
 /**
- * Static File Manager
+ * Static File Manager (Façade + Advanced Features)
  *
- * Serve arquivos estáticos de pastas específicas de forma otimizada.
- * Implementa funcionalidade similar ao express.static() do Node.js.
+ * Implementação avançada para servir arquivos estáticos com cache e otimizações.
+ * Funcionalidade similar ao express.static() do Node.js.
+ *
+ * ESTRATÉGIA: Resolve arquivos dinamicamente com cache inteligente.
+ * - Usa padrões de rota com wildcards
+ * - Cache inteligente de metadados de arquivos
+ * - Funcionalidades avançadas: ETag, compression, security
+ * - Suporte a index files (index.html, index.htm)
+ *
+ * USO RECOMENDADO:
+ * - Projetos médios/grandes com centenas de arquivos estáticos
+ * - Quando você quer funcionalidades express.static()
+ * - SPAs com assets e bundle management
+ * - Produção com cache e performance otimizada
+ *
+ * ARQUITETURA:
+ * - registerDirectory() → Delega para SimpleStaticFileManager
+ * - register() → Mantém compatibilidade com método antigo
+ * - Funcionalidades extras: listFiles(), generateRouteMap(), cache management
  *
  * @package PivotPHP\Core\Routing
  * @since 1.1.3
@@ -116,8 +135,11 @@ class StaticFileManager
      * @return callable Handler otimizado para o router
      * @deprecated Use registerDirectory() no lugar
      */
-    public static function register(string $routePrefix, string $physicalPath, array $options = []): callable
-    {
+    public static function register(
+        string $routePrefix,
+        string $physicalPath,
+        array $options = []
+    ): callable {
         // Normaliza caminhos
         $routePrefix = '/' . trim($routePrefix, '/');
         $physicalPath = rtrim($physicalPath, '/\\');
@@ -172,7 +194,7 @@ class StaticFileManager
 
             // Remove o prefixo da rota para obter o caminho relativo do arquivo
             if (!str_starts_with($requestPath, $routePrefix)) {
-                return $res->status(404)->json(['error' => 'Path does not match route prefix']);
+                throw new HttpException(404, 'Path does not match route prefix');
             }
 
             $relativePath = substr($requestPath, strlen($routePrefix));
@@ -187,7 +209,7 @@ class StaticFileManager
             $fileInfo = self::resolveFile($routePrefix, $relativePath);
 
             if ($fileInfo === null) {
-                return $res->status(404)->json(['error' => 'File not found']);
+                throw new HttpException(404, 'File not found');
             }
 
             // Serve o arquivo
@@ -306,11 +328,16 @@ class StaticFileManager
         // Lê e envia conteúdo do arquivo
         $content = file_get_contents($fileInfo['path']);
         if ($content === false) {
-            return $res->status(500)->json(['error' => 'Unable to read file']);
+            throw new HttpException(
+                500,
+                'Unable to read file: ' . $fileInfo['path'],
+                ['Content-Type' => 'application/json']
+            );
         }
 
-        // Escreve conteúdo na resposta
-        return $res->write($content);
+        // Define o body e retorna response
+        $res = $res->withBody(\PivotPHP\Core\Http\Pool\Psr7Pool::getStream($content));
+        return $res;
     }
 
     /**
@@ -381,8 +408,11 @@ class StaticFileManager
     /**
      * Lista arquivos disponíveis em uma pasta registrada
      */
-    public static function listFiles(string $routePrefix, string $subPath = '', int $maxDepth = 3): array
-    {
+    public static function listFiles(
+        string $routePrefix,
+        string $subPath = '',
+        int $maxDepth = 3
+    ): array {
         if (!isset(self::$registeredPaths[$routePrefix])) {
             return [];
         }

@@ -8,6 +8,12 @@ use PivotPHP\Core\Json\Pool\JsonBufferPool;
 
 class JsonBufferPoolTest extends TestCase
 {
+    /**
+     * Test data size that guarantees pooling is triggered.
+     * This value is greater than NESTED_ARRAY_CHECK_THRESHOLD (50) to bypass nested structure checks
+     * and ensure pooling is always used for consistent test behavior.
+     */
+    private const TEST_DATA_SIZE = 55;
     protected function setUp(): void
     {
         // Clear pools before each test
@@ -63,11 +69,12 @@ class JsonBufferPoolTest extends TestCase
 
     public function testEncodeWithPool(): void
     {
-        $data = ['name' => 'test', 'value' => 123];
+        $data = array_fill(0, self::TEST_DATA_SIZE, ['name' => 'test', 'value' => 123]);
 
         $json = JsonBufferPool::encodeWithPool($data);
 
-        $this->assertEquals('{"name":"test","value":123}', $json);
+        $this->assertStringContainsString('"name":"test"', $json);
+        $this->assertStringContainsString('"value":123', $json);
 
         $stats = JsonBufferPool::getStatistics();
         $this->assertEquals(1, $stats['total_operations']);

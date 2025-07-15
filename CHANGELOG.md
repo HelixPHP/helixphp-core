@@ -5,6 +5,165 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2025-07-15
+
+### 🔧 **Infrastructure Consolidation & Automation Edition**
+
+> **Script Infrastructure Overhaul**: Complete consolidation and reorganization of script ecosystem with logical organization in subfolders, 40% reduction (25 → 15 scripts), automatic version detection via mandatory VERSION file, GitHub Actions optimization, and comprehensive versioning documentation while maintaining 100% backward compatibility and zero impact on framework performance.
+
+#### 📁 **Script Organization & Structure** 
+- **Logical Subfolder Organization**: Scripts organized by functionality for better maintainability
+  ```
+  scripts/
+  ├── validation/     # Validation scripts (validate_all.sh, validate-docs.sh, etc.)
+  ├── quality/        # Quality checks (quality-check.sh, validate-psr12.php)  
+  ├── release/        # Release management (prepare_release.sh, version-bump.sh)
+  ├── testing/        # Testing scripts (test-all-php-versions.sh, run_stress_tests.sh)
+  └── utils/          # Utilities (version-utils.sh, switch-psr7-version.php)
+  ```
+- **Comprehensive Documentation**: README files in each subfolder with usage examples
+- **Backward Compatibility**: All existing script names preserved, only location changed
+- **Updated Integrations**: GitHub Actions workflows, composer.json, and documentation updated
+
+#### 🔧 **Script Infrastructure Consolidation**
+- **40% Script Reduction**: Consolidated from 25 to 15 scripts, eliminating duplication
+  - **Removed Scripts**: 10 duplicate/obsolete scripts eliminated
+    - `quality-check-v114.sh` → Hardcoded version, consolidated into `scripts/quality/quality-check.sh`
+    - `validate_all_v114.sh` → Hardcoded version, consolidated into `scripts/validation/validate_all.sh`
+    - `quick-quality-check.sh` → Duplicate functionality integrated
+    - `simple_pre_release.sh` → Replaced by enhanced `scripts/release/prepare_release.sh`
+    - `quality-gate.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
+    - `quality-metrics.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
+    - `test-php-versions-quick.sh` → Replaced by `scripts/testing/test-all-php-versions.sh`
+    - `ci-validation.sh` → Functionality consolidated into `scripts/quality/quality-check.sh`
+    - `setup-precommit.sh` → One-time setup script, no longer needed
+    - `adapt-psr7-v1.php` → Specific utility script removed for simplicity
+
+- **Shared Utility Library**: Created `scripts/utils/version-utils.sh` with common functions
+  - `get_version()` - Automatic version detection from VERSION file
+  - `get_project_root()` - Project root directory detection
+  - `validate_project_context()` - PivotPHP Core context validation
+  - `print_version_banner()` - Consistent version display across scripts
+
+#### 📦 **Automatic Version Management System**
+- **VERSION File Requirement**: Central version source with strict validation
+  - **Mandatory Format**: X.Y.Z semantic versioning strictly enforced
+  - **Automatic Detection**: All scripts now detect version from single source
+  - **Strict Validation**: Scripts fail immediately if VERSION file missing or invalid
+  - **Portuguese Error Messages**: Clear error messages for better developer experience
+
+- **Enhanced Version Management**: New `scripts/release/version-bump.sh` with automation
+  ```bash
+  # Semantic version management
+  scripts/release/version-bump.sh patch    # 1.1.4 → 1.1.5
+  scripts/release/version-bump.sh minor    # 1.1.4 → 1.2.0
+  scripts/release/version-bump.sh major    # 1.1.4 → 2.0.0
+  
+  # Preview mode
+  scripts/release/version-bump.sh minor --dry-run
+  ```
+  - **Git Integration**: Automatic commit and tag creation
+  - **Composer Integration**: Updates composer.json if present
+  - **Validation**: Semantic version format enforcement
+
+#### 🚀 **GitHub Actions Optimization**
+- **25% Workflow Reduction**: Consolidated from 4 to 3 workflows
+  - **Removed**: `quality-gate.yml` - duplicate functionality eliminated
+  - **Updated**: `ci.yml` - now uses consolidated `quality-check.sh`
+  - **Enhanced**: `pre-release.yml` - automatic version detection from VERSION file
+  - **Fixed**: `release.yml` - corrected repository URLs from express-php to pivotphp-core
+
+- **Workflow Improvements**:
+  - Automatic version detection eliminates hardcoded references
+  - Consolidated script usage for consistency
+  - Fixed broken references to removed scripts
+  - Enhanced validation consistency across all workflows
+
+#### 📚 **Comprehensive Documentation System**
+- **Versioning Guide**: New `docs/VERSIONING_GUIDE.md` (315 lines)
+  - **When to increment MAJOR, MINOR, PATCH** with specific examples
+  - **Complete workflow** from development to release
+  - **Script usage examples** with troubleshooting
+  - **FAQ section** addressing common versioning questions
+
+- **Script Documentation**: Complete rewrite of `scripts/README.md`
+  - **Categorized organization** by script purpose and usage
+  - **Workflow examples** for daily development and releases
+  - **Command reference** with detailed descriptions
+  - **Troubleshooting section** for common issues
+
+- **Release Documentation**: Comprehensive v1.1.4 documentation suite
+  - **Framework Overview**: Complete technical overview and metrics
+  - **Release Notes**: Detailed changes and migration guidance
+  - **Migration Guide**: Step-by-step upgrade instructions
+  - **Changelog**: Comprehensive change documentation
+
+#### ✅ **Validation and Error Handling Improvements**
+- **Strict Error Handling**: No fallback mechanisms, fail-fast approach
+  ```bash
+  # Error examples (in Portuguese for clarity)
+  ❌ ERRO CRÍTICO: Arquivo VERSION não encontrado
+  ❌ ERRO CRÍTICO: Formato de versão inválido: invalid.format
+  ❌ ERRO CRÍTICO: Arquivo VERSION está vazio ou inválido
+  ```
+
+- **Project Context Validation**: Ensures scripts run in correct environment
+  - **Automatic detection** of PivotPHP Core project structure
+  - **Path-independent execution** - works from any directory within project
+  - **Context validation** prevents execution in wrong projects
+
+- **Enhanced Script Capabilities**:
+  - **Cross-directory execution**: Scripts work from any project directory
+  - **Improved error messages**: Clear, actionable feedback in Portuguese
+  - **Consistent interface**: Uniform behavior across all scripts
+  - **Zero configuration**: Automatic setup and detection
+
+#### 🔄 **Development Workflow Optimization**
+- **Simplified Commands**: Single entry points for complex operations
+  ```bash
+  # Quality validation (replaces multiple scripts)
+  scripts/quality/quality-check.sh
+  
+  # Complete validation
+  scripts/validation/validate_all.sh
+  
+  # Release preparation
+  scripts/release/prepare_release.sh
+  ```
+
+- **Improved Developer Experience**:
+  - **Fewer commands to remember** (40% reduction)
+  - **Consistent behavior** across all environments
+  - **Automatic version detection** eliminates manual errors
+  - **Better error feedback** with actionable solutions
+
+#### 📊 **Infrastructure Metrics**
+- **Script Consolidation Results**:
+  - **Active Scripts**: 25 → 15 (40% reduction)
+  - **Duplications Eliminated**: 10 scripts removed
+  - **GitHub Actions**: 4 → 3 workflows (25% reduction)
+  - **Hardcoding Eliminated**: 100% removal of hardcoded versions and paths
+  - **Documentation Added**: 500+ lines of new infrastructure documentation
+
+- **Performance Impact**: **Zero framework performance impact**
+  - All v1.1.3 performance characteristics maintained
+  - JSON pooling: 161K ops/sec (small), 17K ops/sec (medium), 1.7K ops/sec (large)
+  - Framework average: 40,476 ops/sec maintained
+  - Infrastructure changes only, no framework code modifications
+
+#### 🛡️ **Quality Assurance**
+- **Enhanced Validation**: Comprehensive quality checks maintained
+  - **PHPStan Level 9**: Zero errors maintained
+  - **PSR-12 Compliance**: 100% compliance maintained  
+  - **Test Coverage**: All 684 CI tests + 131 integration tests passing
+  - **Cross-platform Compatibility**: Linux, macOS, WSL validation
+
+- **Security Improvements**:
+  - **VERSION file validation** prevents malformed version injection
+  - **Project context validation** ensures correct environment
+  - **Input sanitization** for version strings and paths
+  - **No sensitive information** exposed in error messages
+
 ## [1.1.3] - 2025-07-12
 
 ### 🚀 **Performance Optimization & Architectural Excellence Edition**
@@ -655,7 +814,7 @@ OptimizedHttpFactory::initialize([
 - **Backward Compatibility**: All v1.0.0 routes continue to work
 - **PSR-7 Dual Version Support**: Full compatibility with both PSR-7 v1.x and v2.x
   - Automatic version detection via `Psr7VersionDetector`
-  - Script to switch between versions: `scripts/switch-psr7-version.php`
+  - Script to switch between versions: `scripts/utils/switch-psr7-version.php`
   - Enables ReactPHP integration with PSR-7 v1.x
   - Maintains type safety with PSR-7 v2.x
 

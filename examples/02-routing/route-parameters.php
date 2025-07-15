@@ -17,7 +17,7 @@
  * curl http://localhost:8000/api/users/123/posts/456/comments
  */
 
-require_once dirname(__DIR__, 2) . '/pivotphp-core/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PivotPHP\Core\Core\Application;
 

@@ -15,7 +15,7 @@
  * curl -X POST http://localhost:8000/api/products -H "Content-Type: application/json" -d '{"name":"Notebook","price":2500.99}'
  */
 
-require_once dirname(__DIR__, 2) . '/pivotphp-core/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PivotPHP\Core\Core\Application;
 

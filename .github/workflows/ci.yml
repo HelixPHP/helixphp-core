@@ -1,7 +1,7 @@
 name: CI/CD Pipeline
 
-# Optimized CI/CD - tests critical breaking changes only
-# Full multi-PHP version testing done locally via: ./scripts/test-all-php-versions.sh
+# Optimized CI/CD using consolidated scripts with automatic version detection
+# Multi-PHP testing available locally via: ./scripts/testing/test-all-php-versions.sh
 
 on:
   push:
@@ -10,9 +10,9 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  quality-check:
     runs-on: ubuntu-latest
-    name: Critical CI Tests (PHP 8.1)
+    name: Quality Validation (PHP 8.1)
 
     steps:
     - name: Checkout code
@@ -43,53 +43,20 @@ jobs:
     - name: Check PHP syntax
       run: find src -name "*.php" -exec php -l {} \; || { echo 'PHP syntax check failed'; exit 1; }
 
-    - name: Run optimized CI validation
+    - name: Run consolidated quality check
       run: |
-        echo "⚡ Running optimized CI/CD validation for PHP 8.1..."
-        echo "💡 Multi-PHP testing done locally via: ./scripts/test-all-php-versions.sh"
-        ./scripts/ci-validation.sh || { echo 'CI validation failed'; exit 1; }
-
-    - name: Run CI test suite
-      run: |
-        echo "🧪 Running CI test suite..."
-        composer test:ci || code=$?
-        if [ "${code:-$?}" -eq 0 ] || [ "${code:-$?}" -eq 1 ]; then
-          echo "CI tests OK (exit code $code: success or only skipped/incomplete tests)"
-          exit 0
-        else
-          echo "CI tests failed (exit code $code)"
-          exit $code
-        fi
+        echo "🔍 Running consolidated quality validation..."
+        echo "📋 Using automatic version detection from VERSION file"
+        echo "💡 Multi-PHP testing done locally via: ./scripts/testing/test-all-php-versions.sh"
+        scripts/quality/quality-check.sh || { echo 'Quality check failed'; exit 1; }
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
-        file: ./coverage.xml
+        file: ./reports/coverage.xml
         flags: unittests
         name: codecov-umbrella
-
-  quality:
-    runs-on: ubuntu-latest
-    name: Quality Gate
-    needs: test
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-        extensions: mbstring, xml, ctype, iconv, intl, pdo, dom, filter, gd, json, session
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
-    - name: Run Quality Gate
-      run: |
-        echo "🏆 Running Quality Gate assessment..."
-        ./scripts/quality-gate.sh || { echo 'Quality Gate failed'; exit 1; }
+      continue-on-error: true
 
     - name: CI/CD Summary
       if: always()
@@ -99,11 +66,12 @@ jobs:
         echo "        OPTIMIZED CI/CD SUMMARY"
         echo "========================================="
         echo ""
-        echo "✅ Critical validations completed (PHP 8.1)"
+        echo "✅ Quality validation completed (PHP 8.1)"
+        echo "🔍 Used consolidated scripts with auto-version detection"
         echo ""
-        echo "📋 Comprehensive testing:"
-        echo "   • Multi-PHP: ./scripts/test-all-php-versions.sh (PHP 8.1-8.4)"
-        echo "   • Full validation: ./scripts/validate_all.sh"
-        echo "   • Performance: ./scripts/quality-metrics.sh"
+        echo "📋 For comprehensive testing:"
+        echo "   • Multi-PHP: ./scripts/testing/test-all-php-versions.sh (PHP 8.1-8.4)"
+        echo "   • Full validation: ./scripts/validation/validate_all.sh"
+        echo "   • Version management: ./scripts/release/version-bump.sh"
         echo ""
         echo "🚀 CI/CD optimized for speed - extensive testing done locally"

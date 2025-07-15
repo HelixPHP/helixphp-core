@@ -69,9 +69,13 @@ class AuthMiddlewareTest extends TestCase
         );
         $request = $this->createPsrRequest(['Authorization' => 'Bearer invalid_token']);
         $handler = new DummyHandler();
-        $response = $middleware->process($request, $handler);
+
+        try {
+            $middleware->process($request, $handler);
+        } catch (\PivotPHP\Core\Exceptions\HttpException $e) {
+            $this->assertEquals('Unauthorized', $e->getMessage());
+        }
         $this->assertFalse($handler->called);
-        $this->assertEquals(401, $response->getStatusCode());
     }
 
     public function testBasicAuth(): void
@@ -107,9 +111,11 @@ class AuthMiddlewareTest extends TestCase
         $auth = base64_encode('testuser:wrongpass');
         $request = $this->createPsrRequest(['Authorization' => 'Basic ' . $auth]);
         $handler = new DummyHandler();
-        $response = $middleware->process($request, $handler);
+
+        $this->expectException(\PivotPHP\Core\Exceptions\HttpException::class);
+        $this->expectExceptionMessage('Unauthorized');
+        $middleware->process($request, $handler);
         $this->assertFalse($handler->called);
-        $this->assertEquals(401, $response->getStatusCode());
     }
 
     public function testBearerAuth(): void

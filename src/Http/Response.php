@@ -831,23 +831,8 @@ class Response implements ResponseInterface
      */
     private function shouldUseJsonPooling(mixed $data): bool
     {
-        // Use pooling for medium and large arrays/objects
-        if (is_array($data)) {
-            $count = count($data);
-            return $count >= JsonBufferPool::POOLING_ARRAY_THRESHOLD;
-        }
-
-        if (is_object($data)) {
-            $vars = get_object_vars($data);
-            return $vars && count($vars) >= JsonBufferPool::POOLING_OBJECT_THRESHOLD;
-        }
-
-        // Use pooling for long strings
-        if (is_string($data)) {
-            return strlen($data) > JsonBufferPool::POOLING_STRING_THRESHOLD;
-        }
-
-        return false;
+        // Usar a mesma lógica do JsonBufferPool para consistência
+        return JsonBufferPool::shouldUsePoolingForData($data);
     }
 
     /**
