@@ -36,7 +36,9 @@ class OpenApiExporter
      */
     public function export(?string $baseUrl = null): array
     {
-        $routes = $this->app->getRoutes();
+        // Try to get routes from the router
+        $router = $this->app->getRouter();
+        $routes = method_exists($router, 'getRoutes') ? $router->getRoutes() : [];
 
         $spec = [
             'openapi' => '3.0.0',
