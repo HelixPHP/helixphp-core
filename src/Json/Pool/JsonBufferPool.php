@@ -125,8 +125,8 @@ class JsonBufferPool
      */
     public static function getStatistics(): array
     {
-        $reuseRate = self::$stats['total_operations'] > 0 
-            ? (self::$stats['reuses'] / self::$stats['total_operations']) * 100 
+        $reuseRate = self::$stats['total_operations'] > 0
+            ? (self::$stats['reuses'] / self::$stats['total_operations']) * 100
             : 0.0;
 
         $totalBuffersPooled = 0;
@@ -137,7 +137,7 @@ class JsonBufferPool
         foreach (self::$pools as $poolKey => $pool) {
             $capacity = (int) str_replace('buffer_', '', $poolKey);
             $bufferCount = count($pool);
-            
+
             if ($bufferCount > 0) {
                 $totalBuffersPooled += $bufferCount;
                 $activePoolCount++;
@@ -152,17 +152,20 @@ class JsonBufferPool
         }
 
         // Sort pools by capacity (need to sort by actual capacity, not string)
-        uksort($poolSizes, function($a, $b) {
+        uksort(
+            $poolSizes,
+            function ($a, $b) {
             // Extract capacity from formatted string (e.g., "4.0KB (4096 bytes)" -> 4096)
-            preg_match('/\((\d+) bytes\)/', $a, $matchesA);
-            preg_match('/\((\d+) bytes\)/', $b, $matchesB);
-            
-            $capacityA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
-            $capacityB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
-            
-            return $capacityA <=> $capacityB;
-        });
-        
+                preg_match('/\((\d+) bytes\)/', $a, $matchesA);
+                preg_match('/\((\d+) bytes\)/', $b, $matchesB);
+
+                $capacityA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
+                $capacityB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
+
+                return $capacityA <=> $capacityB;
+            }
+        );
+
         usort($poolsByCapacity, fn($a, $b) => $a['capacity_bytes'] <=> $b['capacity_bytes']);
 
         return [
@@ -249,7 +252,7 @@ class JsonBufferPool
             return 1024;
         }
 
-        // For medium data (like objects with properties), use 1024 
+        // For medium data (like objects with properties), use 1024
         if ($estimatedSize <= 1024) {
             return 1024;
         }
@@ -281,19 +284,19 @@ class JsonBufferPool
             if (empty($data)) {
                 return self::EMPTY_ARRAY_SIZE;
             }
-            
+
             if (count($data) <= self::SMALL_ARRAY_THRESHOLD) {
                 return self::SMALL_ARRAY_SIZE;
             }
-            
+
             if (count($data) <= self::MEDIUM_ARRAY_THRESHOLD) {
                 return self::MEDIUM_ARRAY_SIZE;
             }
-            
+
             if (count($data) <= self::LARGE_ARRAY_THRESHOLD) {
                 return self::LARGE_ARRAY_SIZE;
             }
-            
+
             return self::XLARGE_ARRAY_SIZE;
         }
 
@@ -477,7 +480,7 @@ class JsonBufferPool
     public const OBJECT_PROPERTY_OVERHEAD = 30;
     public const DEFAULT_ESTIMATE = 1024;
     public const MIN_LARGE_BUFFER_SIZE = 16384;
-    
+
     // Array threshold constants
     public const SMALL_ARRAY_THRESHOLD = 10;
     public const MEDIUM_ARRAY_THRESHOLD = 100;

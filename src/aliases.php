@@ -132,18 +132,18 @@ class_alias(
     'PivotPHP\Core\Events\SimpleEventDispatcher'
 );
 
-// Deprecated Utils - Legacy Aliases
+// Deprecated Utils - Simple Implementations
 class_alias(
-    'PivotPHP\Core\Legacy\Utils\SerializationCache',
-    'PivotPHP\Core\Utils\SerializationCache'
+    'PivotPHP\Core\Utils\SerializationCache',
+    'PivotPHP\Core\Legacy\Utils\SerializationCache'
 );
 class_alias(
-    'PivotPHP\Core\Legacy\Utils\OpenApiExporter',
-    'PivotPHP\Core\Utils\OpenApiExporter'
+    'PivotPHP\Core\Utils\OpenApiExporter',
+    'PivotPHP\Core\Legacy\Utils\OpenApiExporter'
 );
 class_alias(
-    'PivotPHP\Core\Legacy\Providers\ExtensionManager',
-    'PivotPHP\Core\Providers\ExtensionManager'
+    'PivotPHP\Core\Providers\ExtensionManager',
+    'PivotPHP\Core\Legacy\Providers\ExtensionManager'
 );
 
 // API Documentation - Core Feature

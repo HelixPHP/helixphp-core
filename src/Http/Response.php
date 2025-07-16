@@ -832,7 +832,7 @@ class Response implements ResponseInterface
     private function shouldUseJsonPooling(mixed $data): bool
     {
         // Usar a mesma lógica do JsonBufferPool para consistência
-        return JsonBufferPool::shouldUsePoolingForData($data);
+        return JsonBufferPool::shouldUsePooling($data);
     }
 
     /**

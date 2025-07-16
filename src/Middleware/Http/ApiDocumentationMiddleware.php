@@ -69,7 +69,7 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
         try {
             // Get the application instance from the request
             $app = $request->getAttribute('app');
-            
+
             if (!$app) {
                 return $this->createErrorResponse('Application not found in request', 500);
             }
@@ -80,11 +80,10 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
             // Create response
             $response = new Response();
             $response->getBody()->write(json_encode($docs, JSON_PRETTY_PRINT));
-            
+
             return $response
                 ->withHeader('Content-Type', 'application/json')
                 ->withHeader('Access-Control-Allow-Origin', '*');
-
         } catch (\Exception $e) {
             return $this->createErrorResponse('Error generating documentation: ' . $e->getMessage(), 500);
         }
@@ -96,10 +95,10 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
     private function handleSwaggerUi(ServerRequestInterface $request): ResponseInterface
     {
         $swaggerHtml = $this->getSwaggerUiHtml();
-        
+
         $response = new Response();
         $response->getBody()->write($swaggerHtml);
-        
+
         return $response->withHeader('Content-Type', 'text/html');
     }
 
@@ -109,7 +108,7 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
     private function getSwaggerUiHtml(): string
     {
         $docsUrl = $this->docsPath;
-        
+
         return <<<HTML
 <!DOCTYPE html>
 <html>
@@ -155,7 +154,7 @@ HTML;
     {
         $response = new Response();
         $response->getBody()->write(json_encode(['error' => $message]));
-        
+
         return $response
             ->withStatus($statusCode)
             ->withHeader('Content-Type', 'application/json');
@@ -174,7 +173,7 @@ HTML;
      */
     private function createHandler(callable $next): RequestHandlerInterface
     {
-        return new class($next) implements RequestHandlerInterface {
+        return new class ($next) implements RequestHandlerInterface {
             private $next;
 
             public function __construct(callable $next)
