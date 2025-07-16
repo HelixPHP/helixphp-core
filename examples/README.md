@@ -1,13 +1,14 @@
-# PivotPHP Core v1.1.3 - Complete Examples Collection 🚀
+# PivotPHP Core v1.2.0 - Complete Examples Collection 🚀
 
-This directory contains production-ready examples that demonstrate the full potential of PivotPHP Core v1.1.3, including the latest performance improvements and array callable support.
+This directory contains production-ready examples that demonstrate the full potential of PivotPHP Core v1.2.0, including simplified performance mode and clean architecture.
 
-## 🎯 What's New in v1.1.3
+## 🎯 What's New in v1.2.0
 
-- **Array Callable Support**: Full PHP 8.4+ compatibility with `callable|array` union types
-- **+116% Performance**: Revolutionary object pooling improvements (20,400 → 44,092 ops/sec)
-- **Architectural Excellence**: Clean middleware organization following ARCHITECTURAL_GUIDELINES
-- **100% Backward Compatibility**: All existing code continues to work
+- **Simplified Performance**: Clean performance mode following "Simplicidade sobre Otimização Prematura"
+- **Architectural Excellence**: Removed enterprise complexity, focused on microframework essentials
+- **100% Test Coverage**: All tests passing, comprehensive CI/CD pipeline
+- **Enhanced Documentation**: Updated examples and clear deprecation warnings
+- **100% Backward Compatibility**: All existing code continues to work via aliases
 
 ## 📁 Examples Structure
 
@@ -34,14 +35,14 @@ This directory contains production-ready examples that demonstrate the full pote
 - **rest-api.php** - Complete RESTful API with pagination, filters and validation
 
 ### 05-performance - Performance & Optimization
-- **high-performance.php** - v1.1.0+ features (pooling, JSON v1.1.1, metrics)
+- **high-performance.php** - v1.2.0 simplified performance mode, JSON optimization, metrics
 
 ### 06-security - Security
 - **jwt-auth.php** - Complete JWT system with refresh tokens and authorization
 
-### 07-advanced - v1.1.3 New Features ✨
-- **array-callables.php** - NEW! Array callable syntax demonstration
-- **performance-v1.1.3.php** - NEW! Performance improvements showcase
+### 07-advanced - v1.2.0 Advanced Features ✨
+- **array-callables.php** - Array callable syntax demonstration
+- **performance-v1.1.3.php** - Performance simplificada showcase (updated to v1.2.0)
 
 ## 🚀 Quick Start
 
@@ -129,7 +130,7 @@ $app->get('/api/data', function($req, $res) {
 ```php
 // JWT with refresh tokens
 $app->post('/auth/login', function($req, $res) {
-    $credentials = $req->getBody();
+    $credentials = $req->getBodyAsStdClass();
     $tokens = AuthService::authenticate($credentials);
     return $res->json($tokens);
 });

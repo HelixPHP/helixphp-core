@@ -60,9 +60,9 @@ class UserController
     
     public function store($req, $res) 
     {
-        $data = $req->getBody();
+        $data = $req->getBodyAsStdClass();
         
-        if (!isset($data['name']) || !isset($data['email'])) {
+        if (!isset($data->name) || !isset($data->email)) {
             return $res->status(400)->json([
                 'error' => 'Name and email are required'
             ]);
@@ -70,8 +70,8 @@ class UserController
         
         $newUser = [
             'id' => max(array_column($this->users, 'id')) + 1,
-            'name' => $data['name'],
-            'email' => $data['email']
+            'name' => $data->name,
+            'email' => $data->email
         ];
         
         $this->users[] = $newUser;
@@ -86,12 +86,12 @@ class UserController
     public function update($req, $res) 
     {
         $id = (int) $req->param('id');
-        $data = $req->getBody();
+        $data = $req->getBodyAsStdClass();
         
         foreach ($this->users as &$user) {
             if ($user['id'] === $id) {
-                $user['name'] = $data['name'] ?? $user['name'];
-                $user['email'] = $data['email'] ?? $user['email'];
+                $user['name'] = $data->name ?? $user['name'];
+                $user['email'] = $data->email ?? $user['email'];
                 
                 return $res->json([
                     'message' => 'User updated successfully',
