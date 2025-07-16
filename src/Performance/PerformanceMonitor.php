@@ -242,7 +242,7 @@ class PerformanceMonitor
             return 0.0;
         }
 
-        return ($currentMemory / $memoryLimit) * 100;
+        return min(($currentMemory / $memoryLimit), 1.0);
     }
 
     /**

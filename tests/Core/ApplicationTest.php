@@ -67,8 +67,8 @@ class ApplicationTest extends TestCase
     public function testApplicationInitialization(): void
     {
         $this->assertInstanceOf(Application::class, $this->app);
-        $this->assertEquals('1.1.3-dev', Application::VERSION);
-        $this->assertEquals('1.1.3-dev', $this->app->version());
+        $this->assertEquals('1.2.0', Application::VERSION);
+        $this->assertEquals('1.2.0', $this->app->version());
         $this->assertFalse($this->app->isBooted());
     }
 

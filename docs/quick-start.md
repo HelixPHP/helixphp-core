@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get up and running with PivotPHP Core v1.1.4 in under 5 minutes! This guide will walk you through installation, basic setup, and creating your first API endpoints.
+Get up and running with PivotPHP Core v1.2.0 in under 5 minutes! This guide will walk you through installation, basic setup, and creating your first API endpoints.
 
 ## 🚀 Installation
 
@@ -40,7 +40,7 @@ $app->get('/users/:id', function($req, $res) {
 
 // JSON POST endpoint
 $app->post('/users', function($req, $res) {
-    $userData = $req->getBody();
+    $userData = $req->getBodyAsStdClass();
     return $res->status(201)->json([
         'message' => 'User created',
         'data' => $userData
@@ -65,7 +65,7 @@ curl -X POST -H "Content-Type: application/json" \
      http://localhost:8080/users               # {"message":"User created","data":{"name":"Alice"}}
 ```
 
-## 🎯 v1.1.3 New Features
+## 🎯 v1.2.0 New Features
 
 ### Array Callable Routes (NEW!)
 
@@ -181,14 +181,14 @@ $app = new Application($config);
 Enable performance monitoring for production:
 
 ```php
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 
-// Enable high performance mode
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Enable performance mode
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // Get performance metrics
 $app->get('/metrics', function($req, $res) {
-    $monitor = HighPerformanceMode::getMonitor();
+    $monitor = PerformanceMode::getMonitor();
     $metrics = $monitor->getPerformanceMetrics();
     return $res->json($metrics);
 });
@@ -223,42 +223,49 @@ class BasicTest extends TestCase
 }
 ```
 
-## 🚀 Next Steps
+## 🚀 Próximos Passos para Provas de Conceito
 
-Now that you have a basic API running, explore more features:
+Agora que você tem uma API básica funcionando, explore recursos para enriquecer seus protótipos:
 
-1. **[API Reference](API_REFERENCE.md)** - Complete method documentation
-2. **[Middleware Guide](reference/middleware.md)** - Security and performance middleware
-3. **[Authentication](technical/authentication/README.md)** - JWT and API key authentication  
-4. **[Performance Guide](guides/performance.md)** - Optimization strategies
-5. **[Examples](reference/examples.md)** - Real-world application examples
+1. **[API Reference](API_REFERENCE.md)** - Referência completa dos métodos
+2. **[Middleware Guide](reference/middleware.md)** - Segurança e performance para demos
+3. **[Authentication](technical/authentication/README.md)** - JWT e API key para protótipos seguros
+4. **[Documentação Automática](examples/api_documentation_example.php)** - Swagger para apresentações
+5. **[Examples](reference/examples.md)** - Exemplos práticos e casos de uso
 
-## 🏗️ Production Deployment
+## 🧪 Expandindo Protótipos
 
-For production deployment:
+Para expandir suas provas de conceito:
 
 ```php
-// Disable debug mode
-$app = new Application(['debug' => false]);
+// Adicionar autenticação JWT para demos
+$app->use(new AuthMiddleware([
+    'authMethods' => ['jwt'],
+    'jwtSecret' => 'demo_secret_key'
+]));
 
-// Enable high performance mode
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Documentação automática (essencial para apresentações)
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',
+    'swagger_path' => '/swagger'
+]));
 
-// Add production middleware
+// Middleware de segurança para protótipos profissionais
 $app->use(new SecurityHeadersMiddleware());
-$app->use(new RateLimitMiddleware(['max_requests' => 100, 'window' => 60]));
-
-// Error handling
-$app->use(new ErrorMiddleware(['log_errors' => true]));
+$app->use(new CorsMiddleware(['allowed_origins' => ['*']]));
 ```
 
-## 🆘 Getting Help
+## 🆘 Suporte e Aprendizado
 
-- **[Documentation](README.md)** - Complete documentation
-- **[Discord Community](https://discord.gg/DMtxsP7z)** - Real-time support
-- **[GitHub Issues](https://github.com/PivotPHP/pivotphp-core/issues)** - Bug reports and feature requests
-- **[Examples Repository](examples/)** - Practical examples
+- **[Documentação](README.md)** - Documentação completa
+- **[Discord Community](https://discord.gg/DMtxsP7z)** - Suporte em tempo real
+- **[GitHub Issues](https://github.com/PivotPHP/pivotphp-core/issues)** - Relatar problemas e sugerir melhorias
+- **[Examples Repository](examples/)** - Exemplos práticos para aprendizado
+
+## ⚠️ Importante: Sobre o Projeto
+
+**PivotPHP Core é mantido por apenas uma pessoa** e pode não receber atualizações constantemente. Este guia é ideal para criar protótipos e provas de conceito, mas não é recomendado para sistemas de produção críticos que exigem suporte 24/7.
 
 ---
 
-**Congratulations!** You now have a solid foundation for building high-performance APIs with PivotPHP Core v1.1.3. 🎉
+**Parabéns!** Agora você tem uma base sólida para criar provas de conceito e protótipos com PivotPHP Core v1.2.0. 🎉

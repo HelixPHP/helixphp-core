@@ -2,15 +2,15 @@
 
 ## 🎯 Simplicidade sobre Otimização Prematura
 
-PivotPHP Core v1.2.0 representa a consolidação dos princípios de design do framework, seguindo rigorosamente o princípio **"Simplicidade sobre Otimização Prematura"**. Esta versão remove complexidades desnecessárias e foca no que realmente importa para um microframework moderno.
+PivotPHP Core v1.2.0 representa a consolidação dos princípios de design do framework, seguindo rigorosamente o princípio **"Simplicidade sobre Otimização Prematura"**. Esta versão remove complexidades desnecessárias e **foca em ser um facilitador ideal para provas de conceito, prototipagem rápida e estudos**.
 
 ## 🚀 Principais Melhorias
 
-### ✅ **Arquitetura Simplificada**
-- **PerformanceMode** substituindo HighPerformanceMode complexo
-- **Middleware organizados** por responsabilidade (Security, Performance, HTTP, Core)
-- **Providers simplificados** sem complexidade enterprise
-- **Memory management** eficiente sem over-engineering
+### ✅ **Arquitetura Orientada a Protótipos**
+- **PerformanceMode** substituindo HighPerformanceMode complexo - foco em adequação
+- **Middleware organizados** para prototipagem profissional (Security, Performance, HTTP, Core)
+- **Providers simplificados** para aprendizado e desenvolvimento rápido
+- **Memory management** eficiente sem complexidade desnecessária
 
 ### ✅ **100% Compatibilidade Mantida**
 - **Aliases automáticos** para todas as classes movidas
@@ -18,16 +18,17 @@ PivotPHP Core v1.2.0 representa a consolidação dos princípios de design do fr
 - **Zero breaking changes** - todo código existente funciona
 - **Migração gradual** opcional para novas APIs
 
-### ✅ **Qualidade Excepcional**
-- **1259 testes passando** (100% success rate)
-- **PHPStan Level 9** compliance
-- **PSR-12** 100% compliant
-- **Zero erros** em produção
+### ✅ **Qualidade Educacional**
+- **1259 testes passando** (100% success rate) - exemplo de qualidade para aprendizado
+- **PHPStan Level 9** compliance - padrão profissional para estudos
+- **PSR-12** 100% compliant - demonstrando boas práticas
+- **Zero erros** em produção - confiabilidade para demos
 
-### ✅ **Funcionalidades Mantidas**
-- **JSON Buffer Pooling** otimizado
-- **Object Pooling** para Request/Response
-- **Middleware Pipeline** completo
+### ✅ **Funcionalidades Essenciais para Protótipos**
+- **JSON Buffer Pooling** otimizado - performance adequada para demos
+- **Object Pooling** para Request/Response - eficiência sem complexidade
+- **Middleware Pipeline** completo - segurança profissional para apresentações
+- **Documentação OpenAPI** automática - essencial para apresentar protótipos
 - **Authentication** robusto
 - **API Documentation** automática
 
@@ -167,6 +168,19 @@ PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 PivotPHP Core v1.2.0 demonstra que **simplicidade e performance** não são mutuamente exclusivas. Ao remover complexidades desnecessárias e focar no essencial, criamos um microframework mais robusto, rápido e fácil de usar.
 
 **"Simplicidade sobre Otimização Prematura"** não é apenas um princípio - é a base de um framework sustentável e produtivo para o futuro.
+
+---
+
+## ⚠️ Importante: Manutenção do Projeto
+
+**PivotPHP Core é mantido por apenas uma pessoa** e pode não receber atualizações constantemente. Esta versão v1.2.0 representa um framework estável e funcional, mas os usuários devem estar cientes de que:
+
+- 🔬 **Ideal para**: Provas de conceito, protótipos, estudos e projetos educacionais
+- 📚 **Não recomendado**: Para sistemas de produção críticos que exigem suporte 24/7
+- 🤝 **Contribuições bem-vindas**: A comunidade pode ajudar com melhorias e correções
+- 🔄 **Atualizações**: Podem não ser frequentes, mas o projeto mantém qualidade e estabilidade
+
+Se você precisa de um framework com equipe dedicada e suporte empresarial, considere alternativas como Laravel, Symfony ou Slim 4.
 
 ---
 
