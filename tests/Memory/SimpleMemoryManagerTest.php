@@ -104,4 +104,3 @@ class SimpleMemoryManagerTest extends TestCase
         $this->assertMatchesRegularExpression('/\d+(\.\d+)?\s*(B|KB|MB|GB)/', $stats['formatted_peak']);
     }
 }
-

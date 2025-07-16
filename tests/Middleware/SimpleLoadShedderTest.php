@@ -98,4 +98,3 @@ class SimpleLoadShedderTest extends TestCase
         $this->assertFalse($stats['enabled']);
     }
 }
-

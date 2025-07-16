@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Performance;
+namespace PivotPHP\Core\Legacy\Performance;
 
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
@@ -14,6 +14,9 @@ use PivotPHP\Core\Middleware\LoadShedder;
 
 /**
  * High Performance Mode configurator for PivotPHP
+ *
+ * @deprecated Use SimplePerformanceMode instead. This class will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class HighPerformanceMode
 {

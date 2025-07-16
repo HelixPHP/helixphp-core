@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Providers;
+namespace PivotPHP\Core\Legacy\Providers;
 
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Providers\ServiceProvider;
@@ -14,6 +14,10 @@ use Composer\Autoload\ClassLoader;
  *
  * This class handles automatic discovery of service providers from composer packages,
  * plugin registration, and extension lifecycle management.
+ *
+ * @deprecated This class adds unnecessary complexity for a microframework.
+ * Use direct service provider registration instead. Will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class ExtensionManager
 {

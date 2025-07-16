@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Http\Pool;
+namespace PivotPHP\Core\Legacy\Http\Pool;
 
 use PivotPHP\Core\Http\Psr7\Cache\OperationsCache;
 use PivotPHP\Core\Http\Psr7\Pool\HeaderPool;
@@ -13,6 +13,9 @@ use PivotPHP\Core\Http\Psr7\Pool\ResponsePool;
  *
  * Adjusts pool sizes based on current memory usage and system resources
  * to prevent memory exhaustion and optimize performance.
+ *
+ * @deprecated Use SimplePoolManager instead. This class will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  *
  * @package PivotPHP\Core\Http\Psr7\Pool
  * @since 2.2.0

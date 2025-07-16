@@ -95,4 +95,3 @@ class SimpleTrafficClassifierTest extends TestCase
         $this->assertContains(SimpleTrafficClassifier::PRIORITY_LOW, $stats['available_priorities']);
     }
 }
-

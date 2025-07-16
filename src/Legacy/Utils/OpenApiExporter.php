@@ -1,11 +1,15 @@
 <?php
 
-namespace PivotPHP\Core\Utils;
+namespace PivotPHP\Core\Legacy\Utils;
 
 use PivotPHP\Core\Routing\Router;
 
 /**
  * Service responsible for exporting OpenAPI documentation from Router routes.
+ *
+ * @deprecated This class adds unnecessary complexity for a microframework.
+ * Consider using dedicated OpenAPI tools instead. Will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class OpenApiExporter
 {

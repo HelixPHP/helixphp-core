@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace PivotPHP\Core\Http\Pool;
 
 /**
- * Simple Pool Manager
+ * Pool Manager
  *
- * Following 'Simplicidade sobre Otimização Prematura' principle
- * Provides basic object pooling without enterprise complexity
+ * Simple and effective object pooling for the microframework.
+ * Provides basic pooling functionality without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
-class SimplePoolManager
+class PoolManager
 {
     /**
      * Pool storage
@@ -167,4 +169,3 @@ class SimplePoolManager
         return isset($this->pools[$poolName]);
     }
 }
-

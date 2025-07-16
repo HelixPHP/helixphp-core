@@ -1,12 +1,16 @@
 <?php
 
-namespace PivotPHP\Core\Utils;
+namespace PivotPHP\Core\Legacy\Utils;
 
 /**
  * Cache otimizado para serialização de dados intensivos.
  *
  * Reduz o impacto de performance causado por múltiplas serializações
  * dos mesmos dados através de cache inteligente baseado em hash.
+ *
+ * @deprecated This class adds unnecessary complexity for a microframework.
+ * Use simple caching or external cache solutions instead. Will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class SerializationCache
 {

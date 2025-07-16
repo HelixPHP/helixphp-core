@@ -143,4 +143,3 @@ class SimplePoolManagerTest extends TestCase
         $this->assertFalse($stats['enabled']);
     }
 }
-

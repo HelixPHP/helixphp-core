@@ -38,12 +38,15 @@ vendor/bin/phpunit tests/Core/ApplicationTest.php
 vendor/bin/phpunit --group stress
 vendor/bin/phpunit --exclude-group stress,integration
 
-# Run specific test suites
+# Run specific test suites (see phpunit.xml for full list)
 vendor/bin/phpunit --testsuite=Core      # Core framework tests
 vendor/bin/phpunit --testsuite=Security  # Security tests
 vendor/bin/phpunit --testsuite=Performance # Performance tests
 vendor/bin/phpunit --testsuite=Unit      # Unit tests only
 vendor/bin/phpunit --testsuite=Fast      # Fast tests (excludes stress)
+vendor/bin/phpunit --testsuite=CI        # CI tests (excludes integration & stress)
+vendor/bin/phpunit --testsuite=Integration # Integration tests
+vendor/bin/phpunit --testsuite=Stress    # Stress tests only
 
 # Additional validation commands
 php ./scripts/quality/validate-psr12.php    # PSR-12 validation (standalone)
@@ -125,6 +128,34 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
 ```
 
 ## Code Architecture
+
+### Project Structure
+```
+pivotphp-core/
+├── src/                    # Framework source code
+│   ├── Core/              # Application core, container, services
+│   ├── Http/              # HTTP layer (Request, Response, PSR-7)
+│   ├── Routing/           # Router and route management
+│   ├── Middleware/        # Middleware system (Security, Performance, HTTP, Core)
+│   ├── Providers/         # Service providers
+│   ├── Performance/       # Performance optimization components
+│   ├── Json/              # JSON optimization and pooling
+│   ├── Utils/             # Utility classes
+│   └── Support/           # Support classes
+├── tests/                 # Test suites
+│   ├── Core/              # Core framework tests
+│   ├── Security/          # Security tests
+│   ├── Performance/       # Performance tests
+│   ├── Integration/       # Integration tests
+│   ├── Stress/            # Stress tests
+│   └── Unit/              # Unit tests
+├── scripts/               # Development scripts
+│   ├── validation/        # Validation scripts
+│   ├── quality/           # Quality check scripts
+│   ├── testing/           # Testing utilities
+│   └── release/           # Release management
+└── examples/              # Usage examples
+```
 
 ### Core Framework Structure
 - **Service Provider Pattern**: All major components are registered via service providers in `src/Providers/`
@@ -282,6 +313,28 @@ vendor/bin/phpunit tests/Integration/Routing/ArrayCallableIntegrationTest.php
 
 # Test parameter routing with array callables
 vendor/bin/phpunit tests/Examples/ParameterRoutingExampleTest.php
+```
+
+### Debugging and Troubleshooting
+```bash
+# Debug specific component
+vendor/bin/phpunit tests/Core/ApplicationTest.php --debug
+
+# Run with verbose output
+vendor/bin/phpunit --verbose
+
+# Check specific middleware
+vendor/bin/phpunit tests/Middleware/Security/ --testdox
+
+# Performance debugging
+composer benchmark:simple                    # Quick performance check
+vendor/bin/phpunit tests/Performance/ --group performance
+
+# Memory usage analysis
+vendor/bin/phpunit tests/Performance/MemoryManagerTest.php
+
+# JSON pool debugging
+vendor/bin/phpunit tests/Json/Pool/ --testdox
 ```
 
 ### Middleware Development (v1.1.2+)

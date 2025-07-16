@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace PivotPHP\Core\Middleware;
+namespace PivotPHP\Core\Legacy\Middleware;
 
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
 
 /**
  * Traffic classification middleware for prioritizing requests
+ *
+ * @deprecated Use SimpleTrafficClassifier instead. This class will be removed in v1.2.0.
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class TrafficClassifier
 {

@@ -7,13 +7,14 @@ namespace PivotPHP\Core\Performance;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
 
 /**
- * Simplified Performance Mode for PivotPHP
+ * Performance Mode for PivotPHP Core
  *
- * This is a much simpler alternative to HighPerformanceMode that focuses on
- * essential optimizations without the complexity of distributed systems,
- * advanced monitoring, and over-engineered features.
+ * Simple and effective performance optimizations for the microframework.
+ * Focuses on essential optimizations without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
-class SimplePerformanceMode
+class PerformanceMode
 {
     /**
      * Performance profiles - simplified
@@ -22,10 +23,20 @@ class SimplePerformanceMode
     public const PROFILE_PRODUCTION = 'production';
     public const PROFILE_TEST = 'test';
 
+    // Backward compatibility with HighPerformanceMode
+    public const PROFILE_STANDARD = 'standard';
+    public const PROFILE_HIGH = 'high';
+    public const PROFILE_EXTREME = 'extreme';
+
     /**
      * Current mode
      */
     private static ?string $currentMode = null;
+
+    /**
+     * Performance monitor instance
+     */
+    private static ?PerformanceMonitor $monitor = null;
 
     /**
      * Enable simple performance optimizations
@@ -46,7 +57,11 @@ class SimplePerformanceMode
                 break;
 
             case self::PROFILE_PRODUCTION:
+            case self::PROFILE_STANDARD:
+            case self::PROFILE_HIGH:
+            case self::PROFILE_EXTREME:
                 // Enable only proven optimizations for production
+                // All legacy profiles map to production level
                 OptimizedHttpFactory::initialize(
                     [
                         'enable_pooling' => true,
@@ -93,5 +108,16 @@ class SimplePerformanceMode
             'mode' => self::$currentMode,
             'pool_enabled' => self::$currentMode === self::PROFILE_PRODUCTION,
         ];
+    }
+
+    /**
+     * Get monitor for compatibility with HighPerformanceMode
+     */
+    public static function getMonitor(): PerformanceMonitor
+    {
+        if (self::$monitor === null) {
+            self::$monitor = new PerformanceMonitor();
+        }
+        return self::$monitor;
     }
 }
