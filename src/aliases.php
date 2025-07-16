@@ -120,6 +120,10 @@ class_alias(
     'PivotPHP\Core\Performance\PerformanceMonitor',
     'PivotPHP\Core\Performance\SimplePerformanceMonitor'
 );
+class_alias(
+    'PivotPHP\Core\Performance\PerformanceMonitor',
+    'PivotPHP\Core\Legacy\Performance\PerformanceMonitor'
+);
 
 // JSON Pool - Legacy Aliases
 class_alias(

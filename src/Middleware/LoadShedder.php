@@ -18,6 +18,14 @@ use PivotPHP\Core\Http\Response;
 class LoadShedder
 {
     /**
+     * Strategy constants for compatibility
+     */
+    const STRATEGY_PRIORITY = 'priority';
+    const STRATEGY_CONSERVATIVE = 'conservative';
+    const STRATEGY_AGGRESSIVE = 'aggressive';
+    const STRATEGY_ADAPTIVE = 'adaptive';
+
+    /**
      * Simple configuration
      */
     private int $maxRequests;

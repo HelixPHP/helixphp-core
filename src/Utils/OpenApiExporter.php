@@ -128,8 +128,11 @@ class OpenApiExporter
                         'description' => 'Development server'
                     ]
                 ],
-                'paths' => []
+                'paths' => [],
+                'tags' => [] // Initialize tags array
             ];
+            
+            $globalTags = [];
             
             // Process routes
             foreach ($routes as $route) {
@@ -151,31 +154,67 @@ class OpenApiExporter
                 
                 // Add default error responses if not a static route
                 if (!isset($route['metadata']['static_route'])) {
-                    $responses = array_merge($responses, [
+                    $defaultErrors = [
                         '400' => ['description' => 'Invalid request'],
                         '401' => ['description' => 'Unauthorized'],
                         '404' => ['description' => 'Not found'],
                         '500' => ['description' => 'Internal server error'],
-                    ]);
+                    ];
+                    
+                    // Only add default errors if they don't already exist
+                    foreach ($defaultErrors as $code => $response) {
+                        if (!isset($responses[$code])) {
+                            $responses[$code] = $response;
+                        }
+                    }
                 }
                 
-                $spec['paths'][$path][$method] = [
+                $operationSpec = [
                     'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
                     'responses' => $responses
                 ];
                 
+                // Add custom responses if they exist
+                if (isset($route['metadata']['responses'])) {
+                    $customResponses = $route['metadata']['responses'];
+                    foreach ($customResponses as $code => $response) {
+                        if (is_string($response)) {
+                            $operationSpec['responses'][$code] = ['description' => $response];
+                        } elseif (is_array($response)) {
+                            $operationSpec['responses'][$code] = $response;
+                        }
+                    }
+                }
+                
+                // Add tags if they exist
+                if (isset($route['metadata']['tags'])) {
+                    $operationSpec['tags'] = $route['metadata']['tags'];
+                }
+                
+                $spec['paths'][$path][$method] = $operationSpec;
+                
+                // Collect global tags
+                if (isset($route['metadata']['tags']) && is_array($route['metadata']['tags'])) {
+                    foreach ($route['metadata']['tags'] as $tag) {
+                        if (!in_array($tag, $globalTags)) {
+                            $globalTags[] = $tag;
+                        }
+                    }
+                }
+                
                 // Add parameters if they exist
-                $parameterSource = $route['parameters'] ?? ($route['metadata']['parameters'] ?? null);
+                $parameterSource = $route['metadata']['parameters'] ?? null;
                 if ($parameterSource) {
                     $parameters = [];
                     
                     if (is_array($parameterSource)) {
                         foreach ($parameterSource as $paramName => $paramConfig) {
                             if (is_string($paramName) && is_array($paramConfig)) {
+                                $inValue = $paramConfig['in'] ?? 'path';
                                 $parameters[] = [
                                     'name' => $paramName,
-                                    'in' => 'path',
-                                    'required' => true,
+                                    'in' => $inValue,
+                                    'required' => $paramConfig['required'] ?? ($inValue === 'path' ? true : false),
                                     'schema' => [
                                         'type' => $paramConfig['type'] ?? 'string'
                                     ],
@@ -189,6 +228,13 @@ class OpenApiExporter
                         $spec['paths'][$path][$method]['parameters'] = $parameters;
                     }
                 }
+            }
+            
+            // Add global tags to spec
+            if (!empty($globalTags)) {
+                $spec['tags'] = array_map(function($tag) {
+                    return ['name' => $tag];
+                }, $globalTags);
             }
             
             return $spec;

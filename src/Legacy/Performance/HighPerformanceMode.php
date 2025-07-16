@@ -423,7 +423,7 @@ class HighPerformanceMode
     /**
      * Schedule periodic task (simulated)
      */
-    private static function schedulePeriodicTask(int $interval, callable $task): void
+    private static function schedulePeriodicTask(int $interval, mixed $task): void
     {
         // In real implementation, would use async task scheduler
         // For now, tasks are called manually or via cron
