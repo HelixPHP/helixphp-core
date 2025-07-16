@@ -1181,7 +1181,7 @@ class Application
         string $provider,
         array $config = []
     ): self {
-        $this->extensions()->registerExtension($name, $provider, $config);
+        $this->extensions()->registerExtension($name, $provider);
         return $this;
     }
 

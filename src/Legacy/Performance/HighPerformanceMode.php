@@ -344,7 +344,12 @@ class HighPerformanceMode
                 'deactivation_threshold' => $protection['deactivation_threshold'] ?? 0.7,
             ];
 
-            $app->use(new LoadShedder($shedConfig));
+            $app->use(
+                new LoadShedder(
+                    (int) $shedConfig['max_concurrent_requests'],
+                    60
+                )
+            );
         }
     }
 
@@ -438,7 +443,9 @@ class HighPerformanceMode
 
                 if (time() - $lastRun[$key] >= $interval) {
                     try {
-                        $task();
+                        if (is_callable($task)) {
+                            $task();
+                        }
                     } catch (\Exception $e) {
                         error_log("Periodic task failed: " . $e->getMessage());
                     }

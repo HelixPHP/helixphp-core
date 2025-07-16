@@ -41,7 +41,7 @@ class PoolManager
             'response' => [],
             'stream' => [],
         ];
-        
+
         // Apply configuration
         if (isset($config['maxPoolSize'])) {
             $this->maxPoolSize = $config['maxPoolSize'];

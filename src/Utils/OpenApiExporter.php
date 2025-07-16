@@ -70,17 +70,20 @@ class OpenApiExporter
                     'description' => 'Successful response'
                 ]
             ];
-            
+
             // Add default error responses if not a static route
             if (!isset($route['metadata']['static_route'])) {
-                $responses = array_merge($responses, [
-                    '400' => ['description' => 'Invalid request'],
-                    '401' => ['description' => 'Unauthorized'],
-                    '404' => ['description' => 'Not found'],
-                    '500' => ['description' => 'Internal server error'],
-                ]);
+                $responses = array_merge(
+                    $responses,
+                    [
+                        '400' => ['description' => 'Invalid request'],
+                        '401' => ['description' => 'Unauthorized'],
+                        '404' => ['description' => 'Not found'],
+                        '500' => ['description' => 'Internal server error'],
+                    ]
+                );
             }
-            
+
             $spec['paths'][$path][$method] = [
                 'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
                 'responses' => $responses
@@ -114,7 +117,7 @@ class OpenApiExporter
                     $routes = $app::getRoutes();
                 }
             }
-            
+
             $spec = [
                 'openapi' => '3.0.0',
                 'info' => [
@@ -131,27 +134,27 @@ class OpenApiExporter
                 'paths' => [],
                 'tags' => [] // Initialize tags array
             ];
-            
+
             $globalTags = [];
-            
+
             // Process routes
             foreach ($routes as $route) {
                 $path = $route['path'] ?? '/';
                 $method = strtolower($route['method'] ?? 'get');
-                
+
                 // Convert Laravel-style parameters to OpenAPI format
-                $path = preg_replace('/\:(\w+)/', '{$1}', $path);
-                
+                $path = (string) preg_replace('/\:(\w+)/', '{$1}', $path);
+
                 if (!isset($spec['paths'][$path])) {
                     $spec['paths'][$path] = [];
                 }
-                
+
                 $responses = [
                     '200' => [
                         'description' => 'Successful response'
                     ]
                 ];
-                
+
                 // Add default error responses if not a static route
                 if (!isset($route['metadata']['static_route'])) {
                     $defaultErrors = [
@@ -160,7 +163,7 @@ class OpenApiExporter
                         '404' => ['description' => 'Not found'],
                         '500' => ['description' => 'Internal server error'],
                     ];
-                    
+
                     // Only add default errors if they don't already exist
                     foreach ($defaultErrors as $code => $response) {
                         if (!isset($responses[$code])) {
@@ -168,12 +171,12 @@ class OpenApiExporter
                         }
                     }
                 }
-                
+
                 $operationSpec = [
                     'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
                     'responses' => $responses
                 ];
-                
+
                 // Add custom responses if they exist
                 if (isset($route['metadata']['responses'])) {
                     $customResponses = $route['metadata']['responses'];
@@ -185,14 +188,14 @@ class OpenApiExporter
                         }
                     }
                 }
-                
+
                 // Add tags if they exist
                 if (isset($route['metadata']['tags'])) {
                     $operationSpec['tags'] = $route['metadata']['tags'];
                 }
-                
+
                 $spec['paths'][$path][$method] = $operationSpec;
-                
+
                 // Collect global tags
                 if (isset($route['metadata']['tags']) && is_array($route['metadata']['tags'])) {
                     foreach ($route['metadata']['tags'] as $tag) {
@@ -201,12 +204,12 @@ class OpenApiExporter
                         }
                     }
                 }
-                
+
                 // Add parameters if they exist
                 $parameterSource = $route['metadata']['parameters'] ?? null;
                 if ($parameterSource) {
                     $parameters = [];
-                    
+
                     if (is_array($parameterSource)) {
                         foreach ($parameterSource as $paramName => $paramConfig) {
                             if (is_string($paramName) && is_array($paramConfig)) {
@@ -223,27 +226,30 @@ class OpenApiExporter
                             }
                         }
                     }
-                    
+
                     if (!empty($parameters)) {
                         $spec['paths'][$path][$method]['parameters'] = $parameters;
                     }
                 }
             }
-            
+
             // Add global tags to spec
             if (!empty($globalTags)) {
-                $spec['tags'] = array_map(function($tag) {
-                    return ['name' => $tag];
-                }, $globalTags);
+                $spec['tags'] = array_map(
+                    function ($tag) {
+                        return ['name' => $tag];
+                    },
+                    $globalTags
+                );
             }
-            
+
             return $spec;
         }
 
         if ($app instanceof Application) {
             return self::exportStatic($app, $baseUrl);
         }
-        
+
         // Fallback for non-Application objects
         return [
             'openapi' => '3.0.0',

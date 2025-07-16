@@ -41,21 +41,15 @@ class PerformanceMonitor
     private static array $completedRequests = [];
 
     /**
-     * Instance configuration
-     */
-    private array $config = [];
-
-    /**
      * Constructor for instance usage
+     * @param array $config Configuration array (not used in simplified implementation)
+     * @phpstan-ignore-next-line
      */
     public function __construct(array $config = [])
     {
-        $this->config = array_merge([
-            'sample_rate' => 1.0,
-            'memory_threshold' => 0.8,
-            'latency_threshold' => 1000,
-        ], $config);
-        
+        // Configuration is not used in this simplified implementation
+        // Following 'Simplicidade sobre Otimização Prematura' principle
+
         if (self::$metrics['start_time'] === 0) {
             self::init();
         }
@@ -170,15 +164,15 @@ class PerformanceMonitor
     public static function startRequestStatic(?string $requestId = null, array $context = []): string
     {
         $requestId = $requestId ?? uniqid('req_', true);
-        
+
         self::$activeRequests[$requestId] = [
             'start_time' => microtime(true),
             'start_memory' => memory_get_usage(true),
             'context' => $context,
         ];
-        
+
         self::$requestContext[$requestId] = $context;
-        
+
         return $requestId;
     }
 
@@ -223,14 +217,17 @@ class PerformanceMonitor
     public static function getLiveMetrics(): array
     {
         $metrics = self::getMetrics();
-        
-        return array_merge($metrics, [
-            'active_requests' => count(self::$activeRequests),
-            'memory_pressure' => self::calculateMemoryPressure(),
-            'average_response_time' => self::calculateAverageResponseTime(),
-            'system_load' => self::getSystemLoad(),
-            'current_load' => self::getSystemLoad(),
-        ]);
+
+        return array_merge(
+            $metrics,
+            [
+                'active_requests' => count(self::$activeRequests),
+                'memory_pressure' => self::calculateMemoryPressure(),
+                'average_response_time' => self::calculateAverageResponseTime(),
+                'system_load' => self::getSystemLoad(),
+                'current_load' => self::getSystemLoad(),
+            ]
+        );
     }
 
     /**
@@ -240,11 +237,11 @@ class PerformanceMonitor
     {
         $currentMemory = memory_get_usage(true);
         $memoryLimit = self::getMemoryLimit();
-        
+
         if ($memoryLimit <= 0) {
             return 0.0;
         }
-        
+
         return ($currentMemory / $memoryLimit) * 100;
     }
 
@@ -256,16 +253,15 @@ class PerformanceMonitor
         if (empty(self::$completedRequests)) {
             return 0.0;
         }
-        
+
         $totalTime = 0;
-        $count = 0;
-        
+        $count = count(self::$completedRequests);
+
         foreach (self::$completedRequests as $request) {
             $totalTime += $request['duration'];
-            $count++;
         }
-        
-        return $count > 0 ? $totalTime / $count : 0.0;
+
+        return $totalTime / $count;
     }
 
     /**
@@ -284,11 +280,11 @@ class PerformanceMonitor
     private static function getMemoryLimit(): int
     {
         $memoryLimit = ini_get('memory_limit');
-        
+
         if ($memoryLimit === '-1') {
             return 0; // Unlimited
         }
-        
+
         return self::parseBytes($memoryLimit);
     }
 
@@ -314,7 +310,7 @@ class PerformanceMonitor
     public function getPerformanceMetrics(): array
     {
         $metrics = self::getMetrics();
-        
+
         return [
             'latency' => [
                 'p50' => self::calculateAverageResponseTime(),
@@ -352,7 +348,7 @@ class PerformanceMonitor
     public static function getPerformanceMetricsStatic(): array
     {
         $metrics = self::getMetrics();
-        
+
         return [
             'latency' => [
                 'p50' => self::calculateAverageResponseTime(),
@@ -392,7 +388,7 @@ class PerformanceMonitor
         $size = trim($size);
         $last = strtolower($size[strlen($size) - 1]);
         $size = (int)$size;
-        
+
         switch ($last) {
             case 'g':
                 $size *= 1024;
@@ -403,7 +399,7 @@ class PerformanceMonitor
             case 'k':
                 $size *= 1024;
         }
-        
+
         return $size;
     }
 }

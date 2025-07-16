@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Middleware\Http;
 
+use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Request;
 use PivotPHP\Core\Http\Response;
 use PivotPHP\Core\Utils\OpenApiExporter;
@@ -184,6 +185,7 @@ HTML;
     private function createHandler(callable $next): RequestHandlerInterface
     {
         return new class ($next) implements RequestHandlerInterface {
+            /** @var callable */
             private $next;
 
             public function __construct(callable $next)

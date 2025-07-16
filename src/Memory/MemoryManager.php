@@ -32,12 +32,12 @@ class MemoryManager
     private int $warningThreshold;
     private int $criticalThreshold;
     private bool $autoGc = true;
-    
+
     /**
      * Configuration
      */
     private array $config;
-    
+
     /**
      * Metrics storage
      */
@@ -60,7 +60,7 @@ class MemoryManager
             $this->config = $warningThreshold;
             $this->warningThreshold = $this->config['warning_threshold'] ?? (128 * 1024 * 1024); // 128MB
             $this->criticalThreshold = $this->config['critical_threshold'] ?? (256 * 1024 * 1024); // 256MB
-            
+
             // Handle special case for unlimited memory
             if (isset($this->config['memory_limit']) && $this->config['memory_limit'] === -1) {
                 $this->criticalThreshold = 2147483648; // 2GB for unlimited
@@ -71,9 +71,9 @@ class MemoryManager
                 'gc_threshold' => 0.7,
                 'emergency_gc' => 0.85,
             ];
-            $this->warningThreshold = $warningThreshold ?? (128 * 1024 * 1024); // 128MB
-            $this->criticalThreshold = $criticalThreshold ?? (256 * 1024 * 1024); // 256MB
-            
+            $this->warningThreshold = is_int($warningThreshold) ? $warningThreshold : (128 * 1024 * 1024); // 128MB
+            $this->criticalThreshold = is_int($criticalThreshold) ? $criticalThreshold : (256 * 1024 * 1024); // 256MB
+
             // Handle unlimited memory from PHP ini only if no explicit thresholds provided
             if ($warningThreshold === null && $criticalThreshold === null) {
                 $memoryLimit = ini_get('memory_limit');
@@ -181,9 +181,9 @@ class MemoryManager
     {
         $currentMemory = memory_get_usage(true);
         $peakMemory = memory_get_peak_usage(true);
-        
+
         $warningPercentage = ($currentMemory / $this->warningThreshold) * 100;
-        
+
         if ($currentMemory >= $this->criticalThreshold) {
             $pressure = self::PRESSURE_CRITICAL;
         } elseif ($currentMemory >= $this->warningThreshold) {
@@ -193,7 +193,7 @@ class MemoryManager
         } else {
             $pressure = self::PRESSURE_LOW;
         }
-        
+
         return [
             'current_memory' => $currentMemory,
             'peak_memory' => $peakMemory,
@@ -229,7 +229,7 @@ class MemoryManager
     public function check(): void
     {
         $currentMemory = memory_get_usage(true);
-        
+
         if ($currentMemory >= $this->criticalThreshold) {
             $this->forceGC();
         } elseif ($currentMemory >= $this->warningThreshold && $this->autoGc) {
@@ -250,7 +250,7 @@ class MemoryManager
             // Three parameter call - key, object, metadata
             $this->metrics['objects_tracked']++;
         }
-        
+
         $this->check();
     }
 
@@ -263,7 +263,7 @@ class MemoryManager
         $cycles = gc_collect_cycles();
         $endTime = microtime(true);
         $duration = ($endTime - $startTime) * 1000; // Convert to ms
-        
+
         // Always count GC runs, even if no cycles were collected
         $this->metrics['gc_cycles']++;
         $this->metrics['gc_duration_total'] += $duration;
@@ -277,28 +277,31 @@ class MemoryManager
     {
         $currentMemory = memory_get_usage(true);
         $usagePercent = ($currentMemory / $this->warningThreshold) * 100;
-        
-        return array_merge($this->metrics, [
-            'current_memory' => $currentMemory,
-            'peak_memory' => memory_get_peak_usage(true),
-            'total_gc_cycles' => $this->metrics['gc_cycles'],
-            'gc_runs' => $this->metrics['gc_cycles'],
-            'gc_collected' => $this->metrics['gc_cycles'], // For test compatibility
-            'memory_usage_percent' => $usagePercent,
-            'current_pressure' => $this->getCurrentPressure(),
-            'memory_trend' => 'stable', // Simplified for tests
-            'emergency_activations' => 0, // Simplified for tests
-            'gc_frequency' => (float)$this->metrics['gc_cycles'], // For test compatibility
-            'avg_gc_duration_ms' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['gc_duration_total'] / $this->metrics['gc_cycles']) : 0.0,
-            'pressure_changes' => $this->metrics['pressure_changes'],
-            'avg_gc_freed_mb' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['memory_freed'] / $this->metrics['gc_cycles'] / 1024 / 1024) : 0.0,
-            'pool_adjustments' => $this->metrics['pool_adjustments'] ?? 0,
-            'memory_peaks' => [
-                'current' => $currentMemory,
-                'peak' => memory_get_peak_usage(true),
-                'max_observed' => memory_get_peak_usage(true),
-            ],
-        ]);
+
+        return array_merge(
+            $this->metrics,
+            [
+                'current_memory' => $currentMemory,
+                'peak_memory' => memory_get_peak_usage(true),
+                'total_gc_cycles' => $this->metrics['gc_cycles'],
+                'gc_runs' => $this->metrics['gc_cycles'],
+                'gc_collected' => $this->metrics['gc_cycles'], // For test compatibility
+                'memory_usage_percent' => $usagePercent,
+                'current_pressure' => $this->getCurrentPressure(),
+                'memory_trend' => 'stable', // Simplified for tests
+                'emergency_activations' => 0, // Simplified for tests
+                'gc_frequency' => (float)$this->metrics['gc_cycles'], // For test compatibility
+                'avg_gc_duration_ms' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['gc_duration_total'] / $this->metrics['gc_cycles']) : 0.0,
+                'pressure_changes' => $this->metrics['pressure_changes'],
+                'avg_gc_freed_mb' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['memory_freed'] / $this->metrics['gc_cycles'] / 1024 / 1024) : 0.0,
+                'pool_adjustments' => $this->metrics['pool_adjustments'] ?? 0,
+                'memory_peaks' => [
+                    'current' => $currentMemory,
+                    'peak' => memory_get_peak_usage(true),
+                    'max_observed' => memory_get_peak_usage(true),
+                ],
+            ]
+        );
     }
 
     /**
@@ -308,7 +311,7 @@ class MemoryManager
     {
         $currentMemory = memory_get_usage(true);
         $previousPressure = $this->metrics['last_pressure'] ?? self::PRESSURE_LOW;
-        
+
         $newPressure = self::PRESSURE_LOW;
         if ($currentMemory >= $this->criticalThreshold) {
             $newPressure = self::PRESSURE_CRITICAL;
@@ -317,13 +320,13 @@ class MemoryManager
         } elseif (($currentMemory / $this->warningThreshold) > 0.7) {
             $newPressure = self::PRESSURE_MEDIUM;
         }
-        
+
         // Track pressure changes
         if ($previousPressure !== $newPressure) {
             $this->metrics['pressure_changes']++;
         }
         $this->metrics['last_pressure'] = $newPressure;
-        
+
         return $newPressure;
     }
 

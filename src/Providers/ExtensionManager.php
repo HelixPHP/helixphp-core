@@ -55,7 +55,7 @@ class ExtensionManager
     {
         $this->extensions[$name] = $extension;
         $this->extensionStates[$name] = true; // enabled by default
-        
+
         // Execute the extension to register services
         try {
             $extension($this->app);
@@ -63,7 +63,7 @@ class ExtensionManager
             // If extension fails, still register it but mark as disabled
             $this->extensionStates[$name] = false;
         }
-        
+
         $this->updateStats();
     }
 
@@ -76,7 +76,7 @@ class ExtensionManager
         if (is_string($extension)) {
             // If it's a class name, instantiate and register it
             if (class_exists($extension)) {
-                $extension = function($app) use ($extension) {
+                $extension = function ($app) use ($extension) {
                     $instance = new $extension($app);
                     if (method_exists($instance, 'register')) {
                         $instance->register();
@@ -84,12 +84,12 @@ class ExtensionManager
                     return $instance;
                 };
             } else {
-                $extension = function() use ($extension) {
+                $extension = function () use ($extension) {
                     return $extension;
                 };
             }
         }
-        
+
         $this->register($name, $extension);
     }
 
@@ -177,7 +177,7 @@ class ExtensionManager
         if (!$this->has($name)) {
             return false;
         }
-        
+
         $this->extensionStates[$name] = true;
         $this->updateStats();
         return true;
@@ -191,7 +191,7 @@ class ExtensionManager
         if (!$this->has($name)) {
             return false;
         }
-        
+
         $this->extensionStates[$name] = false;
         $this->updateStats();
         return true;
@@ -210,9 +210,12 @@ class ExtensionManager
      */
     public function getStats(): array
     {
-        return array_merge($this->stats, [
-            'total' => $this->stats['registered']
-        ]);
+        return array_merge(
+            $this->stats,
+            [
+                'total' => $this->stats['registered']
+            ]
+        );
     }
 
     /**

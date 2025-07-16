@@ -141,7 +141,7 @@ class SerializationCache
         // Cache the size and the serialized data
         self::$sizeCache[$cacheKey] = $size;
         self::$cache[$cacheKey] = $serializedData;
-        
+
         // Evict if needed
         self::evictIfNeeded();
 
@@ -217,7 +217,7 @@ class SerializationCache
             self::evictIfNeeded();
             return $serialized;
         }
-        
+
         // Cache hit
         self::$stats['cache_hits']++;
         return self::$cache[$cacheKey];
@@ -237,7 +237,7 @@ class SerializationCache
      */
     public static function getStats(): array
     {
-        $totalOps = self::$stats['cache_hits'] + self::$stats['cache_misses'];
+        $totalOps = (int) self::$stats['cache_hits'] + (int) self::$stats['cache_misses'];
         $hitRate = $totalOps > 0 ? ((float)self::$stats['cache_hits'] / $totalOps) * 100 : 0.0;
 
         return [
@@ -269,7 +269,7 @@ class SerializationCache
             $serialized = serialize($data);
             $hash = md5($serialized);
         }
-        
+
         // For large arrays, track in hash cache
         if (is_array($data) && count($data) > 100) {
             self::$hashCache[$hash] = true;
