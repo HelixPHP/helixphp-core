@@ -109,9 +109,10 @@ class_alias(
     'PivotPHP\Core\Http\Pool\PoolManager',
     'PivotPHP\Core\Http\Pool\SimplePoolManager'
 );
+// DynamicPoolManager removed - redirecting to simple PoolManager
 class_alias(
-    'PivotPHP\Core\Http\Pool\PoolManager',
-    'PivotPHP\Core\Http\Pool\DynamicPoolManager'
+    'PivotPHP\\Core\\Http\\Pool\\PoolManager',
+    'PivotPHP\\Core\\Http\\Pool\\DynamicPoolManager'
 );
 
 // Performance Monitoring - Legacy Aliases

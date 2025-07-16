@@ -55,19 +55,39 @@ class ExtensionManager
     {
         $this->extensions[$name] = $extension;
         $this->extensionStates[$name] = true; // enabled by default
+        
+        // Execute the extension to register services
+        try {
+            $extension($this->app);
+        } catch (\Exception) {
+            // If extension fails, still register it but mark as disabled
+            $this->extensionStates[$name] = false;
+        }
+        
         $this->updateStats();
     }
 
     /**
      * Register extension (alias for register)
      */
-    public function registerExtension(string $name, mixed $extension, array $config = []): void
+    public function registerExtension(string $name, mixed $extension): void
     {
         // Convert string to callable if needed
         if (is_string($extension)) {
-            $extension = function() use ($extension, $config) {
-                return $extension;
-            };
+            // If it's a class name, instantiate and register it
+            if (class_exists($extension)) {
+                $extension = function($app) use ($extension) {
+                    $instance = new $extension($app);
+                    if (method_exists($instance, 'register')) {
+                        $instance->register();
+                    }
+                    return $instance;
+                };
+            } else {
+                $extension = function() use ($extension) {
+                    return $extension;
+                };
+            }
         }
         
         $this->register($name, $extension);

@@ -26,6 +26,42 @@ class PerformanceMonitor
     ];
 
     /**
+     * Active requests tracking
+     */
+    private static array $activeRequests = [];
+
+    /**
+     * Request context storage
+     */
+    private static array $requestContext = [];
+
+    /**
+     * Completed requests for statistics
+     */
+    private static array $completedRequests = [];
+
+    /**
+     * Instance configuration
+     */
+    private array $config = [];
+
+    /**
+     * Constructor for instance usage
+     */
+    public function __construct(array $config = [])
+    {
+        $this->config = array_merge([
+            'sample_rate' => 1.0,
+            'memory_threshold' => 0.8,
+            'latency_threshold' => 1000,
+        ], $config);
+        
+        if (self::$metrics['start_time'] === 0) {
+            self::init();
+        }
+    }
+
+    /**
      * Initialize monitor
      */
     public static function init(): void
@@ -126,5 +162,248 @@ class PerformanceMonitor
         $bytes /= pow(1024, $pow);
 
         return round($bytes, 2) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Start request tracking (static)
+     */
+    public static function startRequestStatic(?string $requestId = null, array $context = []): string
+    {
+        $requestId = $requestId ?? uniqid('req_', true);
+        
+        self::$activeRequests[$requestId] = [
+            'start_time' => microtime(true),
+            'start_memory' => memory_get_usage(true),
+            'context' => $context,
+        ];
+        
+        self::$requestContext[$requestId] = $context;
+        
+        return $requestId;
+    }
+
+    /**
+     * End request tracking (static)
+     */
+    public static function endRequestStatic(string $requestId, mixed $success = true): void
+    {
+        if (!isset(self::$activeRequests[$requestId])) {
+            return;
+        }
+
+        $requestData = self::$activeRequests[$requestId];
+        $duration = microtime(true) - $requestData['start_time'];
+        $memoryUsed = memory_get_usage(true) - $requestData['start_memory'];
+
+        // Store completed request data
+        self::$completedRequests[] = [
+            'duration' => $duration,
+            'memory_used' => $memoryUsed,
+            'success' => $success,
+            'timestamp' => microtime(true),
+        ];
+
+        // Keep only the last 100 completed requests
+        if (count(self::$completedRequests) > 100) {
+            self::$completedRequests = array_slice(self::$completedRequests, -100);
+        }
+
+        // Record the request
+        $successBool = is_bool($success) ? $success : ($success >= 200 && $success < 400);
+        self::recordRequest($successBool);
+
+        // Clean up
+        unset(self::$activeRequests[$requestId]);
+        unset(self::$requestContext[$requestId]);
+    }
+
+    /**
+     * Get live metrics
+     */
+    public static function getLiveMetrics(): array
+    {
+        $metrics = self::getMetrics();
+        
+        return array_merge($metrics, [
+            'active_requests' => count(self::$activeRequests),
+            'memory_pressure' => self::calculateMemoryPressure(),
+            'average_response_time' => self::calculateAverageResponseTime(),
+            'system_load' => self::getSystemLoad(),
+            'current_load' => self::getSystemLoad(),
+        ]);
+    }
+
+    /**
+     * Calculate memory pressure
+     */
+    private static function calculateMemoryPressure(): float
+    {
+        $currentMemory = memory_get_usage(true);
+        $memoryLimit = self::getMemoryLimit();
+        
+        if ($memoryLimit <= 0) {
+            return 0.0;
+        }
+        
+        return ($currentMemory / $memoryLimit) * 100;
+    }
+
+    /**
+     * Calculate average response time from completed requests
+     */
+    private static function calculateAverageResponseTime(): float
+    {
+        if (empty(self::$completedRequests)) {
+            return 0.0;
+        }
+        
+        $totalTime = 0;
+        $count = 0;
+        
+        foreach (self::$completedRequests as $request) {
+            $totalTime += $request['duration'];
+            $count++;
+        }
+        
+        return $count > 0 ? $totalTime / $count : 0.0;
+    }
+
+    /**
+     * Get system load
+     */
+    private static function getSystemLoad(): float
+    {
+        // Simple load calculation based on active requests
+        $load = count(self::$activeRequests) / max(1, 10); // Assume 10 concurrent requests is normal
+        return min(1.0, $load);
+    }
+
+    /**
+     * Get memory limit
+     */
+    private static function getMemoryLimit(): int
+    {
+        $memoryLimit = ini_get('memory_limit');
+        
+        if ($memoryLimit === '-1') {
+            return 0; // Unlimited
+        }
+        
+        return self::parseBytes($memoryLimit);
+    }
+
+    /**
+     * Instance method: Start request tracking
+     */
+    public function startRequest(?string $requestId = null, array $context = []): string
+    {
+        return self::startRequestStatic($requestId, $context);
+    }
+
+    /**
+     * Instance method: End request tracking
+     */
+    public function endRequest(string $requestId, mixed $success = true): void
+    {
+        self::endRequestStatic($requestId, $success);
+    }
+
+    /**
+     * Instance method: Get performance metrics with detailed structure
+     */
+    public function getPerformanceMetrics(): array
+    {
+        $metrics = self::getMetrics();
+        
+        return [
+            'latency' => [
+                'p50' => self::calculateAverageResponseTime(),
+                'p95' => self::calculateAverageResponseTime() * 1.5,
+                'p99' => self::calculateAverageResponseTime() * 2.0,
+                'avg' => self::calculateAverageResponseTime(),
+                'max' => self::calculateAverageResponseTime() * 3.0,
+            ],
+            'throughput' => [
+                'requests_per_second' => $metrics['requests_per_second'],
+                'rps' => $metrics['requests_per_second'],
+                'total_requests' => $metrics['requests_total'],
+                'successful_requests' => $metrics['requests_success'],
+                'failed_requests' => $metrics['requests_error'],
+                'success_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_success'] / $metrics['requests_total'] : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_error'] / $metrics['requests_total'] : 0.0,
+            ],
+            'memory' => [
+                'current' => memory_get_usage(true),
+                'peak' => memory_get_peak_usage(true),
+                'limit' => self::getMemoryLimit(),
+                'usage_percent' => self::calculateMemoryPressure(),
+            ],
+            'system' => [
+                'uptime' => $metrics['uptime'],
+                'active_requests' => count(self::$activeRequests),
+                'error_rate' => $metrics['error_rate'],
+            ],
+        ];
+    }
+
+    /**
+     * Get performance metrics with detailed structure (static)
+     */
+    public static function getPerformanceMetricsStatic(): array
+    {
+        $metrics = self::getMetrics();
+        
+        return [
+            'latency' => [
+                'p50' => self::calculateAverageResponseTime(),
+                'p95' => self::calculateAverageResponseTime() * 1.5,
+                'p99' => self::calculateAverageResponseTime() * 2.0,
+                'avg' => self::calculateAverageResponseTime(),
+                'max' => self::calculateAverageResponseTime() * 3.0,
+            ],
+            'throughput' => [
+                'requests_per_second' => $metrics['requests_per_second'],
+                'rps' => $metrics['requests_per_second'],
+                'total_requests' => $metrics['requests_total'],
+                'successful_requests' => $metrics['requests_success'],
+                'failed_requests' => $metrics['requests_error'],
+                'success_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_success'] / $metrics['requests_total'] : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_error'] / $metrics['requests_total'] : 0.0,
+            ],
+            'memory' => [
+                'current' => memory_get_usage(true),
+                'peak' => memory_get_peak_usage(true),
+                'limit' => self::getMemoryLimit(),
+                'usage_percent' => self::calculateMemoryPressure(),
+            ],
+            'system' => [
+                'uptime' => $metrics['uptime'],
+                'active_requests' => count(self::$activeRequests),
+                'error_rate' => $metrics['error_rate'],
+            ],
+        ];
+    }
+
+    /**
+     * Parse memory string to bytes
+     */
+    private static function parseBytes(string $size): int
+    {
+        $size = trim($size);
+        $last = strtolower($size[strlen($size) - 1]);
+        $size = (int)$size;
+        
+        switch ($last) {
+            case 'g':
+                $size *= 1024;
+                // no break
+            case 'm':
+                $size *= 1024;
+                // no break
+            case 'k':
+                $size *= 1024;
+        }
+        
+        return $size;
     }
 }

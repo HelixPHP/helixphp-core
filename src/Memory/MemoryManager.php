@@ -22,12 +22,19 @@ class MemoryManager
     private bool $autoGc = true;
 
     /**
-     * Constructor
+     * Constructor - accepts array config or individual parameters
      */
-    public function __construct(?int $warningThreshold = null, ?int $criticalThreshold = null)
+    public function __construct(mixed $warningThreshold = null, ?int $criticalThreshold = null)
     {
-        $this->warningThreshold = $warningThreshold ?? (128 * 1024 * 1024); // 128MB
-        $this->criticalThreshold = $criticalThreshold ?? (256 * 1024 * 1024); // 256MB
+        // Handle array configuration
+        if (is_array($warningThreshold)) {
+            $config = $warningThreshold;
+            $this->warningThreshold = $config['warning_threshold'] ?? (128 * 1024 * 1024); // 128MB
+            $this->criticalThreshold = $config['critical_threshold'] ?? (256 * 1024 * 1024); // 256MB
+        } else {
+            $this->warningThreshold = $warningThreshold ?? (128 * 1024 * 1024); // 128MB
+            $this->criticalThreshold = $criticalThreshold ?? (256 * 1024 * 1024); // 256MB
+        }
     }
 
     /**

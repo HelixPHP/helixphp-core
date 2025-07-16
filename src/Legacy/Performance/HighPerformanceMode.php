@@ -6,7 +6,7 @@ namespace PivotPHP\Core\Legacy\Performance;
 
 use PivotPHP\Core\Core\Application;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
-use PivotPHP\Core\Http\Pool\DynamicPoolManager;
+use PivotPHP\Core\Http\Pool\PoolManager;
 // use PivotPHP\Core\Pool\Distributed\DistributedPoolManager; // REMOVED - Enterprise distributed system
 use PivotPHP\Core\Memory\MemoryManager;
 use PivotPHP\Core\Middleware\TrafficClassifier;
@@ -218,7 +218,7 @@ class HighPerformanceMode
     /**
      * Components
      */
-    private static ?DynamicPoolManager $pool = null;
+    private static ?PoolManager $pool = null;
     private static ?MemoryManager $memoryManager = null;
     private static ?PerformanceMonitor $monitor = null;
     // private static ?DistributedPoolManager $distributedManager = null; // REMOVED - Enterprise distributed system
@@ -276,7 +276,7 @@ class HighPerformanceMode
         $poolConfig = self::$currentConfig['pool'];
 
         // Create dynamic pool
-        self::$pool = new DynamicPoolManager($poolConfig);
+        self::$pool = new PoolManager($poolConfig);
 
         // Configure optimized factory
         OptimizedHttpFactory::initialize($poolConfig);

@@ -65,13 +65,25 @@ class OpenApiExporter
                 $spec['paths'][$path] = [];
             }
 
-            $spec['paths'][$path][$method] = [
-                'summary' => 'Route: ' . $method . ' ' . $path,
-                'responses' => [
-                    '200' => [
-                        'description' => 'Successful response'
-                    ]
+            $responses = [
+                '200' => [
+                    'description' => 'Successful response'
                 ]
+            ];
+            
+            // Add default error responses if not a static route
+            if (!isset($route['metadata']['static_route'])) {
+                $responses = array_merge($responses, [
+                    '400' => ['description' => 'Invalid request'],
+                    '401' => ['description' => 'Unauthorized'],
+                    '404' => ['description' => 'Not found'],
+                    '500' => ['description' => 'Internal server error'],
+                ]);
+            }
+            
+            $spec['paths'][$path][$method] = [
+                'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
+                'responses' => $responses
             ];
         }
 
@@ -131,18 +143,51 @@ class OpenApiExporter
                     $spec['paths'][$path] = [];
                 }
                 
-                $spec['paths'][$path][$method] = [
-                    'summary' => $route['summary'] ?? 'Route: ' . $method . ' ' . $path,
-                    'responses' => [
-                        '200' => [
-                            'description' => 'Successful response'
-                        ]
+                $responses = [
+                    '200' => [
+                        'description' => 'Successful response'
                     ]
                 ];
                 
+                // Add default error responses if not a static route
+                if (!isset($route['metadata']['static_route'])) {
+                    $responses = array_merge($responses, [
+                        '400' => ['description' => 'Invalid request'],
+                        '401' => ['description' => 'Unauthorized'],
+                        '404' => ['description' => 'Not found'],
+                        '500' => ['description' => 'Internal server error'],
+                    ]);
+                }
+                
+                $spec['paths'][$path][$method] = [
+                    'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
+                    'responses' => $responses
+                ];
+                
                 // Add parameters if they exist
-                if (isset($route['parameters'])) {
-                    $spec['paths'][$path][$method]['parameters'] = $route['parameters'];
+                $parameterSource = $route['parameters'] ?? ($route['metadata']['parameters'] ?? null);
+                if ($parameterSource) {
+                    $parameters = [];
+                    
+                    if (is_array($parameterSource)) {
+                        foreach ($parameterSource as $paramName => $paramConfig) {
+                            if (is_string($paramName) && is_array($paramConfig)) {
+                                $parameters[] = [
+                                    'name' => $paramName,
+                                    'in' => 'path',
+                                    'required' => true,
+                                    'schema' => [
+                                        'type' => $paramConfig['type'] ?? 'string'
+                                    ],
+                                    'description' => $paramConfig['description'] ?? ''
+                                ];
+                            }
+                        }
+                    }
+                    
+                    if (!empty($parameters)) {
+                        $spec['paths'][$path][$method]['parameters'] = $parameters;
+                    }
                 }
             }
             
