@@ -70,16 +70,20 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
             // Get the application instance from the request
             $app = $request->getAttribute('app');
 
-            if (!$app) {
+            if (!$app instanceof Application) {
                 return $this->createErrorResponse('Application not found in request', 500);
             }
 
             // Generate OpenAPI documentation
-            $docs = OpenApiExporter::export($app, $this->baseUrl);
+            $exporter = new OpenApiExporter($app);
+            $docs = $exporter->generate($this->baseUrl);
 
             // Create response
             $response = new Response();
-            $response->getBody()->write(json_encode($docs, JSON_PRETTY_PRINT));
+            $body = $response->getBody();
+            if (is_object($body)) {
+                $body->write(json_encode($docs, JSON_PRETTY_PRINT));
+            }
 
             return $response
                 ->withHeader('Content-Type', 'application/json')
@@ -97,7 +101,10 @@ class ApiDocumentationMiddleware implements MiddlewareInterface
         $swaggerHtml = $this->getSwaggerUiHtml();
 
         $response = new Response();
-        $response->getBody()->write($swaggerHtml);
+        $body = $response->getBody();
+        if (is_object($body)) {
+            $body->write($swaggerHtml);
+        }
 
         return $response->withHeader('Content-Type', 'text/html');
     }
@@ -153,7 +160,10 @@ HTML;
     private function createErrorResponse(string $message, int $statusCode = 500): ResponseInterface
     {
         $response = new Response();
-        $response->getBody()->write(json_encode(['error' => $message]));
+        $body = $response->getBody();
+        if (is_object($body)) {
+            $body->write(json_encode(['error' => $message]));
+        }
 
         return $response
             ->withStatus($statusCode)

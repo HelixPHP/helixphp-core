@@ -23,7 +23,7 @@ class DynamicPoolManagerTest extends TestCase
         parent::setUp();
         $this->manager = new DynamicPoolManager();
         // Reset statistics before each test
-        DynamicPoolManager::resetStats();
+        $this->manager->resetStats();
     }
 
     /**

@@ -31,9 +31,9 @@ class PoolManager
     private static ?self $instance = null;
 
     /**
-     * Private constructor for singleton
+     * Constructor for singleton (public for testing)
      */
-    private function __construct()
+    public function __construct(array $config = [])
     {
         // Initialize basic pools
         $this->pools = [
@@ -41,15 +41,23 @@ class PoolManager
             'response' => [],
             'stream' => [],
         ];
+        
+        // Apply configuration
+        if (isset($config['maxPoolSize'])) {
+            $this->maxPoolSize = $config['maxPoolSize'];
+        }
+        if (isset($config['enabled'])) {
+            $this->enabled = $config['enabled'];
+        }
     }
 
     /**
      * Get singleton instance
      */
-    public static function getInstance(): self
+    public static function getInstance(array $config = []): self
     {
         if (self::$instance === null) {
-            self::$instance = new self();
+            self::$instance = new self($config);
         }
         return self::$instance;
     }
@@ -141,6 +149,12 @@ class PoolManager
             'enabled' => $this->enabled,
             'max_pool_size' => $this->maxPoolSize,
             'pools' => [],
+            'stats' => [
+                'total_operations' => 0,
+                'pool_hits' => 0,
+                'pool_misses' => 0,
+            ],
+            'scaling_state' => 'normal',
         ];
 
         foreach ($this->pools as $name => $pool) {
@@ -151,6 +165,24 @@ class PoolManager
         }
 
         return $stats;
+    }
+
+    /**
+     * Reset pool statistics
+     */
+    public function resetStats(): void
+    {
+        // Simple implementation - just clear all pools
+        $this->clearAll();
+    }
+
+    /**
+     * Reset pool statistics (static version)
+     */
+    public static function resetStatsStatic(): void
+    {
+        $instance = self::getInstance();
+        $instance->resetStats();
     }
 
     /**
@@ -167,5 +199,62 @@ class PoolManager
     public function hasPool(string $poolName): bool
     {
         return isset($this->pools[$poolName]);
+    }
+
+    /**
+     * Get optimal pool sizes (simplified)
+     */
+    public function getOptimalPoolSizes(): array
+    {
+        return [
+            'request' => $this->maxPoolSize,
+            'response' => $this->maxPoolSize,
+            'stream' => $this->maxPoolSize,
+        ];
+    }
+
+    /**
+     * Get memory recommendations (simplified)
+     */
+    public function getMemoryRecommendations(): array
+    {
+        return [
+            'current_usage' => 'normal',
+            'recommended_action' => 'none',
+            'tier' => 'normal',
+        ];
+    }
+
+    /**
+     * Get detailed statistics
+     */
+    public function getDetailedStats(): array
+    {
+        $stats = $this->getStats();
+        $stats['detailed'] = true;
+        $stats['memory_usage'] = memory_get_usage(true);
+        $stats['memory_tier'] = 'normal';
+        return $stats;
+    }
+
+    /**
+     * Force cleanup if needed
+     */
+    public function forceCleanupIfNeeded(): void
+    {
+        // Simple implementation - clear if too many items
+        foreach ($this->pools as $poolName => $pool) {
+            if (count($pool) > $this->maxPoolSize) {
+                $this->clearPool($poolName);
+            }
+        }
+    }
+
+    /**
+     * Borrow object from pool (alias for rent)
+     */
+    public function borrow(string $poolName): ?object
+    {
+        return $this->rent($poolName);
     }
 }

@@ -22,6 +22,20 @@ class ExtensionManager
     private array $extensions = [];
 
     /**
+     * Extension statistics
+     */
+    private array $stats = [
+        'registered' => 0,
+        'enabled' => 0,
+        'disabled' => 0,
+    ];
+
+    /**
+     * Extension states
+     */
+    private array $extensionStates = [];
+
+    /**
      * Application instance
      */
     private Application $app;
@@ -40,6 +54,23 @@ class ExtensionManager
     public function register(string $name, callable $extension): void
     {
         $this->extensions[$name] = $extension;
+        $this->extensionStates[$name] = true; // enabled by default
+        $this->updateStats();
+    }
+
+    /**
+     * Register extension (alias for register)
+     */
+    public function registerExtension(string $name, mixed $extension, array $config = []): void
+    {
+        // Convert string to callable if needed
+        if (is_string($extension)) {
+            $extension = function() use ($extension, $config) {
+                return $extension;
+            };
+        }
+        
+        $this->register($name, $extension);
     }
 
     /**
@@ -72,6 +103,8 @@ class ExtensionManager
     public function remove(string $name): void
     {
         unset($this->extensions[$name]);
+        unset($this->extensionStates[$name]);
+        $this->updateStats();
     }
 
     /**
@@ -80,6 +113,8 @@ class ExtensionManager
     public function clear(): void
     {
         $this->extensions = [];
+        $this->extensionStates = [];
+        $this->updateStats();
     }
 
     /**
@@ -93,13 +128,113 @@ class ExtensionManager
     /**
      * Execute an extension if it exists
      */
-    public function execute(string $name, ...$args): mixed
+    public function execute(string $name, mixed ...$args): mixed
     {
         if (!$this->has($name)) {
             return null;
         }
 
         return ($this->extensions[$name])(...$args);
+    }
+
+    /**
+     * Load extensions from configuration
+     */
+    public function loadFromConfig(array $config): void
+    {
+        foreach ($config as $name => $extensionConfig) {
+            if (is_callable($extensionConfig)) {
+                $this->register($name, $extensionConfig);
+            }
+        }
+    }
+
+    /**
+     * Enable an extension
+     */
+    public function enable(string $name): bool
+    {
+        if (!$this->has($name)) {
+            return false;
+        }
+        
+        $this->extensionStates[$name] = true;
+        $this->updateStats();
+        return true;
+    }
+
+    /**
+     * Disable an extension
+     */
+    public function disable(string $name): bool
+    {
+        if (!$this->has($name)) {
+            return false;
+        }
+        
+        $this->extensionStates[$name] = false;
+        $this->updateStats();
+        return true;
+    }
+
+    /**
+     * Check if extension is enabled
+     */
+    public function isEnabled(string $name): bool
+    {
+        return $this->extensionStates[$name] ?? false;
+    }
+
+    /**
+     * Get extension statistics
+     */
+    public function getStats(): array
+    {
+        return array_merge($this->stats, [
+            'total' => $this->stats['registered']
+        ]);
+    }
+
+    /**
+     * Check if extension exists (alias for has)
+     */
+    public function hasExtension(string $name): bool
+    {
+        return $this->has($name);
+    }
+
+    /**
+     * Check if extension is enabled (alias for isEnabled)
+     */
+    public function isExtensionEnabled(string $name): bool
+    {
+        return $this->isEnabled($name);
+    }
+
+    /**
+     * Disable extension (alias for disable)
+     */
+    public function disableExtension(string $name): bool
+    {
+        return $this->disable($name);
+    }
+
+    /**
+     * Enable extension (alias for enable)
+     */
+    public function enableExtension(string $name): bool
+    {
+        return $this->enable($name);
+    }
+
+    /**
+     * Update internal statistics
+     */
+    private function updateStats(): void
+    {
+        $this->stats['registered'] = count($this->extensions);
+        $this->stats['enabled'] = count(array_filter($this->extensionStates));
+        $this->stats['disabled'] = $this->stats['registered'] - $this->stats['enabled'];
     }
 
     /**

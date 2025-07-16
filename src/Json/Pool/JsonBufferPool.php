@@ -51,7 +51,11 @@ class JsonBufferPool
     {
         // Check if should use pooling
         if (!self::shouldUsePooling($data)) {
-            return json_encode($data, $flags);
+            $result = json_encode($data, $flags);
+            if ($result === false) {
+                throw new \JsonException('JSON encoding failed: ' . json_last_error_msg());
+            }
+            return $result;
         }
 
         // Get optimal capacity for data
@@ -69,7 +73,7 @@ class JsonBufferPool
     /**
      * Get buffer from pool
      */
-    public static function getBuffer(int $capacity = null): JsonBuffer
+    public static function getBuffer(?int $capacity = null): JsonBuffer
     {
         if ($capacity === null) {
             $capacity = self::$config['default_capacity'];
@@ -322,13 +326,17 @@ class JsonBufferPool
      */
     public static function shouldUsePooling(mixed $data): bool
     {
-        // Use pooling for arrays with 10+ items or objects with 5+ properties
+        // Use pooling for arrays with POOLING_ARRAY_THRESHOLD+ items or objects with POOLING_OBJECT_THRESHOLD+ properties
         if (is_array($data)) {
-            return count($data) >= 10 || self::hasNestedStructure($data);
+            return count($data) >= self::POOLING_ARRAY_THRESHOLD || self::hasNestedStructure($data);
         }
 
         if (is_object($data)) {
-            return count((array) $data) >= 5;
+            return count((array) $data) >= self::POOLING_OBJECT_THRESHOLD;
+        }
+
+        if (is_string($data)) {
+            return strlen($data) >= self::POOLING_STRING_THRESHOLD;
         }
 
         return false;
@@ -485,4 +493,9 @@ class JsonBufferPool
     public const SMALL_ARRAY_THRESHOLD = 10;
     public const MEDIUM_ARRAY_THRESHOLD = 100;
     public const LARGE_ARRAY_THRESHOLD = 1000;
+
+    // Pooling threshold constants
+    public const POOLING_ARRAY_THRESHOLD = 10;
+    public const POOLING_OBJECT_THRESHOLD = 5;
+    public const POOLING_STRING_THRESHOLD = 1024;
 }
