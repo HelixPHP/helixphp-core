@@ -145,3 +145,9 @@ class_alias(
     'PivotPHP\Core\Legacy\Providers\ExtensionManager',
     'PivotPHP\Core\Providers\ExtensionManager'
 );
+
+// API Documentation - Core Feature
+class_alias(
+    'PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware',
+    'PivotPHP\Core\Middleware\ApiDocumentationMiddleware'
+);

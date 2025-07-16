@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-PivotPHP Core is a high-performance PHP microframework inspired by Express.js, designed for building APIs and web applications. Current version: 1.1.4 (Architectural Excellence & Performance Optimization Edition).
+PivotPHP Core is a high-performance PHP microframework inspired by Express.js, designed for building APIs and web applications. Current version: 1.2.0 (Simplicity Edition - Simplicidade sobre Otimização Prematura).
 
 ## Essential Commands
 
@@ -91,12 +91,35 @@ composer examples:auth        # Authentication example
 composer examples:middleware  # Middleware example
 ```
 
-### v1.1.4 Array Callable & Performance Features
+### v1.2.0 Simplicity Edition Features
 ```php
-// NEW: Array callable support (PHP 8.4+ compatible)
+// Array callable support (PHP 8.4+ compatible)
 $app->get('/users', [UserController::class, 'index']);
 $app->post('/users', [$controller, 'store']);
 // Router methods now accept callable|array union types
+
+// NOVO v1.2.0: Documentação OpenAPI/Swagger Automática
+use PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware;
+
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',        // JSON OpenAPI endpoint
+    'swagger_path' => '/swagger',  // Swagger UI interface
+    'base_url' => 'http://localhost:8080'
+]));
+
+// Suas rotas com documentação PHPDoc
+$app->get('/users', function($req, $res) {
+    /**
+     * @summary List all users
+     * @description Returns a list of all users in the system
+     * @tags Users
+     * @response 200 array List of users
+     */
+    return $res->json(['users' => User::all()]);
+});
+
+// Acesse: http://localhost:8080/swagger (Interface Swagger UI)
+// Acesse: http://localhost:8080/docs (JSON OpenAPI 3.0.0)
 
 // Optimized object pooling (+116% performance improvement)
 // Request pool reuse: 0% → 100%
@@ -393,13 +416,14 @@ $stats = JsonBufferPool::getStatistics();
 
 ## Current Version Status
 
-- **Current Version**: 1.1.4 (Architectural Excellence & Performance Optimization Edition)
-- **Previous Versions**: 1.1.3 (Performance Breakthrough), 1.1.2 (Consolidation), 1.1.1 (JSON Optimization), 1.1.0 (High-Performance)
-- **Tests Status**: 684 CI tests + 131 integration tests (100% success rate), architectural improvements
+- **Current Version**: 1.2.0 (Simplicity Edition - Simplicidade sobre Otimização Prematura)
+- **Previous Versions**: 1.1.4 (Developer Experience), 1.1.3 (Performance Breakthrough), 1.1.2 (Consolidation), 1.1.1 (JSON Optimization), 1.1.0 (High-Performance)
+- **Tests Status**: 684 CI tests + 131 integration tests (100% success rate), architectural simplification
 - **Performance**: +116% framework improvement (20,400 → 44,092 ops/sec), 100% object pool reuse
 - **Code Quality**: PHPStan Level 9, PSR-12 100% compliant, zero violations
-- **Architecture**: ARCHITECTURAL_GUIDELINES compliant, optimized object pooling, array callable support, simplified complexity
+- **Architecture**: Simple classes as core defaults, Legacy namespace for complex classes, automatic OpenAPI/Swagger documentation
 - **Compatibility**: 100% backward compatible via automatic aliases
+- **Key Features**: ApiDocumentationMiddleware for automatic OpenAPI/Swagger generation, simplified core classes
 
 ### Key Development Scripts
 ```bash
@@ -419,23 +443,39 @@ composer cs:fix                               # Auto-fix code style
 - The event system allows for deep customization without modifying core code
 - Documentation updates should be made in the `/docs` directory when adding features
 
-### v1.1.4 Key Changes
-- **🏗️ Architectural Excellence**: Complete implementation of ARCHITECTURAL_GUIDELINES for clean, maintainable code
-- **Array Callable Support**: Router methods now accept `callable|array` union types for PHP 8.4+ compatibility
-- **Performance Revolution**: +116% improvement through optimized object pooling (0% → 100% reuse rates)
-- **Test Quality**: 100% PSR-12 compliance, PHPUnit 10 compatibility, comprehensive integration tests
-- **Zero Breaking Changes**: All existing code continues to work without modification
+### v1.2.0 Key Changes
+- **🎯 Simplicity Edition**: Simple classes promoted to core defaults (PerformanceMode, LoadShedder, MemoryManager, etc.)
+- **🏗️ Legacy Architecture**: Complex classes moved to `src/Legacy/` namespace for backward compatibility
+- **📖 Automatic OpenAPI/Swagger Documentation**: New `ApiDocumentationMiddleware` for automatic documentation generation
+- **🔄 100% Backward Compatibility**: All existing code continues to work via automatic aliases
+- **⚡ Performance Maintained**: All v1.1.4 performance improvements preserved
 
-#### 🏗️ **Architectural Guidelines Compliance**
-Following the established ARCHITECTURAL_GUIDELINES (see `docs/ARCHITECTURAL_GUIDELINES.md`):
+#### 🏗️ **Architectural Simplification**
+Following the "Simplicidade sobre Otimização Prematura" principle:
 
-- **✅ Separation of Concerns**: Functional tests (<1s) completely separated from performance tests (@group performance)
-- **✅ Realistic Timeouts**: All timeouts adjusted to production-realistic expectations (3-5s vs previous 60s)
-- **✅ Over-Engineering Elimination**: Removed circuit breakers, load shedding, distributed pooling for microframework
-- **✅ Test Organization**: Split complex tests into focused components (`MemoryManagerSimpleTest.php` + `MemoryManagerStressTest.php`)
-- **✅ Simplified Implementations**: Created `SimplePerformanceMode` (70 lines) as appropriate alternative to `HighPerformanceMode` (598 lines)
+- **✅ Simple Classes as Core**: `PerformanceMode`, `LoadShedder`, `MemoryManager`, `PoolManager`, etc. are now the default implementations
+- **✅ Legacy Namespace**: Complex classes moved to `src/Legacy/` for those who need advanced features
+- **✅ Automatic Documentation**: `ApiDocumentationMiddleware` provides automatic OpenAPI/Swagger generation
+- **✅ Zero Breaking Changes**: All existing code continues to work without modification through aliases
+- **✅ Clean Architecture**: Focused on essential functionality without unnecessary complexity
 
 **Key Principle**: "Simplicidade sobre Otimização Prematura" - Simple, correct code over complex "optimized" code.
+
+#### 📖 **Automatic OpenAPI/Swagger Documentation**
+The v1.2.0 introduces `ApiDocumentationMiddleware` that automatically:
+- Generates OpenAPI 3.0.0 specification from all routes
+- Provides `/docs` endpoint with JSON OpenAPI
+- Provides `/swagger` endpoint with Swagger UI interface
+- Parses PHPDoc comments for route metadata
+- Requires zero configuration to work
+
+```php
+// Enable automatic documentation in 3 lines
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',
+    'swagger_path' => '/swagger'
+]));
+```
 
 ### Architectural Foundation (v1.1.2+)
 - Organized middleware structure while maintaining full backward compatibility

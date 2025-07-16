@@ -16,10 +16,12 @@
 **PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
 
 - **Performance Excepcional**: 44,092 ops/sec framework (+116% v1.1.3), **2,250 req/sec HTTP real** (cross-framework equivalent), 161K ops/sec JSON pooling, 1.61MB memory footprint.
-- **Arquitetura Excelente (v1.1.3)**: ARCHITECTURAL_GUIDELINES compliant, separação perfeita functional/performance, zero over-engineering.
+- **Arquitetura Simplificada (v1.2.0)**: Simplicidade sobre Otimização Prematura, classes core limpas, zero complexidade desnecessária.
 - **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
 - **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
+- **Documentação Automática**: Geração automática de OpenAPI/Swagger com middleware integrado.
 - **Qualidade Superior**: 684+ testes CI (100% success), 131 integration tests, PHPStan Level 9, PSR-12 100%, arquitectura simplificada.
+- **🎯 v1.2.0**: Simplicity Edition - classes simples como padrão, documentação automática restaurada, arquitetura limpa.
 - **🎯 v1.1.4**: Developer Experience & Examples Modernization Edition - native array callables, intelligent JsonBufferPool, enhanced error diagnostics.
 - **🏗️ v1.1.3**: Architectural Excellence Edition - guidelines compliance, performance +116%, test modernization.
 - **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e performance excepcional.
@@ -36,7 +38,7 @@
 - 🔐 **Autenticação Multi-método**
 - 🛡️ **Segurança Avançada**
 - 📡 **Streaming & SSE**
-- 📚 **OpenAPI/Swagger**
+- 📚 **OpenAPI/Swagger Automático** (v1.2.0+ Middleware)
 - 🔄 **PSR-7 Híbrido**
 - ♻️ **Object Pooling**
 - 🚀 **JSON Optimization** (v1.1.4+ Intelligent)
@@ -44,7 +46,7 @@
 - 🔍 **Enhanced Error Diagnostics** (v1.1.4+)
 - ⚡ **Performance Extrema**
 - 🧪 **Qualidade e Testes**
-- 🏗️ **Architectural Excellence** (v1.1.3)
+- 🎯 **Simplicidade sobre Otimização** (v1.2.0)
 
 ---
 
@@ -406,26 +408,72 @@ ContextualException::configure([
 - [JsonBufferPool Optimization Guide](docs/technical/json/BUFFER_POOL_OPTIMIZATION.md)  
 - [Enhanced Error Diagnostics](docs/technical/error-handling/CONTEXTUAL_EXCEPTION_GUIDE.md)
 
-### 📖 Documentação OpenAPI/Swagger
+### 📖 Documentação OpenAPI/Swagger Automática (v1.2.0+)
 
-O PivotPHP inclui suporte integrado para geração automática de documentação OpenAPI:
+O PivotPHP v1.2.0+ inclui **middleware automático** para geração de documentação OpenAPI/Swagger:
 
 ```php
-use PivotPHP\Core\Services\OpenApiExporter;
+use PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware;
 
-// Gerar documentação OpenAPI
-$openapi = new OpenApiExporter($app);
-$spec = $openapi->export();
+// ✅ NOVO v1.2.0+: Documentação automática em 3 linhas!
+$app = new Application();
 
-// Servir documentação em endpoint
-$app->get('/api/docs', function($req, $res) use ($openapi) {
-    $res->json($openapi->export());
+// Adicionar middleware de documentação automática
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',        // Endpoint JSON OpenAPI
+    'swagger_path' => '/swagger',  // Interface Swagger UI
+    'base_url' => 'http://localhost:8080'
+]));
+
+// Suas rotas com documentação PHPDoc
+$app->get('/users', function($req, $res) {
+    /**
+     * @summary List all users
+     * @description Returns a list of all users in the system
+     * @tags Users
+     * @response 200 array List of users
+     */
+    return $res->json(['users' => User::all()]);
 });
 
-// Servir UI do Swagger
-$app->get('/api/docs/ui', function($req, $res) {
-    $res->html($openapi->getSwaggerUI());
+$app->get('/users/:id', function($req, $res) {
+    /**
+     * @summary Get user by ID
+     * @description Returns a single user by their ID
+     * @tags Users
+     * @param int id User ID
+     * @response 200 object User object
+     * @response 404 object User not found
+     */
+    $userId = $req->param('id');
+    return $res->json(['user' => User::find($userId)]);
 });
+
+// Pronto! Acesse:
+// http://localhost:8080/swagger - Interface Swagger UI completa
+// http://localhost:8080/docs    - JSON OpenAPI 3.0.0
+```
+
+#### 🎯 Recursos do Middleware de Documentação
+
+- ✅ **Geração automática** de OpenAPI 3.0.0 de todas as rotas
+- ✅ **Interface Swagger UI** integrada (zero configuração)
+- ✅ **Parsing de PHPDoc** para metadados das rotas
+- ✅ **Endpoints automáticos** `/docs` e `/swagger`
+- ✅ **Configuração flexível** de paths e URLs
+- ✅ **Zero dependências** externas
+- ✅ **Compatibilidade total** com todas as rotas
+
+#### 📝 Exemplo Completo
+
+Veja o exemplo funcional em [`examples/api_documentation_example.php`](examples/api_documentation_example.php):
+
+```bash
+# Rodar o exemplo
+php examples/api_documentation_example.php
+
+# Acessar documentação
+open http://localhost:8080/swagger
 ```
 
 ---

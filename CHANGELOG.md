@@ -5,6 +5,48 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-01-16 - Simplicity Edition
+
+### Added
+- **ApiDocumentationMiddleware** - Automatic OpenAPI/Swagger documentation generation
+- **Swagger UI Integration** - Interactive documentation interface at `/swagger`
+- **OpenAPI 3.0.0 Support** - Complete specification generation from routes
+- **PHPDoc Route Parsing** - Automatic extraction of route metadata
+- **Example Application** - `api_documentation_example.php` demonstrating features
+- **Legacy Namespace** - New `src/Legacy/` namespace for complex implementations
+- **Simplified Core Classes** - Clean, maintainable implementations as defaults
+
+### Changed
+- **Architecture Simplification** - Simple classes promoted to core defaults following "Simplicidade sobre Otimização Prematura"
+- **Core Classes Renamed** - `SimplePerformanceMode` → `PerformanceMode`, `SimpleLoadShedder` → `LoadShedder`, etc.
+- **Legacy Namespace** - Complex classes moved to `src/Legacy/` for backward compatibility
+- **Core Classes** - `PerformanceMode`, `LoadShedder`, `MemoryManager`, `PoolManager`, etc. are now simple implementations
+- **Documentation Focus** - Emphasis on automatic documentation generation as key differentiator
+- **Middleware Organization** - `ApiDocumentationMiddleware` properly organized under `src/Middleware/Http/`
+
+### Deprecated
+- **Complex Classes** - `HighPerformanceMode`, `ExtensionManager`, `OpenApiExporter`, `SerializationCache` moved to `src/Legacy/` namespace
+- **Manual Documentation** - Superseded by automatic middleware approach
+- **Over-engineered Components** - Complex implementations deprecated in favor of simple alternatives
+
+### Fixed
+- **OpenAPI Documentation** - Restored automatic documentation generation functionality that was lost during simplification
+- **Middleware Organization** - Proper namespace structure for HTTP middleware
+- **JsonBufferPool Compatibility** - Fixed test compatibility issues with renamed classes
+- **Alias System** - Resolved autoloader conflicts during class transitions
+
+### Backward Compatibility
+- **100% Compatible** - All existing code continues to work via automatic aliases
+- **Alias System** - 15+ aliases maintain compatibility with old class names
+- **Zero Breaking Changes** - Drop-in replacement for existing applications
+- **Legacy Support** - Complex classes still available via `src/Legacy/` namespace
+- **Smooth Migration** - Optional migration to new simple classes
+
+### Performance
+- **Maintained Performance** - All v1.1.4 performance improvements preserved
+- **Object Pool Reuse** - 100% request pool reuse, 99.9% response pool reuse maintained
+- **Framework Throughput** - 44,092 ops/sec maintained with simplified architecture
+
 ## [1.1.4] - 2025-07-15
 
 ### 🔧 **Infrastructure Consolidation & Automation Edition**
