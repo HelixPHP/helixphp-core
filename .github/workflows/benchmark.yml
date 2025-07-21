@@ -1,4 +1,4 @@
-name: Performance Benchmarks v1.1.4
+name: Performance Benchmarks v1.2.0
 
 # Automated performance benchmarks with Docker validation
 # Validates Array Callable performance and object pooling improvements
@@ -21,7 +21,7 @@ on:
 jobs:
   performance-benchmarks:
     runs-on: ubuntu-latest
-    name: Performance Benchmarks (PHP 8.1) - v1.1.4
+    name: Performance Benchmarks (PHP 8.1) - v1.2.0
 
     steps:
     - name: Checkout code
@@ -43,12 +43,12 @@ jobs:
         echo "🚀 Running Core Performance Benchmarks..."
         php benchmarks/QuietBenchmark.php
         
-    - name: Run Array Callable Performance Tests (v1.1.4)
+    - name: Run Array Callable Performance Tests (v1.2.0)
       run: |
         echo "🔥 Running Array Callable Performance Tests..."
         php benchmarks/OptimizationBenchmark.php
         
-    - name: Run Object Pooling Benchmarks (v1.1.4)
+    - name: Run Object Pooling Benchmarks (v1.2.0)
       run: |
         echo "⚡ Running Object Pooling Benchmarks..."
         php benchmarks/PoolOptimizationBenchmark.php
@@ -62,10 +62,10 @@ jobs:
       run: |
         echo ""
         echo "========================================="
-        echo "   PERFORMANCE BENCHMARKS - v1.1.4"
+        echo "   PERFORMANCE BENCHMARKS - v1.2.0"
         echo "========================================="
         echo ""
-        echo "🏆 v1.1.4 Performance Achievements:"
+        echo "🏆 v1.2.0 Performance Achievements:"
         echo "   • Framework Performance: +116% improvement"
         echo "   • Application Creation: 110,706 ops/sec"
         echo "   • Array Callable: 28,899 ops/sec"
@@ -87,7 +87,7 @@ jobs:
 
   docker-benchmarks:
     runs-on: ubuntu-latest
-    name: Docker Benchmarks - v1.1.4
+    name: Docker Benchmarks - v1.2.0
     needs: performance-benchmarks
 
     steps:
@@ -118,13 +118,13 @@ jobs:
       run: |
         echo ""
         echo "========================================="
-        echo "   DOCKER BENCHMARKS - v1.1.4"
+        echo "   DOCKER BENCHMARKS - v1.2.0"
         echo "========================================="
         echo ""
         echo "🐳 Docker Environment:"
-        echo "   • Core v1.1.4: port 8080"
-        echo "   • ORM v1.1.4: port 8081"
-        echo "   • ReactPHP v1.1.4: port 8082"
+        echo "   • Core v1.2.0: port 8080"
+        echo "   • ORM v1.2.0: port 8081"
+        echo "   • ReactPHP v1.2.0: port 8082"
         echo "   • MySQL 8.0: port 3306"
         echo "   • Redis 7: port 6379"
         echo ""
