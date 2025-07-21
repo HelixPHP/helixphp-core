@@ -26,6 +26,17 @@ class PoolManager
     private bool $enabled = true;
 
     /**
+     * Pool statistics
+     */
+    private array $statistics = [
+        'borrowed' => 0,
+        'returned' => 0,
+        'expanded' => 0,
+        'pool_hits' => 0,
+        'pool_misses' => 0,
+    ];
+
+    /**
      * Singleton instance
      */
     private static ?self $instance = null;
@@ -92,10 +103,24 @@ class PoolManager
      */
     public function rent(string $poolName): ?object
     {
-        if (!$this->enabled || empty($this->pools[$poolName])) {
+        if (!$this->enabled) {
+            $this->statistics['pool_misses']++;
             return null;
         }
 
+        // If pool is empty, track as miss but we'll create a new object
+        if (empty($this->pools[$poolName])) {
+            $this->statistics['pool_misses']++;
+            $this->statistics['borrowed']++;
+            // If we're borrowing more than pool size, track expansion
+            if ($this->statistics['borrowed'] > $this->maxPoolSize) {
+                $this->statistics['expanded']++;
+            }
+            return null; // Caller should create new object
+        }
+
+        $this->statistics['borrowed']++;
+        $this->statistics['pool_hits']++;
         return array_pop($this->pools[$poolName]);
     }
 
@@ -115,6 +140,12 @@ class PoolManager
         // Don't exceed max pool size
         if (count($this->pools[$poolName]) < $this->maxPoolSize) {
             $this->pools[$poolName][] = $object;
+            $this->statistics['returned']++;
+        }
+
+        // Check if we need to expand (track expansion attempts)
+        if (count($this->pools[$poolName]) >= $this->maxPoolSize * 0.8) {
+            $this->statistics['expanded']++;
         }
     }
 
@@ -149,12 +180,22 @@ class PoolManager
             'enabled' => $this->enabled,
             'max_pool_size' => $this->maxPoolSize,
             'pools' => [],
-            'stats' => [
-                'total_operations' => 0,
-                'pool_hits' => 0,
-                'pool_misses' => 0,
+            'stats' => array_merge(
+                $this->statistics,
+                [
+                    'total_operations' => $this->statistics['borrowed'] + $this->statistics['returned'],
+                ]
+            ),
+            'scaling_state' => [
+                'request' => [
+                    'current_size' => $this->statistics['borrowed'],
+                    'max_size' => $this->maxPoolSize,
+                ],
+                'response' => [
+                    'current_size' => $this->statistics['borrowed'],
+                    'max_size' => $this->maxPoolSize,
+                ],
             ],
-            'scaling_state' => 'normal',
         ];
 
         foreach ($this->pools as $name => $pool) {
@@ -172,8 +213,15 @@ class PoolManager
      */
     public function resetStats(): void
     {
-        // Simple implementation - just clear all pools
+        // Simple implementation - just clear all pools and reset stats
         $this->clearAll();
+        $this->statistics = [
+            'borrowed' => 0,
+            'returned' => 0,
+            'expanded' => 0,
+            'pool_hits' => 0,
+            'pool_misses' => 0,
+        ];
     }
 
     /**
@@ -251,10 +299,27 @@ class PoolManager
     }
 
     /**
-     * Borrow object from pool (alias for rent)
+     * Borrow object from pool (can create new objects if pool is empty)
      */
-    public function borrow(string $poolName): ?object
+    public function borrow(string $poolName, ?array $config = null): object
     {
-        return $this->rent($poolName);
+        // Try to get from pool first
+        $object = $this->rent($poolName);
+
+        // If pool is empty, create new object and track expansion
+        if ($object === null) {
+            // Create a simple stdClass object with the config
+            $object = new \stdClass();
+            if ($config) {
+                foreach ($config as $key => $value) {
+                    $object->$key = $value;
+                }
+            }
+
+            // Since we're going beyond pool capacity, this is an expansion
+            $this->statistics['expanded']++;
+        }
+
+        return $object;
     }
 }

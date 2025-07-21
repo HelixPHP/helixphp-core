@@ -123,15 +123,40 @@ class SerializationCacheTest extends TestCase
         ];
         $keys = ['custom_key_1', 'custom_key_2'];
 
-        $totalSize = SerializationCache::getTotalSerializedSize($objects, $keys);
-        $this->assertIsInt($totalSize);
+        // First, ensure cache is truly clear for this specific test
+        SerializationCache::clear();
 
-        // Second call should use cache
+        // Check that cache is actually empty
+        $initialStats = SerializationCache::getStats();
+        $this->assertEquals(0, $initialStats['cache_hits']);
+        $this->assertEquals(0, $initialStats['cache_misses']);
+
+        // First call should generate cache misses
+        $totalSize1 = SerializationCache::getTotalSerializedSize($objects, $keys);
+        $this->assertIsInt($totalSize1);
+        $this->assertGreaterThan(0, $totalSize1);
+
+        // Check stats after first call - should have 2 misses, 0 hits
+        $afterFirstStats = SerializationCache::getStats();
+        $this->assertEquals(2, $afterFirstStats['cache_misses']);
+        $this->assertEquals(0, $afterFirstStats['cache_hits']);
+
+        // Second call should generate cache hits
         $totalSize2 = SerializationCache::getTotalSerializedSize($objects, $keys);
-        $this->assertEquals($totalSize, $totalSize2);
+        $this->assertEquals($totalSize1, $totalSize2);
 
-        $stats = SerializationCache::getStats();
-        $this->assertEquals(2, $stats['cache_hits']); // Both objects should hit cache
+        // Check final stats - verify caching is working correctly
+        $finalStats = SerializationCache::getStats();
+        
+        // In the full test suite, other components may use the cache, so we check deltas
+        $missesDelta = $finalStats['cache_misses'] - $afterFirstStats['cache_misses']; 
+        $hitsDelta = $finalStats['cache_hits'] - $afterFirstStats['cache_hits'];
+        
+        // The second call should not generate additional misses (delta should be 0)
+        $this->assertEquals(0, $missesDelta, 'Second call should not generate cache misses');
+        
+        // The second call should generate exactly 2 hits (one for each object)
+        $this->assertEquals(2, $hitsDelta, 'Second call should generate 2 cache hits');
     }
 
     public function testGetSerializedData(): void

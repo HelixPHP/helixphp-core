@@ -41,6 +41,16 @@ class PerformanceMonitor
     private static array $completedRequests = [];
 
     /**
+     * Error tracking
+     */
+    private static array $errors = [];
+
+    /**
+     * Memory samples
+     */
+    private static array $memorySamples = [];
+
+    /**
      * Constructor for instance usage
      * @param array $config Configuration array (not used in simplified implementation)
      * @phpstan-ignore-next-line
@@ -98,8 +108,8 @@ class PerformanceMonitor
             : 0;
 
         $requestsPerSecond = $uptime > 0
-            ? self::$metrics['requests_total'] / $uptime
-            : 0;
+            ? self::$metrics['requests_total'] / max($uptime, 0.001) // Minimum 1ms to avoid division by zero
+            : (self::$metrics['requests_total'] > 0 ? self::$metrics['requests_total'] * 1000 : 0);
 
         return [
             'uptime' => round($uptime, 2),
@@ -186,7 +196,7 @@ class PerformanceMonitor
         }
 
         $requestData = self::$activeRequests[$requestId];
-        $duration = microtime(true) - $requestData['start_time'];
+        $duration = max(0.0, microtime(true) - $requestData['start_time']);
         $memoryUsed = memory_get_usage(true) - $requestData['start_memory'];
 
         // Store completed request data
@@ -310,14 +320,16 @@ class PerformanceMonitor
     public function getPerformanceMetrics(): array
     {
         $metrics = self::getMetrics();
+        $latencyStats = self::calculateLatencyStats();
 
         return [
             'latency' => [
-                'p50' => self::calculateAverageResponseTime(),
-                'p95' => self::calculateAverageResponseTime() * 1.5,
-                'p99' => self::calculateAverageResponseTime() * 2.0,
-                'avg' => self::calculateAverageResponseTime(),
-                'max' => self::calculateAverageResponseTime() * 3.0,
+                'min' => $latencyStats['min'],
+                'max' => $latencyStats['max'],
+                'p50' => $latencyStats['avg'],
+                'p95' => $latencyStats['p95'],
+                'p99' => $latencyStats['p99'],
+                'avg' => $latencyStats['avg'],
             ],
             'throughput' => [
                 'requests_per_second' => $metrics['requests_per_second'],
@@ -348,14 +360,16 @@ class PerformanceMonitor
     public static function getPerformanceMetricsStatic(): array
     {
         $metrics = self::getMetrics();
+        $latencyStats = self::calculateLatencyStats();
 
         return [
             'latency' => [
-                'p50' => self::calculateAverageResponseTime(),
-                'p95' => self::calculateAverageResponseTime() * 1.5,
-                'p99' => self::calculateAverageResponseTime() * 2.0,
-                'avg' => self::calculateAverageResponseTime(),
-                'max' => self::calculateAverageResponseTime() * 3.0,
+                'min' => $latencyStats['min'],
+                'max' => $latencyStats['max'],
+                'p50' => $latencyStats['avg'],
+                'p95' => $latencyStats['p95'],
+                'p99' => $latencyStats['p99'],
+                'avg' => $latencyStats['avg'],
             ],
             'throughput' => [
                 'requests_per_second' => $metrics['requests_per_second'],
@@ -381,6 +395,44 @@ class PerformanceMonitor
     }
 
     /**
+     * Calculate latency statistics from completed requests
+     */
+    private static function calculateLatencyStats(): array
+    {
+        if (empty(self::$completedRequests)) {
+            return [
+                'min' => 0.0,
+                'max' => 0.0,
+                'avg' => 0.0,
+                'p95' => 0.0,
+                'p99' => 0.0,
+            ];
+        }
+
+        $durations = array_column(self::$completedRequests, 'duration');
+        sort($durations);
+
+        $count = count($durations);
+        $min = min($durations);
+        $max = max($durations);
+        $avg = array_sum($durations) / $count;
+
+        $p95Index = (int)ceil($count * 0.95) - 1;
+        $p99Index = (int)ceil($count * 0.99) - 1;
+
+        $p95 = $durations[max(0, $p95Index)];
+        $p99 = $durations[max(0, $p99Index)];
+
+        return [
+            'min' => max(0.0, $min),
+            'max' => max(0.0, $max),
+            'avg' => max(0.0, $avg),
+            'p95' => max(0.0, $p95),
+            'p99' => max(0.0, $p99),
+        ];
+    }
+
+    /**
      * Parse memory string to bytes
      */
     private static function parseBytes(string $size): int
@@ -401,5 +453,58 @@ class PerformanceMonitor
         }
 
         return $size;
+    }
+
+    /**
+     * Record memory sample
+     */
+    public function recordMemorySample(): void
+    {
+        self::recordMemorySampleStatic();
+    }
+
+    /**
+     * Record memory sample (static)
+     */
+    public static function recordMemorySampleStatic(): void
+    {
+        self::$memorySamples[] = [
+            'timestamp' => microtime(true),
+            'memory_usage' => memory_get_usage(true),
+            'memory_peak' => memory_get_peak_usage(true),
+        ];
+
+        // Keep only the last 100 samples
+        if (count(self::$memorySamples) > 100) {
+            self::$memorySamples = array_slice(self::$memorySamples, -100);
+        }
+    }
+
+    /**
+     * Record error
+     */
+    public function recordError(string $type, array $context = []): void
+    {
+        self::recordErrorStatic($type, $context);
+    }
+
+    /**
+     * Record error (static)
+     */
+    public static function recordErrorStatic(string $type, array $context = []): void
+    {
+        self::$errors[] = [
+            'type' => $type,
+            'context' => $context,
+            'timestamp' => microtime(true),
+        ];
+
+        // Keep only the last 100 errors
+        if (count(self::$errors) > 100) {
+            self::$errors = array_slice(self::$errors, -100);
+        }
+
+        // Also record as a failed request
+        self::recordRequest(false);
     }
 }

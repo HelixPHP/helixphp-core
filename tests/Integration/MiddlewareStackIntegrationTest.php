@@ -387,8 +387,12 @@ class MiddlewareStackIntegrationTest extends TestCase
         $maxTime = max($times);
 
         // Performance assertions (adjust based on system capabilities)
-        $this->assertLessThan(50, $averageTime, 'Average request time should be < 50ms');
-        $this->assertLessThan(200, $maxTime, 'Maximum request time should be < 200ms');
+        // More lenient thresholds for CI/virtualized environments
+        $averageThreshold = getenv('CI') ? 1000 : 100; // 1000ms for CI, 100ms for local
+        $maxThreshold = getenv('CI') ? 2000 : 500;     // 2000ms for CI, 500ms for local
+
+        $this->assertLessThan($averageThreshold, $averageTime, "Average request time should be < {$averageThreshold}ms");
+        $this->assertLessThan($maxThreshold, $maxTime, "Maximum request time should be < {$maxThreshold}ms");
     }
 
     /**

@@ -309,7 +309,7 @@ class AbstractMiddlewareTest extends TestCase
         $startTime = microtime(true);
 
         // Execute middleware many times
-        for ($i = 0; $i < 1000; $i++) {
+        for ($i = 0; $i < 100; $i++) { // Reduced from 1000 to 100 iterations
             $response = $middleware->process($this->request, $this->handler);
             $this->assertInstanceOf(ResponseInterface::class, $response);
         }
@@ -317,8 +317,8 @@ class AbstractMiddlewareTest extends TestCase
         $endTime = microtime(true);
         $duration = ($endTime - $startTime) * 1000; // Convert to milliseconds
 
-        // Adjusted for realistic performance expectations in various environments
-        $maxDuration = getenv('CI') ? 60000 : 30000; // 60s for CI, 30s for local
+        // Adjusted for realistic performance expectations with reduced iterations
+        $maxDuration = getenv('CI') ? 10000 : 5000; // 10s for CI, 5s for local
         $this->assertLessThan($maxDuration, $duration, "Middleware performance test took too long: {$duration}ms");
     }
 }

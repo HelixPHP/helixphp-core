@@ -47,8 +47,10 @@ class JsonBufferPool
     /**
      * Encode data with pooling
      */
-    public static function encodeWithPool(mixed $data, int $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): string
-    {
+    public static function encodeWithPool(
+        mixed $data,
+        int $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+    ): string {
         // Check if should use pooling
         if (!self::shouldUsePooling($data)) {
             $result = json_encode($data, $flags);
@@ -326,7 +328,8 @@ class JsonBufferPool
      */
     public static function shouldUsePooling(mixed $data): bool
     {
-        // Use pooling for arrays with POOLING_ARRAY_THRESHOLD+ items or objects with POOLING_OBJECT_THRESHOLD+ properties
+        // Use pooling for arrays with POOLING_ARRAY_THRESHOLD+ items or objects with
+        // POOLING_OBJECT_THRESHOLD+ properties
         if (is_array($data)) {
             return count($data) >= self::POOLING_ARRAY_THRESHOLD || self::hasNestedStructure($data);
         }
@@ -461,7 +464,9 @@ class JsonBufferPool
                     throw new \InvalidArgumentException("Size category names must be non-empty strings");
                 }
                 if (!is_int($capacity)) {
-                    throw new \InvalidArgumentException("Size category '{$name}' must have an integer capacity");
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have an integer capacity"
+                    );
                 }
                 if ($capacity <= 0) {
                     throw new \InvalidArgumentException("Size category '{$name}' must have a positive integer capacity");

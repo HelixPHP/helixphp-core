@@ -118,8 +118,9 @@ class SerializationCache
     {
         // If called with data and key (legacy usage)
         if ($key !== null) {
-            // Use both the key and data hash for uniqueness
-            $cacheKey = $key . '_' . md5(serialize($keyOrData));
+            // Use the provided key with data hash for consistency
+            $dataHash = md5(serialize($keyOrData));
+            $cacheKey = $key . '_' . $dataHash;
             $data = $keyOrData;
         } else {
             // Generate cache key for data

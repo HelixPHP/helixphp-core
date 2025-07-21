@@ -17,14 +17,14 @@ class MemoryManager
     /**
      * Constants for compatibility
      */
-    const STRATEGY_CONSERVATIVE = 'conservative';
-    const STRATEGY_AGGRESSIVE = 'aggressive';
-    const STRATEGY_ADAPTIVE = 'adaptive';
-    const STRATEGY_PRIORITY = 'priority';
-    const PRESSURE_LOW = 'low';
-    const PRESSURE_MEDIUM = 'medium';
-    const PRESSURE_HIGH = 'high';
-    const PRESSURE_CRITICAL = 'critical';
+    public const STRATEGY_CONSERVATIVE = 'conservative';
+    public const STRATEGY_AGGRESSIVE = 'aggressive';
+    public const STRATEGY_ADAPTIVE = 'adaptive';
+    public const STRATEGY_PRIORITY = 'priority';
+    public const PRESSURE_LOW = 'low';
+    public const PRESSURE_MEDIUM = 'medium';
+    public const PRESSURE_HIGH = 'high';
+    public const PRESSURE_CRITICAL = 'critical';
 
     /**
      * Memory thresholds (in bytes)
@@ -182,7 +182,7 @@ class MemoryManager
         $currentMemory = memory_get_usage(true);
         $peakMemory = memory_get_peak_usage(true);
 
-        $warningPercentage = ($currentMemory / $this->warningThreshold) * 100;
+        $warningPercentage = (float)(($currentMemory / $this->warningThreshold) * 100);
 
         if ($currentMemory >= $this->criticalThreshold) {
             $pressure = self::PRESSURE_CRITICAL;
@@ -276,7 +276,7 @@ class MemoryManager
     public function getMetrics(): array
     {
         $currentMemory = memory_get_usage(true);
-        $usagePercent = ($currentMemory / $this->warningThreshold) * 100;
+        $usagePercent = (float)(($currentMemory / $this->warningThreshold) * 100);
 
         return array_merge(
             $this->metrics,
@@ -291,9 +291,11 @@ class MemoryManager
                 'memory_trend' => 'stable', // Simplified for tests
                 'emergency_activations' => 0, // Simplified for tests
                 'gc_frequency' => (float)$this->metrics['gc_cycles'], // For test compatibility
-                'avg_gc_duration_ms' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['gc_duration_total'] / $this->metrics['gc_cycles']) : 0.0,
+                'avg_gc_duration_ms' => $this->metrics['gc_cycles'] > 0 ?
+                    (float)($this->metrics['gc_duration_total'] / $this->metrics['gc_cycles']) : 0.0,
                 'pressure_changes' => $this->metrics['pressure_changes'],
-                'avg_gc_freed_mb' => $this->metrics['gc_cycles'] > 0 ? (float)($this->metrics['memory_freed'] / $this->metrics['gc_cycles'] / 1024 / 1024) : 0.0,
+                'avg_gc_freed_mb' => $this->metrics['gc_cycles'] > 0 ?
+                    (float)($this->metrics['memory_freed'] / $this->metrics['gc_cycles'] / 1024 / 1024) : 0.0,
                 'pool_adjustments' => $this->metrics['pool_adjustments'] ?? 0,
                 'memory_peaks' => [
                     'current' => $currentMemory,
