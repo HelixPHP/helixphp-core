@@ -52,7 +52,10 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 
 ### 🚀 Histórico de Versões
 - [**Documentação de Releases**](releases/README.md) - Índice completo de versões
-- [**v1.0.1 (Atual)**](releases/FRAMEWORK_OVERVIEW_v1.0.1.md) - Regex route validation support
+- [**v1.2.0 (Atual)**](releases/FRAMEWORK_OVERVIEW_v1.2.0.md) - Simplicity Edition: Arquitetura simplificada
+- [**v1.1.4**](releases/FRAMEWORK_OVERVIEW_v1.1.4.md) - Developer Experience & Examples Modernization
+- [**v1.1.3**](releases/FRAMEWORK_OVERVIEW_v1.1.3.md) - Architectural Excellence Edition
+- [**v1.0.1**](releases/FRAMEWORK_OVERVIEW_v1.0.1.md) - Regex route validation support
 - [**v1.0.0**](releases/FRAMEWORK_OVERVIEW_v1.0.0.md) - Core rewrite and PSR compliance
 
 ## 🧪 Testes
@@ -91,4 +94,10 @@ Bem-vindo ao guia completo do PivotPHP! Esta documentação foi criada para ser 
 
 ---
 
-*📖 Documentação atualizada em: 6 de julho de 2025*
+## ⚠️ Importante: Manutenção do Projeto
+
+**PivotPHP Core é mantido por apenas uma pessoa** e pode não receber atualizações constantemente. Esta documentação cobre um framework estável e funcional, ideal para provas de conceito, protótipos e estudos, mas não recomendado para sistemas de produção críticos.
+
+---
+
+*📖 Documentação atualizada em: 16 de julho de 2025 - v1.2.0*

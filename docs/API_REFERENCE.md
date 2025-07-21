@@ -1,7 +1,9 @@
 # PivotPHP Core - API Reference
 
-**Version:** 1.1.3-dev  
-**Last Updated:** January 2025  
+**Version:** 1.2.0  
+**Last Updated:** July 2025  
+
+> ⚠️ **Nota**: Este projeto é mantido por apenas uma pessoa e pode não receber atualizações constantemente. Ideal para provas de conceito, protótipos e estudos, mas não recomendado para aplicações críticas de produção.
 
 ## Quick Start
 
@@ -281,24 +283,24 @@ $app->get('/users', [UserController::class, 'index']);
 
 ## Performance Features
 
-### High-Performance Mode (v1.1.0+)
+### Performance Mode (v1.2.0+)
 ```php
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 
-// Enable high-performance mode
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Enable performance mode
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // Check status
-$status = HighPerformanceMode::getStatus();
+$status = PerformanceMode::getStatus();
 
 // Disable
-HighPerformanceMode::disable();
+PerformanceMode::disable();
 ```
 
 **Performance Profiles:**
-- `PROFILE_BALANCED` - Standard optimization
-- `PROFILE_HIGH` - Advanced optimization  
-- `PROFILE_EXTREME` - Maximum performance
+- `PROFILE_DEVELOPMENT` - Development optimization
+- `PROFILE_PRODUCTION` - Production optimization  
+- `PROFILE_TEST` - Test optimization
 
 ### JSON Optimization (v1.1.1+)
 ```php

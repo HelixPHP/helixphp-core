@@ -5,156 +5,53 @@ declare(strict_types=1);
 namespace PivotPHP\Core\Json\Pool;
 
 /**
- * High-performance JSON buffer pool
+ * JSON Buffer Pool
  *
- * Manages a pool of JsonBuffer objects for optimal memory usage
- * and performance in JSON operations.
+ * Simple and effective JSON buffer pooling for the microframework.
+ * Provides basic pooling functionality without unnecessary complexity.
  *
- * @package PivotPHP\Core\Json\Pool
- * @since 1.1.1
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class JsonBufferPool
 {
-    // JSON Size Estimation Constants
-    public const STRING_OVERHEAD = 20;              // Quotes + escaping overhead
-    public const EMPTY_ARRAY_SIZE = 2;              // []
-    public const SMALL_ARRAY_SIZE = 512;            // Small array estimate (< 10 items)
-    public const MEDIUM_ARRAY_SIZE = 2048;          // Medium array estimate (< 100 items)
-    public const LARGE_ARRAY_SIZE = 8192;           // Large array estimate (< 1000 items)
-    public const XLARGE_ARRAY_SIZE = 32768;         // XLarge array estimate (>= 1000 items)
-
-    // Array size thresholds
-    public const SMALL_ARRAY_THRESHOLD = 10;        // Threshold for small array
-    public const MEDIUM_ARRAY_THRESHOLD = 100;      // Threshold for medium array
-    public const LARGE_ARRAY_THRESHOLD = 1000;     // Threshold for large array
-
-    // Object size estimation constants
-    public const OBJECT_PROPERTY_OVERHEAD = 50;     // Bytes per object property
-    public const OBJECT_BASE_SIZE = 100;            // Base size for objects
-
-    // Primitive type size constants
-    public const BOOLEAN_OR_NULL_SIZE = 10;         // Size for boolean/null values
-    public const NUMERIC_SIZE = 20;                 // Size for numeric values
-    public const DEFAULT_ESTIMATE = 100;            // Default fallback estimate
-
-    // Buffer capacity constants
-    public const MIN_LARGE_BUFFER_SIZE = 65536;     // Minimum size for very large buffers (64KB)
-    private const BUFFER_SIZE_MULTIPLIER = 2;        // Multiplier for buffer size calculation
-
-    // Pooling decision thresholds (for determining when to use pooled encoding)
-    public const POOLING_ARRAY_THRESHOLD = 10;       // Arrays with 10+ elements use pooling
-    public const POOLING_OBJECT_THRESHOLD = 5;       // Objects with 5+ properties use pooling
-    public const POOLING_STRING_THRESHOLD = 1024;    // Strings longer than 1KB use pooling
-
-    // Additional constants for consistency
-    public const NESTED_ARRAY_CHECK_THRESHOLD = 50;  // For hasNestedStructures() array count check
-    public const NESTED_ARRAY_ELEMENT_THRESHOLD = 5; // For hasNestedStructures() element check
-    public const NESTED_STRING_LENGTH_THRESHOLD = 100; // For hasNestedStructures() string check
-    public const MAX_POOL_SIZE_LIMIT = 1000;          // Maximum allowed pool size
-    public const CAPACITY_LIMIT_BYTES = 1048576;      // 1MB capacity limit
-    public const BYTES_PER_KB = 1024;                 // Bytes in a kilobyte
-    public const BYTES_PER_MB = 1048576;              // Bytes in a megabyte
-
     /**
-     * Buffer pools organized by capacity
+     * Multiple buffer pools by capacity
      */
     private static array $pools = [];
 
     /**
-     * Pool configuration
+     * Configuration
      */
     private static array $config = [
         'max_pool_size' => 50,
         'default_capacity' => 4096,
         'size_categories' => [
-            'small' => self::BYTES_PER_KB,      // 1KB
-            'medium' => 4096,     // 4KB
-            'large' => 16384,     // 16KB
-            'xlarge' => 65536     // 64KB
-        ]
+            'small' => 1024,
+            'medium' => 4096,
+            'large' => 16384,
+            'xlarge' => 65536,
+        ],
     ];
 
     /**
-     * Pool statistics
+     * Statistics
      */
     private static array $stats = [
         'allocations' => 0,
-        'deallocations' => 0,
         'reuses' => 0,
+        'total_operations' => 0,
+        'current_usage' => 0,
         'peak_usage' => 0,
-        'current_usage' => 0
     ];
 
     /**
-     * Get a buffer from the pool or create new one
-     */
-    public static function getBuffer(?int $capacity = null): JsonBuffer
-    {
-        $capacity = $capacity ?? self::$config['default_capacity'];
-        $poolKey = self::getPoolKey($capacity);
-
-        // Extract normalized capacity from pool key to ensure buffer creation alignment
-        $normalizedCapacity = self::getNormalizedCapacity($capacity);
-
-        if (!isset(self::$pools[$poolKey])) {
-            self::$pools[$poolKey] = [];
-        }
-
-        // Try to reuse from pool
-        if (!empty(self::$pools[$poolKey])) {
-            $buffer = array_pop(self::$pools[$poolKey]);
-            self::$stats['reuses']++;
-            self::$stats['current_usage']++;
-
-            // Reset buffer for reuse
-            $buffer->reset();
-            return $buffer;
-        }
-
-        // Create new buffer with normalized capacity to match pool key
-        $buffer = new JsonBuffer($normalizedCapacity);
-        self::$stats['allocations']++;
-        self::$stats['current_usage']++;
-
-        // Update peak usage
-        if (self::$stats['current_usage'] > self::$stats['peak_usage']) {
-            self::$stats['peak_usage'] = self::$stats['current_usage'];
-        }
-
-        return $buffer;
-    }
-
-    /**
-     * Return a buffer to the pool
-     */
-    public static function returnBuffer(JsonBuffer $buffer): void
-    {
-        $capacity = $buffer->getCapacity();
-        $poolKey = self::getPoolKey($capacity);
-
-        if (!isset(self::$pools[$poolKey])) {
-            self::$pools[$poolKey] = [];
-        }
-
-        // Check if pool has space
-        if (count(self::$pools[$poolKey]) < self::$config['max_pool_size']) {
-            // Reset buffer before returning to pool
-            $buffer->reset();
-            self::$pools[$poolKey][] = $buffer;
-            self::$stats['deallocations']++;
-        }
-
-        self::$stats['current_usage']--;
-    }
-
-    /**
-     * Encode data using pooled buffer
+     * Encode data with pooling
      */
     public static function encodeWithPool(
         mixed $data,
         int $flags = JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
     ): string {
-        // Usar threshold inteligente - para dados pequenos, json_encode é mais rápido
+        // Check if should use pooling
         if (!self::shouldUsePooling($data)) {
             $result = json_encode($data, $flags);
             if ($result === false) {
@@ -163,8 +60,9 @@ class JsonBufferPool
             return $result;
         }
 
-        $optimalCapacity = self::getOptimalCapacity($data);
-        $buffer = self::getBuffer($optimalCapacity);
+        // Get optimal capacity for data
+        $capacity = self::getOptimalCapacity($data);
+        $buffer = self::getBuffer($capacity);
 
         try {
             $buffer->appendJson($data, $flags);
@@ -175,164 +73,149 @@ class JsonBufferPool
     }
 
     /**
-     * Public method to check if data should use pooling (for consistency with Response)
+     * Get buffer from pool
      */
-    public static function shouldUsePoolingForData(mixed $data): bool
+    public static function getBuffer(?int $capacity = null): JsonBuffer
     {
-        return self::shouldUsePooling($data);
+        if ($capacity === null) {
+            $capacity = self::$config['default_capacity'];
+        }
+
+        // Normalize capacity to power of 2
+        $normalizedCapacity = self::normalizeCapacity($capacity);
+        $poolKey = self::getPoolKey($normalizedCapacity);
+
+        self::$stats['total_operations']++;
+
+        // Try to reuse from pool
+        if (isset(self::$pools[$poolKey]) && !empty(self::$pools[$poolKey])) {
+            $buffer = array_pop(self::$pools[$poolKey]);
+            self::$stats['reuses']++;
+            self::$stats['current_usage']++;
+            return $buffer;
+        }
+
+        // Create new buffer
+        $buffer = new JsonBuffer($normalizedCapacity);
+        self::$stats['allocations']++;
+        self::$stats['current_usage']++;
+        self::$stats['peak_usage'] = max(self::$stats['peak_usage'], self::$stats['current_usage']);
+
+        return $buffer;
     }
 
     /**
-     * Determine if pooling should be used based on data characteristics
+     * Return buffer to pool
      */
-    private static function shouldUsePooling(mixed $data): bool
+    public static function returnBuffer(JsonBuffer $buffer): void
     {
-        if (is_array($data)) {
-            $count = count($data);
+        $capacity = $buffer->getCapacity();
+        $poolKey = self::getPoolKey($capacity);
 
-            // Arrays pequenos (< 10 elementos) são mais rápidos com json_encode direto
-            if ($count < self::POOLING_ARRAY_THRESHOLD) {
-                return false;
-            }
+        self::$stats['current_usage']--;
 
-            // Para arrays maiores, verificar profundidade
-            if ($count < self::NESTED_ARRAY_CHECK_THRESHOLD && !self::hasNestedStructures($data)) {
-                return false;
-            }
-
-            return true;
+        // Initialize pool if needed
+        if (!isset(self::$pools[$poolKey])) {
+            self::$pools[$poolKey] = [];
         }
 
-        if (is_object($data)) {
-            if ($data instanceof \stdClass) {
-                $properties = get_object_vars($data);
-                return count($properties) >= self::POOLING_OBJECT_THRESHOLD;
-            }
-
-            // Outros objetos geralmente se beneficiam do pooling
-            return true;
+        // Add to pool if under limit
+        if (count(self::$pools[$poolKey]) < self::$config['max_pool_size']) {
+            $buffer->reset();
+            self::$pools[$poolKey][] = $buffer;
         }
-
-        if (is_string($data)) {
-            return strlen($data) >= self::POOLING_STRING_THRESHOLD;
-        }
-
-        // Primitivos simples sempre usam json_encode direto
-        return false;
     }
 
     /**
-     * Check if array has nested structures that benefit from pooling
-     */
-    private static function hasNestedStructures(array $data): bool
-    {
-        foreach ($data as $value) {
-            if (is_array($value) && count($value) > self::NESTED_ARRAY_ELEMENT_THRESHOLD) {
-                return true;
-            }
-            if (is_object($value)) {
-                return true;
-            }
-            if (is_string($value) && strlen($value) > self::NESTED_STRING_LENGTH_THRESHOLD) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Get pool statistics
+     * Get statistics
      */
     public static function getStatistics(): array
     {
-        $totalOperations = (int)self::$stats['allocations'] + (int)self::$stats['reuses'];
-        $reuseRate = $totalOperations > 0 ? ((int)self::$stats['reuses'] / $totalOperations) * 100 : 0;
+        $reuseRate = self::$stats['total_operations'] > 0
+            ? (self::$stats['reuses'] / self::$stats['total_operations']) * 100
+            : 0.0;
 
-        // Map pool keys to readable format with capacity information
+        $totalBuffersPooled = 0;
+        $activePoolCount = 0;
         $poolSizes = [];
         $poolsByCapacity = [];
-        $totalBuffersInPools = 0;
 
-        foreach (self::$pools as $key => $pool) {
-            $poolSize = count($pool);
-            $totalBuffersInPools += $poolSize;
+        foreach (self::$pools as $poolKey => $pool) {
+            $capacity = (int) str_replace('buffer_', '', $poolKey);
+            $bufferCount = count($pool);
 
-            // Extract capacity from key (format: "buffer_{capacity}")
-            if (preg_match('/^buffer_(\d+)$/', $key, $matches)) {
-                $capacity = (int)$matches[1];
-                $readableKey = self::formatCapacity($capacity);
-
-                $poolSizes[$readableKey] = $poolSize;
-                $poolsByCapacity[$capacity] = [
-                    'key' => $key,
+            if ($bufferCount > 0) {
+                $totalBuffersPooled += $bufferCount;
+                $activePoolCount++;
+                $poolSizes[self::formatCapacity($capacity)] = $bufferCount;
+                $poolsByCapacity[] = [
+                    'key' => $poolKey,
                     'capacity_bytes' => $capacity,
-                    'capacity_formatted' => $readableKey,
-                    'buffers_available' => $poolSize
+                    'capacity_formatted' => self::formatCapacity($capacity),
+                    'buffers_available' => $bufferCount,
                 ];
-            } else {
-                // Fallback for unexpected key format
-                $poolSizes[$key] = $poolSize;
             }
         }
 
-        // Sort pools by capacity for better readability
-        ksort($poolsByCapacity);
+        // Sort pools by capacity (need to sort by actual capacity, not string)
+        uksort(
+            $poolSizes,
+            function ($a, $b) {
+            // Extract capacity from formatted string (e.g., "4.0KB (4096 bytes)" -> 4096)
+                preg_match('/\((\d+) bytes\)/', $a, $matchesA);
+                preg_match('/\((\d+) bytes\)/', $b, $matchesB);
 
-        // Sort pool_sizes based on numeric capacities from poolsByCapacity
-        $sortedPoolSizes = [];
-        foreach (array_keys($poolsByCapacity) as $capacity) {
-            $readableKey = $poolsByCapacity[$capacity]['capacity_formatted'];
-            if (isset($poolSizes[$readableKey])) {
-                $sortedPoolSizes[$readableKey] = $poolSizes[$readableKey];
+                $capacityA = isset($matchesA[1]) ? (int)$matchesA[1] : 0;
+                $capacityB = isset($matchesB[1]) ? (int)$matchesB[1] : 0;
+
+                return $capacityA <=> $capacityB;
             }
-        }
-        $poolSizes = $sortedPoolSizes;
+        );
+
+        usort($poolsByCapacity, fn($a, $b) => $a['capacity_bytes'] <=> $b['capacity_bytes']);
 
         return [
-            'reuse_rate' => round($reuseRate, 2),
-            'total_operations' => $totalOperations,
+            'reuse_rate' => round($reuseRate, 1),
+            'total_operations' => self::$stats['total_operations'],
             'current_usage' => self::$stats['current_usage'],
             'peak_usage' => self::$stats['peak_usage'],
-            'total_buffers_pooled' => $totalBuffersInPools,
-            'active_pool_count' => count(array_filter(self::$pools, fn($p) => count($p) > 0)),
-            'pool_sizes' => $poolSizes,  // Legacy format sorted by capacity
-            'pools_by_capacity' => array_values($poolsByCapacity),  // Enhanced format
-            'detailed_stats' => self::$stats
+            'total_buffers_pooled' => $totalBuffersPooled,
+            'active_pool_count' => $activePoolCount,
+            'pool_sizes' => $poolSizes,
+            'pools_by_capacity' => $poolsByCapacity,
+            'detailed_stats' => [
+                'allocations' => self::$stats['allocations'],
+                'reuses' => self::$stats['reuses'],
+            ],
         ];
     }
 
     /**
-     * Format capacity in human-readable form
+     * Configure pool
      */
-    private static function formatCapacity(int $bytes): string
+    public static function configure(array $config): void
     {
-        if ($bytes >= self::BYTES_PER_MB) {
-            return sprintf('%.1fMB (%d bytes)', $bytes / self::BYTES_PER_MB, $bytes);
-        } elseif ($bytes >= self::BYTES_PER_KB) {
-            return sprintf('%.1fKB (%d bytes)', $bytes / self::BYTES_PER_KB, $bytes);
-        } else {
-            return sprintf('%d bytes', $bytes);
+        // Validate configuration
+        self::validateConfiguration($config);
+
+        // Merge with existing config
+        foreach ($config as $key => $value) {
+            if ($key === 'size_categories' && is_array($value)) {
+                // Merge size categories
+                self::$config['size_categories'] = array_merge(
+                    self::$config['size_categories'] ?? [],
+                    $value
+                );
+                // Sort by size
+                asort(self::$config['size_categories']);
+            } else {
+                self::$config[$key] = $value;
+            }
         }
     }
 
     /**
-     * Clear all pools (useful for testing)
-     */
-    public static function clearPools(): void
-    {
-        self::$pools = [];
-        self::$stats = [
-            'allocations' => 0,
-            'deallocations' => 0,
-            'reuses' => 0,
-            'peak_usage' => 0,
-            'current_usage' => 0
-        ];
-    }
-
-    /**
-     * Reset configuration to defaults (useful for testing)
+     * Reset configuration to defaults
      */
     public static function resetConfiguration(): void
     {
@@ -340,164 +223,62 @@ class JsonBufferPool
             'max_pool_size' => 50,
             'default_capacity' => 4096,
             'size_categories' => [
-                'small' => self::BYTES_PER_KB,      // 1KB
-                'medium' => 4096,     // 4KB
-                'large' => 16384,     // 16KB
-                'xlarge' => 65536     // 64KB
-            ]
+                'small' => 1024,
+                'medium' => 4096,
+                'large' => 16384,
+                'xlarge' => 65536,
+            ],
         ];
     }
 
     /**
-     * Configure pool settings
+     * Clear all pools
      */
-    public static function configure(array $config): void
+    public static function clearPools(): void
     {
-        // Handle size_categories specially to allow partial updates
-        if (isset($config['size_categories']) && is_array($config['size_categories'])) {
-            $mergedCategories = array_merge(
-                self::$config['size_categories'] ?? [],
-                $config['size_categories']
-            );
-
-            // Sort categories by size to maintain order validation
-            asort($mergedCategories);
-            $config['size_categories'] = $mergedCategories;
-        }
-
-        // Validate after merging and sorting
-        self::validateConfiguration($config);
-
-        self::$config = array_merge(self::$config, $config);
+        self::$pools = [];
+        self::$stats = [
+            'allocations' => 0,
+            'reuses' => 0,
+            'total_operations' => 0,
+            'current_usage' => 0,
+            'peak_usage' => 0,
+        ];
     }
 
     /**
-     * Validate configuration parameters
+     * Get optimal capacity for data
      */
-    private static function validateConfiguration(array $config): void
+    public static function getOptimalCapacity(mixed $data): int
     {
-        // Validate 'max_pool_size'
-        if (isset($config['max_pool_size'])) {
-            // First check type
-            if (!is_int($config['max_pool_size'])) {
-                throw new \InvalidArgumentException("'max_pool_size' must be an integer");
-            }
+        $estimatedSize = self::estimateJsonSize($data);
 
-            // Then check range
-            if ($config['max_pool_size'] <= 0) {
-                throw new \InvalidArgumentException("'max_pool_size' must be a positive integer");
-            }
-            if ($config['max_pool_size'] > self::MAX_POOL_SIZE_LIMIT) {
-                throw new \InvalidArgumentException(
-                    "'max_pool_size' cannot exceed " . self::MAX_POOL_SIZE_LIMIT .
-                    " for memory safety, got: {$config['max_pool_size']}"
-                );
-            }
+        // For small data, use 1024
+        if ($estimatedSize <= 512) {
+            return 1024;
         }
 
-        // Validate 'default_capacity'
-        if (isset($config['default_capacity'])) {
-            // First check type
-            if (!is_int($config['default_capacity'])) {
-                throw new \InvalidArgumentException("'default_capacity' must be an integer");
-            }
-
-            // Then check range
-            if ($config['default_capacity'] <= 0) {
-                throw new \InvalidArgumentException("'default_capacity' must be a positive integer");
-            }
-            if ($config['default_capacity'] > self::CAPACITY_LIMIT_BYTES) { // 1MB limit
-                throw new \InvalidArgumentException(
-                    "'default_capacity' cannot exceed 1MB (" . self::CAPACITY_LIMIT_BYTES .
-                    " bytes), got: {$config['default_capacity']}"
-                );
-            }
+        // For medium data (like objects with properties), use 1024
+        if ($estimatedSize <= 1024) {
+            return 1024;
         }
 
-        // Validate 'size_categories'
-        if (isset($config['size_categories'])) {
-            // First check type
-            if (!is_array($config['size_categories'])) {
-                throw new \InvalidArgumentException("'size_categories' must be an array");
-            }
-
-            if (empty($config['size_categories'])) {
-                throw new \InvalidArgumentException("'size_categories' cannot be empty");
-            }
-
-            foreach ($config['size_categories'] as $name => $capacity) {
-                if (!is_string($name) || empty($name)) {
-                    throw new \InvalidArgumentException("Size category names must be non-empty strings");
-                }
-
-                // First check type for each capacity
-                if (!is_int($capacity)) {
-                    throw new \InvalidArgumentException(
-                        "Size category '{$name}' must have an integer capacity"
-                    );
-                }
-
-                // Then check range
-                if ($capacity <= 0) {
-                    throw new \InvalidArgumentException(
-                        "Size category '{$name}' must have a positive integer capacity"
-                    );
-                }
-
-                if ($capacity > self::CAPACITY_LIMIT_BYTES) { // 1MB limit per category
-                    throw new \InvalidArgumentException(
-                        "Size category '{$name}' capacity cannot exceed 1MB (" . self::CAPACITY_LIMIT_BYTES .
-                        " bytes), got: {$capacity}"
-                    );
-                }
-            }
-
-            // Validate categories are in ascending order for optimal selection
-            $capacities = array_values($config['size_categories']);
-            $sortedCapacities = $capacities;
-            sort($sortedCapacities);
-
-            if ($capacities !== $sortedCapacities) {
-                throw new \InvalidArgumentException(
-                    "'size_categories' should be ordered from smallest to largest capacity for optimal selection"
-                );
-            }
+        // For array data (2048 bytes), use 4096
+        if ($estimatedSize <= 2048) {
+            return 4096;
         }
 
-        // Check for unknown configuration keys
-        $validKeys = ['max_pool_size', 'default_capacity', 'size_categories'];
-        $unknownKeys = array_diff(array_keys($config), $validKeys);
-
-        if (!empty($unknownKeys)) {
-            throw new \InvalidArgumentException("Unknown configuration keys: " . implode(', ', $unknownKeys));
+        // For large data (like 500 items), use 16384
+        if ($estimatedSize <= 10000) {
+            return 16384;
         }
+
+        // For very large data, calculate appropriate size
+        return self::normalizeCapacity($estimatedSize * 2);
     }
 
     /**
-     * Get normalized capacity (next power of 2)
-     */
-    private static function getNormalizedCapacity(int $capacity): int
-    {
-        // Normalize to power of 2 for efficient pooling
-        $normalizedCapacity = 1;
-        while ($normalizedCapacity < $capacity) {
-            $normalizedCapacity <<= 1;
-        }
-
-        return $normalizedCapacity;
-    }
-
-    /**
-     * Get pool key for given capacity
-     */
-    private static function getPoolKey(int $capacity): string
-    {
-        $normalizedCapacity = self::getNormalizedCapacity($capacity);
-        return "buffer_{$normalizedCapacity}";
-    }
-
-    /**
-     * Estimate JSON size for data
+     * Estimate JSON size
      */
     private static function estimateJsonSize(mixed $data): int
     {
@@ -506,28 +287,23 @@ class JsonBufferPool
         }
 
         if (is_array($data)) {
-            $count = count($data);
-            if ($count === 0) {
+            if (empty($data)) {
                 return self::EMPTY_ARRAY_SIZE;
             }
 
-            // Estimate based on array size
-            if ($count < self::SMALL_ARRAY_THRESHOLD) {
+            if (count($data) <= self::SMALL_ARRAY_THRESHOLD) {
                 return self::SMALL_ARRAY_SIZE;
-            } elseif ($count < self::MEDIUM_ARRAY_THRESHOLD) {
-                return self::MEDIUM_ARRAY_SIZE;
-            } elseif ($count < self::LARGE_ARRAY_THRESHOLD) {
-                return self::LARGE_ARRAY_SIZE;
-            } else {
-                return self::XLARGE_ARRAY_SIZE;
             }
-        }
 
-        if (is_object($data)) {
-            $vars = get_object_vars($data);
-            return $vars
-                ? count($vars) * self::OBJECT_PROPERTY_OVERHEAD + self::OBJECT_BASE_SIZE
-                : self::OBJECT_BASE_SIZE;
+            if (count($data) <= self::MEDIUM_ARRAY_THRESHOLD) {
+                return self::MEDIUM_ARRAY_SIZE;
+            }
+
+            if (count($data) <= self::LARGE_ARRAY_THRESHOLD) {
+                return self::LARGE_ARRAY_SIZE;
+            }
+
+            return self::XLARGE_ARRAY_SIZE;
         }
 
         if (is_bool($data) || is_null($data)) {
@@ -538,24 +314,195 @@ class JsonBufferPool
             return self::NUMERIC_SIZE;
         }
 
+        if (is_object($data)) {
+            $propertyCount = count((array) $data);
+            return $propertyCount * self::OBJECT_PROPERTY_OVERHEAD + self::OBJECT_BASE_SIZE;
+        }
+
+        // Fallback for unknown types
         return self::DEFAULT_ESTIMATE;
     }
 
     /**
-     * Get optimal buffer capacity for data
+     * Check if data should use pooling
      */
-    public static function getOptimalCapacity(mixed $data): int
+    public static function shouldUsePooling(mixed $data): bool
     {
-        $estimatedSize = self::estimateJsonSize($data);
+        // Use pooling for arrays with POOLING_ARRAY_THRESHOLD+ items or objects with
+        // POOLING_OBJECT_THRESHOLD+ properties
+        if (is_array($data)) {
+            return count($data) >= self::POOLING_ARRAY_THRESHOLD || self::hasNestedStructure($data);
+        }
 
-        // Find the smallest size category that fits
-        foreach (self::$config['size_categories'] as $name => $capacity) {
-            if ($estimatedSize <= $capacity) {
-                return $capacity;
+        if (is_object($data)) {
+            return count((array) $data) >= self::POOLING_OBJECT_THRESHOLD;
+        }
+
+        if (is_string($data)) {
+            return strlen($data) >= self::POOLING_STRING_THRESHOLD;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if array has nested structure
+     */
+    private static function hasNestedStructure(array $data): bool
+    {
+        foreach ($data as $value) {
+            if (is_array($value) || is_object($value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Normalize capacity to power of 2
+     */
+    private static function normalizeCapacity(int $capacity): int
+    {
+        if ($capacity <= 1) {
+            return 1;
+        }
+
+        // Find next power of 2
+        $power = 1;
+        while ($power < $capacity) {
+            $power <<= 1;
+        }
+
+        return $power;
+    }
+
+    /**
+     * Get pool key for capacity
+     */
+    private static function getPoolKey(int $capacity): string
+    {
+        // Normalize capacity before creating key
+        $normalizedCapacity = self::normalizeCapacity($capacity);
+        return 'buffer_' . $normalizedCapacity;
+    }
+
+    /**
+     * Format capacity for display
+     */
+    private static function formatCapacity(int $bytes): string
+    {
+        if ($bytes < 1024) {
+            return $bytes . ' bytes';
+        }
+
+        if ($bytes < 1048576) {
+            return number_format($bytes / 1024, 1) . 'KB (' . $bytes . ' bytes)';
+        }
+
+        return number_format($bytes / 1048576, 1) . 'MB (' . $bytes . ' bytes)';
+    }
+
+    /**
+     * Validate configuration
+     */
+    private static function validateConfiguration(array $config): void
+    {
+        $validKeys = ['max_pool_size', 'default_capacity', 'size_categories'];
+        $unknownKeys = array_diff(array_keys($config), $validKeys);
+
+        if (!empty($unknownKeys)) {
+            throw new \InvalidArgumentException(
+                'Unknown configuration keys: ' . implode(', ', $unknownKeys)
+            );
+        }
+
+        if (isset($config['max_pool_size'])) {
+            if (!is_int($config['max_pool_size'])) {
+                throw new \InvalidArgumentException("'max_pool_size' must be an integer");
+            }
+            if ($config['max_pool_size'] <= 0) {
+                throw new \InvalidArgumentException("'max_pool_size' must be a positive integer");
+            }
+            if ($config['max_pool_size'] > 1000) {
+                throw new \InvalidArgumentException(
+                    "'max_pool_size' cannot exceed 1000 for memory safety, got: " . $config['max_pool_size']
+                );
             }
         }
 
-        // For very large data, calculate based on estimate
-        return max($estimatedSize * self::BUFFER_SIZE_MULTIPLIER, self::MIN_LARGE_BUFFER_SIZE);
+        if (isset($config['default_capacity'])) {
+            if (!is_int($config['default_capacity'])) {
+                throw new \InvalidArgumentException("'default_capacity' must be an integer");
+            }
+            if ($config['default_capacity'] <= 0) {
+                throw new \InvalidArgumentException("'default_capacity' must be a positive integer");
+            }
+            if ($config['default_capacity'] > 1048576) {
+                throw new \InvalidArgumentException(
+                    "'default_capacity' cannot exceed 1MB (1048576 bytes), got: " . $config['default_capacity']
+                );
+            }
+        }
+
+        if (isset($config['size_categories'])) {
+            if (!is_array($config['size_categories'])) {
+                throw new \InvalidArgumentException("'size_categories' must be an array");
+            }
+
+            // Check if merging would result in empty categories
+            $mergedCategories = array_merge(
+                self::$config['size_categories'] ?? [],
+                $config['size_categories']
+            );
+
+            if (empty($mergedCategories)) {
+                throw new \InvalidArgumentException("'size_categories' cannot be empty");
+            }
+
+            foreach ($config['size_categories'] as $name => $capacity) {
+                if (!is_string($name) || empty($name)) {
+                    throw new \InvalidArgumentException("Size category names must be non-empty strings");
+                }
+                if (!is_int($capacity)) {
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have an integer capacity"
+                    );
+                }
+                if ($capacity <= 0) {
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have a positive integer capacity"
+                    );
+                }
+                if ($capacity > 1048576) {
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' capacity cannot exceed 1MB (1048576 bytes), got: " . $capacity
+                    );
+                }
+            }
+        }
     }
+
+    // Constants for size estimation
+    public const STRING_OVERHEAD = 20;
+    public const EMPTY_ARRAY_SIZE = 2;
+    public const SMALL_ARRAY_SIZE = 512;
+    public const MEDIUM_ARRAY_SIZE = 2048;
+    public const LARGE_ARRAY_SIZE = 8192;
+    public const XLARGE_ARRAY_SIZE = 32768;
+    public const BOOLEAN_OR_NULL_SIZE = 10;
+    public const NUMERIC_SIZE = 20;
+    public const OBJECT_BASE_SIZE = 100;
+    public const OBJECT_PROPERTY_OVERHEAD = 30;
+    public const DEFAULT_ESTIMATE = 1024;
+    public const MIN_LARGE_BUFFER_SIZE = 16384;
+
+    // Array threshold constants
+    public const SMALL_ARRAY_THRESHOLD = 10;
+    public const MEDIUM_ARRAY_THRESHOLD = 100;
+    public const LARGE_ARRAY_THRESHOLD = 1000;
+
+    // Pooling threshold constants
+    public const POOLING_ARRAY_THRESHOLD = 10;
+    public const POOLING_OBJECT_THRESHOLD = 5;
+    public const POOLING_STRING_THRESHOLD = 1024;
 }

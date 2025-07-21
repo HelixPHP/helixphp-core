@@ -299,8 +299,8 @@ class MiddlewareStack
     public static function benchmarkPipeline(array $middlewares, int $iterations = 1000): array
     {
         // Usa cache de serialização otimizado para gerar chave
-        $serializedData = SerializationCache::getSerializedData($middlewares, 'middleware_benchmark');
-        $cacheKey = 'benchmark:' . md5($serializedData);
+        $serializedData = SerializationCache::getSerializedData($middlewares);
+        $cacheKey = 'benchmark:' . md5($serializedData ?? '');
 
         // Compila pipeline
         $compilationStart = microtime(true);

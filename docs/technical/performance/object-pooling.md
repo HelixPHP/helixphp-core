@@ -183,17 +183,18 @@ Array:
 */
 ```
 
-### Comando de Monitoramento
+### Monitoramento Programático
 
-```bash
-# Exibir estatísticas
-php bin/console pool:stats
+```php
+// Obter estatísticas do pool
+$stats = Psr7Pool::getStats();
+echo "Pool sizes: " . json_encode($stats['pool_sizes']);
 
-# Limpar pools
-php bin/console pool:clear
+// Limpar todos os pools
+Psr7Pool::clearAll();
 
-# Pré-aquecer pools
-php bin/console pool:warmup
+// Pré-aquecer pools
+Psr7Pool::warmUp();
 ```
 
 ## 🎯 Benefícios de Performance

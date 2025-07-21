@@ -418,8 +418,14 @@ class Request implements ServerRequestInterface, AttributeInterface
      */
     public function isAjax(): bool
     {
-        return !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
-            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+        $requestedWith = $this->header('X-Requested-With');
+
+        // Fallback to $_SERVER if not found in headers
+        if ($requestedWith === null) {
+            $requestedWith = $_SERVER['HTTP_X_REQUESTED_WITH'] ?? null;
+        }
+
+        return !empty($requestedWith) && strtolower($requestedWith) === 'xmlhttprequest';
     }
 
     /**
@@ -456,6 +462,109 @@ class Request implements ServerRequestInterface, AttributeInterface
         }
 
         return $this->headers->getHeader($name);
+    }
+
+    /**
+     * Define headers para a requisição (principalmente para testes).
+     *
+     * @param array<string, string> $headers
+     * @return self
+     */
+    public function setHeaders(array $headers): self
+    {
+        // Criar um novo HeaderRequest com headers customizados
+        $this->headers = new class ($headers) extends HeaderRequest {
+            /** @var array<string, string> */
+            private array $customHeaders;
+
+            /** @var array<string, mixed> */
+            protected array $headers;
+
+            /**
+             * @param array<string, string> $customHeaders
+             */
+            public function __construct(array $customHeaders = [])
+            {
+                $this->customHeaders = $customHeaders;
+                $this->headers = [];
+
+                // Primeiro processar headers customizados
+                foreach ($customHeaders as $key => $value) {
+                    $key = trim($key, ':'); // Remove leading colon
+                    $camelCaseKey = explode('-', $key);
+                    $camelCaseKey = array_map('ucfirst', $camelCaseKey);
+                    $camelCaseKey = implode('', $camelCaseKey);
+                    $key = lcfirst($camelCaseKey); // Convert to camelCase
+                    $this->headers[$key] = $value;
+                }
+
+                // Depois processar headers padrão se não foram sobrescritos
+                $existingHeaders = function_exists('getallheaders') ? getallheaders() : [];
+                if (empty($existingHeaders)) {
+                    foreach ($_SERVER as $name => $value) {
+                        if (substr($name, 0, 5) == 'HTTP_') {
+                            $headerName = str_replace(
+                                ' ',
+                                '-',
+                                ucwords(strtolower(str_replace('_', ' ', substr($name, 5))))
+                            );
+                            $camelCaseKey = explode('-', $headerName);
+                            $camelCaseKey = array_map('ucfirst', $camelCaseKey);
+                            $camelCaseKey = implode('', $camelCaseKey);
+                            $key = lcfirst($camelCaseKey);
+
+                            // Only add if not already set by custom headers
+                            if (!isset($this->headers[$key])) {
+                                $this->headers[$key] = $value;
+                            }
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Override getHeader to handle test headers properly
+             */
+            public function getHeader($name): ?string
+            {
+                // First check if it's in our custom headers (exact match)
+                if (isset($this->customHeaders[$name])) {
+                    return (string) $this->customHeaders[$name];
+                }
+
+                // Then check camelCase version
+                $key = trim($name, ':');
+                $camelCaseKey = explode('-', $key);
+                $camelCaseKey = array_map('ucfirst', $camelCaseKey);
+                $camelCaseKey = implode('', $camelCaseKey);
+                $key = lcfirst($camelCaseKey);
+
+                $value = $this->headers[$key] ?? null;
+                return $value !== null && (is_string($value) || is_numeric($value)) ? (string) $value : null;
+            }
+
+            /**
+             * Override hasHeader to check both formats
+             */
+            public function hasHeader($name): bool
+            {
+                // Check exact match first
+                if (isset($this->customHeaders[$name])) {
+                    return true;
+                }
+
+                // Check camelCase version
+                $key = trim($name, ':');
+                $camelCaseKey = explode('-', $key);
+                $camelCaseKey = array_map('ucfirst', $camelCaseKey);
+                $camelCaseKey = implode('', $camelCaseKey);
+                $key = lcfirst($camelCaseKey);
+
+                return isset($this->headers[$key]);
+            }
+        };
+
+        return $this;
     }
 
     // =============================================================================

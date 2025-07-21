@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-PivotPHP Core is a high-performance PHP microframework inspired by Express.js, designed for building APIs and web applications. Current version: 1.1.4 (Architectural Excellence & Performance Optimization Edition).
+PivotPHP Core is a high-performance PHP microframework inspired by Express.js, designed for building APIs and web applications. Current version: 1.2.0 (Simplicity Edition - Simplicidade sobre Otimização Prematura).
 
 ## Essential Commands
 
@@ -38,12 +38,15 @@ vendor/bin/phpunit tests/Core/ApplicationTest.php
 vendor/bin/phpunit --group stress
 vendor/bin/phpunit --exclude-group stress,integration
 
-# Run specific test suites
+# Run specific test suites (see phpunit.xml for full list)
 vendor/bin/phpunit --testsuite=Core      # Core framework tests
 vendor/bin/phpunit --testsuite=Security  # Security tests
 vendor/bin/phpunit --testsuite=Performance # Performance tests
 vendor/bin/phpunit --testsuite=Unit      # Unit tests only
 vendor/bin/phpunit --testsuite=Fast      # Fast tests (excludes stress)
+vendor/bin/phpunit --testsuite=CI        # CI tests (excludes integration & stress)
+vendor/bin/phpunit --testsuite=Integration # Integration tests
+vendor/bin/phpunit --testsuite=Stress    # Stress tests only
 
 # Additional validation commands
 php ./scripts/quality/validate-psr12.php    # PSR-12 validation (standalone)
@@ -88,12 +91,35 @@ composer examples:auth        # Authentication example
 composer examples:middleware  # Middleware example
 ```
 
-### v1.1.4 Array Callable & Performance Features
+### v1.2.0 Simplicity Edition Features
 ```php
-// NEW: Array callable support (PHP 8.4+ compatible)
+// Array callable support (PHP 8.4+ compatible)
 $app->get('/users', [UserController::class, 'index']);
 $app->post('/users', [$controller, 'store']);
 // Router methods now accept callable|array union types
+
+// NOVO v1.2.0: Documentação OpenAPI/Swagger Automática
+use PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware;
+
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',        // JSON OpenAPI endpoint
+    'swagger_path' => '/swagger',  // Swagger UI interface
+    'base_url' => 'http://localhost:8080'
+]));
+
+// Suas rotas com documentação PHPDoc
+$app->get('/users', function($req, $res) {
+    /**
+     * @summary List all users
+     * @description Returns a list of all users in the system
+     * @tags Users
+     * @response 200 array List of users
+     */
+    return $res->json(['users' => User::all()]);
+});
+
+// Acesse: http://localhost:8080/swagger (Interface Swagger UI)
+// Acesse: http://localhost:8080/docs (JSON OpenAPI 3.0.0)
 
 // Optimized object pooling (+116% performance improvement)
 // Request pool reuse: 0% → 100%
@@ -126,6 +152,34 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
 
 ## Code Architecture
 
+### Project Structure
+```
+pivotphp-core/
+├── src/                    # Framework source code
+│   ├── Core/              # Application core, container, services
+│   ├── Http/              # HTTP layer (Request, Response, PSR-7)
+│   ├── Routing/           # Router and route management
+│   ├── Middleware/        # Middleware system (Security, Performance, HTTP, Core)
+│   ├── Providers/         # Service providers
+│   ├── Performance/       # Performance optimization components
+│   ├── Json/              # JSON optimization and pooling
+│   ├── Utils/             # Utility classes
+│   └── Support/           # Support classes
+├── tests/                 # Test suites
+│   ├── Core/              # Core framework tests
+│   ├── Security/          # Security tests
+│   ├── Performance/       # Performance tests
+│   ├── Integration/       # Integration tests
+│   ├── Stress/            # Stress tests
+│   └── Unit/              # Unit tests
+├── scripts/               # Development scripts
+│   ├── validation/        # Validation scripts
+│   ├── quality/           # Quality check scripts
+│   ├── testing/           # Testing utilities
+│   └── release/           # Release management
+└── examples/              # Usage examples
+```
+
 ### Core Framework Structure
 - **Service Provider Pattern**: All major components are registered via service providers in `src/Providers/`
 - **PSR Standards**: Strict PSR-7 (HTTP messages), PSR-15 (middleware), PSR-12 (coding style) compliance
@@ -146,7 +200,7 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
    - **Performance**: `src/Middleware/Performance/` - CacheMiddleware, RateLimitMiddleware  
    - **HTTP**: `src/Middleware/Http/` - CorsMiddleware, ErrorMiddleware
    - **Core**: `src/Middleware/Core/` - BaseMiddleware, MiddlewareInterface
-   - **Advanced**: LoadShedder, CircuitBreaker, TrafficClassifier
+   - **Advanced**: LoadShedder, TrafficClassifier
 
 4. **HTTP Layer** (`src/Http/`): PSR-7 hybrid implementation
    - Express.js style API with PSR-7 compliance
@@ -284,6 +338,28 @@ vendor/bin/phpunit tests/Integration/Routing/ArrayCallableIntegrationTest.php
 vendor/bin/phpunit tests/Examples/ParameterRoutingExampleTest.php
 ```
 
+### Debugging and Troubleshooting
+```bash
+# Debug specific component
+vendor/bin/phpunit tests/Core/ApplicationTest.php --debug
+
+# Run with verbose output
+vendor/bin/phpunit --verbose
+
+# Check specific middleware
+vendor/bin/phpunit tests/Middleware/Security/ --testdox
+
+# Performance debugging
+composer benchmark:simple                    # Quick performance check
+vendor/bin/phpunit tests/Performance/ --group performance
+
+# Memory usage analysis
+vendor/bin/phpunit tests/Performance/MemoryManagerTest.php
+
+# JSON pool debugging
+vendor/bin/phpunit tests/Json/Pool/ --testdox
+```
+
 ### Middleware Development (v1.1.2+)
 When creating new middleware, follow the organized structure:
 
@@ -340,13 +416,25 @@ $stats = JsonBufferPool::getStatistics();
 
 ## Current Version Status
 
-- **Current Version**: 1.1.4 (Architectural Excellence & Performance Optimization Edition)
-- **Previous Versions**: 1.1.3 (Performance Breakthrough), 1.1.2 (Consolidation), 1.1.1 (JSON Optimization), 1.1.0 (High-Performance)
-- **Tests Status**: 684 CI tests + 131 integration tests (100% success rate), architectural improvements
+- **Current Version**: 1.2.0 (Simplicity Edition - Simplicidade sobre Otimização Prematura)
+- **Release Date**: 2025-07-21 (Quality & Maintainability Release)
+- **Previous Versions**: 1.1.4 (Developer Experience), 1.1.3 (Performance Breakthrough), 1.1.2 (Consolidation), 1.1.1 (JSON Optimization), 1.1.0 (High-Performance)
+- **Tests Status**: 684 CI tests + 131 integration tests (100% success rate), architectural simplification
 - **Performance**: +116% framework improvement (20,400 → 44,092 ops/sec), 100% object pool reuse
-- **Code Quality**: PHPStan Level 9, PSR-12 100% compliant, zero violations
-- **Architecture**: ARCHITECTURAL_GUIDELINES compliant, optimized object pooling, array callable support, simplified complexity
+- **Code Quality**: PHPStan Level 9, PSR-12 100% compliant, **zero IDE warnings**, enhanced readability
+- **Architecture**: Simple classes as core defaults, Legacy namespace for complex classes, automatic OpenAPI/Swagger documentation
 - **Compatibility**: 100% backward compatible via automatic aliases
+- **Key Features**: ApiDocumentationMiddleware for automatic OpenAPI/Swagger generation, simplified core classes, enhanced developer experience
+
+### Key Development Scripts
+```bash
+# Most frequently used commands
+./scripts/validation/validate_all.sh          # Comprehensive project validation
+./scripts/pre-commit                          # Pre-commit validation
+composer quality:check                        # Quality checks (PHPStan + tests + style)
+composer test                                 # Run all tests
+composer cs:fix                               # Auto-fix code style
+```
 
 ## Important Notes
 
@@ -356,23 +444,39 @@ $stats = JsonBufferPool::getStatistics();
 - The event system allows for deep customization without modifying core code
 - Documentation updates should be made in the `/docs` directory when adding features
 
-### v1.1.4 Key Changes
-- **🏗️ Architectural Excellence**: Complete implementation of ARCHITECTURAL_GUIDELINES for clean, maintainable code
-- **Array Callable Support**: Router methods now accept `callable|array` union types for PHP 8.4+ compatibility
-- **Performance Revolution**: +116% improvement through optimized object pooling (0% → 100% reuse rates)
-- **Test Quality**: 100% PSR-12 compliance, PHPUnit 10 compatibility, comprehensive integration tests
-- **Zero Breaking Changes**: All existing code continues to work without modification
+### v1.2.0 Key Changes
+- **🎯 Simplicity Edition**: Simple classes promoted to core defaults (PerformanceMode, LoadShedder, MemoryManager, etc.)
+- **🏗️ Legacy Architecture**: Complex classes moved to `src/Legacy/` namespace for backward compatibility
+- **📖 Automatic OpenAPI/Swagger Documentation**: New `ApiDocumentationMiddleware` for automatic documentation generation
+- **🔄 100% Backward Compatibility**: All existing code continues to work via automatic aliases
+- **⚡ Performance Maintained**: All v1.1.4 performance improvements preserved
 
-#### 🏗️ **Architectural Guidelines Compliance**
-Following the established ARCHITECTURAL_GUIDELINES (see `docs/ARCHITECTURAL_GUIDELINES.md`):
+#### 🏗️ **Architectural Simplification**
+Following the "Simplicidade sobre Otimização Prematura" principle:
 
-- **✅ Separation of Concerns**: Functional tests (<1s) completely separated from performance tests (@group performance)
-- **✅ Realistic Timeouts**: All timeouts adjusted to production-realistic expectations (3-5s vs previous 60s)
-- **✅ Over-Engineering Elimination**: Removed circuit breakers, load shedding, distributed pooling for microframework
-- **✅ Test Organization**: Split complex tests into focused components (`MemoryManagerSimpleTest.php` + `MemoryManagerStressTest.php`)
-- **✅ Simplified Implementations**: Created `SimplePerformanceMode` (70 lines) as appropriate alternative to `HighPerformanceMode` (598 lines)
+- **✅ Simple Classes as Core**: `PerformanceMode`, `LoadShedder`, `MemoryManager`, `PoolManager`, etc. are now the default implementations
+- **✅ Legacy Namespace**: Complex classes moved to `src/Legacy/` for those who need advanced features
+- **✅ Automatic Documentation**: `ApiDocumentationMiddleware` provides automatic OpenAPI/Swagger generation
+- **✅ Zero Breaking Changes**: All existing code continues to work without modification through aliases
+- **✅ Clean Architecture**: Focused on essential functionality without unnecessary complexity
 
 **Key Principle**: "Simplicidade sobre Otimização Prematura" - Simple, correct code over complex "optimized" code.
+
+#### 📖 **Automatic OpenAPI/Swagger Documentation**
+The v1.2.0 introduces `ApiDocumentationMiddleware` that automatically:
+- Generates OpenAPI 3.0.0 specification from all routes
+- Provides `/docs` endpoint with JSON OpenAPI
+- Provides `/swagger` endpoint with Swagger UI interface
+- Parses PHPDoc comments for route metadata
+- Requires zero configuration to work
+
+```php
+// Enable automatic documentation in 3 lines
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',
+    'swagger_path' => '/swagger'
+]));
+```
 
 ### Architectural Foundation (v1.1.2+)
 - Organized middleware structure while maintaining full backward compatibility

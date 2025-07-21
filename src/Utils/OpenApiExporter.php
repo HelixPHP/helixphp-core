@@ -1,370 +1,278 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PivotPHP\Core\Utils;
 
-use PivotPHP\Core\Routing\Router;
+use PivotPHP\Core\Core\Application;
 
 /**
- * Service responsible for exporting OpenAPI documentation from Router routes.
+ * OpenAPI Exporter
+ *
+ * Simple and effective OpenAPI specification generation for the microframework.
+ * Provides basic OpenAPI functionality without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
+ *
+ * @deprecated Use ApiDocumentationMiddleware instead for automatic documentation
  */
 class OpenApiExporter
 {
     /**
-     * Generates OpenAPI documentation from multiple router routes.
-     *
-     * @param  array|string $routers Array of Router/RouterInstance instances or Router class name
-     * @return array<string, mixed>
+     * Application instance
      */
-    public static function export($routers, ?string $baseUrl = null): array
+    private Application $app;
+
+    /**
+     * Constructor
+     */
+    public function __construct(Application $app)
     {
-        $allRoutes = [];
-        if (is_string($routers)) {
-            $allRoutes = $routers::getRoutes();
-        } elseif (is_array($routers)) {
-            foreach ($routers as $router) {
-                if (is_string($router) && class_exists($router) && method_exists($router, 'getRoutes')) {
-                    $allRoutes = array_merge($allRoutes, $router::getRoutes());
-                } elseif (is_object($router) && method_exists($router, 'getRoutes')) {
-                    $allRoutes = array_merge($allRoutes, $router->getRoutes());
-                }
-            }
-        } elseif (is_object($routers) && method_exists($routers, 'getRoutes')) {
-            $allRoutes = $routers->getRoutes();
-        }
+        $this->app = $app;
+    }
 
-        $paths = [];
-        $allTags = [];
-        $tagDescriptions = [];
+    /**
+     * Generate OpenAPI specification
+     */
+    public function generate(?string $baseUrl = null): array
+    {
+        // Try to get routes from the router
+        $router = $this->app->getRouter();
+        $routes = method_exists($router, 'getRoutes') ? $router->getRoutes() : [];
 
-        // Default servers
-        $servers = [];
-        if ($baseUrl) {
-            $servers[] = [ 'url' => $baseUrl, 'description' => 'Current environment' ];
-        }
-        $servers[] = [ 'url' => 'http://localhost:8080', 'description' => 'Local development' ];
-        $servers[] = [ 'url' => 'https://api.example.com', 'description' => 'Production' ];
-        $servers[] = [ 'url' => 'https://staging.api.example.com', 'description' => 'Staging' ];
-
-        // Global error responses
-        $globalErrors = [
-            '400' => ['description' => 'Invalid request'],
-            '401' => ['description' => 'Unauthorized'],
-            '404' => ['description' => 'Not found'],
-            '500' => ['description' => 'Internal server error']
+        $spec = [
+            'openapi' => '3.0.0',
+            'info' => [
+                'title' => 'PivotPHP API',
+                'version' => '1.2.0',
+                'description' => 'Auto-generated API documentation'
+            ],
+            'servers' => [
+                [
+                    'url' => $baseUrl ?? 'http://localhost:8080',
+                    'description' => 'Development server'
+                ]
+            ],
+            'paths' => []
         ];
 
-        // Process routes
-        foreach ($allRoutes as $route) {
-            // O Router usa 'path', mas podemos aceitar tanto 'path' quanto 'url' para compatibilidade
-            $path = self::convertPathParameters($route['path'] ?? $route['url'] ?? '');
-            $method = strtolower($route['method']);
+        // Simple route processing
+        foreach ($routes as $route) {
+            $path = $route['path'] ?? '/';
+            $method = strtolower($route['method'] ?? 'get');
 
-            if (!isset($paths[$path])) {
-                $paths[$path] = [];
+            if (!isset($spec['paths'][$path])) {
+                $spec['paths'][$path] = [];
             }
 
-            // Extract documentation from comments
-            $docInfo = self::parseDocumentation($route);
-            $tags = $docInfo['tags'] ?? ['default'];
-            $summary = $docInfo['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path;
-            $description = $docInfo['description'] ?? '';
-            $parameters = $docInfo['parameters'] ?? [];
+            $responses = [
+                '200' => [
+                    'description' => 'Successful response'
+                ]
+            ];
 
-            // Determine if we should add global errors
-            $hasCustomResponses = !empty($docInfo['responses']);
-            $responses = $docInfo['responses'] ?? ['200' => ['description' => 'Successful response']];
-
-            // Mesclar respostas globais sem sobrescrever as customizadas, já convertendo as chaves para string
-            foreach ($globalErrors as $code => $error) {
-                $codeStr = (string)$code;
-                if (!isset($responses[$codeStr])) {
-                    $responses[$codeStr] = $error;
-                }
-            }
-            // Forçar todas as chaves para string já no merge acima, evitando loop extra
-            if (array_keys($responses) !== array_map('strval', array_keys($responses))) {
-                $responses = array_combine(
-                    array_map('strval', array_keys($responses)),
-                    array_values($responses)
+            // Add default error responses if not a static route
+            if (!isset($route['metadata']['static_route'])) {
+                $responses = array_merge(
+                    $responses,
+                    [
+                        '400' => ['description' => 'Invalid request'],
+                        '401' => ['description' => 'Unauthorized'],
+                        '404' => ['description' => 'Not found'],
+                        '500' => ['description' => 'Internal server error'],
+                    ]
                 );
             }
 
-            // Add tags to collection
-            $allTags = array_merge($allTags, $tags);
-
-            $paths[$path][$method] = [
-                'tags' => $tags,
-                'summary' => $summary,
-                'description' => $description,
-                'parameters' => $parameters,
+            $spec['paths'][$path][$method] = [
+                'summary' => $route['summary'] ?? (
+                    $route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path
+                ),
                 'responses' => $responses
             ];
+        }
 
-            // Add request body for POST/PUT/PATCH
-            if (in_array($method, ['post', 'put', 'patch'])) {
-                $paths[$path][$method]['requestBody'] = [
-                    'required' => true,
-                    'content' => [
-                        'application/json' => [
-                            'schema' => ['type' => 'object']
-                        ]
+        return $spec;
+    }
+
+    /**
+     * Static export method for backward compatibility
+     */
+    public static function exportStatic(Application $app, ?string $baseUrl = null): array
+    {
+        $exporter = new self($app);
+        return $exporter->generate($baseUrl);
+    }
+
+    /**
+     * Static export method (alias for backward compatibility)
+     */
+    public static function export(mixed $app, ?string $baseUrl = null): array
+    {
+        // If app is a string, try to get routes from Router class directly
+        if (is_string($app)) {
+            // Try to get routes from the Router class
+            $routes = [];
+            if (class_exists($app)) {
+                // Try to get routes from static methods
+                if (method_exists($app, 'getRoutes')) {
+                    $routes = $app::getRoutes();
+                }
+            }
+
+            $spec = [
+                'openapi' => '3.0.0',
+                'info' => [
+                    'title' => 'PivotPHP API',
+                    'version' => '1.2.0',
+                    'description' => 'Auto-generated API documentation'
+                ],
+                'servers' => [
+                    [
+                        'url' => $baseUrl ?? 'http://localhost:8080',
+                        'description' => 'Development server'
+                    ]
+                ],
+                'paths' => [],
+                'tags' => [] // Initialize tags array
+            ];
+
+            $globalTags = [];
+
+            // Process routes
+            foreach ($routes as $route) {
+                $path = $route['path'] ?? '/';
+                $method = strtolower($route['method'] ?? 'get');
+
+                // Convert Laravel-style parameters to OpenAPI format
+                $path = preg_replace('/\:(\w+)/', '{$1}', $path);
+                if ($path === null) {
+                    throw new \RuntimeException("Error processing path: '{$route['path']}'");
+                }
+                $path = (string) $path;
+
+                if (!isset($spec['paths'][$path])) {
+                    $spec['paths'][$path] = [];
+                }
+
+                $responses = [
+                    '200' => [
+                        'description' => 'Successful response'
                     ]
                 ];
+
+                // Add default error responses if not a static route
+                if (!isset($route['metadata']['static_route'])) {
+                    $defaultErrors = [
+                        '400' => ['description' => 'Invalid request'],
+                        '401' => ['description' => 'Unauthorized'],
+                        '404' => ['description' => 'Not found'],
+                        '500' => ['description' => 'Internal server error'],
+                    ];
+
+                    // Only add default errors if they don't already exist
+                    foreach ($defaultErrors as $code => $response) {
+                        if (!isset($responses[$code])) {
+                            $responses[$code] = $response;
+                        }
+                    }
+                }
+
+                $operationSpec = [
+                    'summary' => $route['summary'] ?? (
+                        $route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path
+                    ),
+                    'responses' => $responses
+                ];
+
+                // Add custom responses if they exist
+                if (isset($route['metadata']['responses'])) {
+                    $customResponses = $route['metadata']['responses'];
+                    foreach ($customResponses as $code => $response) {
+                        if (is_string($response)) {
+                            $operationSpec['responses'][$code] = ['description' => $response];
+                        } elseif (is_array($response)) {
+                            $operationSpec['responses'][$code] = $response;
+                        }
+                    }
+                }
+
+                // Add tags if they exist
+                if (isset($route['metadata']['tags'])) {
+                    $operationSpec['tags'] = $route['metadata']['tags'];
+                }
+
+                $spec['paths'][$path][$method] = $operationSpec;
+
+                // Collect global tags
+                if (isset($route['metadata']['tags']) && is_array($route['metadata']['tags'])) {
+                    foreach ($route['metadata']['tags'] as $tag) {
+                        if (!in_array($tag, $globalTags)) {
+                            $globalTags[] = $tag;
+                        }
+                    }
+                }
+
+                // Add parameters if they exist
+                $parameterSource = $route['metadata']['parameters'] ?? null;
+                if ($parameterSource) {
+                    $parameters = [];
+
+                    if (is_array($parameterSource)) {
+                        foreach ($parameterSource as $paramName => $paramConfig) {
+                            if (is_string($paramName) && is_array($paramConfig)) {
+                                $inValue = $paramConfig['in'] ?? 'path';
+                                $parameters[] = [
+                                    'name' => $paramName,
+                                    'in' => $inValue,
+                                    'required' => $paramConfig['required'] ?? ($inValue === 'path' ? true : false),
+                                    'schema' => [
+                                        'type' => $paramConfig['type'] ?? 'string'
+                                    ],
+                                    'description' => $paramConfig['description'] ?? ''
+                                ];
+                            }
+                        }
+                    }
+
+                    if (!empty($parameters)) {
+                        $spec['paths'][$path][$method]['parameters'] = $parameters;
+                    }
+                }
             }
+
+            // Add global tags to spec
+            if (!empty($globalTags)) {
+                $spec['tags'] = array_map(
+                    function ($tag) {
+                        return ['name' => $tag];
+                    },
+                    $globalTags
+                );
+            }
+
+            return $spec;
         }
 
-        // Create tag definitions
-        $tagDefinitions = [];
-        foreach (array_unique($allTags) as $tag) {
-            $tagDefinitions[] = [
-                'name' => $tag,
-                'description' => ucfirst($tag) . ' operations'
-            ];
+        if ($app instanceof Application) {
+            return self::exportStatic($app, $baseUrl);
         }
 
+        // Fallback for non-Application objects
         return [
             'openapi' => '3.0.0',
             'info' => [
                 'title' => 'PivotPHP API',
-                'version' => '1.0.0',
+                'version' => '1.2.0',
                 'description' => 'Auto-generated API documentation'
             ],
-            'servers' => $servers,
-            'tags' => $tagDefinitions,
-            'paths' => $paths
+            'servers' => [
+                [
+                    'url' => $baseUrl ?? 'http://localhost:8080',
+                    'description' => 'Development server'
+                ]
+            ],
+            'paths' => []
         ];
-    }
-
-    /**
-     * Convert Express route parameters to OpenAPI format
-     */
-    private static function convertPathParameters(?string $path): string
-    {
-        if (empty($path)) {
-            return '/';
-        }
-        $result = preg_replace('/:(\w+)/', '{$1}', $path);
-        return $result ?? $path;
-    }
-
-    /**
-     * Parse documentation from route callback or comments
-     */
-    private static function parseDocumentation(array $route): array
-    {
-        $docInfo = [
-            'tags' => ['default'],
-            'summary' => '',
-            'description' => '',
-            'parameters' => [],
-            'responses' => []
-        ];
-
-        // Primeiro, vamos verificar se temos metadados explícitos na rota
-        if (isset($route['metadata']) && is_array($route['metadata'])) {
-            $metadata = $route['metadata'];
-
-            if (isset($metadata['summary'])) {
-                $docInfo['summary'] = $metadata['summary'];
-            }
-
-            if (isset($metadata['description'])) {
-                $docInfo['description'] = $metadata['description'];
-            }
-
-            if (isset($metadata['tags'])) {
-                $docInfo['tags'] = is_array($metadata['tags']) ? $metadata['tags'] : [$metadata['tags']];
-            }
-
-            if (isset($metadata['parameters'])) {
-                $docInfo['parameters'] = self::convertParameters($metadata['parameters']);
-            }
-
-            if (isset($metadata['responses'])) {
-                $docInfo['responses'] = self::normalizeResponses($metadata['responses']);
-            }
-        }
-
-        // Se não temos summary e temos um handler, tentamos extrair da reflection
-        if (empty($docInfo['summary'])) {
-            $handler = $route['handler'] ?? $route['callback'] ?? null;
-            if ($handler && is_callable($handler)) {
-                try {
-                    if (is_string($handler)) {
-                        $reflection = new \ReflectionFunction($handler);
-                    } elseif ($handler instanceof \Closure) {
-                        $reflection = new \ReflectionFunction($handler);
-                    } else {
-                        $reflection = null;
-                    }
-
-                    if ($reflection) {
-                        $docComment = $reflection->getDocComment();
-
-                        if ($docComment) {
-                            $parsedDoc = self::parseDocComment($docComment);
-                            $docInfo = array_merge($docInfo, array_filter($parsedDoc));
-                        }
-                    }
-                } catch (\Exception $e) {
-                    // Ignore reflection errors
-                }
-            }
-        }
-
-        // Se ainda não temos summary, gerar um padrão
-        if (empty($docInfo['summary'])) {
-            $method = strtoupper($route['method'] ?? 'GET');
-            $path = $route['path'] ?? '/';
-            $docInfo['summary'] = "Endpoint {$method} {$path}";
-        }
-
-        return $docInfo;
-    }
-
-    /**
-     * Convert parameter definitions to OpenAPI format
-     */
-    private static function convertParameters(array $parameters): array
-    {
-        $converted = [];
-
-        foreach ($parameters as $name => $config) {
-            if (is_string($config)) {
-                // Simple string definition
-                $converted[] = [
-                    'name' => $name,
-                    'in' => 'path',
-                    'required' => true,
-                    'schema' => ['type' => self::phpTypeToOpenApi($config)]
-                ];
-            } elseif (is_array($config)) {
-                // Full parameter definition
-                $param = [
-                    'name' => $name,
-                    'in' => $config['in'] ?? 'path',
-                    'required' => $config['required'] ?? true,
-                    'schema' => [
-                        'type' => self::phpTypeToOpenApi($config['type'] ?? 'string')
-                    ]
-                ];
-
-                if (isset($config['description'])) {
-                    $param['description'] = $config['description'];
-                }
-
-                $converted[] = $param;
-            }
-        }
-
-        return $converted;
-    }
-
-    /**
-     * Normalize response definitions to OpenAPI format
-     */
-    private static function normalizeResponses(array $responses): array
-    {
-        $normalized = [];
-        foreach ($responses as $code => $response) {
-            $codeStr = (string)$code;
-            if (is_string($response)) {
-                $normalized[$codeStr] = ['description' => $response];
-            } elseif (is_array($response) && isset($response['description'])) {
-                $normalized[$codeStr] = $response;
-            } else {
-                $normalized[$codeStr] = ['description' => 'Response'];
-            }
-        }
-        return $normalized;
-    }
-
-    /**
-     * Parse PHPDoc comment
-     */
-    private static function parseDocComment(string $docComment): array
-    {
-        $docInfo = [
-            'tags' => ['default'],
-            'summary' => '',
-            'description' => '',
-            'parameters' => [],
-            'responses' => []
-        ];
-
-        $lines = explode("\n", $docComment);
-        $currentSection = 'description';
-        $description = [];
-
-        foreach ($lines as $line) {
-            $line = trim($line, " \t\n\r\0\x0B/*");
-
-            if (empty($line)) {
-                continue;
-            }
-
-            if (strpos($line, '@') === 0) {
-                $parts = explode(' ', $line, 2);
-                $tag = $parts[0];
-                $content = $parts[1] ?? '';
-
-                switch ($tag) {
-                    case '@summary':
-                        $docInfo['summary'] = $content;
-                        break;
-                    case '@tag':
-                        $docInfo['tags'] = array_merge($docInfo['tags'], explode(',', $content));
-                        break;
-                    case '@param':
-                        // Parse parameter documentation
-                        if (preg_match('/(\w+)\s+\$(\w+)\s*(.*)/', $content, $matches)) {
-                            $docInfo['parameters'][] = [
-                                'name' => $matches[2],
-                                'in' => 'path',
-                                'required' => true,
-                                'schema' => ['type' => self::phpTypeToOpenApi($matches[1])],
-                                'description' => $matches[3]
-                            ];
-                        }
-                        break;
-                    case '@return':
-                    case '@response':
-                        // Basic response documentation
-                        $docInfo['responses']['200'] = ['description' => $content];
-                        break;
-                }
-            } else {
-                $description[] = $line;
-            }
-        }
-
-        if (empty($docInfo['summary']) && !empty($description)) {
-            $docInfo['summary'] = $description[0];
-        }
-
-        $docInfo['description'] = implode(' ', $description);
-        $docInfo['tags'] = array_unique(array_filter($docInfo['tags']));
-
-        return $docInfo;
-    }
-
-    /**
-     * Convert PHP type to OpenAPI type
-     */
-    private static function phpTypeToOpenApi(string $phpType): string
-    {
-        $typeMap = [
-            'int' => 'integer',
-            'integer' => 'integer',
-            'float' => 'number',
-            'double' => 'number',
-            'bool' => 'boolean',
-            'boolean' => 'boolean',
-            'string' => 'string',
-            'array' => 'array',
-            'object' => 'object'
-        ];
-
-        return $typeMap[strtolower($phpType)] ?? 'string';
     }
 }

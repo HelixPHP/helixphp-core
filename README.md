@@ -13,17 +13,15 @@
 
 ## 🚀 O que é o PivotPHP?
 
-**PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, para construir APIs e aplicações web de alta performance em PHP. Ideal para validação de conceitos, estudos e desenvolvimento de aplicações que exigem produtividade, arquitetura desacoplada e extensibilidade real.
+**PivotPHP** é um microframework moderno, leve e seguro, inspirado no Express.js, **especialmente projetado para provas de conceito, prototipagem rápida e estudos**. Oferece uma API familiar e produtiva para validar ideias rapidamente, com arquitetura desacoplada e extensibilidade real quando necessário.
 
-- **Performance Excepcional**: 44,092 ops/sec framework (+116% v1.1.3), 6,227 req/sec Docker (3º lugar), 161K ops/sec JSON pooling, 1.61MB memory footprint.
-- **Arquitetura Excelente (v1.1.3)**: ARCHITECTURAL_GUIDELINES compliant, separação perfeita functional/performance, zero over-engineering.
-- **Segurança**: Middlewares robustos para CSRF, XSS, Rate Limiting, JWT, API Key e mais.
-- **Extensível**: Sistema de plugins, hooks, providers e integração PSR-14.
-- **Qualidade Superior**: 684+ testes CI (100% success), 131 integration tests, PHPStan Level 9, PSR-12 100%, arquitectura simplificada.
-- **🎯 v1.1.4**: Developer Experience & Examples Modernization Edition - native array callables, intelligent JsonBufferPool, enhanced error diagnostics.
-- **🏗️ v1.1.3**: Architectural Excellence Edition - guidelines compliance, performance +116%, test modernization.
-- **🚀 v1.1.1**: JSON Optimization Edition com pooling automático e performance excepcional.
-- **🎯 v1.1.2**: Consolidation Edition - arquitetura limpa, 100% backward compatible, base sólida para produção.
+- **⚡ Setup Instantâneo**: API funcionando em menos de 5 minutos, perfeito para validar ideias rapidamente.
+- **🎯 Foco em Produtividade**: Sintaxe familiar (Express.js) que acelera o desenvolvimento de protótipos.
+- **📚 Documentação Automática**: Geração automática de OpenAPI/Swagger - essencial para apresentar provas de conceito.
+- **🛡️ Segurança Integrada**: Middlewares prontos para CSRF, XSS, JWT - protótipos seguros desde o início.
+- **🔧 Extensibilidade Simples**: Sistema de plugins e providers para expandir funcionalidades conforme necessário.
+- **📊 Performance Adequada**: Throughput de 44,092 ops/sec, footprint de 1.61MB - suficiente para demonstrações.
+- **🎨 v1.2.0**: Simplicity Edition - Arquitetura limpa, zero complexidade desnecessária, foco em simplicidade.
 
 ---
 
@@ -36,27 +34,30 @@
 - 🔐 **Autenticação Multi-método**
 - 🛡️ **Segurança Avançada**
 - 📡 **Streaming & SSE**
-- 📚 **OpenAPI/Swagger**
+- 📚 **OpenAPI/Swagger Automático** (v1.2.0+ Middleware)
 - 🔄 **PSR-7 Híbrido**
 - ♻️ **Object Pooling**
-- 🚀 **JSON Optimization** (v1.1.4+ Intelligent)
-- 🎯 **Array Callables** (v1.1.4+ Native)
-- 🔍 **Enhanced Error Diagnostics** (v1.1.4+)
+- 🚀 **JSON Optimization** (v1.2.0 Intelligent)
+- 🎯 **Array Callables** (v1.2.0 Native)
+- 🔍 **Enhanced Error Diagnostics** (v1.2.0)
 - ⚡ **Performance Extrema**
 - 🧪 **Qualidade e Testes**
-- 🏗️ **Architectural Excellence** (v1.1.3)
+- 🎯 **Simplicidade sobre Otimização** (v1.2.0)
 
 ---
 
-## 💡 Casos de Uso & Insights
+## 💡 Casos de Uso Ideais
 
-- APIs RESTful de alta performance
-- Gateways de autenticação JWT/API Key
-- Microsserviços e aplicações desacopladas
-- Sistemas extensíveis com plugins e hooks
-- Plataformas que exigem segurança e performance
+- **🔬 Provas de Conceito**: Validar ideias de API rapidamente com setup mínimo
+- **🎯 Prototipagem Rápida**: Demonstrar funcionalidades para stakeholders e clientes
+- **📚 Estudos e Aprendizado**: Compreender arquiteturas de microframework e PSR standards
+- **🧪 Testes de Integração**: Criar APIs mock para testar integrações frontend/mobile
+- **🎨 MVPs Educacionais**: Projetos acadêmicos e de portfólio com qualidade profissional
+- **🔗 APIs Bridge**: Conectar sistemas legacy com interfaces modernas
 
-Veja exemplos práticos em [`examples/`](examples/), benchmarks reais em [`benchmarks/`](benchmarks/) e [relatório de performance completo](docs/performance/PERFORMANCE_REPORT_v1.0.0.md).
+**Ideal para:** Desenvolvedores que precisam validar conceitos rapidamente sem a complexidade de frameworks enterprise.
+
+Veja exemplos práticos em [`examples/`](examples/) e [documentação técnica completa](docs/).
 
 ---
 
@@ -115,7 +116,7 @@ $app->get('/posts/:year<\d{4}>/:month<\d{2}>/:slug<slug>', function($req, $res) 
 $app->run();
 ```
 
-### 🛣️ Sintaxes de Roteamento Suportadas (v1.1.4+)
+### 🛣️ Sintaxes de Roteamento Suportadas (v1.2.0)
 
 O PivotPHP oferece suporte robusto para múltiplas sintaxes de roteamento:
 
@@ -127,7 +128,7 @@ $app->get('/users', function($req, $res) {
     return $res->json(['users' => User::all()]);
 });
 
-// 2. Array Callable - NOVO v1.1.4+ (Recomendado para Controllers)
+// 2. Array Callable (Recomendado para Controllers)
 $app->get('/users', [UserController::class, 'index']);           // Método estático/instância
 $app->post('/users', [$userController, 'store']);                // Instância específica
 $app->get('/users/:id<\d+>', [UserController::class, 'show']);   // Com validação regex
@@ -189,7 +190,7 @@ class UserController
     }
 }
 
-// ✅ Registrar rotas com array callable v1.1.4+
+// ✅ Registrar rotas com array callable v1.2.0
 $app->get('/users', [UserController::class, 'index']);
 $app->get('/users/:id<\d+>', [UserController::class, 'show']);    // Apenas números
 $app->post('/users', [UserController::class, 'store']);
@@ -199,10 +200,10 @@ $app->put('/users/:id', [UserController::class, 'update'])
     ->middleware($authMiddleware);
 ```
 
-#### ⚡ Validação Automática (v1.1.4+)
+#### ⚡ Validação Automática (v1.2.0)
 
 ```php
-// O PivotPHP v1.1.4+ valida automaticamente array callables:
+// O PivotPHP v1.2.0 valida automaticamente array callables:
 
 // ✅ Método público - ACEITO
 class PublicController {
@@ -264,9 +265,9 @@ $response = OptimizedHttpFactory::createResponse();
 - ✅ **API Express.js** mantida para produtividade
 - ✅ **Zero breaking changes** - código existente funciona sem alterações
 
-### 🚀 JSON Optimization (v1.1.4+ Intelligent System)
+### 🚀 JSON Optimization (v1.2.0 Intelligent System)
 
-O PivotPHP v1.1.4+ introduz **threshold inteligente de 256 bytes** no sistema de otimização JSON, eliminando overhead para dados pequenos:
+O PivotPHP v1.2.0 mantém o **threshold inteligente de 256 bytes** no sistema de otimização JSON, eliminando overhead para dados pequenos:
 
 #### ⚡ Sistema Inteligente Automático
 
@@ -326,7 +327,7 @@ echo "Eficiência: {$stats['efficiency']}%\n";
 echo "Operações: {$stats['total_operations']}\n";
 ```
 
-#### ✨ Novidades v1.1.4+
+#### ✨ Mantido v1.2.0
 
 - ✅ **Threshold Inteligente** - Elimina overhead para dados <256 bytes
 - ✅ **Detecção Automática** - Sistema decide quando usar pooling
@@ -335,9 +336,9 @@ echo "Operações: {$stats['total_operations']}\n";
 - ✅ **Monitoramento Integrado** - Estatísticas em tempo real
 - ✅ **Compatibilidade Total** - Drop-in replacement transparente
 
-### 🔍 Enhanced Error Diagnostics (v1.1.4+)
+### 🔍 Enhanced Error Diagnostics (v1.2.0)
 
-PivotPHP v1.1.4+ introduz **ContextualException** para diagnósticos avançados de erros:
+PivotPHP v1.2.0 mantém **ContextualException** para diagnósticos avançados de erros:
 
 #### ⚡ Sistema de Erro Inteligente
 
@@ -392,7 +393,7 @@ ContextualException::configure([
 ]);
 ```
 
-#### ✨ Recursos v1.1.4+
+#### ✨ Recursos v1.2.0
 
 - ✅ **Erro IDs Únicos** - Rastreamento facilitado para debugging
 - ✅ **Sugestões Inteligentes** - Orientações específicas para resolver problemas
@@ -406,26 +407,72 @@ ContextualException::configure([
 - [JsonBufferPool Optimization Guide](docs/technical/json/BUFFER_POOL_OPTIMIZATION.md)  
 - [Enhanced Error Diagnostics](docs/technical/error-handling/CONTEXTUAL_EXCEPTION_GUIDE.md)
 
-### 📖 Documentação OpenAPI/Swagger
+### 📖 Documentação OpenAPI/Swagger Automática (v1.2.0+)
 
-O PivotPHP inclui suporte integrado para geração automática de documentação OpenAPI:
+O PivotPHP v1.2.0+ inclui **middleware automático** para geração de documentação OpenAPI/Swagger:
 
 ```php
-use PivotPHP\Core\Services\OpenApiExporter;
+use PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware;
 
-// Gerar documentação OpenAPI
-$openapi = new OpenApiExporter($app);
-$spec = $openapi->export();
+// ✅ NOVO v1.2.0+: Documentação automática em 3 linhas!
+$app = new Application();
 
-// Servir documentação em endpoint
-$app->get('/api/docs', function($req, $res) use ($openapi) {
-    $res->json($openapi->export());
+// Adicionar middleware de documentação automática
+$app->use(new ApiDocumentationMiddleware([
+    'docs_path' => '/docs',        // Endpoint JSON OpenAPI
+    'swagger_path' => '/swagger',  // Interface Swagger UI
+    'base_url' => 'http://localhost:8080'
+]));
+
+// Suas rotas com documentação PHPDoc
+$app->get('/users', function($req, $res) {
+    /**
+     * @summary List all users
+     * @description Returns a list of all users in the system
+     * @tags Users
+     * @response 200 array List of users
+     */
+    return $res->json(['users' => User::all()]);
 });
 
-// Servir UI do Swagger
-$app->get('/api/docs/ui', function($req, $res) {
-    $res->html($openapi->getSwaggerUI());
+$app->get('/users/:id', function($req, $res) {
+    /**
+     * @summary Get user by ID
+     * @description Returns a single user by their ID
+     * @tags Users
+     * @param int id User ID
+     * @response 200 object User object
+     * @response 404 object User not found
+     */
+    $userId = $req->param('id');
+    return $res->json(['user' => User::find($userId)]);
 });
+
+// Pronto! Acesse:
+// http://localhost:8080/swagger - Interface Swagger UI completa
+// http://localhost:8080/docs    - JSON OpenAPI 3.0.0
+```
+
+#### 🎯 Recursos do Middleware de Documentação
+
+- ✅ **Geração automática** de OpenAPI 3.0.0 de todas as rotas
+- ✅ **Interface Swagger UI** integrada (zero configuração)
+- ✅ **Parsing de PHPDoc** para metadados das rotas
+- ✅ **Endpoints automáticos** `/docs` e `/swagger`
+- ✅ **Configuração flexível** de paths e URLs
+- ✅ **Zero dependências** externas
+- ✅ **Compatibilidade total** com todas as rotas
+
+#### 📝 Exemplo Completo
+
+Veja o exemplo funcional em [`examples/api_documentation_example.php`](examples/api_documentation_example.php):
+
+```bash
+# Rodar o exemplo
+php examples/api_documentation_example.php
+
+# Acessar documentação
+open http://localhost:8080/swagger
 ```
 
 ---
@@ -584,15 +631,15 @@ Veja a [documentação completa sobre PSR-7](docs/technical/compatibility/psr7-d
 
 ---
 
-## 🏗️ Arquitetura v1.1.4+ (Developer Experience Edition)
+## 🏗️ Arquitetura v1.2.0 (Simplicity Edition)
 
-O PivotPHP v1.1.4+ aprimora a arquitetura consolidada com foco na experiência do desenvolvedor:
+O PivotPHP v1.2.0 simplifica a arquitetura seguindo o princípio "Simplicidade sobre Otimização Prematura", **priorizando facilidade de uso para provas de conceito**:
 
-### 🎯 Novos Recursos v1.1.4+
+### 🎯 Recursos v1.2.0
 
 #### 🚀 Array Callables Nativos
 ```php
-// ✅ NOVO v1.1.4+: Suporte nativo a array callables
+// ✅ MANTIDO v1.2.0: Suporte nativo a array callables
 $app->get('/users', [UserController::class, 'index']);
 $app->post('/users', [$userController, 'store']);
 
@@ -624,9 +671,9 @@ try {
 }
 ```
 
-## 🏗️ Arquitetura v1.1.2+ (Consolidated Foundation)
+## 🏗️ Arquitetura v1.2.0 (Simplified Foundation)
 
-O PivotPHP v1.1.2 introduziu uma arquitetura consolidada que serve como base sólida para v1.1.4+:
+O PivotPHP v1.2.0 simplifica a arquitetura v1.1.x, eliminando complexidade desnecessária:
 
 ### 🎯 Estrutura de Middlewares Organizada
 ```
@@ -644,14 +691,14 @@ src/Middleware/
     └── ErrorMiddleware.php
 ```
 
-### ✅ Melhorias da v1.1.2
-- **Zero duplicações críticas** - Código 100% limpo
-- **Arquitetura consolidada** - Estrutura lógica e intuitiva
-- **100% compatibilidade** - Aliases automáticos preservam código existente
-- **Qualidade máxima** - PHPStan Level 9, 100% testes passando
-- **Performance otimizada** - 48,323 ops/sec média mantida
+### ✅ Melhorias da v1.2.0 (Foco em Simplicidade)
+- **🎯 Orientado a Protótipos** - Arquitetura simplificada para desenvolvimento rápido
+- **📚 Documentação Didática** - Exemplos práticos e guias de aprendizado
+- **🔧 Setup Mínimo** - Configuração zero para começar imediatamente
+- **💡 Conceitos Claros** - Estrutura lógica e intuitiva para estudos
+- **🛡️ Qualidade Educacional** - PHPStan Level 9, 100% testes passando para aprendizado
 
-### 🔄 Migração para v1.1.2
+### 🔄 Migração para v1.2.0
 ```php
 // Imports antigos (ainda funcionam via aliases)
 use PivotPHP\Core\Http\Psr15\Middleware\CorsMiddleware;
@@ -662,7 +709,25 @@ use PivotPHP\Core\Middleware\Http\CorsMiddleware;
 use PivotPHP\Core\Utils\Arr;
 ```
 
-Veja o [Overview Estrutural](STRUCTURAL_OVERVIEW_v1.1.2.md) para detalhes completos.
+Veja o [Overview Estrutural](docs/releases/FRAMEWORK_OVERVIEW_v1.2.0.md) para detalhes completos.
+
+---
+
+## ⚠️ Importante: Manutenção do Projeto
+
+**PivotPHP Core é mantido por apenas uma pessoa** e pode não receber atualizações constantemente. Este projeto é ideal para:
+
+- 🔬 **Provas de conceito** e protótipos
+- 📚 **Estudos** e aprendizado de arquitetura
+- 🧪 **Testes** e validação de ideias
+- 🎓 **Projetos educacionais** e acadêmicos
+
+**Não recomendado para:**
+- 🏢 Aplicações enterprise críticas
+- 📈 Sistemas de produção que exigem suporte 24/7
+- 🔄 Projetos que precisam de atualizações frequentes
+
+Se você precisa de um framework com equipe dedicada e suporte empresarial, considere alternativas como Laravel, Symfony ou Slim 4.
 
 ---
 
@@ -677,6 +742,8 @@ Junte-se à nossa comunidade crescente de desenvolvedores:
 ## 🤝 Como Contribuir
 
 Quer ajudar a evoluir o PivotPHP? Veja o [Guia de Contribuição](CONTRIBUTING.md) ou acesse [`docs/contributing/`](docs/contributing/) para saber como abrir issues, enviar PRs ou criar extensões.
+
+**Contribuições são especialmente bem-vindas!** Por ser mantido por uma pessoa, o projeto se beneficia muito da colaboração da comunidade.
 
 ---
 

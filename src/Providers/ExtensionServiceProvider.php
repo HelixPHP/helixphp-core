@@ -41,7 +41,7 @@ class ExtensionServiceProvider extends ServiceProvider
         $extensionManager = $this->app->make(ExtensionManager::class);
 
         // Load extensions from configuration
-        $extensionManager->loadFromConfig();
+        $extensionManager->loadFromConfig([]);
     }
 
     /**

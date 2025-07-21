@@ -1,10 +1,12 @@
 <?php
 
 /**
- * ⚡ PivotPHP - Modo Alta Performance
+ * ⚡ PivotPHP - Modo Performance Simplificado
  * 
- * Demonstra recursos de alta performance do PivotPHP v1.1.0+
- * Object pooling, JSON optimization, memory management e métricas
+ * Demonstra recursos de performance do PivotPHP v1.2.0+
+ * Performance simplificada, JSON optimization, memory management e métricas
+ * 
+ * NOTA: Versão simplificada seguindo principio "Simplicidade sobre Otimização Prematura"
  * 
  * 🚀 Como executar:
  * php -S localhost:8000 examples/05-performance/high-performance.php
@@ -20,7 +22,7 @@
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PivotPHP\Core\Core\Application;
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 use PivotPHP\Core\Json\Pool\JsonBufferPool;
 use PivotPHP\Core\Performance\PerformanceMonitor;
 
@@ -30,11 +32,11 @@ $app = new Application();
 $app->get('/', function ($req, $res) {
     return $res->json([
         'title' => 'PivotPHP - High Performance Examples',
-        'description' => 'Demonstrações dos recursos de alta performance v1.1.0+',
+        'description' => 'Demonstrações dos recursos de performance v1.2.0+',
         'performance_features' => [
             'High Performance Mode' => [
                 'description' => 'Modo otimizado para throughput máximo',
-                'profiles' => ['BALANCED', 'HIGH', 'EXTREME'],
+                'profiles' => ['DEVELOPMENT', 'PRODUCTION', 'TEST'],
                 'benefits' => ['Object pooling', 'Memory optimization', 'Response caching']
             ],
             'JSON Buffer Pooling' => [
@@ -63,7 +65,7 @@ $app->get('/', function ($req, $res) {
             'GET /benchmark' => 'Benchmark completo'
         ],
         'current_status' => [
-            'high_performance_enabled' => HighPerformanceMode::getStatus()['enabled'],
+            'high_performance_enabled' => PerformanceMode::isEnabled(),
             'json_pool_configured' => class_exists('PivotPHP\\Core\\Json\\Pool\\JsonBufferPool'),
             'framework_version' => Application::VERSION
         ]
@@ -74,7 +76,7 @@ $app->get('/', function ($req, $res) {
 $app->get('/enable-high-performance', function ($req, $res) {
     $profile = $req->get('profile', 'HIGH');
     
-    $validProfiles = ['BALANCED', 'HIGH', 'EXTREME'];
+    $validProfiles = ['DEVELOPMENT', 'PRODUCTION', 'TEST'];
     if (!in_array($profile, $validProfiles)) {
         return $res->status(400)->json([
             'error' => 'Profile inválido',
@@ -84,9 +86,12 @@ $app->get('/enable-high-performance', function ($req, $res) {
     }
     
     // Ativar modo alta performance
-    HighPerformanceMode::enable(constant("PivotPHP\\Core\\Performance\\HighPerformanceMode::PROFILE_{$profile}"));
+    PerformanceMode::enable(constant("PivotPHP\\Core\\Performance\\PerformanceMode::PROFILE_{$profile}"));
     
-    $status = HighPerformanceMode::getStatus();
+    $status = [
+        'enabled' => PerformanceMode::isEnabled(),
+        'current_mode' => PerformanceMode::getCurrentMode()
+    ];
     
     return $res->json([
         'message' => 'Modo alta performance ativado',
@@ -99,7 +104,7 @@ $app->get('/enable-high-performance', function ($req, $res) {
             'json_pooling' => true // Always available in v1.1.1
         ],
         'performance_impact' => [
-            'expected_throughput_gain' => $profile === 'EXTREME' ? '200-400%' : ($profile === 'HIGH' ? '100-200%' : '50-100%'),
+            'expected_throughput_gain' => $profile === 'PRODUCTION' ? '50-100%' : ($profile === 'DEVELOPMENT' ? '0-25%' : '0%'),
             'memory_efficiency' => 'Significantly improved',
             'gc_pressure' => 'Reduced'
         ]
@@ -108,11 +113,11 @@ $app->get('/enable-high-performance', function ($req, $res) {
 
 // 🔄 Desativar modo alta performance
 $app->get('/disable-high-performance', function ($req, $res) {
-    HighPerformanceMode::disable();
+    PerformanceMode::disable();
     
     return $res->json([
         'message' => 'Modo alta performance desativado',
-        'status' => HighPerformanceMode::getStatus(),
+        'status' => ['enabled' => PerformanceMode::isEnabled()],
         'note' => 'JSON pooling permanece ativo (feature v1.1.1)'
     ]);
 });
@@ -202,7 +207,7 @@ $app->post('/json-test', function ($req, $res) {
         ],
         'json_pool_stats' => $poolStats,
         'performance_mode' => [
-            'enabled' => HighPerformanceMode::getStatus()['enabled'],
+            'enabled' => PerformanceMode::isEnabled(),
             'json_pooling_used' => class_exists('PivotPHP\\Core\\Json\\Pool\\JsonBufferPool')
         ],
         'comparison' => [
@@ -241,7 +246,7 @@ $app->get('/pool-demo', function ($req, $res) {
     $memoryEnd = memory_get_usage();
     $memoryPeak = memory_get_peak_usage();
     
-    $performance = HighPerformanceMode::getStatus();
+    $performance = ['enabled' => PerformanceMode::isEnabled()];
     
     return $res->json([
         'pool_demo_results' => [
@@ -259,8 +264,8 @@ $app->get('/pool-demo', function ($req, $res) {
                 'Enable high performance mode for object pooling'
         ],
         'recommendations' => [
-            'for_production' => 'Enable HIGH or EXTREME profile for maximum performance',
-            'for_development' => 'BALANCED profile provides good performance with debugging capabilities',
+            'for_production' => 'Enable PRODUCTION profile for maximum performance',
+            'for_development' => 'DEVELOPMENT profile provides good performance with debugging capabilities',
             'monitoring' => 'Use /metrics endpoint to monitor pool efficiency'
         ]
     ]);
@@ -312,11 +317,11 @@ $app->get('/memory-test', function ($req, $res) {
             'memory_after_gc_mb' => round($memoryAfterGC / 1024 / 1024, 2),
             'memory_freed_mb' => round(($memoryAfter - $memoryAfterGC) / 1024 / 1024, 2)
         ],
-        'performance_mode' => HighPerformanceMode::getStatus(),
+        'performance_mode' => ['enabled' => PerformanceMode::isEnabled()],
         'optimization_tips' => [
             'memory_management' => 'High performance mode optimizes memory usage patterns',
             'gc_optimization' => 'Object pooling reduces garbage collection pressure',
-            'production_advice' => 'Enable EXTREME profile for memory-intensive applications'
+            'production_advice' => 'Enable PRODUCTION profile for memory-intensive applications'
         ]
     ]);
 });
@@ -332,7 +337,7 @@ $app->get('/metrics', function ($req, $res) {
             'php_version' => PHP_VERSION,
             'framework_version' => Application::VERSION
         ],
-        'performance_mode' => HighPerformanceMode::getStatus(),
+        'performance_mode' => ['enabled' => PerformanceMode::isEnabled()],
         'json_pool' => class_exists('PivotPHP\\Core\\Json\\Pool\\JsonBufferPool') ? 
             JsonBufferPool::getStatistics() : null,
         'request_info' => [
@@ -431,7 +436,7 @@ $app->get('/benchmark', function ($req, $res) {
             'test_environment' => [
                 'php_version' => PHP_VERSION,
                 'framework_version' => Application::VERSION,
-                'high_performance_enabled' => HighPerformanceMode::getStatus()['enabled']
+                'high_performance_enabled' => PerformanceMode::isEnabled()
             ]
         ],
         'interpretation' => [

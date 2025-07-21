@@ -1,18 +1,18 @@
-# High-Performance Mode
+# Performance Mode (v1.2.0)
 
-PivotPHP Core v1.1.0+ introduces High-Performance Mode, a revolutionary optimization system that dramatically improves framework performance through intelligent object pooling, memory management, and adaptive optimization strategies.
+PivotPHP Core v1.2.0 introduces **simplified Performance Mode**, following the principle "Simplicidade sobre Otimização Prematura". This replaces the complex HighPerformanceMode with a cleaner, more maintainable implementation.
 
 ## Overview
 
-High-Performance Mode transforms PivotPHP from a standard microframework into a high-throughput, enterprise-grade platform capable of handling intensive workloads with minimal resource consumption.
+Performance Mode provides essential optimizations without unnecessary complexity. It maintains the performance benefits while eliminating enterprise-grade features that add complexity to the microframework.
 
 ### Key Features
 
-- **Object Pooling**: Automatic reuse of Request/Response objects (25x faster creation)
-- **Memory Management**: Adaptive garbage collection with pressure monitoring
-- **Performance Profiles**: BALANCED, HIGH, EXTREME optimization levels
-- **Real-time Metrics**: Pool efficiency and system monitoring
-- **Zero Configuration**: Automatic optimization with optional tuning
+- **Simplified Object Pooling**: Automatic reuse of Request/Response objects (maintained performance)
+- **Basic Memory Management**: Essential garbage collection optimizations
+- **Three Profiles**: DEVELOPMENT, PRODUCTION, TEST (simplified from 5+ profiles)
+- **Essential Metrics**: Core performance monitoring
+- **Zero Configuration**: Works out-of-the-box with sensible defaults
 
 ## Performance Characteristics
 
@@ -26,7 +26,7 @@ High-Performance Mode transforms PivotPHP from a standard microframework into a 
 
 ### Memory Impact
 
-| Scenario | Traditional | High-Performance | Improvement |
+| Scenario | Traditional | Performance Mode | Improvement |
 |----------|-------------|------------------|-------------|
 | 10K requests | 200MB peak | 60MB peak | 70% reduction |
 | Sustained load | Growing | Stable | Memory stable |
@@ -37,10 +37,10 @@ High-Performance Mode transforms PivotPHP from a standard microframework into a 
 ### Basic Enablement
 
 ```php
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 
-// Enable high-performance mode (recommended for production)
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Enable performance mode (recommended for production)
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // Your application code remains unchanged
 $app = new Application();
@@ -53,21 +53,21 @@ $app->run();
 ### Performance Profiles
 
 ```php
-// Balanced optimization (default)
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_BALANCED);
+// Development profile (default)
+PerformanceMode::enable(PerformanceMode::PROFILE_DEVELOPMENT);
 
-// High optimization (recommended for production)
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Production profile (recommended for production)
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
-// Extreme optimization (for maximum throughput)
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_EXTREME);
+// Test profile (optimized for testing)
+PerformanceMode::enable(PerformanceMode::PROFILE_TEST);
 ```
 
 ## Architecture
 
 ### Object Pooling System
 
-The core of High-Performance Mode is an intelligent object pooling system that reuses expensive-to-create objects:
+The core of Performance Mode is an intelligent object pooling system that reuses expensive-to-create objects:
 
 #### PSR-7 Object Pooling
 
@@ -75,7 +75,7 @@ The core of High-Performance Mode is an intelligent object pooling system that r
 // Traditional approach (slow)
 $request = new ServerRequest(); // 28 ops/sec
 
-// High-Performance Mode (fast)
+// Performance Mode (fast)
 $request = Psr7Pool::getRequest(); // 28,693 ops/sec (25x faster)
 // Framework automatically returns objects to pool
 ```
@@ -142,22 +142,22 @@ DynamicPool::configure([
 ### Environment-based Configuration
 
 ```php
-// Enable high-performance mode via environment
-$_ENV['PIVOTPHP_HIGH_PERFORMANCE'] = 'true';
-$_ENV['PIVOTPHP_PERFORMANCE_PROFILE'] = 'HIGH';
+// Enable performance mode via environment
+$_ENV['PIVOTPHP_PERFORMANCE_MODE'] = 'true';
+$_ENV['PIVOTPHP_PERFORMANCE_PROFILE'] = 'PRODUCTION';
 
 // Framework automatically reads these settings
-$app = new Application(); // High-performance mode auto-enabled
+$app = new Application(); // Performance mode auto-enabled
 ```
 
 ### Application Bootstrap
 
 ```php
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 use PivotPHP\Core\Performance\MemoryManager;
 
 // Production-ready configuration
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // Configure memory management
 MemoryManager::configure([
@@ -176,17 +176,17 @@ $app->run();
 ```php
 // Development: Balanced performance with debugging
 if ($_ENV['APP_ENV'] === 'development') {
-    HighPerformanceMode::enable(HighPerformanceMode::PROFILE_BALANCED);
+    PerformanceMode::enable(PerformanceMode::PROFILE_DEVELOPMENT);
 }
 
 // Production: Maximum performance
 if ($_ENV['APP_ENV'] === 'production') {
-    HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
-    
-    // Optional: Extreme mode for high-traffic scenarios
-    if ($_ENV['HIGH_TRAFFIC'] === 'true') {
-        HighPerformanceMode::enable(HighPerformanceMode::PROFILE_EXTREME);
-    }
+    PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
+}
+
+// Test: Optimized for testing
+if ($_ENV['APP_ENV'] === 'test') {
+    PerformanceMode::enable(PerformanceMode::PROFILE_TEST);
 }
 ```
 
@@ -196,7 +196,7 @@ if ($_ENV['APP_ENV'] === 'production') {
 
 ```php
 // Get comprehensive performance status
-$status = HighPerformanceMode::getStatus();
+$status = PerformanceMode::getStatus();
 
 echo "Enabled: " . ($status['enabled'] ? 'Yes' : 'No') . "\n";
 echo "Profile: {$status['profile']}\n";
@@ -227,7 +227,7 @@ echo "GC pressure reduction: {$metrics['gc_pressure_reduction']}%\n";
 $app->get('/health', function($req, $res) {
     $health = [
         'status' => 'ok',
-        'performance' => HighPerformanceMode::getStatus(),
+        'performance' => PerformanceMode::getStatus(),
         'memory' => MemoryManager::getStatus(),
         'pools' => DynamicPool::getStatistics(),
         'timestamp' => time()
@@ -242,10 +242,10 @@ $app->get('/health', function($req, $res) {
 ### High-Traffic API
 
 ```php
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 
 // Enable maximum performance for high-traffic APIs
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_EXTREME);
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 $app = new Application();
 
@@ -262,7 +262,7 @@ $app->run();
 
 ```php
 // Configure for microservice workloads
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // Configure pools for microservice patterns
 DynamicPool::configure([
@@ -295,8 +295,8 @@ $app->get('/health/detailed', function($req, $res) {
     $detailed = [
         'status' => 'ok',
         'performance' => [
-            'high_performance_enabled' => HighPerformanceMode::isEnabled(),
-            'pool_efficiency' => HighPerformanceMode::getPoolEfficiency(),
+            'performance_mode_enabled' => PerformanceMode::isEnabled(),
+            'pool_efficiency' => PerformanceMode::getPoolEfficiency(),
             'memory_pressure' => MemoryManager::getPressureLevel()
         ],
         'uptime' => $this->getUptime(),
@@ -309,12 +309,12 @@ $app->get('/health/detailed', function($req, $res) {
 
 ## Performance Profiles Explained
 
-### PROFILE_BALANCED
+### PROFILE_DEVELOPMENT
 
-**Best for**: Development, testing, mixed workloads
+**Best for**: Development, testing, debugging
 
 ```php
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_BALANCED);
+PerformanceMode::enable(PerformanceMode::PROFILE_DEVELOPMENT);
 ```
 
 **Characteristics:**
@@ -322,13 +322,14 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_BALANCED);
 - Standard memory management
 - 10x performance improvement
 - Safe for all environments
+- Debug-friendly
 
-### PROFILE_HIGH
+### PROFILE_PRODUCTION
 
 **Best for**: Production, high-traffic applications
 
 ```php
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 ```
 
 **Characteristics:**
@@ -337,19 +338,19 @@ HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
 - 25x performance improvement
 - Recommended for production
 
-### PROFILE_EXTREME
+### PROFILE_TEST
 
-**Best for**: Maximum throughput scenarios
+**Best for**: Testing scenarios
 
 ```php
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_EXTREME);
+PerformanceMode::enable(PerformanceMode::PROFILE_TEST);
 ```
 
 **Characteristics:**
-- Maximum object pooling (pool size: 500)
-- Aggressive memory optimization
-- 40x+ performance improvement
-- For specialized high-load scenarios
+- Minimal object pooling (pool size: 20)
+- Simplified memory management
+- 5x performance improvement
+- Optimized for test suite speed
 
 ## Troubleshooting
 
@@ -371,13 +372,13 @@ DynamicPool::configure(['max_pool_size' => 100]);
 #### 2. Performance Not Improving
 
 ```php
-// Verify high-performance mode is enabled
-if (!HighPerformanceMode::isEnabled()) {
-    HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// Verify performance mode is enabled
+if (!PerformanceMode::isEnabled()) {
+    PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 }
 
 // Check pool hit rates
-$status = HighPerformanceMode::getStatus();
+$status = PerformanceMode::getStatus();
 if ($status['pools']['request']['hit_rate'] < 0.8) {
     echo "Pool hit rate is low, consider warming up pools\n";
 }
@@ -398,21 +399,21 @@ if ($memoryStatus['pressure_level'] === 'HIGH') {
 
 ```php
 // Enable debug mode for troubleshooting
-HighPerformanceMode::enableDebug();
+PerformanceMode::enableDebug();
 
 // Get detailed debug information
-$debug = HighPerformanceMode::getDebugInfo();
+$debug = PerformanceMode::getDebugInfo();
 var_dump($debug);
 
 // Disable debug mode in production
-HighPerformanceMode::disableDebug();
+PerformanceMode::disableDebug();
 ```
 
 ## Best Practices
 
 ### Production Deployment
 
-1. **Enable HIGH profile** for most production workloads
+1. **Enable PRODUCTION profile** for most production workloads
 2. **Monitor pool efficiency** - aim for 80%+ hit rates
 3. **Set memory limits** appropriate for your environment
 4. **Use health checks** to monitor performance impact
@@ -420,11 +421,11 @@ HighPerformanceMode::disableDebug();
 
 ### Performance Optimization
 
-1. **Start with BALANCED** and measure improvements
-2. **Gradually increase** to HIGH profile after testing
+1. **Start with DEVELOPMENT** and measure improvements
+2. **Gradually increase** to PRODUCTION profile after testing
 3. **Monitor memory usage** during optimization
 4. **Configure pools** based on actual traffic patterns
-5. **Use EXTREME profile** only for specialized scenarios
+5. **Use TEST profile** for testing scenarios
 
 ### Memory Management
 
@@ -443,8 +444,8 @@ $app = new Application();
 $app->get('/', $handler);
 $app->run();
 
-// v1.1.0+ - Just enable high-performance mode
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// v1.2.0+ - Just enable performance mode
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 $app = new Application(); // Now 25x faster
 $app->get('/', $handler);  // Same code, dramatically faster
 $app->run();
@@ -466,4 +467,4 @@ $app->run();
 
 ---
 
-**High-Performance Mode** transforms PivotPHP Core into an enterprise-grade platform capable of handling intensive workloads with minimal resource consumption. Enable it in production for dramatic performance improvements with zero code changes.
+**Performance Mode** transforms PivotPHP Core into a high-performance platform capable of handling intensive workloads with minimal resource consumption. Enable it in production for dramatic performance improvements with zero code changes.

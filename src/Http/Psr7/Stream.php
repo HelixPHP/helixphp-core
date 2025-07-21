@@ -393,7 +393,7 @@ class Stream implements StreamInterface
      */
     public function isReusable(): bool
     {
-        return $this->reusable && $this->stream !== null && $this->isSeekable();
+        return $this->reusable && isset($this->stream) && $this->isSeekable();
     }
 
     /**
@@ -410,7 +410,7 @@ class Stream implements StreamInterface
      */
     public function truncate(int $length = 0): bool
     {
-        if (!$this->stream || !$this->isWritable()) {
+        if (!isset($this->stream) || !$this->isWritable()) {
             return false;
         }
 

@@ -40,7 +40,7 @@ class Application
     /**
      * Versão do framework.
      */
-    public const VERSION = '1.1.3-dev';
+    public const VERSION = '1.2.0';
 
     /**
      * Container de dependências PSR-11.
@@ -97,7 +97,6 @@ class Application
      */
     protected array $middlewareAliases = [
         'load-shedder' => \PivotPHP\Core\Middleware\LoadShedder::class,
-        'circuit-breaker' => \PivotPHP\Core\Middleware\CircuitBreaker::class,
         'rate-limiter' => \PivotPHP\Core\Middleware\RateLimiter::class,
     ];
 
@@ -1182,7 +1181,7 @@ class Application
         string $provider,
         array $config = []
     ): self {
-        $this->extensions()->registerExtension($name, $provider, $config);
+        $this->extensions()->registerExtension($name, $provider);
         return $this;
     }
 

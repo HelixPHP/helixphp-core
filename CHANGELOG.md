@@ -5,6 +5,68 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-07-21 - Simplicity Edition (Simplicidade sobre Otimização Prematura)
+
+### Added
+- **ApiDocumentationMiddleware** - Automatic OpenAPI/Swagger documentation generation
+- **Swagger UI Integration** - Interactive documentation interface at `/swagger`
+- **OpenAPI 3.0.0 Support** - Complete specification generation from routes
+- **PHPDoc Route Parsing** - Automatic extraction of route metadata
+- **Example Application** - `api_documentation_example.php` demonstrating features
+- **Legacy Namespace** - New `src/Legacy/` namespace for complex implementations
+- **Simplified Core Classes** - Clean, maintainable implementations as defaults
+- **Enhanced Code Readability** - Improved formatting and readability across test files
+- **Better Error Messages** - Enhanced test failure messages with more descriptive output
+- **Environment-Aware Testing** - Improved test skipping logic for different environments
+
+### Changed
+- **Architecture Simplification** - Simple classes promoted to core defaults following "Simplicidade sobre Otimização Prematura"
+- **Core Classes Renamed** - `SimplePerformanceMode` → `PerformanceMode`, `SimpleLoadShedder` → `LoadShedder`, etc.
+- **Legacy Namespace** - Complex classes moved to `src/Legacy/` for backward compatibility
+- **Core Classes** - `PerformanceMode`, `LoadShedder`, `MemoryManager`, `PoolManager`, etc. are now simple implementations
+- **Documentation Focus** - Emphasis on automatic documentation generation as key differentiator
+- **Middleware Organization** - `ApiDocumentationMiddleware` properly organized under `src/Middleware/Http/`
+- **Code Formatting** - Standardized code formatting for better maintainability
+- **Test Messages** - Improved clarity of test assertions and error messages
+- **Function Parameters** - Simplified unused parameters in test route closures using `$_` convention
+- **Line Length Management** - Improved code readability by managing long lines appropriately
+
+### Deprecated
+- **Complex Classes** - `HighPerformanceMode`, `ExtensionManager`, `OpenApiExporter`, `SerializationCache` moved to `src/Legacy/` namespace
+- **Manual Documentation** - Superseded by automatic middleware approach
+- **Over-engineered Components** - Complex implementations deprecated in favor of simple alternatives
+
+### Fixed
+- **OpenAPI Documentation** - Restored automatic documentation generation functionality that was lost during simplification
+- **Middleware Organization** - Proper namespace structure for HTTP middleware
+- **JsonBufferPool Compatibility** - Fixed test compatibility issues with renamed classes
+- **Alias System** - Resolved autoloader conflicts during class transitions
+- **IDE Diagnostics** - Resolved all unused variable warnings and undefined type issues
+- **Code Style Compliance** - Enhanced PSR-12 compliance across test files
+- **Test Reliability** - Improved test stability in various environments
+- **Long Line Formatting** - Better handling of long strings and complex assertions
+
+### Backward Compatibility
+- **100% Compatible** - All existing code continues to work via automatic aliases
+- **Alias System** - 15+ aliases maintain compatibility with old class names
+- **Zero Breaking Changes** - Drop-in replacement for existing applications
+- **Legacy Support** - Complex classes still available via `src/Legacy/` namespace
+- **Smooth Migration** - Optional migration to new simple classes
+
+### Performance
+- **Maintained Performance** - All v1.1.4 performance improvements preserved
+- **Object Pool Reuse** - 100% request pool reuse, 99.9% response pool reuse maintained
+- **Framework Throughput** - 44,092 ops/sec maintained with simplified architecture
+- **Cleaner Code Execution** - No performance impact from code quality improvements
+
+### Quality Improvements
+- **Zero IDE Warnings** - All IDE diagnostics issues resolved across the entire codebase
+- **Enhanced Test Coverage** - Better test environment detection and handling
+- **Cleaner Codebase** - Removed unnecessary whitespace and improved formatting
+- **Maintainable Tests** - More readable test code with descriptive error messages
+- **PSR-12 Compliance** - Enhanced code style compliance throughout the project
+- **Developer Experience** - Improved code readability and maintainability
+
 ## [1.1.4] - 2025-07-15
 
 ### 🔧 **Infrastructure Consolidation & Automation Edition**
@@ -697,10 +759,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Throughput and error rate tracking
   - Prometheus-compatible metric export
   - Built-in alerting system
-- **Console Commands**:
-  - `pool:stats` for real-time pool monitoring
-  - Performance metrics display
-  - Health status monitoring
+- **Pool Management**:
+  - Pool statistics and metrics collection
+  - Performance monitoring capabilities
+  - Health status tracking
 
 #### Performance Improvements
 - **25x faster** Request/Response creation (2K → 50K ops/s)

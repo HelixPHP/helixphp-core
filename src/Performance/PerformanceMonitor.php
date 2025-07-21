@@ -4,181 +4,463 @@ declare(strict_types=1);
 
 namespace PivotPHP\Core\Performance;
 
-use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
-use PivotPHP\Core\Http\Pool\DynamicPool;
-
 /**
- * Real-time performance monitoring system
+ * Performance Monitor
+ *
+ * Simple and effective performance monitoring for the microframework.
+ * Provides basic metrics without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class PerformanceMonitor
 {
     /**
-     * Monitoring configuration
+     * Simple metrics storage
      */
-    private array $config = [
-        'sample_rate' => 0.1,           // Sample 10% of requests
-        'metric_window' => 60,          // 60 second window
-        'percentiles' => [50, 90, 95, 99],
-        'alert_thresholds' => [
-            'latency_p99' => 1000,      // 1 second
-            'error_rate' => 0.05,       // 5%
-            'memory_usage' => 0.8,      // 80%
-            'gc_frequency' => 100,      // per minute
-        ],
-        'export_interval' => 10,        // Export metrics every 10 seconds
+    private static array $metrics = [
+        'requests_total' => 0,
+        'requests_success' => 0,
+        'requests_error' => 0,
+        'start_time' => 0,
+        'peak_memory' => 0,
     ];
 
     /**
-     * Metrics storage
+     * Active requests tracking
      */
-    private array $metrics = [
-        'requests' => [],
-        'latencies' => [],
-        'memory_samples' => [],
-        'gc_events' => [],
-        'pool_stats' => [],
-        'errors' => [],
-        'custom' => [],
-    ];
+    private static array $activeRequests = [];
 
     /**
-     * Aggregated metrics
+     * Request context storage
      */
-    private array $aggregated = [];
+    private static array $requestContext = [];
 
     /**
-     * Start times for request tracking
+     * Completed requests for statistics
      */
-    private array $activeRequests = [];
+    private static array $completedRequests = [];
 
     /**
-     * Alerts
+     * Error tracking
      */
-    private array $alerts = [];
+    private static array $errors = [];
 
     /**
-     * Export callbacks
+     * Memory samples
      */
-    private array $exporters = [];
+    private static array $memorySamples = [];
 
     /**
-     * Last export time
-     */
-    private float $lastExportTime;
-
-    /**
-     * Constructor
+     * Constructor for instance usage
+     * @param array $config Configuration array (not used in simplified implementation)
+     * @phpstan-ignore-next-line
      */
     public function __construct(array $config = [])
     {
-        $this->config = array_merge($this->config, $config);
-        $this->lastExportTime = microtime(true);
+        // Configuration is not used in this simplified implementation
+        // Following 'Simplicidade sobre Otimização Prematura' principle
 
-        // Register GC observer
-        $this->registerGCObserver();
+        if (self::$metrics['start_time'] === 0) {
+            self::init();
+        }
     }
 
     /**
-     * Start monitoring a request
+     * Initialize monitor
      */
-    public function startRequest(string $requestId, array $metadata = []): void
+    public static function init(): void
     {
-        if (!$this->shouldSample()) {
-            return;
-        }
-
-        $this->activeRequests[$requestId] = [
-            'start_time' => microtime(true),
-            'start_memory' => memory_get_usage(true),
-            'metadata' => $metadata,
-        ];
-    }
-
-    /**
-     * End monitoring a request
-     */
-    public function endRequest(
-        string $requestId,
-        int $statusCode,
-        array $metadata = []
-    ): void {
-        if (!isset($this->activeRequests[$requestId])) {
-            return;
-        }
-
-        $start = $this->activeRequests[$requestId];
-        $now = microtime(true);
-
-        // Calculate metrics
-        $latency = max(0, ($now - $start['start_time']) * 1000); // ms, ensure non-negative
-        $memoryDelta = memory_get_usage(true) - $start['start_memory'];
-
-        // Record request
-        $this->recordRequest(
-            [
-                'id' => $requestId,
-                'timestamp' => $now,
-                'latency' => $latency,
-                'status_code' => $statusCode,
-                'memory_delta' => $memoryDelta,
-                'metadata' => array_merge($start['metadata'], $metadata),
-            ]
-        );
-
-        // Clean up
-        unset($this->activeRequests[$requestId]);
-
-        // Check if should export
-        $this->checkExport();
+        self::$metrics['start_time'] = microtime(true);
+        self::$metrics['peak_memory'] = memory_get_peak_usage(true);
     }
 
     /**
      * Record a request
      */
-    private function recordRequest(array $request): void
+    public static function recordRequest(bool $success = true): void
     {
-        $window = $this->getCurrentWindow();
+        self::$metrics['requests_total']++;
 
-        // Store in time window
-        if (!isset($this->metrics['requests'][$window])) {
-            $this->metrics['requests'][$window] = [];
+        if ($success) {
+            self::$metrics['requests_success']++;
+        } else {
+            self::$metrics['requests_error']++;
         }
 
-        $this->metrics['requests'][$window][] = $request;
-        $this->metrics['latencies'][] = $request['latency'];
-
-        // Check for errors
-        if ($request['status_code'] >= 500) {
-            $this->recordError('server_error', $request);
-        } elseif ($request['status_code'] >= 400) {
-            $this->recordError('client_error', $request);
-        }
-
-        // Keep latencies bounded
-        if (count($this->metrics['latencies']) > 10000) {
-            array_shift($this->metrics['latencies']);
-        }
-
-        // Clean old windows
-        $this->cleanOldWindows();
+        // Update peak memory
+        self::$metrics['peak_memory'] = max(
+            self::$metrics['peak_memory'],
+            memory_get_peak_usage(true)
+        );
     }
 
     /**
-     * Record an error
+     * Get simple metrics
      */
-    public function recordError(string $type, array $context = []): void
+    public static function getMetrics(): array
     {
-        $window = $this->getCurrentWindow();
+        $uptime = self::$metrics['start_time'] > 0
+            ? microtime(true) - self::$metrics['start_time']
+            : 0;
 
-        if (!isset($this->metrics['errors'][$window])) {
-            $this->metrics['errors'][$window] = [];
-        }
+        $errorRate = self::$metrics['requests_total'] > 0
+            ? (self::$metrics['requests_error'] / self::$metrics['requests_total']) * 100
+            : 0;
 
-        $this->metrics['errors'][$window][] = [
-            'type' => $type,
-            'timestamp' => microtime(true),
+        $requestsPerSecond = $uptime > 0
+            ? self::$metrics['requests_total'] / max($uptime, 0.001) // Minimum 1ms to avoid division by zero
+            : (self::$metrics['requests_total'] > 0 ? self::$metrics['requests_total'] * 1000 : 0);
+
+        return [
+            'uptime' => round($uptime, 2),
+            'requests_total' => self::$metrics['requests_total'],
+            'requests_success' => self::$metrics['requests_success'],
+            'requests_error' => self::$metrics['requests_error'],
+            'error_rate' => round($errorRate, 2),
+            'requests_per_second' => round($requestsPerSecond, 2),
+            'memory_current' => self::formatBytes(memory_get_usage(true)),
+            'memory_peak' => self::formatBytes(self::$metrics['peak_memory']),
+        ];
+    }
+
+    /**
+     * Reset metrics
+     */
+    public static function reset(): void
+    {
+        self::$metrics = [
+            'requests_total' => 0,
+            'requests_success' => 0,
+            'requests_error' => 0,
+            'start_time' => microtime(true),
+            'peak_memory' => memory_get_peak_usage(true),
+        ];
+    }
+
+    /**
+     * Get status summary
+     */
+    public static function getStatus(): array
+    {
+        $metrics = self::getMetrics();
+
+        return [
+            'status' => $metrics['error_rate'] < 5 ? 'healthy' : 'degraded',
+            'uptime' => $metrics['uptime'],
+            'requests_per_second' => $metrics['requests_per_second'],
+            'error_rate' => $metrics['error_rate'],
+            'memory_usage' => $metrics['memory_current'],
+        ];
+    }
+
+    /**
+     * Format bytes for human readability
+     */
+    private static function formatBytes(int $bytes): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+
+        $bytes /= pow(1024, $pow);
+
+        return round($bytes, 2) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Start request tracking (static)
+     */
+    public static function startRequestStatic(?string $requestId = null, array $context = []): string
+    {
+        $requestId = $requestId ?? uniqid('req_', true);
+
+        self::$activeRequests[$requestId] = [
+            'start_time' => microtime(true),
+            'start_memory' => memory_get_usage(true),
             'context' => $context,
         ];
+
+        self::$requestContext[$requestId] = $context;
+
+        return $requestId;
+    }
+
+    /**
+     * End request tracking (static)
+     */
+    public static function endRequestStatic(string $requestId, mixed $success = true): void
+    {
+        if (!isset(self::$activeRequests[$requestId])) {
+            return;
+        }
+
+        $requestData = self::$activeRequests[$requestId];
+        $duration = max(0.0, microtime(true) - $requestData['start_time']);
+        $memoryUsed = memory_get_usage(true) - $requestData['start_memory'];
+
+        // Store completed request data
+        self::$completedRequests[] = [
+            'duration' => $duration,
+            'memory_used' => $memoryUsed,
+            'success' => $success,
+            'timestamp' => microtime(true),
+        ];
+
+        // Keep only the last 100 completed requests
+        if (count(self::$completedRequests) > 100) {
+            self::$completedRequests = array_slice(self::$completedRequests, -100);
+        }
+
+        // Record the request
+        $successBool = is_bool($success) ? $success : ($success >= 200 && $success < 400);
+        self::recordRequest($successBool);
+
+        // Clean up
+        unset(self::$activeRequests[$requestId]);
+        unset(self::$requestContext[$requestId]);
+    }
+
+    /**
+     * Get live metrics
+     */
+    public static function getLiveMetrics(): array
+    {
+        $metrics = self::getMetrics();
+
+        return array_merge(
+            $metrics,
+            [
+                'active_requests' => count(self::$activeRequests),
+                'memory_pressure' => self::calculateMemoryPressure(),
+                'average_response_time' => self::calculateAverageResponseTime(),
+                'system_load' => self::getSystemLoad(),
+                'current_load' => self::getSystemLoad(),
+            ]
+        );
+    }
+
+    /**
+     * Calculate memory pressure
+     */
+    private static function calculateMemoryPressure(): float
+    {
+        $currentMemory = memory_get_usage(true);
+        $memoryLimit = self::getMemoryLimit();
+
+        if ($memoryLimit <= 0) {
+            return 0.0;
+        }
+
+        return min(($currentMemory / $memoryLimit), 1.0);
+    }
+
+    /**
+     * Calculate average response time from completed requests
+     */
+    private static function calculateAverageResponseTime(): float
+    {
+        if (empty(self::$completedRequests)) {
+            return 0.0;
+        }
+
+        $totalTime = 0;
+        $count = count(self::$completedRequests);
+
+        foreach (self::$completedRequests as $request) {
+            $totalTime += $request['duration'];
+        }
+
+        return $totalTime / $count;
+    }
+
+    /**
+     * Get system load
+     */
+    private static function getSystemLoad(): float
+    {
+        // Simple load calculation based on active requests
+        $load = count(self::$activeRequests) / max(1, 10); // Assume 10 concurrent requests is normal
+        return min(1.0, $load);
+    }
+
+    /**
+     * Get memory limit
+     */
+    private static function getMemoryLimit(): int
+    {
+        $memoryLimit = ini_get('memory_limit');
+
+        if ($memoryLimit === '-1') {
+            return 0; // Unlimited
+        }
+
+        return self::parseBytes($memoryLimit);
+    }
+
+    /**
+     * Instance method: Start request tracking
+     */
+    public function startRequest(?string $requestId = null, array $context = []): string
+    {
+        return self::startRequestStatic($requestId, $context);
+    }
+
+    /**
+     * Instance method: End request tracking
+     */
+    public function endRequest(string $requestId, mixed $success = true): void
+    {
+        self::endRequestStatic($requestId, $success);
+    }
+
+    /**
+     * Instance method: Get performance metrics with detailed structure
+     */
+    public function getPerformanceMetrics(): array
+    {
+        $metrics = self::getMetrics();
+        $latencyStats = self::calculateLatencyStats();
+
+        return [
+            'latency' => [
+                'min' => $latencyStats['min'],
+                'max' => $latencyStats['max'],
+                'p50' => $latencyStats['avg'],
+                'p95' => $latencyStats['p95'],
+                'p99' => $latencyStats['p99'],
+                'avg' => $latencyStats['avg'],
+            ],
+            'throughput' => [
+                'requests_per_second' => $metrics['requests_per_second'],
+                'rps' => $metrics['requests_per_second'],
+                'total_requests' => $metrics['requests_total'],
+                'successful_requests' => $metrics['requests_success'],
+                'failed_requests' => $metrics['requests_error'],
+                'success_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_success'] / $metrics['requests_total']
+                    : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_error'] / $metrics['requests_total']
+                    : 0.0,
+            ],
+            'memory' => [
+                'current' => memory_get_usage(true),
+                'peak' => memory_get_peak_usage(true),
+                'limit' => self::getMemoryLimit(),
+                'usage_percent' => self::calculateMemoryPressure(),
+            ],
+            'system' => [
+                'uptime' => $metrics['uptime'],
+                'active_requests' => count(self::$activeRequests),
+                'error_rate' => $metrics['error_rate'],
+            ],
+        ];
+    }
+
+    /**
+     * Get performance metrics with detailed structure (static)
+     */
+    public static function getPerformanceMetricsStatic(): array
+    {
+        $metrics = self::getMetrics();
+        $latencyStats = self::calculateLatencyStats();
+
+        return [
+            'latency' => [
+                'min' => $latencyStats['min'],
+                'max' => $latencyStats['max'],
+                'p50' => $latencyStats['avg'],
+                'p95' => $latencyStats['p95'],
+                'p99' => $latencyStats['p99'],
+                'avg' => $latencyStats['avg'],
+            ],
+            'throughput' => [
+                'requests_per_second' => $metrics['requests_per_second'],
+                'rps' => $metrics['requests_per_second'],
+                'total_requests' => $metrics['requests_total'],
+                'successful_requests' => $metrics['requests_success'],
+                'failed_requests' => $metrics['requests_error'],
+                'success_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_success'] / $metrics['requests_total']
+                    : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_error'] / $metrics['requests_total']
+                    : 0.0,
+            ],
+            'memory' => [
+                'current' => memory_get_usage(true),
+                'peak' => memory_get_peak_usage(true),
+                'limit' => self::getMemoryLimit(),
+                'usage_percent' => self::calculateMemoryPressure(),
+            ],
+            'system' => [
+                'uptime' => $metrics['uptime'],
+                'active_requests' => count(self::$activeRequests),
+                'error_rate' => $metrics['error_rate'],
+            ],
+        ];
+    }
+
+    /**
+     * Calculate latency statistics from completed requests
+     */
+    private static function calculateLatencyStats(): array
+    {
+        if (empty(self::$completedRequests)) {
+            return [
+                'min' => 0.0,
+                'max' => 0.0,
+                'avg' => 0.0,
+                'p95' => 0.0,
+                'p99' => 0.0,
+            ];
+        }
+
+        $durations = array_column(self::$completedRequests, 'duration');
+        sort($durations);
+
+        $count = count($durations);
+        $min = min($durations);
+        $max = max($durations);
+        $avg = array_sum($durations) / $count;
+
+        $p95Index = (int)ceil($count * 0.95) - 1;
+        $p99Index = (int)ceil($count * 0.99) - 1;
+
+        $p95 = $durations[max(0, $p95Index)];
+        $p99 = $durations[max(0, $p99Index)];
+
+        return [
+            'min' => max(0.0, $min),
+            'max' => max(0.0, $max),
+            'avg' => max(0.0, $avg),
+            'p95' => max(0.0, $p95),
+            'p99' => max(0.0, $p99),
+        ];
+    }
+
+    /**
+     * Parse memory string to bytes
+     */
+    private static function parseBytes(string $size): int
+    {
+        $size = trim($size);
+        $last = strtolower($size[strlen($size) - 1]);
+        $size = (int)$size;
+
+        switch ($last) {
+            case 'g':
+                $size *= 1024;
+                // no break
+            case 'm':
+                $size *= 1024;
+                // no break
+            case 'k':
+                $size *= 1024;
+        }
+
+        return $size;
     }
 
     /**
@@ -186,499 +468,51 @@ class PerformanceMonitor
      */
     public function recordMemorySample(): void
     {
-        $this->metrics['memory_samples'][] = [
+        self::recordMemorySampleStatic();
+    }
+
+    /**
+     * Record memory sample (static)
+     */
+    public static function recordMemorySampleStatic(): void
+    {
+        self::$memorySamples[] = [
             'timestamp' => microtime(true),
-            'usage' => memory_get_usage(true),
-            'peak' => memory_get_peak_usage(true),
-            'real_usage' => memory_get_usage(false),
+            'memory_usage' => memory_get_usage(true),
+            'memory_peak' => memory_get_peak_usage(true),
         ];
 
-        // Keep bounded
-        if (count($this->metrics['memory_samples']) > 1000) {
-            array_shift($this->metrics['memory_samples']);
+        // Keep only the last 100 samples
+        if (count(self::$memorySamples) > 100) {
+            self::$memorySamples = array_slice(self::$memorySamples, -100);
         }
     }
 
     /**
-     * Record pool statistics
+     * Record error
      */
-    public function recordPoolStats(array $stats): void
+    public function recordError(string $type, array $context = []): void
     {
-        $this->metrics['pool_stats'][] = [
+        self::recordErrorStatic($type, $context);
+    }
+
+    /**
+     * Record error (static)
+     */
+    public static function recordErrorStatic(string $type, array $context = []): void
+    {
+        self::$errors[] = [
+            'type' => $type,
+            'context' => $context,
             'timestamp' => microtime(true),
-            'stats' => $stats,
         ];
 
-        // Keep bounded
-        if (count($this->metrics['pool_stats']) > 100) {
-            array_shift($this->metrics['pool_stats']);
-        }
-    }
-
-    /**
-     * Record custom metric
-     */
-    public function recordMetric(
-        string $name,
-        float $value,
-        array $tags = []
-    ): void {
-        if (!isset($this->metrics['custom'][$name])) {
-            $this->metrics['custom'][$name] = [];
+        // Keep only the last 100 errors
+        if (count(self::$errors) > 100) {
+            self::$errors = array_slice(self::$errors, -100);
         }
 
-        $this->metrics['custom'][$name][] = [
-            'timestamp' => microtime(true),
-            'value' => $value,
-            'tags' => $tags,
-        ];
-
-        // Keep bounded
-        if (count($this->metrics['custom'][$name]) > 1000) {
-            array_shift($this->metrics['custom'][$name]);
-        }
-    }
-
-    /**
-     * Get live metrics
-     */
-    public function getLiveMetrics(): array
-    {
-        $this->aggregate();
-
-        return [
-            'current_load' => $this->getCurrentLoad(),
-            'pool_utilization' => $this->getPoolUtilization(),
-            'memory_pressure' => $this->getMemoryPressure(),
-            'gc_frequency' => $this->getGCFrequency(),
-            'p99_latency' => $this->aggregated['latency_p99'] ?? 0,
-            'error_rate' => $this->aggregated['error_rate'] ?? 0,
-            'active_requests' => count($this->activeRequests),
-            'alerts' => $this->alerts,
-        ];
-    }
-
-    /**
-     * Get performance metrics
-     */
-    public function getPerformanceMetrics(): array
-    {
-        $this->aggregate();
-
-        return [
-            'latency' => [
-                'p50' => $this->aggregated['latency_p50'] ?? 0,
-                'p90' => $this->aggregated['latency_p90'] ?? 0,
-                'p95' => $this->aggregated['latency_p95'] ?? 0,
-                'p99' => $this->aggregated['latency_p99'] ?? 0,
-                'min' => $this->aggregated['latency_min'] ?? 0,
-                'max' => $this->aggregated['latency_max'] ?? 0,
-                'avg' => $this->aggregated['latency_avg'] ?? 0,
-            ],
-            'throughput' => [
-                'rps' => $this->aggregated['requests_per_second'] ?? 0,
-                'success_rate' => $this->aggregated['success_rate'] ?? 0,
-                'error_rate' => $this->aggregated['error_rate'] ?? 0,
-            ],
-            'memory' => [
-                'current' => $this->aggregated['memory_current'] ?? 0,
-                'peak' => $this->aggregated['memory_peak'] ?? 0,
-                'avg' => $this->aggregated['memory_avg'] ?? 0,
-            ],
-            'pool' => $this->getPoolMetrics(),
-            'recommendations' => $this->generateRecommendations(),
-        ];
-    }
-
-    /**
-     * Aggregate metrics
-     */
-    private function aggregate(): void
-    {
-        $now = microtime(true);
-
-        // Latency percentiles
-        if (!empty($this->metrics['latencies'])) {
-            $sorted = $this->metrics['latencies'];
-            sort($sorted);
-
-            $this->aggregated['latency_min'] = min($sorted);
-            $this->aggregated['latency_max'] = max($sorted);
-            $this->aggregated['latency_avg'] = array_sum($sorted) / count($sorted);
-
-            foreach ($this->config['percentiles'] as $p) {
-                $index = (int) ceil(count($sorted) * ($p / 100)) - 1;
-                $this->aggregated["latency_p$p"] = $sorted[$index] ?? 0;
-            }
-        }
-
-        // Request rate
-        $recentRequests = $this->getRecentRequests(60);
-        $this->aggregated['requests_per_second'] = count($recentRequests) / 60;
-
-        // Error rate
-        $recentErrors = $this->getRecentErrors(60);
-        $errorRate = count($recentRequests) > 0
-            ? count($recentErrors) / count($recentRequests)
-            : 0;
-        $this->aggregated['error_rate'] = $errorRate;
-
-        // Success rate
-        $this->aggregated['success_rate'] = 1 - $errorRate;
-
-        // Memory
-        if (!empty($this->metrics['memory_samples'])) {
-            $recent = array_slice($this->metrics['memory_samples'], -10);
-            $usages = array_column($recent, 'usage');
-
-            $this->aggregated['memory_current'] = end($usages);
-            $this->aggregated['memory_peak'] = max($usages);
-            $this->aggregated['memory_avg'] = array_sum($usages) / count($usages);
-        }
-
-        // Check alerts
-        $this->checkAlerts();
-    }
-
-    /**
-     * Get current load (requests per second)
-     */
-    private function getCurrentLoad(): float
-    {
-        $recentRequests = $this->getRecentRequests(10); // Last 10 seconds
-        return count($recentRequests) / 10;
-    }
-
-    /**
-     * Get pool utilization
-     */
-    private function getPoolUtilization(): float
-    {
-        if (empty($this->metrics['pool_stats'])) {
-            return 0.0;
-        }
-
-        $latest = end($this->metrics['pool_stats']);
-        $stats = $latest['stats'] ?? [];
-
-        if (!isset($stats['pool_usage'])) {
-            return 0.0;
-        }
-
-        $totalUsage = 0;
-        $count = 0;
-
-        foreach ($stats['pool_usage'] as $usage) {
-            $totalUsage += $usage;
-            $count++;
-        }
-
-        return $count > 0 ? $totalUsage / $count : 0.0;
-    }
-
-    /**
-     * Get memory pressure
-     */
-    private function getMemoryPressure(): float
-    {
-        $limit = $this->getMemoryLimit();
-        if ($limit <= 0) {
-            return 0.0;
-        }
-
-        $current = memory_get_usage(true);
-        return $current / $limit;
-    }
-
-    /**
-     * Get memory limit
-     */
-    private function getMemoryLimit(): int
-    {
-        $limit = ini_get('memory_limit');
-
-        if ($limit === '-1') {
-            return PHP_INT_MAX;
-        }
-
-        // Convert to bytes
-        $value = (int) $limit;
-        $unit = strtolower($limit[strlen($limit) - 1]);
-
-        switch ($unit) {
-            case 'g':
-                $value *= 1024;
-                // no break
-            case 'm':
-                $value *= 1024;
-                // no break
-            case 'k':
-                $value *= 1024;
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get GC frequency
-     */
-    private function getGCFrequency(): float
-    {
-        $recentGC = array_filter(
-            $this->metrics['gc_events'],
-            fn($event) => $event['timestamp'] > microtime(true) - 60
-        );
-
-        return count($recentGC);
-    }
-
-    /**
-     * Get recent requests
-     */
-    private function getRecentRequests(int $seconds): array
-    {
-        $cutoff = microtime(true) - $seconds;
-        $recent = [];
-
-        foreach ($this->metrics['requests'] as $window => $requests) {
-            foreach ($requests as $request) {
-                if ($request['timestamp'] > $cutoff) {
-                    $recent[] = $request;
-                }
-            }
-        }
-
-        return $recent;
-    }
-
-    /**
-     * Get recent errors
-     */
-    private function getRecentErrors(int $seconds): array
-    {
-        $cutoff = microtime(true) - $seconds;
-        $recent = [];
-
-        foreach ($this->metrics['errors'] as $window => $errors) {
-            foreach ($errors as $error) {
-                if ($error['timestamp'] > $cutoff) {
-                    $recent[] = $error;
-                }
-            }
-        }
-
-        return $recent;
-    }
-
-    /**
-     * Get pool metrics
-     */
-    private function getPoolMetrics(): array
-    {
-        try {
-            $stats = OptimizedHttpFactory::getPoolStats();
-            return [
-                'sizes' => $stats['pool_sizes'] ?? [],
-                'efficiency' => $stats['efficiency'] ?? [],
-                'usage' => $stats['usage'] ?? [],
-            ];
-        } catch (\Exception $e) {
-            return [
-                'error' => 'Unable to get pool stats',
-            ];
-        }
-    }
-
-    /**
-     * Check alerts
-     */
-    private function checkAlerts(): void
-    {
-        $this->alerts = [];
-
-        // Latency alert
-        $latencyThreshold = ($this->config['alert_thresholds'] ?? [])['latency_p99'] ?? 1000;
-        if (($this->aggregated['latency_p99'] ?? 0) > $latencyThreshold) {
-            $this->alerts[] = [
-                'type' => 'latency',
-                'severity' => 'warning',
-                'message' => sprintf('P99 latency %.2fms exceeds threshold', $this->aggregated['latency_p99']),
-            ];
-        }
-
-        // Error rate alert
-        $errorRateThreshold = ($this->config['alert_thresholds'] ?? [])['error_rate'] ?? 0.05;
-        if (($this->aggregated['error_rate'] ?? 0) > $errorRateThreshold) {
-            $this->alerts[] = [
-                'type' => 'error_rate',
-                'severity' => 'critical',
-                'message' => sprintf('Error rate %.1f%% exceeds threshold', $this->aggregated['error_rate'] * 100),
-            ];
-        }
-
-        // Memory alert
-        $memoryPressure = $this->getMemoryPressure();
-        $memoryThreshold = ($this->config['alert_thresholds'] ?? [])['memory_usage'] ?? 0.8;
-        if ($memoryPressure > $memoryThreshold) {
-            $this->alerts[] = [
-                'type' => 'memory',
-                'severity' => 'warning',
-                'message' => sprintf('Memory usage %.1f%% exceeds threshold', $memoryPressure * 100),
-            ];
-        }
-
-        // GC frequency alert
-        $gcFrequency = $this->getGCFrequency();
-        $gcThreshold = ($this->config['alert_thresholds'] ?? [])['gc_frequency'] ?? 100;
-        if ($gcFrequency > $gcThreshold) {
-            $this->alerts[] = [
-                'type' => 'gc_frequency',
-                'severity' => 'warning',
-                'message' => sprintf('GC frequency %d/min exceeds threshold', $gcFrequency),
-            ];
-        }
-    }
-
-    /**
-     * Generate recommendations
-     */
-    private function generateRecommendations(): array
-    {
-        $recommendations = [];
-
-        // Based on latency
-        if (($this->aggregated['latency_p99'] ?? 0) > 500) {
-            $recommendations[] = 'High P99 latency detected - consider increasing pool sizes';
-        }
-
-        // Based on memory
-        if ($this->getMemoryPressure() > 0.7) {
-            $recommendations[] = 'High memory usage - enable more aggressive pooling';
-        }
-
-        // Based on error rate
-        if (($this->aggregated['error_rate'] ?? 0) > 0.01) {
-            $recommendations[] = 'Elevated error rate - check circuit breaker configuration';
-        }
-
-        // Based on pool efficiency
-        $poolStats = $this->getPoolMetrics();
-        if (isset($poolStats['efficiency'])) {
-            foreach ($poolStats['efficiency'] as $type => $efficiency) {
-                if ($efficiency < 50) {
-                    $recommendations[] = "Low $type pool efficiency - consider adjusting pool size";
-                }
-            }
-        }
-
-        return $recommendations;
-    }
-
-    /**
-     * Register GC observer
-     */
-    private function registerGCObserver(): void
-    {
-        // This would use a real GC observer in production
-        // For now, we'll simulate with periodic checks
-    }
-
-    /**
-     * Should sample this request?
-     */
-    private function shouldSample(): bool
-    {
-        return mt_rand() / mt_getrandmax() <= $this->config['sample_rate'];
-    }
-
-    /**
-     * Get current window
-     */
-    private function getCurrentWindow(): int
-    {
-        return (int) floor(microtime(true) / $this->config['metric_window']);
-    }
-
-    /**
-     * Clean old windows
-     */
-    private function cleanOldWindows(): void
-    {
-        $currentWindow = $this->getCurrentWindow();
-        $maxAge = 5; // Keep 5 windows
-
-        foreach (['requests', 'errors'] as $metric) {
-            foreach ($this->metrics[$metric] as $window => $data) {
-                if ($window < $currentWindow - $maxAge) {
-                    unset($this->metrics[$metric][$window]);
-                }
-            }
-        }
-    }
-
-    /**
-     * Check if should export metrics
-     */
-    private function checkExport(): void
-    {
-        $now = microtime(true);
-
-        if ($now - $this->lastExportTime >= $this->config['export_interval']) {
-            $this->export();
-            $this->lastExportTime = $now;
-        }
-    }
-
-    /**
-     * Register exporter
-     */
-    public function registerExporter(callable $exporter): void
-    {
-        $this->exporters[] = $exporter;
-    }
-
-    /**
-     * Export metrics
-     */
-    public function export(): void
-    {
-        $metrics = $this->getExportMetrics();
-
-        foreach ($this->exporters as $exporter) {
-            try {
-                $exporter($metrics);
-            } catch (\Exception $e) {
-                error_log("Failed to export metrics: " . $e->getMessage());
-            }
-        }
-    }
-
-    /**
-     * Get metrics for export
-     */
-    private function getExportMetrics(): array
-    {
-        $this->aggregate();
-
-        return [
-            'timestamp' => microtime(true),
-            'latency' => [
-                'p50' => $this->aggregated['latency_p50'] ?? 0,
-                'p90' => $this->aggregated['latency_p90'] ?? 0,
-                'p95' => $this->aggregated['latency_p95'] ?? 0,
-                'p99' => $this->aggregated['latency_p99'] ?? 0,
-            ],
-            'throughput' => [
-                'rps' => $this->aggregated['requests_per_second'] ?? 0,
-                'error_rate' => $this->aggregated['error_rate'] ?? 0,
-            ],
-            'memory' => [
-                'usage' => memory_get_usage(true),
-                'peak' => memory_get_peak_usage(true),
-                'pressure' => $this->getMemoryPressure(),
-            ],
-            'pool' => $this->getPoolMetrics(),
-            'alerts' => $this->alerts,
-        ];
+        // Also record as a failed request
+        self::recordRequest(false);
     }
 }

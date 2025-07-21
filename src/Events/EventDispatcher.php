@@ -3,87 +3,82 @@
 namespace PivotPHP\Core\Events;
 
 /**
- * Sistema de eventos para PivotPHP
+ * Event Dispatcher
+ *
+ * Simple and effective event handling for the microframework.
+ * Provides basic event functionality without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class EventDispatcher
 {
+    /**
+     * Event listeners
+     */
     private array $listeners = [];
 
     /**
-     * Registra um listener para um evento
+     * Register a listener for an event
      */
-    public function listen(
-        string $event,
-        callable $listener,
-        int $priority = 0
-    ): void {
+    public function listen(string $event, callable $listener): void
+    {
         if (!isset($this->listeners[$event])) {
             $this->listeners[$event] = [];
         }
 
-        $this->listeners[$event][] = [
-            'listener' => $listener,
-            'priority' => $priority
-        ];
-
-        // Ordena por prioridade (maior prioridade primeiro)
-        usort(
-            $this->listeners[$event],
-            function ($a, $b) {
-                return $b['priority'] <=> $a['priority'];
-            }
-        );
+        $this->listeners[$event][] = $listener;
     }
 
     /**
-     * Dispara um evento
+     * Dispatch an event
      */
-    public function dispatch(string $event, array $data = []): void
+    public function dispatch(string $event, array $data = []): bool
     {
         if (!isset($this->listeners[$event])) {
-            return;
+            return false;
         }
 
-        $eventObject = new Event($event, $data);
+        foreach ($this->listeners[$event] as $listener) {
+            $result = $listener($data);
 
-        foreach ($this->listeners[$event] as $listenerData) {
-            if ($eventObject->isPropagationStopped()) {
-                break;
+            // If listener returns false, stop propagation
+            if ($result === false) {
+                return false;
             }
-
-            call_user_func($listenerData['listener'], $eventObject);
         }
+
+        return true;
     }
 
     /**
-     * Remove todos os listeners de um evento
+     * Remove listeners for an event
      */
-    public function forget(string $event): void
+    public function removeListeners(string $event): void
     {
         unset($this->listeners[$event]);
     }
 
     /**
-     * Remove todos os listeners
+     * Get all registered events
      */
-    public function forgetAll(): void
+    public function getEvents(): array
+    {
+        return array_keys($this->listeners);
+    }
+
+    /**
+     * Get listener count for an event
+     */
+    public function getListenerCount(string $event): int
+    {
+        return count($this->listeners[$event] ?? []);
+    }
+
+    /**
+     * Clear all listeners
+     */
+    public function clearAll(): void
     {
         $this->listeners = [];
-    }
-
-    /**
-     * Verifica se um evento tem listeners
-     */
-    public function hasListeners(string $event): bool
-    {
-        return isset($this->listeners[$event]) && !empty($this->listeners[$event]);
-    }
-
-    /**
-     * Retorna todos os listeners de um evento
-     */
-    public function getListeners(string $event): array
-    {
-        return $this->listeners[$event] ?? [];
     }
 }

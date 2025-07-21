@@ -49,17 +49,17 @@ class_alias(
     'PivotPHP\Core\Http\Psr15\Middleware\CacheMiddleware'
 );
 
-// Performance e Pool
+// Performance e Pool - Legacy Support
 class_alias(
     'PivotPHP\Core\Performance\PerformanceMonitor',
     'PivotPHP\Core\Monitoring\PerformanceMonitor'
 );
 class_alias(
-    'PivotPHP\Core\Http\Pool\DynamicPoolManager',
+    'PivotPHP\Core\Http\Pool\PoolManager',
     'PivotPHP\Core\Http\Psr7\Pool\DynamicPoolManager'
 );
 class_alias(
-    'PivotPHP\Core\Http\Pool\DynamicPoolManager',
+    'PivotPHP\Core\Http\Pool\PoolManager',
     'PivotPHP\Core\Http\Pool\DynamicPool'
 );
 
@@ -73,4 +73,86 @@ class_alias(
 class_alias(
     'PivotPHP\Core\Utils\Arr',
     'PivotPHP\Core\Support\Arr'
+);
+
+// Legacy Classes - Backward Compatibility for v1.2.0
+// These aliases allow old code to continue working while using new implementations
+
+// Performance Classes - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Performance\PerformanceMode',
+    'PivotPHP\Core\Performance\SimplePerformanceMode'
+);
+class_alias(
+    'PivotPHP\Core\Legacy\Performance\HighPerformanceMode',
+    'PivotPHP\Core\Performance\HighPerformanceMode'
+);
+
+// Middleware - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Middleware\LoadShedder',
+    'PivotPHP\Core\Middleware\SimpleLoadShedder'
+);
+class_alias(
+    'PivotPHP\Core\Legacy\Middleware\TrafficClassifier',
+    'PivotPHP\Core\Middleware\TrafficClassifier'
+);
+
+// Memory Management - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Memory\MemoryManager',
+    'PivotPHP\Core\Memory\SimpleMemoryManager'
+);
+
+// Pool Management - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Http\Pool\PoolManager',
+    'PivotPHP\Core\Http\Pool\SimplePoolManager'
+);
+// DynamicPoolManager removed - redirecting to simple PoolManager
+class_alias(
+    'PivotPHP\\Core\\Http\\Pool\\PoolManager',
+    'PivotPHP\\Core\\Http\\Pool\\DynamicPoolManager'
+);
+
+// Performance Monitoring - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Performance\PerformanceMonitor',
+    'PivotPHP\Core\Performance\SimplePerformanceMonitor'
+);
+class_alias(
+    'PivotPHP\Core\Performance\PerformanceMonitor',
+    'PivotPHP\Core\Legacy\Performance\PerformanceMonitor'
+);
+
+// JSON Pool - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Json\Pool\JsonBufferPool',
+    'PivotPHP\Core\Json\Pool\SimpleJsonBufferPool'
+);
+
+// Event System - Legacy Aliases
+class_alias(
+    'PivotPHP\Core\Events\EventDispatcher',
+    'PivotPHP\Core\Events\SimpleEventDispatcher'
+);
+
+// Deprecated Utils - Simple Implementations
+class_alias(
+    'PivotPHP\Core\Utils\SerializationCache',
+    'PivotPHP\Core\Legacy\Utils\SerializationCache'
+);
+class_alias(
+    'PivotPHP\Core\Utils\OpenApiExporter',
+    'PivotPHP\Core\Legacy\Utils\OpenApiExporter'
+);
+class_alias(
+    'PivotPHP\Core\Providers\ExtensionManager',
+    'PivotPHP\Core\Legacy\Providers\ExtensionManager'
+);
+
+// API Documentation - Core Feature
+class_alias(
+    'PivotPHP\Core\Middleware\Http\ApiDocumentationMiddleware',
+    'PivotPHP\Core\Middleware\ApiDocumentationMiddleware'
 );

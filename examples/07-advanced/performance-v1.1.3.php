@@ -1,13 +1,13 @@
 <?php
 
 /**
- * 🚀 PivotPHP v1.1.3 - Performance Improvements Demo
+ * 🚀 PivotPHP v1.2.0 - Performance Simplificada Demo
  * 
- * Demonstrates the revolutionary performance improvements in v1.1.3:
- * - +116% framework performance improvement
- * - 100% object pool reuse rate
+ * Demonstrates the simplified performance improvements in v1.2.0:
+ * - Simplified performance mode
  * - Automatic JSON optimization
  * - Memory efficiency improvements
+ * - Following "Simplicidade sobre Otimização Prematura" principle
  * 
  * 🚀 How to run:
  * php -S localhost:8000 examples/07-advanced/performance-v1.1.3.php
@@ -25,20 +25,20 @@
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 use PivotPHP\Core\Core\Application;
-use PivotPHP\Core\Performance\HighPerformanceMode;
+use PivotPHP\Core\Performance\PerformanceMode;
 use PivotPHP\Core\Json\Pool\JsonBufferPool;
 use PivotPHP\Core\Http\Factory\OptimizedHttpFactory;
 
 // 🎯 Create Application with Performance Monitoring
 $app = new Application();
 
-// ⚡ Enable High Performance Mode
-HighPerformanceMode::enable(HighPerformanceMode::PROFILE_HIGH);
+// ⚡ Enable Performance Mode
+PerformanceMode::enable(PerformanceMode::PROFILE_PRODUCTION);
 
 // 🏠 Home route - Performance overview
 $app->get('/', function($req, $res) {
     return $res->json([
-        'title' => 'PivotPHP v1.1.3 - Performance Revolution Demo',
+        'title' => 'PivotPHP v1.2.0 - Performance Simplificada Demo',
         'performance_improvements' => [
             'framework_throughput' => '+116% improvement (20,400 → 44,092 ops/sec)',
             'object_pool_reuse' => [
@@ -57,21 +57,15 @@ $app->get('/', function($req, $res) {
         'version_info' => [
             'framework' => 'PivotPHP Core v1.1.3',
             'php_version' => PHP_VERSION,
-            'high_performance_mode' => HighPerformanceMode::getStatus()['enabled'] ? 'ENABLED' : 'DISABLED'
+            'performance_mode' => PerformanceMode::isEnabled() ? 'ENABLED' : 'DISABLED'
         ]
     ]);
 });
 
 // 📊 Performance Metrics
 $app->get('/performance/metrics', function($req, $res) {
-    $monitor = HighPerformanceMode::getMonitor();
-    
-    if (!$monitor) {
-        return $res->status(503)->json([
-            'error' => 'Performance monitor not available',
-            'suggestion' => 'Enable HighPerformanceMode first'
-        ]);
-    }
+    // Performance monitor is always available in v1.2.0
+    $monitor = new \PivotPHP\Core\Performance\PerformanceMonitor();
     
     $metrics = $monitor->getPerformanceMetrics();
     $liveMetrics = $monitor->getLiveMetrics();
@@ -241,7 +235,7 @@ $app->get('/performance/pool-stats', function($req, $res) {
     $jsonStats = JsonBufferPool::getStatistics();
     
     // Get performance monitor
-    $monitor = HighPerformanceMode::getMonitor();
+    $monitor = new \PivotPHP\Core\Performance\PerformanceMonitor();
     $monitorStats = $monitor ? $monitor->getLiveMetrics() : null;
     
     return $res->json([

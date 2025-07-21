@@ -1,257 +1,312 @@
 <?php
 
+declare(strict_types=1);
+
 namespace PivotPHP\Core\Utils;
 
 /**
- * Cache otimizado para serialização de dados intensivos.
+ * Serialization Cache
  *
- * Reduz o impacto de performance causado por múltiplas serializações
- * dos mesmos dados através de cache inteligente baseado em hash.
+ * Simple and effective serialization caching for the microframework.
+ * Provides basic caching functionality without unnecessary complexity.
+ *
+ * Following 'Simplicidade sobre Otimização Prematura' principle.
  */
 class SerializationCache
 {
     /**
-     * Cache de dados serializados
-     *
-     * @var array<string, array{data: string, size: int, hash: string}>
+     * Cache storage
      */
     private static array $cache = [];
 
     /**
-     * Cache de tamanhos calculados
-     *
-     * @var array<string, int>
+     * Size cache for optimized lookups
      */
     private static array $sizeCache = [];
 
     /**
-     * Cache de hashes de objetos
-     *
-     * @var array<string, string>
+     * Hash cache for large arrays
      */
     private static array $hashCache = [];
 
     /**
-     * Limite máximo de entradas no cache
+     * Statistics
      */
-    private static int $maxCacheSize = 100;
+    private static array $stats = [
+        'cache_hits' => 0,
+        'cache_misses' => 0,
+    ];
 
     /**
-     * Contador de hits do cache para métricas
+     * Maximum cache size
      */
-    private static int $cacheHits = 0;
+    private static int $maxCacheSize = 1000;
 
     /**
-     * Contador de misses do cache para métricas
+     * Cache an item
      */
-    private static int $cacheMisses = 0;
-
-    /**
-     * Calcula o tamanho de um objeto usando cache inteligente
-     */
-    public static function getSerializedSize(mixed $data, string|null $cacheKey = null): int
+    public static function set(string $key, mixed $value): void
     {
-        // Gera chave de cache baseada no tipo e conteúdo dos dados
-        $key = $cacheKey ?? self::generateCacheKey($data);
+        self::$cache[$key] = serialize($value);
+        self::evictIfNeeded();
+    }
 
-        // Verifica se já temos o tamanho em cache
-        if (isset(self::$sizeCache[$key])) {
-            $dataHash = self::generateDataHash($data);
-
-            // Verifica se os dados não mudaram
-            if (isset(self::$hashCache[$key]) && self::$hashCache[$key] === $dataHash) {
-                self::$cacheHits++;
-                return self::$sizeCache[$key];
-            }
+    /**
+     * Get cached item
+     */
+    public static function get(string $key): mixed
+    {
+        if (!isset(self::$cache[$key])) {
+            return null;
         }
 
-        // Cache miss - precisa calcular
-        self::$cacheMisses++;
+        return unserialize(self::$cache[$key]);
+    }
 
-        // Serializa e calcula tamanho
-        $serialized = serialize($data);
-        $size = strlen($serialized);
+    /**
+     * Check if item exists in cache
+     */
+    public static function has(string $key): bool
+    {
+        return isset(self::$cache[$key]);
+    }
 
-        // Armazena no cache se não estiver no limite
-        if (count(self::$sizeCache) < self::$maxCacheSize) {
-            self::$sizeCache[$key] = $size;
-            self::$hashCache[$key] = self::generateDataHash($data);
+    /**
+     * Remove item from cache
+     */
+    public static function remove(string $key): void
+    {
+        unset(self::$cache[$key]);
+        unset(self::$sizeCache[$key]);
+        unset(self::$hashCache[$key]);
+    }
 
-            // Também armazena a string serializada por um tempo
-            self::$cache[$key] = [
-                'data' => $serialized,
-                'size' => $size,
-                'hash' => self::$hashCache[$key]
-            ];
+    /**
+     * Clear all cache
+     */
+    public static function clear(): void
+    {
+        self::$cache = [];
+        self::$sizeCache = [];
+        self::$hashCache = [];
+        self::$stats = [
+            'cache_hits' => 0,
+            'cache_misses' => 0,
+        ];
+    }
+
+    /**
+     * Get cache size
+     */
+    public static function size(): int
+    {
+        return count(self::$cache);
+    }
+
+    /**
+     * Get all cache keys
+     */
+    public static function keys(): array
+    {
+        return array_keys(self::$cache);
+    }
+
+    /**
+     * Get serialized size of cached item or data
+     */
+    public static function getSerializedSize(mixed $keyOrData, ?string $key = null): int
+    {
+        // If called with data and key (legacy usage)
+        if ($key !== null) {
+            // Use the provided key with data hash for consistency
+            $dataHash = md5(serialize($keyOrData));
+            $cacheKey = $key . '_' . $dataHash;
+            $data = $keyOrData;
         } else {
-            // Se o cache está cheio, limpa algumas entradas antigas
-            self::evictOldEntries();
+            // Generate cache key for data
+            $cacheKey = self::generateCacheKey($keyOrData);
+            $data = $keyOrData;
         }
+
+        // Check size cache first
+        if (isset(self::$sizeCache[$cacheKey])) {
+            self::$stats['cache_hits']++;
+            return self::$sizeCache[$cacheKey];
+        }
+
+        // Cache miss - calculate size and cache both size and data
+        self::$stats['cache_misses']++;
+        $serializedData = serialize($data);
+        $size = strlen($serializedData);
+
+        // Cache the size and the serialized data
+        self::$sizeCache[$cacheKey] = $size;
+        self::$cache[$cacheKey] = $serializedData;
+
+        // Evict if needed
+        self::evictIfNeeded();
 
         return $size;
     }
 
     /**
-     * Calcula tamanho total de múltiplos objetos com cache otimizado
-     */
-    public static function getTotalSerializedSize(array $objects, array $cacheKeys = []): int
-    {
-        $totalSize = 0;
-
-        foreach ($objects as $index => $object) {
-            $key = $cacheKeys[$index] ?? "obj_$index";
-            $totalSize += self::getSerializedSize($object, $key);
-        }
-
-        return $totalSize;
-    }
-
-    /**
-     * Obtém dados serializados com cache
-     */
-    public static function getSerializedData(mixed $data, string|null $cacheKey = null): string
-    {
-        $key = $cacheKey ?? self::generateCacheKey($data);
-
-        // Verifica cache
-        if (isset(self::$cache[$key])) {
-            $dataHash = self::generateDataHash($data);
-
-            if (self::$cache[$key]['hash'] === $dataHash) {
-                self::$cacheHits++;
-                return self::$cache[$key]['data'];
-            }
-        }
-
-        // Cache miss
-        self::$cacheMisses++;
-        $serialized = serialize($data);
-
-        // Armazena no cache
-        if (count(self::$cache) < self::$maxCacheSize) {
-            self::$cache[$key] = [
-                'data' => $serialized,
-                'size' => strlen($serialized),
-                'hash' => self::generateDataHash($data)
-            ];
-        }
-
-        return $serialized;
-    }
-
-    /**
-     * Gera chave de cache baseada no tipo e estrutura dos dados
-     */
-    private static function generateCacheKey(mixed $data): string
-    {
-        if (is_array($data)) {
-            // Para arrays, usa estrutura de chaves e tipos
-            $keyStructure = array_map('gettype', $data);
-            return 'array_' . md5(
-                serialize(
-                    [
-                        'keys' => array_keys($data),
-                        'types' => $keyStructure,
-                        'count' => count($data)
-                    ]
-                )
-            );
-        }
-
-        if (is_object($data)) {
-            return 'object_' . get_class($data) . '_' . spl_object_hash($data);
-        }
-
-        return 'scalar_' . gettype($data) . '_' . md5(serialize($data));
-    }
-
-    /**
-     * Gera hash rápido dos dados para verificar mudanças
-     */
-    private static function generateDataHash(mixed $data): string
-    {
-        if (is_array($data)) {
-            // Para arrays grandes, usa apenas uma amostra para performance
-            if (count($data) > 50) {
-                $sample = array_slice($data, 0, 10, true) +
-                         array_slice($data, -10, 10, true);
-                return md5(serialize($sample) . count($data));
-            }
-        }
-
-        // Para dados menores, usa hash completo
-        return md5(serialize($data));
-    }
-
-    /**
-     * Remove entradas antigas do cache
-     */
-    private static function evictOldEntries(): void
-    {
-        // Remove 25% das entradas mais antigas (estratégia simples)
-        $entriesToRemove = (int) (self::$maxCacheSize * 0.25);
-
-        $keys = array_keys(self::$cache);
-        for ($i = 0; $i < $entriesToRemove && !empty($keys); $i++) {
-            $key = array_shift($keys);
-            unset(self::$cache[$key], self::$sizeCache[$key], self::$hashCache[$key]);
-        }
-    }
-
-    /**
-     * Limpa todo o cache
+     * Clear cache (alias for clear)
      */
     public static function clearCache(): void
     {
-        self::$cache = [];
-        self::$sizeCache = [];
-        self::$hashCache = [];
-        self::$cacheHits = 0;
-        self::$cacheMisses = 0;
+        self::clear();
     }
 
     /**
-     * Obtém estatísticas do cache
+     * Get total serialized size of all cached items or calculate for provided data
+     */
+    public static function getTotalSerializedSize(mixed $data = null, ?array $keys = null): int
+    {
+        // If data is provided with custom keys, calculate total size for that data
+        if ($data !== null && $keys !== null) {
+            if (is_array($data)) {
+                $total = 0;
+                foreach ($data as $index => $item) {
+                    $key = $keys[$index] ?? "auto_key_{$index}";
+                    $total += self::getSerializedSize($item, $key);
+                }
+                return $total;
+            } else {
+                $key = $keys[0] ?? "auto_key_0";
+                return self::getSerializedSize($data, $key);
+            }
+        }
+
+        // If data is provided, calculate total size for that data
+        if ($data !== null) {
+            if (is_array($data)) {
+                $total = 0;
+                foreach ($data as $item) {
+                    $total += strlen(serialize($item));
+                }
+                return $total;
+            } else {
+                return strlen(serialize($data));
+            }
+        }
+
+        // Otherwise, return total size of all cached items
+        $total = 0;
+        foreach (self::$cache as $cachedData) {
+            $total += strlen($cachedData);
+        }
+        return $total;
+    }
+
+    /**
+     * Get serialized data for a key
+     */
+    public static function getSerializedData(mixed $keyOrData): ?string
+    {
+        // Handle both string keys and data objects
+        if (is_string($keyOrData)) {
+            return self::$cache[$keyOrData] ?? null;
+        }
+
+        // For data objects, generate cache key and serialize if not in cache
+        $cacheKey = self::generateCacheKey($keyOrData);
+        if (!isset(self::$cache[$cacheKey])) {
+            // Cache miss - serialize and cache the data
+            self::$stats['cache_misses']++;
+            $serialized = serialize($keyOrData);
+            self::$cache[$cacheKey] = $serialized;
+            self::evictIfNeeded();
+            return $serialized;
+        }
+
+        // Cache hit
+        self::$stats['cache_hits']++;
+        return self::$cache[$cacheKey];
+    }
+
+    /**
+     * Set maximum cache size
+     */
+    public static function setMaxCacheSize(int $size): void
+    {
+        self::$maxCacheSize = $size;
+        self::evictIfNeeded();
+    }
+
+    /**
+     * Get cache statistics
      */
     public static function getStats(): array
     {
-        $totalRequests = self::$cacheHits + self::$cacheMisses;
-        $hitRate = $totalRequests > 0 ? (self::$cacheHits / $totalRequests) * 100 : 0;
+        $totalOps = (int) self::$stats['cache_hits'] + (int) self::$stats['cache_misses'];
+        $hitRate = $totalOps > 0 ? ((float)self::$stats['cache_hits'] / $totalOps) * 100 : 0.0;
 
         return [
-            'cache_entries' => count(self::$cache),
+            'size' => self::size(),
+            'total_serialized_size' => self::getTotalSerializedSize(),
+            'keys' => self::keys(),
+            'cache_entries' => self::size(),
             'size_cache_entries' => count(self::$sizeCache),
             'hash_cache_entries' => count(self::$hashCache),
-            'cache_hits' => self::$cacheHits,
-            'cache_misses' => self::$cacheMisses,
+            'cache_hits' => self::$stats['cache_hits'],
+            'cache_misses' => self::$stats['cache_misses'],
             'hit_rate_percent' => round($hitRate, 2),
-            'memory_usage' => self::getMemoryUsage()
+            'memory_usage' => self::formatBytes(self::getTotalSerializedSize()),
         ];
     }
 
     /**
-     * Calcula uso de memória do próprio cache
+     * Generate cache key for data
      */
-    private static function getMemoryUsage(): string
+    private static function generateCacheKey(mixed $data): string
     {
-        $size = strlen(serialize(self::$cache)) +
-                strlen(serialize(self::$sizeCache)) +
-                strlen(serialize(self::$hashCache));
-
-        if ($size < 1024) {
-            return $size . ' B';
-        } elseif ($size < 1048576) {
-            return round($size / 1024, 2) . ' KB';
+        // For objects, include object ID to differentiate instances
+        if (is_object($data)) {
+            $objectId = spl_object_hash($data);
+            $serialized = serialize($data);
+            $hash = md5($objectId . $serialized);
         } else {
-            return round($size / 1048576, 2) . ' MB';
+            // For non-objects, use serialization hash to ensure uniqueness
+            $serialized = serialize($data);
+            $hash = md5($serialized);
+        }
+
+        // For large arrays, track in hash cache
+        if (is_array($data) && count($data) > 100) {
+            self::$hashCache[$hash] = true;
+        }
+
+        return $hash;
+    }
+
+    /**
+     * Evict cache entries if over limit
+     */
+    private static function evictIfNeeded(): void
+    {
+        if (count(self::$cache) > self::$maxCacheSize) {
+            // Simple FIFO eviction
+            $key = array_key_first(self::$cache);
+            if ($key === null) {
+                return; // No key to evict
+            }
+            if (is_string($key)) {
+                self::remove($key);
+            }
         }
     }
 
     /**
-     * Define o tamanho máximo do cache
+     * Format bytes to human readable string
      */
-    public static function setMaxCacheSize(int $size): void
+    private static function formatBytes(int $bytes): string
     {
-        self::$maxCacheSize = max(10, $size); // Mínimo de 10 entradas
+        if ($bytes < 1024) {
+            return $bytes . ' B';
+        } elseif ($bytes < 1048576) {
+            return round($bytes / 1024, 2) . ' KB';
+        } else {
+            return round($bytes / 1048576, 2) . ' MB';
+        }
     }
 }

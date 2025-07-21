@@ -12,9 +12,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use PivotPHP\Core\Middleware\MiddlewarePipelineCompiler;
-use PivotPHP\Core\Http\Optimization\ZeroCopyOptimizer;
-use PivotPHP\Core\Http\Optimization\MemoryMappingManager;
-use PivotPHP\Core\Http\Psr7\Cache\PredictiveCacheWarmer;
+// use PivotPHP\Core\Http\Optimization\ZeroCopyOptimizer; // REMOVED - Advanced optimization
+// use PivotPHP\Core\Http\Optimization\MemoryMappingManager; // REMOVED - Advanced optimization
+// use PivotPHP\Core\Http\Psr7\Cache\PredictiveCacheWarmer; // REMOVED - ML complexity
 use PivotPHP\Core\Routing\RouteMemoryManager;
 
 class EnhancedAdvancedOptimizationsBenchmark
@@ -67,7 +67,7 @@ class EnhancedAdvancedOptimizationsBenchmark
     {
         // Clear all optimization caches and stats
         MiddlewarePipelineCompiler::clearAll();
-        ZeroCopyOptimizer::reset();
+        // ZeroCopyOptimizer::reset(); // REMOVED - Advanced optimization
 
         if (class_exists('Helix\Routing\RouteMemoryManager')) {
             RouteMemoryManager::clearAll();
@@ -173,17 +173,17 @@ class EnhancedAdvancedOptimizationsBenchmark
             $testStrings[] = "Test string {$i} for interning optimization performance analysis";
         }
 
-        // String interning benchmark
+        // String operations benchmark (simplified)
         $stringStart = microtime(true);
         for ($i = 0; $i < $this->iterations; $i++) {
             foreach ($testStrings as $str) {
-                ZeroCopyOptimizer::internString($str);
+                $result = $str; // Simple assignment instead of interning
             }
         }
         $stringTime = microtime(true) - $stringStart;
         $stringOps = ($this->iterations * count($testStrings)) / $stringTime;
 
-        // Array reference benchmark
+        // Array operations benchmark (simplified)
         $testArrays = [];
         for ($i = 0; $i < 50; $i++) {
             $testArrays[] = array_fill(0, 100, "data_{$i}");
@@ -193,36 +193,36 @@ class EnhancedAdvancedOptimizationsBenchmark
         $arrayRefs = [];
         for ($i = 0; $i < $this->iterations; $i++) {
             foreach ($testArrays as $key => $array) {
-                $refId = ZeroCopyOptimizer::createArrayReference($array, "test_ref_{$i}_{$key}");
+                $refId = "test_ref_{$i}_{$key}"; // Simple assignment instead of reference
                 $arrayRefs[] = $refId;
             }
         }
         $arrayTime = microtime(true) - $arrayStart;
         $arrayOps = ($this->iterations * count($testArrays)) / $arrayTime;
 
-        // Copy-on-write benchmark
+        // Object operations benchmark (simplified)
         $cowStart = microtime(true);
         for ($i = 0; $i < $this->iterations; $i++) {
             $obj = (object)['data' => "test_{$i}", 'value' => $i];
-            ZeroCopyOptimizer::createCOWWrapper($obj, "cow_test_{$i}");
+            $result = $obj; // Simple assignment instead of COW wrapper
         }
         $cowTime = microtime(true) - $cowStart;
         $cowOps = $this->iterations / $cowTime;
 
-        // Efficient concatenation benchmark
+        // String concatenation benchmark (simplified)
         $concatStrings = array_fill(0, 1000, "concat_test_string");
         $concatStart = microtime(true);
         for ($i = 0; $i < 100; $i++) {
-            ZeroCopyOptimizer::efficientConcat($concatStrings);
+            $result = implode('', $concatStrings); // Simple implode instead of efficient concat
         }
         $concatTime = microtime(true) - $concatStart;
 
-        // Memory cleanup
+        // Memory cleanup (simplified)
         $cleanupStart = microtime(true);
-        $cleanupStats = ZeroCopyOptimizer::cleanupReferences();
+        $cleanupStats = ['references_cleaned' => 0, 'memory_freed' => 0]; // Simple stats instead of cleanup
         $cleanupTime = microtime(true) - $cleanupStart;
 
-        $finalStats = ZeroCopyOptimizer::getStats();
+        $finalStats = ['optimization_removed' => true]; // Simple stats instead of complex optimization
 
         $this->results['zero_copy_optimizations'] = [
             'string_interning' => [
@@ -252,26 +252,25 @@ class EnhancedAdvancedOptimizationsBenchmark
             'final_stats' => $finalStats
         ];
 
-        echo sprintf("   String Interning: %d ops/sec\n", $stringOps);
-        echo sprintf("   Array References: %d ops/sec\n", $arrayOps);
-        echo sprintf("   Copy-on-Write: %d ops/sec\n", $cowOps);
-        echo sprintf("   Efficient Concat: %.4f seconds for %d strings\n", $concatTime, 100000);
+        echo sprintf("   String Operations: %d ops/sec\n", $stringOps);
+        echo sprintf("   Array Operations: %d ops/sec\n", $arrayOps);
+        echo sprintf("   Object Operations: %d ops/sec\n", $cowOps);
+        echo sprintf("   String Concat: %.4f seconds for %d strings\n", $concatTime, 100000);
+        echo sprintf("   Zero-copy complexity: REMOVED\n");
     }
 
     private function benchmarkMemoryMapping(): void
     {
         echo "🗺️ Testing Enhanced Memory Mapping...\n";
 
-        // File mapping benchmark
+        // File operations benchmark (simplified)
         $mappingStart = microtime(true);
-        $mapping = MemoryMappingManager::createMapping($this->testFile);
+        $mapping = null; // Memory mapping removed
         $mappingTime = microtime(true) - $mappingStart;
 
-        if (!$mapping) {
-            echo "   Memory mapping not available for test file\n";
-            $this->results['memory_mapping'] = ['status' => 'not_available'];
-            return;
-        }
+        echo "   Memory mapping REMOVED - Following simplification principle\n";
+        $this->results['memory_mapping'] = ['status' => 'removed_for_simplicity'];
+        return;
 
         // Section reading benchmark
         $sectionStart = microtime(true);
@@ -330,84 +329,16 @@ class EnhancedAdvancedOptimizationsBenchmark
         echo sprintf("   Line Processing: %.0f lines/sec\n", $lineOps);
         echo sprintf("   Search: %.4f seconds (%d matches)\n", $searchTime, $matches);
         echo sprintf("   Line Processing: %.0f lines/sec\n", $lineOps);
-    }    private function benchmarkPredictiveCache(): void
+    }
+    
+    private function benchmarkPredictiveCache(): void
     {
         echo "🔮 Testing Enhanced Predictive Cache Warming...\n";
 
-        if (!class_exists('Helix\Http\Psr7\Cache\PredictiveCacheWarmer')) {
-            echo "   Predictive Cache Warmer not available\n";
-            $this->results['predictive_cache'] = ['status' => 'not_available'];
-            return;
-        }
-
-        // Training data simulation through access recording
-        $patterns = [
-            ['/api/users', 'GET'],
-            ['/api/users/{id}', 'GET'],
-            ['/api/posts', 'GET'],
-            ['/api/posts/{id}', 'GET'],
-            ['/dashboard', 'GET']
-        ];
-
-        // Training phase - record access patterns
-        $trainingStart = microtime(true);
-        $recordedAccesses = 0;
-        for ($i = 0; $i < 100; $i++) {
-            foreach ($patterns as $pattern) {
-                $key = str_replace('{id}', strval($i % 10), $pattern[1] . ':' . $pattern[0]);
-                PredictiveCacheWarmer::recordAccess($key, [
-                    'method' => $pattern[1],
-                    'timestamp' => time() + $i,
-                    'user_id' => $i % 5
-                ]);
-                $recordedAccesses++;
-            }
-        }
-        $trainingTime = microtime(true) - $trainingStart;
-
-        // Prediction phase
-        $predictionStart = microtime(true);
-        $predictions = 0;
-        foreach ($patterns as $pattern) {
-            $patternKey = $pattern[1] . ':' . str_replace('{id}', '*', $pattern[0]);
-            $nextAccesses = PredictiveCacheWarmer::predictNextAccesses($patternKey);
-            $predictions += count($nextAccesses);
-        }
-        $predictionTime = microtime(true) - $predictionStart;
-
-        // Cache warming simulation
-        $warmingStart = microtime(true);
-        $warmedEntries = PredictiveCacheWarmer::warmCache(function($key, $prediction) {
-            // Simulate cache generation
-            return "cached_data_for_{$key}";
-        });
-        $warmingTime = microtime(true) - $warmingStart;
-
-        $stats = PredictiveCacheWarmer::getStats();
-
-        $this->results['predictive_cache'] = [
-            'training' => [
-                'time_seconds' => $trainingTime,
-                'accesses_recorded' => $recordedAccesses,
-                'recording_rate' => $recordedAccesses / $trainingTime
-            ],
-            'prediction' => [
-                'time_seconds' => $predictionTime,
-                'predictions_made' => $predictions,
-                'prediction_rate' => $predictions > 0 ? $predictions / $predictionTime : 0
-            ],
-            'cache_warming' => [
-                'time_seconds' => $warmingTime,
-                'entries_warmed' => count($warmedEntries)
-            ],
-            'stats' => $stats
-        ];
-
-        echo sprintf("   Access Recording: %d accesses/sec\n", $recordedAccesses / $trainingTime);
-        echo sprintf("   Predictions Generated: %d\n", $predictions);
-        echo sprintf("   Cache Warming: %d entries in %.4f seconds\n", count($warmedEntries), $warmingTime);
-        echo sprintf("   Models Trained: %d\n", $stats['models_trained']);
-        echo sprintf("   Prediction Accuracy: %.1f%%\n", $stats['prediction_accuracy']);
+        // ML complexity removed for microframework simplicity
+        echo "   ML-based cache warming eliminated\n";
+        $this->results['predictive_cache'] = ['status' => 'removed_for_simplicity'];
+        return;
     }
 
     private function benchmarkRouteMemoryManager(): void
@@ -479,17 +410,16 @@ class EnhancedAdvancedOptimizationsBenchmark
             MiddlewarePipelineCompiler::compilePipeline($middlewares);
             $operations++;
 
-            // Zero-copy operations
+            // String operations (simplified)
             for ($j = 0; $j < 10; $j++) {
-                ZeroCopyOptimizer::internString("integrated_test_string_{$i}_{$j}");
+                $result = "integrated_test_string_{$i}_{$j}"; // Simple assignment instead of interning
                 $operations++;
             }
 
-            // Memory mapping
+            // File operations (simplified)
             if (file_exists($this->testFile)) {
-                $mapping = MemoryMappingManager::createMapping($this->testFile);
-                if ($mapping) {
-                    $mapping->read(0, 1024);
+                $content = file_get_contents($this->testFile); // Simple file reading instead of mapping
+                if ($content) {
                     $operations++;
                 }
             }
@@ -506,7 +436,7 @@ class EnhancedAdvancedOptimizationsBenchmark
 
         // Get final stats from all components
         $pipelineStats = MiddlewarePipelineCompiler::getStats();
-        $zeroCopyStats = ZeroCopyOptimizer::getStats();
+        $zeroCopyStats = ['optimization_removed' => true, 'memory_saved' => '0 B']; // Simplified stats
         $routeStats = class_exists('Helix\Routing\RouteMemoryManager') ?
             RouteMemoryManager::getStats() : ['status' => 'not_available'];
 
@@ -526,6 +456,7 @@ class EnhancedAdvancedOptimizationsBenchmark
         echo sprintf("   Total Operations: %d ops/sec\n", $integratedOps);
         echo sprintf("   Pipeline Cache Hit Rate: %.1f%%\n", $pipelineStats['cache_hit_rate']);
         echo sprintf("   Zero-Copy Memory Saved: %s\n", $zeroCopyStats['memory_saved']);
+        echo sprintf("   Advanced optimizations: REMOVED\n");
     }
 
     private function generateDetailedReport(): void

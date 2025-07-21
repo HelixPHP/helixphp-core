@@ -30,7 +30,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup a simple route
         $this->app->get(
             '/integration-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['message' => 'success', 'timestamp' => time()]);
             }
         );
@@ -68,7 +68,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup routes that would benefit from HP mode
         $this->app->get(
             '/hp-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 $data = $this->createLargeJsonPayload(50);
                 return $res->json($data);
             }
@@ -106,7 +106,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup route with large JSON response
         $this->app->get(
             '/large-json',
-            function ($req, $res) {
+            function ($_, $res) {
                 $data = $this->createLargeJsonPayload(100);
                 return $res->json($data);
             }
@@ -152,7 +152,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Add route
         $this->app->get(
             '/middleware-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['middleware_test' => true]);
             }
         );
@@ -177,7 +177,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Add route that throws exception
         $this->app->get(
             '/error-test',
-            function ($req, $res) {
+            function ($_) {
                 throw new \Exception('Test integration error');
             }
         );
@@ -213,13 +213,25 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
      */
     public function testConcurrentRequestPerformance(): void
     {
+        // Skip test in very slow environments
+        $isVerySlowEnvironment = (
+            extension_loaded('xdebug') &&
+            (getenv('XDEBUG_MODE') === 'coverage' || defined('PHPUNIT_COVERAGE_ACTIVE'))
+        ) || getenv('SKIP_PERFORMANCE_TESTS') === 'true';
+
+        if ($isVerySlowEnvironment) {
+            $this->markTestSkipped(
+                'Skipping concurrent performance test in very slow environment (coverage/debugging)'
+            );
+        }
+
         // Enable high performance mode for better concurrency
         $this->enableHighPerformanceMode('HIGH');
 
         // Setup route
         $this->app->get(
             '/concurrent-test',
-            function ($req, $res) {
+            function ($_, $res) {
             // Simulate some work
                 usleep(1000); // 1ms
                 return $res->json(['request_id' => uniqid(), 'timestamp' => microtime(true)]);
@@ -250,12 +262,40 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
             $this->assertArrayHasKey('timestamp', $data);
         }
 
-        // Verify performance - concurrent requests should be faster than sequential
-        // Adjusted for test environment constraints (CI, coverage, debug mode, Xdebug overhead)
-        $this->assertLessThan(30000, $totalTime); // Should complete in under 30 seconds with coverage
+        // Verify performance with environment-aware expectations
+        $maxTime = $this->getPerformanceTimeout();
+        $this->assertLessThan(
+            $maxTime,
+            $totalTime,
+            sprintf('Concurrent requests took too long: %.2fms (max: %dms)', $totalTime, $maxTime)
+        );
 
         // Verify memory usage is reasonable (adjusted for test environment)
         $this->assertMemoryUsageWithinLimits(150);
+    }
+
+    /**
+     * Get performance timeout based on environment
+     */
+    private function getPerformanceTimeout(): int
+    {
+        // Check if running in CI environment
+        if (getenv('CI') !== false || getenv('GITHUB_ACTIONS') !== false) {
+            return 15000; // 15 seconds for CI
+        }
+
+        // Check for debug/coverage mode (Xdebug heavily impacts performance)
+        if (extension_loaded('xdebug') || getenv('XDEBUG_MODE') !== false) {
+            return 10000; // 10 seconds for debug mode
+        }
+
+        // Check for slow test environment
+        if (getenv('SLOW_TESTS') === 'true') {
+            return 20000; // 20 seconds for very slow environment
+        }
+
+        // Local development environment
+        return 5000; // 5 seconds for local
     }
 
     /**
@@ -276,7 +316,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         $uniquePath = '/unique-config-test-' . substr(md5(__METHOD__), 0, 8);
         $this->app->get(
             $uniquePath,
-            function ($req, $res) use ($testConfig) {
+            function ($_, $res) use ($testConfig) {
                 return $res->json(
                     [
                         'config_loaded' => true,
@@ -316,7 +356,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup route that creates memory pressure
         $this->app->get(
             '/memory-test',
-            function ($req, $res) {
+            function ($_, $res) {
             // Create temporary large data structure
                 $largeData = [];
                 for ($i = 0; $i < 1000; $i++) {
@@ -367,7 +407,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Generate some activity
         $this->app->get(
             '/cleanup-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['cleanup_test' => true]);
             }
         );
@@ -398,7 +438,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Test empty route
         $this->app->get(
             '/empty',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json([]);
             }
         );
@@ -406,7 +446,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Test null values
         $this->app->get(
             '/null-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['value' => null]);
             }
         );
