@@ -30,7 +30,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup a simple route
         $this->app->get(
             '/integration-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['message' => 'success', 'timestamp' => time()]);
             }
         );
@@ -68,7 +68,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup routes that would benefit from HP mode
         $this->app->get(
             '/hp-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 $data = $this->createLargeJsonPayload(50);
                 return $res->json($data);
             }
@@ -106,7 +106,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup route with large JSON response
         $this->app->get(
             '/large-json',
-            function ($req, $res) {
+            function ($_, $res) {
                 $data = $this->createLargeJsonPayload(100);
                 return $res->json($data);
             }
@@ -152,7 +152,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Add route
         $this->app->get(
             '/middleware-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['middleware_test' => true]);
             }
         );
@@ -177,7 +177,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Add route that throws exception
         $this->app->get(
             '/error-test',
-            function ($req, $res) {
+            function ($_) {
                 throw new \Exception('Test integration error');
             }
         );
@@ -229,7 +229,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup route
         $this->app->get(
             '/concurrent-test',
-            function ($req, $res) {
+            function ($_, $res) {
             // Simulate some work
                 usleep(1000); // 1ms
                 return $res->json(['request_id' => uniqid(), 'timestamp' => microtime(true)]);
@@ -314,7 +314,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         $uniquePath = '/unique-config-test-' . substr(md5(__METHOD__), 0, 8);
         $this->app->get(
             $uniquePath,
-            function ($req, $res) use ($testConfig) {
+            function ($_, $res) use ($testConfig) {
                 return $res->json(
                     [
                         'config_loaded' => true,
@@ -354,7 +354,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Setup route that creates memory pressure
         $this->app->get(
             '/memory-test',
-            function ($req, $res) {
+            function ($_, $res) {
             // Create temporary large data structure
                 $largeData = [];
                 for ($i = 0; $i < 1000; $i++) {
@@ -405,7 +405,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Generate some activity
         $this->app->get(
             '/cleanup-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['cleanup_test' => true]);
             }
         );
@@ -436,7 +436,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Test empty route
         $this->app->get(
             '/empty',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json([]);
             }
         );
@@ -444,7 +444,7 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Test null values
         $this->app->get(
             '/null-test',
-            function ($req, $res) {
+            function ($_, $res) {
                 return $res->json(['value' => null]);
             }
         );
