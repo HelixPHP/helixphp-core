@@ -36,6 +36,11 @@ class ExtensionManager
     private array $extensionStates = [];
 
     /**
+     * Cache for class_exists() checks to avoid repeated autoloading
+     */
+    private array $classExistsCache = [];
+
+    /**
      * Application instance
      */
     private Application $app;
@@ -78,7 +83,10 @@ class ExtensionManager
         // Convert string to callable if needed
         if (is_string($extension)) {
             // If it's a class name, instantiate and register it
-            if (class_exists($extension)) {
+            if (!isset($this->classExistsCache[$extension])) {
+                $this->classExistsCache[$extension] = class_exists($extension);
+            }
+            if ($this->classExistsCache[$extension]) {
                 $extension = function ($app) use ($extension) {
                     $instance = new $extension($app);
                     if (method_exists($instance, 'register')) {
