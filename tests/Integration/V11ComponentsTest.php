@@ -228,7 +228,8 @@ class V11ComponentsTest extends TestCase
                 0,
                 $results['rate_limited'] + $results['shed'],
                 sprintf(
-                    'Either rate limiter or load shedder should trigger. Results: success=%d, rate_limited=%d, shed=%d, total=%d',
+                    'Either rate limiter or load shedder should trigger. Results: success=%d, rate_limited=%d,' .
+                    ' shed=%d, total=%d',
                     $results['success'],
                     $results['rate_limited'],
                     $results['shed'],

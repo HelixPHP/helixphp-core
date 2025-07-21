@@ -145,7 +145,11 @@ class SerializationCacheTest extends TestCase
         $afterFirstStats = SerializationCache::getStats();
 
         // Be more permissive about the exact counts, but ensure we have the minimum expected
-        $this->assertGreaterThanOrEqual(2, $afterFirstStats['cache_misses'], 'Should have at least 2 cache misses after first call');
+        $this->assertGreaterThanOrEqual(
+            2,
+            $afterFirstStats['cache_misses'],
+            'Should have at least 2 cache misses after first call'
+        );
         $this->assertEquals(0, $afterFirstStats['cache_hits'], 'Should have 0 cache hits after first call');
 
         // Record the stats after first call for delta calculation

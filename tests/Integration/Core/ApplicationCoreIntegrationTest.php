@@ -220,7 +220,9 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         ) || getenv('SKIP_PERFORMANCE_TESTS') === 'true';
 
         if ($isVerySlowEnvironment) {
-            $this->markTestSkipped('Skipping concurrent performance test in very slow environment (coverage/debugging)');
+            $this->markTestSkipped(
+                'Skipping concurrent performance test in very slow environment (coverage/debugging)'
+            );
         }
 
         // Enable high performance mode for better concurrency
