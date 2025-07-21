@@ -289,7 +289,8 @@ class Psr7PoolTest extends TestCase
 
         // Should not be added to pool (because it's not seekable/writable)
         $stats = Psr7Pool::getStats();
-        $this->assertEquals(0, $stats['pool_sizes']['streams']); // None should be in pool (stream2 was reused from stream1)
+        // None should be in pool (stream2 was reused from stream1)
+        $this->assertEquals(0, $stats['pool_sizes']['streams']);
     }
 
     /**

@@ -337,8 +337,12 @@ class PerformanceMonitor
                 'total_requests' => $metrics['requests_total'],
                 'successful_requests' => $metrics['requests_success'],
                 'failed_requests' => $metrics['requests_error'],
-                'success_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_success'] / $metrics['requests_total'] : 0.0,
-                'error_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_error'] / $metrics['requests_total'] : 0.0,
+                'success_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_success'] / $metrics['requests_total']
+                    : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_error'] / $metrics['requests_total']
+                    : 0.0,
             ],
             'memory' => [
                 'current' => memory_get_usage(true),
@@ -377,8 +381,12 @@ class PerformanceMonitor
                 'total_requests' => $metrics['requests_total'],
                 'successful_requests' => $metrics['requests_success'],
                 'failed_requests' => $metrics['requests_error'],
-                'success_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_success'] / $metrics['requests_total'] : 0.0,
-                'error_rate' => $metrics['requests_total'] > 0 ? $metrics['requests_error'] / $metrics['requests_total'] : 0.0,
+                'success_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_success'] / $metrics['requests_total']
+                    : 0.0,
+                'error_rate' => $metrics['requests_total'] > 0
+                    ? $metrics['requests_error'] / $metrics['requests_total']
+                    : 0.0,
             ],
             'memory' => [
                 'current' => memory_get_usage(true),

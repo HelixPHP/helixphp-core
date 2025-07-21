@@ -391,7 +391,11 @@ class MiddlewareStackIntegrationTest extends TestCase
         $averageThreshold = getenv('CI') ? 1000 : 100; // 1000ms for CI, 100ms for local
         $maxThreshold = getenv('CI') ? 2000 : 500;     // 2000ms for CI, 500ms for local
 
-        $this->assertLessThan($averageThreshold, $averageTime, "Average request time should be < {$averageThreshold}ms");
+        $this->assertLessThan(
+            $averageThreshold,
+            $averageTime,
+            "Average request time should be < {$averageThreshold}ms"
+        );
         $this->assertLessThan($maxThreshold, $maxTime, "Maximum request time should be < {$maxThreshold}ms");
     }
 

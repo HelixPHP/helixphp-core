@@ -63,7 +63,11 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseWithoutBody(): void
     {
-        $response = new Response(204, ['Content-Type' => 'text/plain'], Stream::createFromString('This should not be output'));
+        $response = new Response(
+            204,
+            ['Content-Type' => 'text/plain'],
+            Stream::createFromString('This should not be output')
+        );
 
         // Test that we can emit without body
         $this->assertInstanceOf(ResponseInterface::class, $response);
@@ -166,7 +170,11 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitChunkedWithChunkableResponse(): void
     {
-        $response = new Response(200, ['Content-Type' => 'text/plain'], Stream::createFromString('Test content for chunking'));
+        $response = new Response(
+            200,
+            ['Content-Type' => 'text/plain'],
+            Stream::createFromString('Test content for chunking')
+        );
 
         // Test that response should be chunked
         $this->assertTrue(ResponseEmitter::shouldChunk($response));
@@ -240,7 +248,11 @@ class ResponseEmitterTest extends TestCase
     public function testEmitResponseWithSpecialCharacters(): void
     {
         $content = "Special characters: áéíóú ñ 中文 🎉";
-        $response = new Response(200, ['Content-Type' => 'text/plain; charset=utf-8'], Stream::createFromString($content));
+        $response = new Response(
+            200,
+            ['Content-Type' => 'text/plain; charset=utf-8'],
+            Stream::createFromString($content)
+        );
 
         $this->assertEquals($content, (string) $response->getBody());
         $this->assertEquals('text/plain; charset=utf-8', $response->getHeaderLine('Content-Type'));
@@ -345,7 +357,10 @@ class ResponseEmitterTest extends TestCase
         $this->assertEquals('DENY', $response->getHeaderLine('X-Frame-Options'));
         $this->assertEquals('nosniff', $response->getHeaderLine('X-Content-Type-Options'));
         $this->assertEquals('1; mode=block', $response->getHeaderLine('X-XSS-Protection'));
-        $this->assertEquals('max-age=31536000; includeSubDomains', $response->getHeaderLine('Strict-Transport-Security'));
+        $this->assertEquals(
+            'max-age=31536000; includeSubDomains',
+            $response->getHeaderLine('Strict-Transport-Security')
+        );
     }
 
     /**

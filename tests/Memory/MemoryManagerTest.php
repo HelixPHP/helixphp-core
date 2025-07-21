@@ -46,7 +46,7 @@ class MemoryManagerTest extends TestCase
         // Restore original settings (only if it's safe to do so)
         $currentUsage = memory_get_usage(true);
         $originalLimitBytes = $this->parseMemoryLimit($this->originalConfig['memory_limit']);
-        
+
         // Only restore if the original limit is higher than current usage
         if ($originalLimitBytes > $currentUsage || $this->originalConfig['memory_limit'] === '-1') {
             ini_set('memory_limit', $this->originalConfig['memory_limit']);
@@ -412,7 +412,7 @@ class MemoryManagerTest extends TestCase
         // Restore original limit (only if safe)
         $currentUsage = memory_get_usage(true);
         $originalLimitBytes = $this->parseMemoryLimit($originalLimit);
-        
+
         if ($originalLimitBytes > $currentUsage || $originalLimit === '-1') {
             ini_set('memory_limit', $originalLimit);
         }
@@ -457,7 +457,7 @@ class MemoryManagerTest extends TestCase
         // Restore original limit (only if safe)
         $currentUsage = memory_get_usage(true);
         $originalLimitBytes = $this->parseMemoryLimit($originalLimit);
-        
+
         if ($originalLimitBytes > $currentUsage || $originalLimit === '-1') {
             ini_set('memory_limit', $originalLimit);
         }

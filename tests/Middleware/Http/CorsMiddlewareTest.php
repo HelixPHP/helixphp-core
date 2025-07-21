@@ -74,7 +74,10 @@ class CorsMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals('GET,POST,PUT,DELETE,OPTIONS', $response->getHeaderLine('Access-Control-Allow-Methods'));
-        $this->assertEquals('Content-Type,Authorization,X-Requested-With', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        $this->assertEquals(
+            'Content-Type,Authorization,X-Requested-With',
+            $response->getHeaderLine('Access-Control-Allow-Headers')
+        );
     }
 
     /**
@@ -92,7 +95,10 @@ class CorsMiddlewareTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('*', $response->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals('GET,POST,PUT,DELETE,OPTIONS', $response->getHeaderLine('Access-Control-Allow-Methods'));
-        $this->assertEquals('Content-Type,Authorization,X-Requested-With', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        $this->assertEquals(
+            'Content-Type,Authorization,X-Requested-With',
+            $response->getHeaderLine('Access-Control-Allow-Headers')
+        );
         $this->assertEquals('86400', $response->getHeaderLine('Access-Control-Max-Age'));
     }
 
@@ -119,7 +125,9 @@ class CorsMiddlewareTest extends TestCase
      */
     public function testHandleMethodThrowsException(): void
     {
-        $this->markTestSkipped('CorsMiddleware handle method has restrictive type hints that prevent testing the exception');
+        $this->markTestSkipped(
+            'CorsMiddleware handle method has restrictive type hints that prevent testing the exception'
+        );
     }
 
     /**
@@ -405,7 +413,10 @@ class CorsMiddlewareTest extends TestCase
 
         $this->assertEquals('https://trusted.com', $response->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals('GET,POST', $response->getHeaderLine('Access-Control-Allow-Methods'));
-        $this->assertEquals('Content-Type,Authorization', $response->getHeaderLine('Access-Control-Allow-Headers'));
+        $this->assertEquals(
+            'Content-Type,Authorization',
+            $response->getHeaderLine('Access-Control-Allow-Headers')
+        );
         $this->assertEquals('true', $response->getHeaderLine('Access-Control-Allow-Credentials'));
 
         // Test preflight request
@@ -415,7 +426,10 @@ class CorsMiddlewareTest extends TestCase
 
         $this->assertEquals('https://trusted.com', $preflightResponse->getHeaderLine('Access-Control-Allow-Origin'));
         $this->assertEquals('GET,POST', $preflightResponse->getHeaderLine('Access-Control-Allow-Methods'));
-        $this->assertEquals('Content-Type,Authorization', $preflightResponse->getHeaderLine('Access-Control-Allow-Headers'));
+        $this->assertEquals(
+            'Content-Type,Authorization',
+            $preflightResponse->getHeaderLine('Access-Control-Allow-Headers')
+        );
         $this->assertEquals('true', $preflightResponse->getHeaderLine('Access-Control-Allow-Credentials'));
         $this->assertEquals('7200', $preflightResponse->getHeaderLine('Access-Control-Max-Age'));
     }

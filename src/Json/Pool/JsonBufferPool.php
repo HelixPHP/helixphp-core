@@ -469,7 +469,9 @@ class JsonBufferPool
                     );
                 }
                 if ($capacity <= 0) {
-                    throw new \InvalidArgumentException("Size category '{$name}' must have a positive integer capacity");
+                    throw new \InvalidArgumentException(
+                        "Size category '{$name}' must have a positive integer capacity"
+                    );
                 }
                 if ($capacity > 1048576) {
                     throw new \InvalidArgumentException(

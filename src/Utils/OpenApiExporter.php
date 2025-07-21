@@ -85,7 +85,9 @@ class OpenApiExporter
             }
 
             $spec['paths'][$path][$method] = [
-                'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
+                'summary' => $route['summary'] ?? (
+                    $route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path
+                ),
                 'responses' => $responses
             ];
         }
@@ -173,7 +175,9 @@ class OpenApiExporter
                 }
 
                 $operationSpec = [
-                    'summary' => $route['summary'] ?? ($route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path),
+                    'summary' => $route['summary'] ?? (
+                        $route['metadata']['summary'] ?? 'Endpoint ' . strtoupper($method) . ' ' . $path
+                    ),
                     'responses' => $responses
                 ];
 
