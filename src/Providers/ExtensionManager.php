@@ -59,7 +59,10 @@ class ExtensionManager
         // Execute the extension to register services
         try {
             $extension($this->app);
-        } catch (\Exception) {
+        } catch (\Exception $e) {
+            // Log the exception details for debugging
+            error_log("Extension '{$name}' failed to execute: " . $e->getMessage());
+            error_log($e->getTraceAsString());
             // If extension fails, still register it but mark as disabled
             $this->extensionStates[$name] = false;
         }
