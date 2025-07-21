@@ -145,7 +145,11 @@ class OpenApiExporter
                 $method = strtolower($route['method'] ?? 'get');
 
                 // Convert Laravel-style parameters to OpenAPI format
-                $path = (string) preg_replace('/\:(\w+)/', '{$1}', $path);
+                $path = preg_replace('/\:(\w+)/', '{$1}', $path);
+                if ($path === null) {
+                    throw new \RuntimeException("Error processing path: '{$route['path']}'");
+                }
+                $path = (string) $path;
 
                 if (!isset($spec['paths'][$path])) {
                     $spec['paths'][$path] = [];
