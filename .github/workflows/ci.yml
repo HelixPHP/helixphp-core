@@ -55,8 +55,8 @@ jobs:
     - name: Run Array Callable Tests (v1.2.0)
       run: |
         echo "🧪 Running Array Callable specific tests..."
-        vendor/bin/phpunit tests/Unit/Routing/ArrayCallableTest.php --verbose
-        vendor/bin/phpunit tests/Integration/Routing/ArrayCallableIntegrationTest.php --verbose
+        vendor/bin/phpunit tests/Unit/Routing/ArrayCallableTest.php --testdox
+        vendor/bin/phpunit tests/Integration/Routing/ArrayCallableIntegrationTest.php --testdox
         
     - name: Run Performance Benchmarks (v1.2.0)
       run: |
