@@ -329,7 +329,7 @@ class MiddlewareStackIntegrationTest extends TestCase
         $this->assertNotEmpty($processingTimes);
         // Allow for timing variance and possible negative values due to microsecond precision
         $this->assertGreaterThan(-1000, $processingTimes[0]); // Reasonable lower bound
-        
+
         // If the timing is positive, it should be at least the delay we added
         if ($processingTimes[0] > 0) {
             $this->assertGreaterThan(8, $processingTimes[0]); // Should be > 8ms due to 10ms delay (with tolerance)

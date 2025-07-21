@@ -215,10 +215,10 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
     {
         // Skip test in very slow environments
         $isVerySlowEnvironment = (
-            extension_loaded('xdebug') && 
+            extension_loaded('xdebug') &&
             (getenv('XDEBUG_MODE') === 'coverage' || defined('PHPUNIT_COVERAGE_ACTIVE'))
         ) || getenv('SKIP_PERFORMANCE_TESTS') === 'true';
-        
+
         if ($isVerySlowEnvironment) {
             $this->markTestSkipped('Skipping concurrent performance test in very slow environment (coverage/debugging)');
         }
@@ -263,8 +263,8 @@ class ApplicationCoreIntegrationTest extends IntegrationTestCase
         // Verify performance with environment-aware expectations
         $maxTime = $this->getPerformanceTimeout();
         $this->assertLessThan(
-            $maxTime, 
-            $totalTime, 
+            $maxTime,
+            $totalTime,
             sprintf('Concurrent requests took too long: %.2fms (max: %dms)', $totalTime, $maxTime)
         );
 

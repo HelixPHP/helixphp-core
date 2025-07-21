@@ -143,7 +143,7 @@ class SerializationCacheTest extends TestCase
 
         // Check stats after first call - should have 2 misses, 0 hits
         $afterFirstStats = SerializationCache::getStats();
-        
+
         // Be more permissive about the exact counts, but ensure we have the minimum expected
         $this->assertGreaterThanOrEqual(2, $afterFirstStats['cache_misses'], 'Should have at least 2 cache misses after first call');
         $this->assertEquals(0, $afterFirstStats['cache_hits'], 'Should have 0 cache hits after first call');
@@ -166,7 +166,7 @@ class SerializationCacheTest extends TestCase
         // Instead of checking exact statistics (which can be unreliable in a full test suite),
         // verify functional caching by checking if the values are identical and reasonable
         $this->assertEquals($totalSize1, $totalSize2, 'Cached values should be identical');
-        
+
         // Verify that the cache has some activity (either hits or misses increased)
         $totalActivity = $finalStats['cache_hits'] + $finalStats['cache_misses'];
         $this->assertGreaterThan(0, $totalActivity, 'Cache should have some activity');

@@ -238,7 +238,7 @@ class V11ComponentsTest extends TestCase
         } else {
             $this->assertGreaterThan(0, $results['rate_limited'], 'Rate limiter should trigger');
         }
-        
+
         $this->assertGreaterThan(25, $results['success'], 'Some requests should succeed');
     }
 
@@ -381,10 +381,10 @@ class V11ComponentsTest extends TestCase
     {
         // Skip test in very slow environments
         $isVerySlowEnvironment = (
-            extension_loaded('xdebug') && 
+            extension_loaded('xdebug') &&
             (getenv('XDEBUG_MODE') === 'coverage' || defined('PHPUNIT_COVERAGE_ACTIVE'))
         ) || getenv('SKIP_PERFORMANCE_TESTS') === 'true';
-        
+
         if ($isVerySlowEnvironment) {
             $this->markTestSkipped('Skipping high-performance test in very slow environment (coverage/debugging)');
         }

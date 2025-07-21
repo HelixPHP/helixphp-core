@@ -307,16 +307,16 @@ class AbstractMiddlewareTest extends TestCase
     {
         // Skip if running in very slow environment
         $isSlowEnvironment = (
-            extension_loaded('xdebug') && 
+            extension_loaded('xdebug') &&
             (getenv('XDEBUG_MODE') === 'coverage' || defined('PHPUNIT_COVERAGE_ACTIVE'))
         ) || getenv('SLOW_TESTS') === 'true';
-        
+
         if ($isSlowEnvironment) {
             $this->markTestSkipped('Skipping performance test in slow environment (coverage/debugging)');
         }
 
         $middleware = new DefaultMiddleware();
-        
+
         // Use fewer iterations for better test stability
         $iterations = 10; // Reduced from 100 to 10 for stability
         $startTime = microtime(true);
@@ -333,14 +333,14 @@ class AbstractMiddlewareTest extends TestCase
         // Much more reasonable expectations for a stress-free environment
         $maxDurationPerIteration = 100; // 100ms per iteration max
         $maxTotalDuration = $maxDurationPerIteration * $iterations;
-        
+
         $this->assertLessThan(
-            $maxTotalDuration, 
-            $duration, 
-            "Middleware performance test took too long: {$duration}ms for {$iterations} iterations (avg: " . 
+            $maxTotalDuration,
+            $duration,
+            "Middleware performance test took too long: {$duration}ms for {$iterations} iterations (avg: " .
             round($duration / $iterations, 2) . "ms per iteration)"
         );
-        
+
         // Also verify that each iteration was reasonably fast on average
         $avgDuration = $duration / $iterations;
         $this->assertLessThan(

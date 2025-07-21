@@ -136,7 +136,7 @@ class EndToEndIntegrationTest extends TestCase
 
         // Create a fresh application instance to avoid route conflicts
         $this->app = new Application();
-        
+
         // Use test-optimized performance mode (minimal overhead)
         HighPerformanceMode::enable(HighPerformanceMode::PROFILE_TEST);
 
@@ -147,7 +147,7 @@ class EndToEndIntegrationTest extends TestCase
         // Use unique paths to avoid conflicts with other tests
         $testCases = [
             '/test/hp/fast',
-            '/test/hp/medium', 
+            '/test/hp/medium',
             '/test/hp/slow'
         ];
 
