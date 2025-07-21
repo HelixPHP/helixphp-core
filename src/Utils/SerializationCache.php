@@ -287,7 +287,10 @@ class SerializationCache
         if (count(self::$cache) > self::$maxCacheSize) {
             // Simple FIFO eviction
             $key = array_key_first(self::$cache);
-            if ($key !== null && is_string($key)) {
+            if ($key === null) {
+                return; // No key to evict
+            }
+            if (is_string($key)) {
                 self::remove($key);
             }
         }
