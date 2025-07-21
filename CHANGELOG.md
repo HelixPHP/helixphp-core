@@ -5,7 +5,7 @@ All notable changes to the PivotPHP Framework will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.2.0] - 2025-01-16 - Simplicity Edition
+## [1.2.0] - 2025-07-21 - Simplicity Edition (Simplicidade sobre Otimização Prematura)
 
 ### Added
 - **ApiDocumentationMiddleware** - Automatic OpenAPI/Swagger documentation generation
@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Example Application** - `api_documentation_example.php` demonstrating features
 - **Legacy Namespace** - New `src/Legacy/` namespace for complex implementations
 - **Simplified Core Classes** - Clean, maintainable implementations as defaults
+- **Enhanced Code Readability** - Improved formatting and readability across test files
+- **Better Error Messages** - Enhanced test failure messages with more descriptive output
+- **Environment-Aware Testing** - Improved test skipping logic for different environments
 
 ### Changed
 - **Architecture Simplification** - Simple classes promoted to core defaults following "Simplicidade sobre Otimização Prematura"
@@ -23,6 +26,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Core Classes** - `PerformanceMode`, `LoadShedder`, `MemoryManager`, `PoolManager`, etc. are now simple implementations
 - **Documentation Focus** - Emphasis on automatic documentation generation as key differentiator
 - **Middleware Organization** - `ApiDocumentationMiddleware` properly organized under `src/Middleware/Http/`
+- **Code Formatting** - Standardized code formatting for better maintainability
+- **Test Messages** - Improved clarity of test assertions and error messages
+- **Function Parameters** - Simplified unused parameters in test route closures using `$_` convention
+- **Line Length Management** - Improved code readability by managing long lines appropriately
 
 ### Deprecated
 - **Complex Classes** - `HighPerformanceMode`, `ExtensionManager`, `OpenApiExporter`, `SerializationCache` moved to `src/Legacy/` namespace
@@ -34,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Middleware Organization** - Proper namespace structure for HTTP middleware
 - **JsonBufferPool Compatibility** - Fixed test compatibility issues with renamed classes
 - **Alias System** - Resolved autoloader conflicts during class transitions
+- **IDE Diagnostics** - Resolved all unused variable warnings and undefined type issues
+- **Code Style Compliance** - Enhanced PSR-12 compliance across test files
+- **Test Reliability** - Improved test stability in various environments
+- **Long Line Formatting** - Better handling of long strings and complex assertions
 
 ### Backward Compatibility
 - **100% Compatible** - All existing code continues to work via automatic aliases
@@ -46,6 +57,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Maintained Performance** - All v1.1.4 performance improvements preserved
 - **Object Pool Reuse** - 100% request pool reuse, 99.9% response pool reuse maintained
 - **Framework Throughput** - 44,092 ops/sec maintained with simplified architecture
+- **Cleaner Code Execution** - No performance impact from code quality improvements
+
+### Quality Improvements
+- **Zero IDE Warnings** - All IDE diagnostics issues resolved across the entire codebase
+- **Enhanced Test Coverage** - Better test environment detection and handling
+- **Cleaner Codebase** - Removed unnecessary whitespace and improved formatting
+- **Maintainable Tests** - More readable test code with descriptive error messages
+- **PSR-12 Compliance** - Enhanced code style compliance throughout the project
+- **Developer Experience** - Improved code readability and maintainability
 
 ## [1.1.4] - 2025-07-15
 
