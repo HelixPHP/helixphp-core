@@ -134,6 +134,9 @@ class EndToEndIntegrationTest extends TestCase
             $this->markTestSkipped('Skipping HP mode integration test during coverage to avoid timing issues');
         }
 
+        // Create a fresh application instance to avoid route conflicts
+        $this->app = new Application();
+        
         // Use test-optimized performance mode (minimal overhead)
         HighPerformanceMode::enable(HighPerformanceMode::PROFILE_TEST);
 
@@ -141,10 +144,11 @@ class EndToEndIntegrationTest extends TestCase
         $this->app->boot();
 
         // Test functionality, not performance - just verify it works
+        // Use unique paths to avoid conflicts with other tests
         $testCases = [
-            '/api/fast',
-            '/api/medium',
-            '/api/slow'
+            '/test/hp/fast',
+            '/test/hp/medium', 
+            '/test/hp/slow'
         ];
 
         foreach ($testCases as $endpoint) {
@@ -440,15 +444,16 @@ class EndToEndIntegrationTest extends TestCase
      */
     private function setupPerformanceRoutes(): void
     {
+        // Use unique route paths to avoid conflicts with other tests
         $this->app->get(
-            '/api/fast',
+            '/test/hp/fast',
             function ($req, $res) {
                 return $res->json(['data' => 'fast response', 'timestamp' => microtime(true)]);
             }
         );
 
         $this->app->get(
-            '/api/medium',
+            '/test/hp/medium',
             function ($req, $res) {
                 usleep(1000); // 1ms delay
                 return $res->json(['data' => 'medium response', 'timestamp' => microtime(true)]);
@@ -456,7 +461,7 @@ class EndToEndIntegrationTest extends TestCase
         );
 
         $this->app->get(
-            '/api/slow',
+            '/test/hp/slow',
             function ($req, $res) {
                 usleep(5000); // 5ms delay
                 return $res->json(['data' => 'slow response', 'timestamp' => microtime(true)]);
