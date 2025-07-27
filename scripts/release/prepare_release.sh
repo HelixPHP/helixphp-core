@@ -5,6 +5,12 @@
 
 set -e
 
+# Check if running in CI environment or --ci flag is passed
+CI_MODE=false
+if [[ "$CI" == "true" ]] || [[ "$GITHUB_ACTIONS" == "true" ]] || [[ "$1" == "--ci" ]]; then
+    CI_MODE=true
+fi
+
 # Load shared utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../utils/version-utils.sh"
@@ -117,10 +123,14 @@ if [ -d ".git" ]; then
         warning "There are uncommitted changes:"
         git status --porcelain
         echo ""
-        read -p "Continue anyway? (y/N) " -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            error "Cancelled by user"
+        if [[ "$CI_MODE" == "true" ]]; then
+            warning "CI Mode: Continuing with uncommitted changes"
+        else
+            read -p "Continue anyway? (y/N) " -n 1 -r
+            echo
+            if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+                error "Cancelled by user"
+            fi
         fi
     else
         info "All files are committed"
@@ -201,22 +211,26 @@ echo "   - Packagist: https://packagist.org"
 echo "   - Documentation: https://pivotphp.com"
 echo ""
 
-# 12. Offer to execute useful commands
-read -p "Do you want to execute 'composer validate' now? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    composer validate
-fi
-
-read -p "Do you want to see a preview of what will be included in the package? (y/N) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Files that will be included in the package:"
-    if [ -d ".git" ]; then
-        git ls-files 2>/dev/null || find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
-    else
-        find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+# 12. Offer to execute useful commands (only in interactive mode)
+if [[ "$CI_MODE" == "false" ]]; then
+    read -p "Do you want to execute 'composer validate' now? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        composer validate
     fi
+
+    read -p "Do you want to see a preview of what will be included in the package? (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Files that will be included in the package:"
+        if [ -d ".git" ]; then
+            git ls-files 2>/dev/null || find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+        else
+            find . -type f -not -path "./vendor/*" -not -path "./.git/*" -not -path "./node_modules/*"
+        fi
+    fi
+else
+    info "CI Mode: Skipping interactive commands"
 fi
 
 echo ""
